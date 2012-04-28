@@ -6,14 +6,14 @@
  *
  * @see  http://kohanaframework.org/guide/about.install#application
  */
-$application = 'application';
+$application = './application';
 
 /**
  * The directory in which your modules are located.
  *
  * @see  http://kohanaframework.org/guide/about.install#modules
  */
-$modules = 'modules';
+$modules = '/usr/share/php/kohana3.2/modules';
 
 /**
  * The directory in which the Kohana resources are located. The system
@@ -21,7 +21,7 @@ $modules = 'modules';
  *
  * @see  http://kohanaframework.org/guide/about.install#system
  */
-$system = 'system';
+$system = '/usr/share/php/kohana3.2/system';
 
 /**
  * The default extension of resource files. If you change this, all resources
@@ -69,10 +69,9 @@ if ( ! is_dir($system) AND is_dir(DOCROOT.$system))
 	$system = DOCROOT.$system;
 
 // Define the absolute paths for configured directories
-#define('APPPATH', '/usr/share/php/kohana3.2/application'.DIRECTORY_SEPARATOR);
-define('APPPATH', '/home/david/public_html/application'.DIRECTORY_SEPARATOR);
-define('MODPATH', '/usr/share/php/kohana3.2/modules'.DIRECTORY_SEPARATOR);
-define('SYSPATH', '/usr/share/php/kohana3.2/system'.DIRECTORY_SEPARATOR);
+define('APPPATH', realpath($application).DIRECTORY_SEPARATOR);
+define('MODPATH', realpath($modules).DIRECTORY_SEPARATOR);
+define('SYSPATH', realpath($system).DIRECTORY_SEPARATOR);
 
 // Clean up the configuration vars
 unset($application, $modules, $system);
