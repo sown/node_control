@@ -9,20 +9,20 @@ sudo sed -i "s/`lsb_release -cs`/maverick/" /etc/apt/sources.list.d/kohana-stabl
 sudo apt-get update
 sudo apt-get install git-core libkohana3.2-core-php libkohana3.2-mod-auth-php libkohana3.2-mod-cache-php libkohana3.2-mod-codebench-php libkohana3.2-mod-database-php libkohana3.2-mod-image-php libkohana3.2-mod-orm-php libkohana3.2-mod-unittest-php mysql-client mysql-server php5-mysql libmysqlclient15-dev
 
-
 sudo a2enmod mod_rewrite
-sudo /etc/init.d/apache2 restart
-sudo /etc/init.d/mysql restart
+
+cd /srv/www/default
+
+sudo git clone git://github.com/sown/node_control.git .
 
 sudo mkdir -p /srv/www/default/application
 sudo cp /usr/share/php/kohana3.2/index.php /srv/www/default
 
-cd /srv/www/default
+# Hack httpd to use /srv/www/default
+# Hack httpd.conf to allow allow override all
 
-# Hack httpd to use /srv/ww/default
-# Hack httpd.conf to allow allow override any
-
-sudo git clone git://github.com/sown/node_control.git .
+sudo /etc/init.d/apache2 restart
+sudo /etc/init.d/mysql restart
 
 cd /srv/www
 sudo git clone https://github.com/Flynsarmy/KODoctrine2.git
