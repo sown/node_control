@@ -15,9 +15,6 @@ cd /srv/www/default
 
 sudo git clone git://github.com/sown/node_control.git .
 
-sudo mkdir -p /srv/www/default/application
-sudo cp /usr/share/php/kohana3.2/index.php /srv/www/default
-
 # Hack httpd to use /srv/www/default
 # Hack httpd.conf to allow allow override all
 
