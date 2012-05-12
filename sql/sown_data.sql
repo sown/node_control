@@ -161,8 +161,8 @@ INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image
 INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image,notes) VALUES (4,4,4,903,'',NULL);
 INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image,notes) VALUES (5,5,5,904,'',NULL);
 
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (1,1,'00:0d:b9:20:a3:44','0','100M');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (2,1,'00:20:6a:15:67:3a','1','n');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (1,1,'00:11:5b:e4:7e:cb','0','100M');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (2,1,'00:0b:6b:56:2e:7e','1','n');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (3,2,'00:0d:b9:20:a4:55','0','100M');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (4,2,'00:20:6a:15:67:3b','6','n');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (5,3,'00:0d:b9:20:a5:66','0','100M');
