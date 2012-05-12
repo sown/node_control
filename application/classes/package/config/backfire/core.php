@@ -72,9 +72,9 @@ class Package_Config_Backfire_Core extends Package_Config
 	{
 		$authorized_keys = '/srv/www/auth/config/authorized_keys';
 # SHOULDN'T PASS THIS FILE
-#		$passwd_file = '/srv/www/auth/config/data/etc/passwd';
+		$passwd_file = '/srv/www/auth/config/passwd';
 		
-		$last_mod = max($node->client_certificate->last_modified, filemtime($authorized_keys), filemtime($passwd_file));
+		$last_mod = max($node->certificate->lastModified->getTimestamp(), filemtime($authorized_keys), filemtime($passwd_file));
 		
 		if ($since = strtotime(Request::$current->headers('if-modified-since')))
 		{
@@ -89,12 +89,12 @@ class Package_Config_Backfire_Core extends Package_Config
 
 		static::send_tgz(array(
 			'client.crt'      => array(
-				'content' => PKI::PEM_encode_certificate($node->client_certificate->public_key),
-				'mtime'   => $node->client_certificate->last_modified,
+				'content' => PKI::PEM_encode_certificate($node->certificate->publicKey),
+				'mtime'   => $node->certificate->lastModified->getTimestamp(),
 			),
 			'client.key'      => array(
-				'content' => PKI::PEM_encode_key($node->client_certificate->private_key),
-				'mtime'   => $node->client_certificate->last_modified,
+				'content' => PKI::PEM_encode_key($node->certificate->privateKey),
+				'mtime'   => $node->certificate->lastModified->getTimestamp(),
 			),
 			'authorized_keys' => $authorized_keys,
 #			'passwd'          => $passwd_file,
