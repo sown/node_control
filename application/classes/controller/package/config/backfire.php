@@ -56,12 +56,6 @@ class Controller_Package_Config_Backfire extends Controller
 			Package_Config::send_shell_script("echo \"Unable to determine node from request for '$request_name' at version '$version' for package '$package'.\" >&2; return 1\n");
 		}
 		
-		if (! $classname::is_permitted($this->request, $node))
-		{
-			SOWN::send_irc_message('Node config: Node '.$node->id.' was denied access to: '."$package:$version:$request_name.");
-			Package_Config::send_shell_script("echo \"Request for '$request_name' at version '$version' for package '$package' not permitted.\" >&2; return 1\n");
-		}
-		
 		//SOWN::send_irc_message('calling '.$classname.'::'.$versions.'['.$found.']["method"]('.$node.', '.$version.');');
 		$classname::$versions[$found]['method']($node, $version);
 	}
