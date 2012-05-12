@@ -11,6 +11,13 @@ function query($q, $params, $type) {
         return $sth->fetchObject($type);
 }
 
+function queryID($q, $params) {
+        global $dbh;
+        $sth = $dbh->prepare($q);
+        $sth->execute($params);
+        return $sth->fetchColumn(0);
+}
+
 function insert($q, $params) {
         global $dbh;
         $sth = $dbh->prepare($q);
