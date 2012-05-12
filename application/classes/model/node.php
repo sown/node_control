@@ -136,14 +136,15 @@ class Model_Node extends Model_Entity
 
 	public static function getByMac($mac)
 	{
-		require_once('../mysql-dbo.php');
-		$q = "SELECT nodes.* FROM nodes JOIN physical_interfaces ON nodes.id = physical_interfaces.node_id WHERE physical_interfaces.mac_address = ?";
-		$params = array($mac);
-		$res = query($q, $params, 'Model_Node');
-		print_r($res);
+		$q = "SELECT nodes.id FROM nodes JOIN network_adapters ON nodes.id = network_adapters.node_id WHERE network_adapters.mac = ?";
+		$params = array(strtolower($mac));
+		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
 	}
 
 	public static function getByCertificate($pubkey)
 	{
+		$q = "SELECT nodes.id FROM nodes JOIN certificates ON nodes.certificate_id = certificates.id WHERE certificates.public_key = ?";
+		$params = array($pubkey);
+		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
 	}
 }
