@@ -117,42 +117,6 @@ abstract class Package_Config
 		));
 	}
 	
-/*
-	public static function is_permitted(Request $request, Model_Node $node)
-	{
-		$cert = static::get_client_cert();
-		if ($request->param('request_name') == 'credentials')
-		{
-			if ($cert === null)
-			{
-				// TODO for more security: ensure client IP is on the sown vlan.
-			}
-			elseif (static::is_bootstrap_cert($cert))
-			{
-				$valid = static::is_cert_valid($cert);
-
-				if (! $valid)
-					return false;
-			}
-
-			// TODO check for flag on node record
-			return $node !== null;
-		}
-		else
-		{
-			if ($cert == null)
-				return false;
-			
-			$valid = static::is_cert_valid($cert);
-
-			if (! $valid)
-				return false;
-
-			return ! static::is_bootstrap_cert($cert);
-		}
-	}
-*/
-	
 	public static function get_node(Request $request)
 	{
 		$cert = static::get_client_cert();
