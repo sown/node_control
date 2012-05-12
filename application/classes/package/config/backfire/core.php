@@ -124,13 +124,13 @@ class Package_Config_Backfire_Core extends Package_Config
 
 	public static function config_sown_core_v0_1_78(Model_Node $node)
 	{
-		$last_mod = max(filemtime(__FILE__), $node->last_modified);
+		$last_mod = max(filemtime(__FILE__), $node->lastModified->getTimestamp());
 		$deployment = $node->getCurrentDeployment();
 
 		if ($deployment !== NULL)
 		{
 			$node_name = $deployment->name;
-			$last_mod = max($last_mod, $deployment->last_modified);
+			$last_mod = max($last_mod, $deployment->lastModified->getTimestamp());
 		}
 		else
 		{
@@ -206,7 +206,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			
 			$config['interface'][$iface->name] = $iface_config;
 			
-			$last_mod = max($last_mod, $iface->last_modified);
+			$last_mod = max($last_mod, $iface->lastModified->getTimestamp());
 		}
 		
 		static::send_uci_config('network', $config, $last_mod);
@@ -265,7 +265,7 @@ class Package_Config_Backfire_Core extends Package_Config
 					),
 				);
 				
-			$last_mod = max($last_mod, $radio->last_modified);
+			$last_mod = max($last_mod, $radio->lastModified->getTimestamp());
 			$count++;
 		}
 		
@@ -294,7 +294,7 @@ class Package_Config_Backfire_Core extends Package_Config
 				}
 				$config['wifi-iface'][$interface->name]['nasid'] = $node->getFQDN();
 			}
-			$last_mod = max($last_mod, $interface->last_modified);
+			$last_mod = max($last_mod, $interface->lastModified->getTimestamp());
 		}
 		
 		static::send_uci_config('wireless', $config, $last_mod);
@@ -340,7 +340,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			}
 			
 			$config['dhcp'][$iface->name] = $if_config;
-			$last_mod = max($last_mod, $iface->last_modified);
+			$last_mod = max($last_mod, $iface->lastModified->getTimestamp());
 		}
 
 		static::send_uci_config('dhcp', $config, $last_mod);
@@ -370,7 +370,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			),
 		);
 		// TODO update this once the above config generation is fixed
-		$last_mod = max(filemtime(__FILE__), $node->last_modified, $node->vpn_server->last_modified);
+		$last_mod = max(filemtime(__FILE__), $node->lastModified->getTimestamp(), $node->vpn_server->lastModified->getTimestamp());
 		
 		static::send_uci_config('softflowd', $config);
 	}
