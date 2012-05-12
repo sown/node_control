@@ -89,11 +89,11 @@ class Package_Config_Backfire_Core extends Package_Config
 
 		static::send_tgz(array(
 			'client.crt'      => array(
-				'content' => PKI::PEM_encode_certificate($node->certificate->publicKey),
+				'content' => $node->certificate->publicKey,
 				'mtime'   => $node->certificate->lastModified->getTimestamp(),
 			),
 			'client.key'      => array(
-				'content' => PKI::PEM_encode_key($node->certificate->privateKey),
+				'content' => $node->certificate->privateKey,
 				'mtime'   => $node->certificate->lastModified->getTimestamp(),
 			),
 			'authorized_keys' => $authorized_keys,
