@@ -2,7 +2,7 @@
 
 if (Kohana::$environment === Kohana::DEVELOPMENT)
 {
-	return require dirname(__FILE__) . '/../../../system/views/kohana/error.php';
+	return require SYSPATH . '/views/kohana/error.php';
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
