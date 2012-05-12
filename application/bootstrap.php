@@ -183,3 +183,5 @@ Route::set('foo', 'foo/<action>')
 	->defaults(array(
 		'controller' => 'JellyReverseEngineer'
 	));
+
+require_once(APPPATH.'/classes/mysql-dbo.php');
