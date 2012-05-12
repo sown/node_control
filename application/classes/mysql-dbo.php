@@ -2,7 +2,7 @@
 
 //$dbh = new PDO("mysql:dbname=node_config;host=localhost", "auth-https", "6itL6cbuwz=fd");
 global $dbh;
-$dbh = new PDO("mysql:dbname=sown_admin;host=localhost", "root", "") or die("WTF");
+$dbh = new PDO("mysql:dbname=sown_data;host=localhost", "root", "") or die("WTF");
 
 function query($q, $params, $type) {
         global $dbh;
