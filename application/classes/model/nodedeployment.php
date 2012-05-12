@@ -13,105 +13,105 @@ class Model_NodeDeployment extends Model_Entity
 	 *
 	 * @Column(name="name", type="string", length=255, nullable=true)
 	 */
-	private $name;
+	protected $name;
 
 	/**
 	 * @var boolean $isDevelopment
 	 *
 	 * @Column(name="is_development", type="boolean", nullable=false)
 	 */
-	private $isDevelopment;
+	protected $isDevelopment;
 
 	/**
 	 * @var boolean $isPrivate
 	 *
-	 * @Column(name="is_private", type="boolean", nullable=false)
+	 * @Column(name="is_protected", type="boolean", nullable=false)
 	 */
-	private $isPrivate;
+	protected $isPrivate;
 
 	/**
 	 * @var boolean $firewall
 	 *
 	 * @Column(name="firewall", type="boolean", nullable=false)
 	 */
-	private $firewall;
+	protected $firewall;
 
 	/**
 	 * @var boolean $advancedFirewall
 	 *
 	 * @Column(name="advanced_firewall", type="boolean", nullable=false)
 	 */
-	private $advancedFirewall;
+	protected $advancedFirewall;
 
 	/**
 	 * @var bigint $cap
 	 *
 	 * @Column(name="cap", type="bigint", nullable=false)
 	 */
-	private $cap;
+	protected $cap;
 
 	/**
 	 * @var datetime $startDate
 	 *
 	 * @Column(name="start_date", type="datetime", nullable=false)
 	 */
-	private $startDate;
+	protected $startDate;
 
 	/**
 	 * @var datetime $endDate
 	 *
 	 * @Column(name="end_date", type="datetime", nullable=false)
 	 */
-	private $endDate;
+	protected $endDate;
 
 	/**
 	 * @var integer $range
 	 *
 	 * @Column(name="range", type="integer", nullable=false)
 	 */
-	private $range;
+	protected $range;
 
 	/**
 	 * @var string $allowedPorts
 	 *
 	 * @Column(name="allowed_ports", type="string", length=255, nullable=true)
 	 */
-	private $allowedPorts;
+	protected $allowedPorts;
 
 	/**
 	 * @var nodedeploymenttype $type
 	 *
 	 * @Column(name="type", type="nodedeploymenttype", nullable=true)
 	 */
-	private $type;
+	protected $type;
 
 	/**
 	 * @var text $url
 	 *
 	 * @Column(name="url", type="text", nullable=true)
 	 */
-	private $url;
+	protected $url;
 
 	/**
 	 * @var decimal $longitude
 	 *
 	 * @Column(name="longitude", type="decimal", nullable=true)
 	 */
-	private $longitude;
+	protected $longitude;
 
 	/**
 	 * @var decimal $latitude
 	 *
 	 * @Column(name="latitude", type="decimal", nullable=true)
 	 */
-	private $latitude;
+	protected $latitude;
 
 	/**
 	 * @var text $address
 	 *
 	 * @Column(name="address", type="text", nullable=true)
 	 */
-	private $address;
+	protected $address;
 
 	/**
 	 * @var Model_Node
@@ -121,6 +121,6 @@ class Model_NodeDeployment extends Model_Entity
 	 *   @JoinColumn(name="node_id", referencedColumnName="id")
 	 * })
 	 */
-	private $node;
+	protected $node;
 
 }

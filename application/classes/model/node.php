@@ -19,21 +19,21 @@ class Model_Node extends Model_Entity
 	 *
 	 * @Column(name="box_number", type="integer", nullable=true)
 	 */
-	private $boxNumber;
+	protected $boxNumber;
 
 	/**
 	 * @var text $firmwareImage
 	 *
 	 * @Column(name="firmware_image", type="text", nullable=false)
 	 */
-	private $firmwareImage;
+	protected $firmwareImage;
 
 	/**
 	 * @var text $notes
 	 *
 	 * @Column(name="notes", type="text", nullable=true)
 	 */
-	private $notes;
+	protected $notes;
 
 	/**
 	 * @var Model_Certificate
@@ -43,7 +43,7 @@ class Model_Node extends Model_Entity
 	 *   @JoinColumn(name="certificate_id", referencedColumnName="id")
 	 * })
 	 */
-	private $certificate;
+	protected $certificate;
 
 	/**
 	 * @var Model_VpnEndpoint
@@ -53,7 +53,7 @@ class Model_Node extends Model_Entity
 	 *   @JoinColumn(name="vpn_endpoint_id", referencedColumnName="id")
 	 * })
 	 */
-	private $vpnEndpoint;
+	protected $vpnEndpoint;
 
 	public function __get($name)
 	{

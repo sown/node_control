@@ -13,63 +13,63 @@ class Model_Interface extends Model_Entity
 	 *
 	 * @Column(name="ipv4_addr", type="ipv4address", nullable=false)
 	 */
-	private $IPv4Addr;
+	protected $IPv4Addr;
 
 	/**
 	 * @var integer $IPv4AddrCidr
 	 *
 	 * @Column(name="ipv4_addr_cidr", type="integer", nullable=false)
 	 */
-	private $IPv4AddrCidr;
+	protected $IPv4AddrCidr;
 
 	/**
 	 * @var string $IPv6Addr
 	 *
 	 * @Column(name="ipv6_addr", type="ipv6address", nullable=false)
 	 */
-	private $IPv6Addr;
+	protected $IPv6Addr;
 
 	/**
 	 * @var integer $IPv6AddrCidr
 	 *
 	 * @Column(name="ipv6_addr_cidr", type="integer", nullable=false)
 	 */
-	private $IPv6AddrCidr;
+	protected $IPv6AddrCidr;
 
 	/**
 	 * @var text $name
 	 *
 	 * @Column(name="name", type="text", nullable=false)
 	 */
-	private $name;
+	protected $name;
 
 	/**
 	 * @var text $ssid
 	 *
 	 * @Column(name="ssid", type="text", nullable=false)
 	 */
-	private $ssid;
+	protected $ssid;
 
 	/**
 	 * @var string $type
 	 *
 	 * @Column(name="type", type="string", nullable=false)
 	 */
-	private $type;
+	protected $type;
 
 	/**
 	 * @var boolean $offerDhcp
 	 *
 	 * @Column(name="offer_dhcp", type="boolean", nullable=false)
 	 */
-	private $offerDhcp;
+	protected $offerDhcp;
 
 	/**
 	 * @var boolean $is1x
 	 *
 	 * @Column(name="is_1x", type="boolean", nullable=false)
 	 */
-	private $is1x;
+	protected $is1x;
 
 	/**
 	 * @var Model_NetworkAdapter
@@ -79,7 +79,7 @@ class Model_Interface extends Model_Entity
 	 *   @JoinColumn(name="network_adapter_id", referencedColumnName="id")
 	 * })
 	 */
-	private $networkAdapter;
+	protected $networkAdapter;
 
 	/**
 	 * @var Model_Node
@@ -89,6 +89,6 @@ class Model_Interface extends Model_Entity
 	 *   @JoinColumn(name="node_id", referencedColumnName="id")
 	 * })
 	 */
-	private $node;
+	protected $node;
 
 }

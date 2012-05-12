@@ -12,10 +12,10 @@ abstract class Model_Entity
 	 * @Id @Column(type="integer")
 	 * @GeneratedValue
 	 */
-	private $id;
+	protected $id;
 	
 	/** @Column(name="last_modified", type="datetime") */
-	private $lastModified;
+	protected $lastModified;
 	
 	public function __get($name)
 	{

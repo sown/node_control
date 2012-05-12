@@ -20,28 +20,28 @@ class Model_VpnEndpoint extends Model_Entity
 	 *
 	 * @Column(name="port", type="integer", nullable=true)
 	 */
-	private $port;
+	protected $port;
 
 	/**
 	 * @var string $protocol
 	 *
 	 * @Column(name="protocol", type="string", nullable=true)
 	 */
-	private $protocol;
+	protected $protocol;
 
 	/**
 	 * @var string $IPv4Network
 	 *
 	 * @Column(name="ipv4_network", type="ipv4networkaddress", nullable=true)
 	 */
-	private $IPv4Network;
+	protected $IPv4Network;
 
 	/**
 	 * @var string $IPv6Network
 	 *
 	 * @Column(name="ipv6_network", type="ipv6networkaddress", nullable=true)
 	 */
-	private $IPv6Network;
+	protected $IPv6Network;
 
 	/**
 	 * @var Model_VpnServer
@@ -51,6 +51,6 @@ class Model_VpnEndpoint extends Model_Entity
 	 *   @JoinColumn(name="vpn_server_id", referencedColumnName="id")
 	 * })
 	 */
-	private $vpnServer;
+	protected $vpnServer;
 
 }

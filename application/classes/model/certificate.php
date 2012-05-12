@@ -15,21 +15,21 @@ class Model_Certificate extends Model_Entity
 	/**
 	 * @var blob $publicKey
 	 *
-	 * @Column(name="public_key", type="blob", nullable=false)
+	 * @Column(name="public_key", type="text", nullable=false)
 	 */
-	private $publicKey;
+	protected $publicKey;
 
 	/**
 	 * @var blob $privateKey
 	 *
-	 * @Column(name="private_key", type="blob", nullable=false)
+	 * @Column(name="private_key", type="text", nullable=false)
 	 */
-	private $privateKey;
+	protected $privateKey;
 
 	/**
 	 * @var boolean $current
 	 *
 	 * @Column(name="current", type="boolean", nullable=false)
 	 */
-	private $current;
+	protected $current;
 }

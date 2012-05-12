@@ -13,21 +13,21 @@ class Model_NetworkAdapter extends Model_Entity
 	 *
 	 * @Column(name="mac", type="text", nullable=false)
 	 */
-	private $mac;
+	protected $mac;
 
 	/**
 	 * @var integer $wirelessChannel
 	 *
 	 * @Column(name="wireless channel", type="integer", nullable=false)
 	 */
-	private $wirelessChannel;
+	protected $wirelessChannel;
 
 	/**
 	 * @var text $type
 	 *
 	 * @Column(name="type", type="text", nullable=false)
 	 */
-	private $type;
+	protected $type;
 
 	/**
 	 * @var Model_Node
@@ -37,6 +37,6 @@ class Model_NetworkAdapter extends Model_Entity
 	 *   @JoinColumn(name="node_id", referencedColumnName="id")
 	 * })
 	 */
-	private $node;
+	protected $node;
 
 }

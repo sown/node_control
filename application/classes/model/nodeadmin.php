@@ -13,21 +13,21 @@ class Model_NodeAdmin extends Model_Entity
 	 *
 	 * @Column(name="user_id", type="integer", nullable=false)
 	 */
-	private $userId;
+	protected $userId;
 
 	/**
 	 * @var datetime $startDate
 	 *
 	 * @Column(name="start_date", type="datetime", nullable=false)
 	 */
-	private $startDate;
+	protected $startDate;
 
 	/**
 	 * @var datetime $endDate
 	 *
 	 * @Column(name="end_date", type="datetime", nullable=false)
 	 */
-	private $endDate;
+	protected $endDate;
 
 	/**
 	 * @var Model_NodeDeployment
@@ -37,6 +37,6 @@ class Model_NodeAdmin extends Model_Entity
 	 *   @JoinColumn(name="node_deployment_id", referencedColumnName="id")
 	 * })
 	 */
-	private $nodeDeployment;
+	protected $nodeDeployment;
 
 }
