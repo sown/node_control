@@ -117,6 +117,7 @@ abstract class Package_Config
 		));
 	}
 	
+/*
 	public static function is_permitted(Request $request, Model_Node $node)
 	{
 		$cert = static::get_client_cert();
@@ -150,64 +151,44 @@ abstract class Package_Config
 			return ! static::is_bootstrap_cert($cert);
 		}
 	}
+*/
 	
 	public static function get_node(Request $request)
 	{
-//$classloader = new \Doctrine\Common\ClassLoader('Model', '/srv/www/sown-auth2.ecs.soton.ac.uk:443/kohana/application/classes');
-//$classloader->register();
-
-		$node = Doctrine::em('node_config')->find('Model_Node', 1);
-		//$node = new Model_Node(1);
-		echo 'Node: '.$node;
-		var_dump($r = new ReflectionClass($node));
-		var_dump($r->getProperties());
-		return $node;
 		$cert = static::get_client_cert();
+
+		if ($cert === NULL)
+		{
+                        SOWN::send_irc_message('Node config: client '.Request::$client_ip.' with CN '.$_SERVER['SSL_CLIENT_S_DN_CN'].' did not send a certificate in a request.');
+			return null;
+		}
 		
-		if ($cert === NULL || static::is_bootstrap_cert($cert))
+		if (static::is_bootstrap_cert($cert))
 		{
 			if ($request->param('request_name') != 'credentials')
+			{
+				SOWN::send_irc_message('Node config: client '.Request::$client_ip.' is using the bootstrap certificate in a request.');
 				return null;
+			}
 
 			// Get node object
-			return Model_Node::getByMac($request->post('mac'));
-/*
-			$iface = Jelly::query('New_Node_Interface_Physical')
-				->where('mac_address', '=', $request->post('mac'))
-				->where('name', '=', 'eth0')
-				->with('node')
-				->limit(1)
-				->select();
-
-			if (! $iface->loaded())
-*/
-				return null;
-
-//			return $iface->node;
+			$node = Model_Node::getByMac($request->post('mac'));
+			if($node === null) SOWN::send_irc_message('Node config: failed to find node with MAC: '.$request->post('mac'));
+			return $node;
 		}
 
 		openssl_x509_export($cert, $dump);
 
 		// Get node object
-		// return getNodeWithCertificate(pubkey)
-		return Model_Node::getByCertificate(PKI::PEM_decode($dump));
-/*
-		$c_cert = Jelly::query('New_ClientCertificate')
-			->where('public_key', '=', PKI::PEM_decode($dump))
-			->with('node')
-			->limit(1)
-			->select();
-*/
-
-//		if(! $c_cert->loaded())
-			return null;
-//		else
-//			return $c_cert->node;
+		$node = Model_Node::getByCertificate(PKI::PEM_decode($dump));
+		if($node === null) SOWN::send_irc_message('Node config: failed to find node by certificate.');
+		return $node;
 	}
 	
 	public static function get_client_cert()
 	{
-		$cert = $_SERVER["SSL_CLIENT_CERT"];
+		$cert = null;
+		if(isset($_SERVER["SSL_CLIENT_CERT"])) $cert = $_SERVER["SSL_CLIENT_CERT"];
 
 		if ($cert === null || empty($cert))
 			return null;
