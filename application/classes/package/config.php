@@ -220,15 +220,16 @@ abstract class Package_Config
 		return (openssl_x509_checkpurpose($cert, X509_PURPOSE_SSL_CLIENT, array('/srv/vpn-keys/ca.crt')) === true);
 	}
 	
-	public static function get_cert_cn($cert)
+	public static function get_cert_cn()
 	{
-		$data = openssl_x509_parse($cert);
-		return $data['subject']['CN'];
+		return $_SERVER['SSL_CLIENT_S_DN_CN'];
+		//$data = openssl_x509_parse($cert);
+		//return $data['subject']['CN'];
 	}
 	
 	public static function is_bootstrap_cert($cert)
 	{
-		return static::get_cert_cn($cert) == 'client_bootstrap';
+		return static::get_cert_cn() == 'client_bootstrap'; //&& static::is_cert_valid($cert);
 	}
 	
 	public static function makeHeader($commentchar, Model_Node $node, $version)
