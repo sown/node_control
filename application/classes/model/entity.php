@@ -19,18 +19,18 @@ abstract class Model_Entity
 	
 	public function __get($name)
 	{
-		//if (property_exists($this, $name))
+		if (property_exists($this, $name))
 			return $this->$name;
-		//else
-		//	throw new OutOfBoundsException('Class '.get_class($this).' does not have the property \''.$name.'\'.');
+		else
+			throw new OutOfBoundsException('Class '.get_class($this).' does not have the property \''.$name.'\'.');
 	}
 	
 	public function __set($name, $value)
 	{
-		//if (property_exists($this, $name))
+		if (property_exists($this, $name))
 			$this->$name = $value;
-		//else
-		//	throw new OutOfBoundsException('Class \''.get_class($this).'\' does not have the property \''.$name.'\'.');
+		else
+			throw new OutOfBoundsException('Class \''.get_class($this).'\' does not have the property \''.$name.'\'.');
 	}
 
 	protected function __throwReadOnlyException($name)
