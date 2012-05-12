@@ -68,7 +68,14 @@ class Model_Node extends Model_Entity
 			case "updatePoint":
 				return $this->getUpdatePoint();
 			default:
-				return parent::__get($name);
+				if (property_exists($this, $name))
+				{
+					return $this->$name;
+				}
+				else
+				{
+					return parent::__get($name);
+				}
 		}
 	}
 	
@@ -82,7 +89,14 @@ class Model_Node extends Model_Entity
 			case "updatePoint":
 				parent::__throwReadOnlyException($name);
 			default:
-				parent::__set($name, $value);
+				if (property_exists($this, $name))
+				{
+					$this->$name = $value;
+				}
+				else
+				{
+					parent::__set($name, $value);
+				}
 		}
 	}
 
