@@ -25,7 +25,7 @@ class Model_NodeDeployment extends Model_Entity
 	/**
 	 * @var boolean $isPrivate
 	 *
-	 * @Column(name="is_protected", type="boolean", nullable=false)
+	 * @Column(name="is_private", type="boolean", nullable=false)
 	 */
 	protected $isPrivate;
 
