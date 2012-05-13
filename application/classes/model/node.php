@@ -162,6 +162,22 @@ class Model_Node extends Model_Entity
 		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
 	}
 
+	public static function getByHostname($hostname)
+	{
+		$boxNumber = Model_Node::getBoxNumberFromHostname($hostname);
+		$q = "SELECT nodes.id FROM nodes WHERE box_number = ?";
+		$params = array($boxNumber);
+		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
+	}
+
+	public static function getBoxNumberFromHostname($hostname)
+	{
+		if(substr($hostname, 0, 4) == 'node')
+		{
+			return substr($hostname, 4);
+		}
+	}
+
 	public static function getByCertificate($pubkey)
 	{
 		$q = "SELECT nodes.id FROM nodes JOIN certificates ON nodes.certificate_id = certificates.id WHERE certificates.public_key = ?";
