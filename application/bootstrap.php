@@ -171,7 +171,7 @@ Route::set('package_test', 'test/config/backfire/<package>/<version>/<request_na
 		'request_name' => '[A-Za-z0-9_]+',
 	))
 	->defaults(array(
-		'directory'  => 'package/test',
+		'directory'  => 'test/config',
 		'controller' => 'backfire',
 		'action'     => 'default',
 	));
