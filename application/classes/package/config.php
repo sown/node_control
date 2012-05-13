@@ -144,7 +144,7 @@ abstract class Package_Config
 		openssl_x509_export($cert, $dump);
 
 		// Get node object
-		$node = Model_Node::getByCertificate(PKI::PEM_decode($dump));
+		$node = Model_Node::getByHostname(static::get_cert_cn());
 		if($node === null) SOWN::send_irc_message('Node config: failed to find node by certificate.');
 		return $node;
 	}
