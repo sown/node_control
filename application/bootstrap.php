@@ -165,6 +165,17 @@ Route::set('package_config', 'package/config/backfire/<package>/<version>/<reque
 		'action'     => 'default',
 	));
 	
+Route::set('package_test', 'test/config/backfire/<package>/<version>/<request_name>', array(
+		'package'	=> '[A-Za-z0-9_]+',
+		'version'	=> '[0-9.]+',
+		'request_name' => '[A-Za-z0-9_]+',
+	))
+	->defaults(array(
+		'directory'  => 'package/test',
+		'controller' => 'backfire',
+		'action'     => 'default',
+	));
+
 Route::set('package_list', 'package/list/backfire')
 	->defaults(array(
 		'directory'  => 'package/list',
