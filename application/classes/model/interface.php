@@ -115,6 +115,25 @@ class Model_Interface extends Model_Entity
 		}
 	}
 
+	public function __set($name, $value)
+	{
+		switch($name)
+		{
+			case "mode":
+				$this->setMode($value);
+				break;
+			default:
+				if (property_exists($this, $name))
+				{
+					$this->$name = $value;
+				}
+				else
+				{
+					parent::__set($name, $value);
+				}
+		}
+	}
+
 	protected function getMode()
 	{
 		if($this->offerDhcp)
@@ -125,5 +144,10 @@ class Model_Interface extends Model_Entity
 		{
 			return "static";
 		}
+	}
+
+	protected function setMode($value)
+	{
+		$this->offerDhcp = ($value == 'dhcp');
 	}
 }
