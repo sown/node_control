@@ -7,7 +7,7 @@ sudo add-apt-repository ppa:kohana/stable
 sudo sed -i "s/`lsb_release -cs`/maverick/" /etc/apt/sources.list.d/kohana-stable-lucid.list
 
 sudo apt-get update
-sudo apt-get install git-core libkohana3.2-core-php libkohana3.2-mod-auth-php libkohana3.2-mod-cache-php libkohana3.2-mod-codebench-php libkohana3.2-mod-database-php libkohana3.2-mod-image-php libkohana3.2-mod-orm-php libkohana3.2-mod-unittest-php mysql-client mysql-server php5-mysql libmysqlclient15-dev
+sudo apt-get install git-core libkohana3.2-core-php libkohana3.2-mod-auth-php libkohana3.2-mod-cache-php libkohana3.2-mod-codebench-php libkohana3.2-mod-database-php libkohana3.2-mod-image-php libkohana3.2-mod-orm-php libkohana3.2-mod-unittest-php mysql-client mysql-server php5-mysql libmysqlclient15-dev php5-curl
 
 sudo a2enmod rewrite
 
@@ -24,6 +24,8 @@ sudo /etc/init.d/mysql restart
 cd /srv/www
 sudo git clone https://github.com/Flynsarmy/KODoctrine2.git
 sudo ln -s /srv/www/KODoctrine2/modules/doctrine2/ /usr/share/php/kohana3.2/modules/doctrine2
+sudo git clone https://github.com/leth/PHP-IPAddress.git
+sudo ln -s /srv/www/PHP-IPAddress/ /usr/share/php/kohana3.2/modules/php-ipaddress
 
 cd /tmp
 wget http://www.doctrine-project.org/downloads/DoctrineORM-2.2.2-full.tar.gz
