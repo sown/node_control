@@ -140,7 +140,7 @@ Kohana::modules(array(
 	// 'userguide'  => MODPATH.'userguide',  // User guide and API documentation
 #	'jelly   '      => MODPATH.'jelly',	
 #	'jelly-filtered'=> MODPATH.'jelly-filtered',
-#	'php-ipaddress' => MODPATH.'php-ipaddress',
+	'php-ipaddress' => MODPATH.'php-ipaddress',
 #	'kohana-jelly-reverse-engineer' => MODPATH.'kohana-jelly-reverse-engineer',
 	));
 
