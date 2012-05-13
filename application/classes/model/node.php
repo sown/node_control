@@ -4,6 +4,7 @@ use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
 /**
@@ -55,9 +56,18 @@ class Model_Node extends Model_Entity
 	 */
 	protected $vpnEndpoint;
 
+	/**
+	 * @OneToMany(targetEntity="Model_NodeDeployment", mappedBy="node")
+	 */
+	protected $deployments;
+
+	/**
+	 * @OneToMany(targetEntity="Model_Interface", mappedBy="node")
+	 */
+	protected $interfaces;
+
 	public function __get($name)
 	{
-		//SOWN::send_irc_message("requesting " . $name);
 		switch($name)
 		{
 			case "FQDN":
