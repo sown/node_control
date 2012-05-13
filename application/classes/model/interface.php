@@ -97,4 +97,33 @@ class Model_Interface extends Model_Entity
 	 */
 	protected $node;
 
+	public function __get($name)
+	{
+		switch($name)
+		{
+			case "mode":
+				return $this->getMode();
+			default:
+				if (property_exists($this, $name))
+				{
+					return $this->$name;
+				}
+				else
+				{
+					return parent::__get($name);
+				}
+		}
+	}
+
+	protected function getMode()
+	{
+		if($this->offerDhcp)
+		{
+			return "dhcp";
+		}
+		else
+		{
+			return "static";
+		}
+	}
 }
