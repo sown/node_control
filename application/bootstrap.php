@@ -196,3 +196,8 @@ Route::set('foo', 'foo/<action>')
 	));
 
 require_once(APPPATH.'/classes/mysql-dbo.php');
+Doctrine\DBAL\Types\Type::addType('ipv4address', 'Model_Type_IPv4Address');
+Doctrine\DBAL\Types\Type::addType('ipv6address', 'Model_Type_IPv6Address');
+Doctrine\DBAL\Types\Type::addType('ipv4networkaddress', 'Model_Type_IPv4NetworkAddress');
+Doctrine\DBAL\Types\Type::addType('ipv6networkaddress', 'Model_Type_IPv6NetworkAddress');
+Doctrine\DBAL\Types\Type::addType('nodedeploymenttype', 'Model_Type_NodeDeploymentType');
