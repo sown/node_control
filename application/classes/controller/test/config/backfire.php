@@ -7,16 +7,40 @@ class Controller_Test_Config_Backfire extends Controller
 		$package      = $this->request->param('package');
 		$version      = $this->request->param('version');
 		$request_name = $this->request->param('request_name');
+		$hostname     = $this->request->param('hostname');
 
-		$this->curl($package, $version, $request_name);
+		$keyfiles = $this->storeKeys($hostname);
+		$this->curl($package, $version, $request_name, $keyfiles);
+		$this->removeKeys($keyfiles);
 	}
 
-	private function curl($package, $version, $request_name)
+	private function storeKeys($hostname)
+	{
+		$node = Model_Node::getByHostname($hostname);
+		$cert = $node->certificate;
+		$fpub = tempnam('/tmp/', 'pub_key_');
+		$fh = fopen($fpub, 'w+');
+		fputs($fh, $cert->publicKey);
+		fclose($fh);
+		$fpriv = tempnam('/tmp/', 'priv_key_');
+		$fh = fopen($fpriv, 'w+');
+		fputs($fh, $cert->privateKey);
+		fclose($fh);
+		return array('public' => $fpub, 'private' => $fpriv);
+	}
+
+	private function removeKeys($keyfiles)
+	{
+		foreach(array_values($keyfiles) as $file)
+		{
+			unlink($file);
+		}
+	}
+
+	private function curl($package, $version, $request_name, $keyfiles)
 	{
 		$url = "https://sown-auth2.ecs.soton.ac.uk/package/config/backfire/$package/$version/$request_name";
 
-		$publicKey = "/tmp/pub.key";
-		$privateKey = "/tmp/priv.key";
 		$mac = "00:11:5b:e4:7e:cb";
 
 		$ch = curl_init(); 
@@ -27,9 +51,9 @@ class Controller_Test_Config_Backfire extends Controller
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); 
-		curl_setopt($ch, CURLOPT_SSLCERT, $publicKey); 
+		curl_setopt($ch, CURLOPT_SSLCERT, $keyfiles['public']);
 		curl_setopt($ch, CURLOPT_SSLCERTPASSWD, '');
-		curl_setopt($ch, CURLOPT_SSLKEY, $privateKey); 
+		curl_setopt($ch, CURLOPT_SSLKEY, $keyfiles['private']);
 		curl_setopt($ch, CURLOPT_SSLKEYPASSWD, '');
 
 		$ret = curl_exec($ch);
