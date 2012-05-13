@@ -24,7 +24,7 @@ class Model_NetworkAdapter extends Model_Entity
 	/**
 	 * @var integer $wirelessChannel
 	 *
-	 * @Column(name="wireless channel", type="integer", nullable=false)
+	 * @Column(name="wireless_channel", type="integer", nullable=false)
 	 */
 	protected $wirelessChannel;
 
