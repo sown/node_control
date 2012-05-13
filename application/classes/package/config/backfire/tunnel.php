@@ -23,11 +23,11 @@ class Package_Config_Backfire_Tunnel extends Package_Config
 					
 					'remote' => array(
 						// Connect to the server by DNS name
-						$node->vpn_server->vpn_host->hostname .' '. $node->vpn_server->port,
+						$node->vpnEndpoint->vpnServer->name .' '. $node->vpnEndpoint->port,
 						// IP address failover incase of DNS lookup failure
-						$node->vpn_server->vpn_host->ipv4_address .' '. $node->vpn_server->port,
+						$node->vpnEndpoint->vpnServer->externalIPv4 .' '. $node->vpnEndpoint->port,
 					),
-					'proto' =>  $node->vpn_server->mode,
+					'proto' =>  $node->vpnEndpoint->protocol,
 					
 					// The server uses tap tunnels, so must you
 					'dev' => 'tap',

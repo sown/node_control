@@ -24,12 +24,6 @@ class Package_Config_Backfire_Core extends Package_Config
 				'method' => 'credentials_v0_1_78'
 			),
 		),
-		'clients_list' => array(
-			array(
-				'>=' => '0',
-				'method' => 'clients_list',
-			),
-		),
 		'uci_config_system' => array(
 			array(
 				'>=' => '0.1.78',
@@ -125,7 +119,7 @@ class Package_Config_Backfire_Core extends Package_Config
 	public static function config_sown_core_v0_1_78(Model_Node $node)
 	{
 		$last_mod = max(filemtime(__FILE__), $node->lastModified->getTimestamp());
-		$deployment = $node->getCurrentDeployment();
+		$deployment = $node->currentDeployment;
 
 		if ($deployment !== NULL)
 		{
@@ -140,7 +134,7 @@ class Package_Config_Backfire_Core extends Package_Config
 		$config = array(
 			'node' => array(
 				array(
-					'config_URL' => 'https://sown-auth.ecs.soton.ac.uk/pkg/config/backfire/',
+					'config_URL' => 'https://sown-auth2.ecs.soton.ac.uk/package/config/backfire/',
 					'hostname'   => $node->hostname,
 					'node_name'  => $node_name,
 					'id'         => $node->id,
@@ -162,14 +156,8 @@ class Package_Config_Backfire_Core extends Package_Config
 			'ip6addr'=> '::1',	
 		);
 
-		$interfaces = array();
-		foreach ($node->physical_interfaces as $iface)
-			$interfaces[] = $iface;
-		foreach ($node->wireless_interfaces as $iface)
-			$interfaces[] = $iface;
-
 		$last_mod = filemtime(__FILE__);
-		foreach ($interfaces as $iface)
+		foreach ($node->interfaces as $iface)
 		{
 			$iface_config = array();
 			
@@ -179,7 +167,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			
 			if ($iface->mode == 'static')
 			{
-				$v4_net_addr = IPv4_Network_Address::factory($iface->ipv4_address, $iface->ipv4_subnet);
+				$v4_net_addr = IPv4_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
 				
 				$iface_config['ipaddr'] = $v4_net_addr->get_address();
 				// TODO should tap0 be given a subnet mask?
@@ -187,9 +175,9 @@ class Package_Config_Backfire_Core extends Package_Config
 				// TODO get DNS servers for static IPs from the database
 				$iface_config['dns'] = '10.13.0.254';
 				
-				if($iface->ipv6_address)
+				if($iface->IPv6Addr)
 				{
-					$v6_net_addr = IPv6_Network_Address::factory($iface->ipv6_address, $iface->ipv6_subnet);
+					$v6_net_addr = IPv6_Network_Address::factory($iface->IPv6Addr, $iface->IPv6AddrCidr);
 
 					$iface_config['ip6addr'] = $v6_net_addr;
 					if ($iface->name == 'tap0')
@@ -240,50 +228,52 @@ class Package_Config_Backfire_Core extends Package_Config
 		
 		$count = 0;
 		$radio_id = array();
-		foreach ($node->radios as $radio)
+		foreach ($node->interfaces as $interface)
 		{
-			if ($radio->type == 'atheros')
-			{
-				// Madwifi requires this to match the actual device name
-				$dev_name = 'wifi'.$count;
-			}
-			else
-			{
+			//if ($radio->type == 'atheros')
+			//{
+			//	// Madwifi requires this to match the actual device name
+			//	$dev_name = 'wifi'.$count;
+			//}
+			//else
+			//{
 				// mac80211 uses this identifier for co-ordination only
 				// it looks up the actual device name using the mac address
 				// TODO test this is ok
-				$dev_name = 'radio'.$radio->id;
-			}
+				$dev_name = 'radio'.$interface->id;
+			//}
 			
-			$radio_id[$radio->id] = $dev_name;
+			$radio_id[$interface->id] = $dev_name;
 			
 			$config['wifi-device'] = array(
 					$dev_name => array(
-						'type' => $radio->type,
-						'channel' => $radio->channel,
-						'macaddr' => $radio->mac_address,
+						'type' => $interface->type,
+						'channel' => $interface->networkAdapter->wirelessChannel,
+						'macaddr' => $interface->networkAdapter->mac,
 					),
 				);
 				
-			$last_mod = max($last_mod, $radio->lastModified->getTimestamp());
+			$last_mod = max($last_mod, $interface->lastModified->getTimestamp());
 			$count++;
 		}
 		
-		foreach ($node->wireless_interfaces as $interface)
+		foreach ($node->interfaces as $interface)
 		{
-			if (!isset($radio_id[$interface->radio->id]))
+			if($interface->networkAdapter->wirelessChannel == null)
 				continue;
-			
+			if (!isset($radio_id[$interface->id]))
+				continue;
+
 			$config['wifi-iface'][$interface->name] = array(
-				'device' => $radio_id[$interface->radio->id],
+				'device' => $radio_id[$interface->id],
 				'mode' => 'ap',
 				'ssid' => $interface->ssid,
-				'encryption' => $interface->encryption,
 				'ifname' => $interface->name,
 			);
 			
-			if($interface->encryption == 'wpa2+aes')
+			if($interface->is1x)
 			{
+				$config['wifi-iface'][$interface->name]['encryption'] = 'wpa2+aes';
 				$config['wifi-iface'][$interface->name]['server'] = '10.13.0.252';
 				$config['wifi-iface'][$interface->name]['port'] = 1812;
 				$config['wifi-iface'][$interface->name]['key'] = 'accidentswillhappen';
@@ -292,7 +282,7 @@ class Package_Config_Backfire_Core extends Package_Config
 					$config['wifi-iface'][$interface->name]['auth_'.$x] = $config['wifi-iface'][$interface->name][$x];
 					$config['wifi-iface'][$interface->name]['acct_'.$x] = $config['wifi-iface'][$interface->name][$x];
 				}
-				$config['wifi-iface'][$interface->name]['nasid'] = $node->getFQDN();
+				$config['wifi-iface'][$interface->name]['nasid'] = $node->FQDN;
 			}
 			$last_mod = max($last_mod, $interface->lastModified->getTimestamp());
 		}
@@ -315,20 +305,14 @@ class Package_Config_Backfire_Core extends Package_Config
 			),
 		);
 		
-		$interfaces = array();
-		foreach ($node->physical_interfaces as $iface)
-			$interfaces[] = $iface;
-		foreach ($node->wireless_interfaces as $iface)
-			$interfaces[] = $iface;
-
-		foreach ($interfaces as $iface)
+		foreach ($node->interfaces as $iface)
 		{
 			$if_config = array();
 			$if_config['interface'] = $iface->name;
 			
-			if ($iface->offer_dhcp)
+			if ($iface->offerDhcp)
 			{
-				$v4_net_addr = IP_Network_Address::factory($iface->ipv4_address, $iface->ipv4_subnet);
+				$v4_net_addr = IP_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
 				$if_config['start'] = $v4_net_addr->get_address_in_network(0);
 				$if_config['limit'] = $v4_net_addr->get_address_in_network(-2);
 				$if_config['leasetime'] = '1h';
@@ -358,7 +342,7 @@ class Package_Config_Backfire_Core extends Package_Config
 					// 'timeout' => '',
 					'max_flows' => 8192,
 					// TODO this port number is a bit random.
-					'host_port' => '152.78.189.84:'.$node->vpn_server->port,
+					'host_port' => '152.78.189.84:'.$node->vpnEndpoint->port,
 					'pid_file' => '/var/run/softflowd.pid',
 					'control_socket' => '/var/run/softflowd.ctl',
 					'export_version' => 5,
@@ -370,41 +354,8 @@ class Package_Config_Backfire_Core extends Package_Config
 			),
 		);
 		// TODO update this once the above config generation is fixed
-		$last_mod = max(filemtime(__FILE__), $node->lastModified->getTimestamp(), $node->vpn_server->lastModified->getTimestamp());
+		$last_mod = max(filemtime(__FILE__), $node->lastModified->getTimestamp(), $node->vpnEndpoint->lastModified->getTimestamp());
 		
 		static::send_uci_config('softflowd', $config);
-	}
-	
-	public static function clients_list(Model_Node $node)
-	{
-		$users = Jelly::query('user')
-			// logged in recently, or locked to this node
-			->and_where_open()
-				->where('last_logged_in', '>=', $node->getUpdatePoint())
-				->or_where('node_lock', '=', $node->old_id)
-			->and_where_close()
-			// Not node-locked, or locked to this node.
-			->and_where_open()
-				->where('only_node_id', '=', 0)
-				->or_where('only_node_id', '=', $node->old_id)
-			->and_where_close()
-			// Not logged-out
-			->where('logged_out', '=', 'no')
-			// and not over bandwidth on this node.
-			->test_over_bandwidth($node, false)
-			->select_column(':primary_key');
-			
-		$records = Jelly::query('UserMac')
-			->where('user' , 'IN', $users)
-			->with('user')
-			->select();
-		
-		// TODO get the groups for the users and the node and output chains accordingly
-		foreach ($records as $rec) {
-			if (empty($rec->mac_address))
-				continue;
-			
-			echo $rec->mac_address ."\t\n";
-		}
 	}
 }

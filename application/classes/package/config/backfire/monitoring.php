@@ -34,7 +34,7 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 
 	public static function cronjobs_v0_1_78(Model_Node $node)
 	{
-		require $_SERVER['DOCUMENT_ROOT'] . '/admin/incoming_cronjobs.php';
+		//require $_SERVER['DOCUMENT_ROOT'] . '/admin/incoming_cronjobs.php';
 		
 		static::send_shell_script("return 0");
 	}
@@ -42,7 +42,7 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 	public static function snmpd_v0_1_78(Model_Node $node)
 	{
 		$node_location = '';
-		$deployment = $node->getCurrentDeployment();
+		$deployment = $node->currentDeployment;
 		$node_name = ($deployment != null ? $deployment->name : $node->hostname);
 		$sown_oid = '.1.3.6.1.4.1.12275.5032';
 		
