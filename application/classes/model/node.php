@@ -77,6 +77,8 @@ class Model_Node extends Model_Entity
 				return $this->getHostname();
 			case "updatePoint":
 				return $this->getUpdatePoint();
+			case "currentDeployment":
+				return $this->getCurrentDeployment();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -97,6 +99,7 @@ class Model_Node extends Model_Entity
 			case "name":
 			case "hostname":
 			case "updatePoint":
+			case "currentDeployment":
 				parent::__throwReadOnlyException($name);
 			default:
 				if (property_exists($this, $name))
@@ -133,6 +136,14 @@ class Model_Node extends Model_Entity
 			return date("Y-m-d 04:00:00",$unix);
 		} else {
 			return $near;
+		}
+	}
+
+	protected function getCurrentDeployment()
+	{
+		foreach($this->deployments as $deployment)
+		{
+			return $deployment;
 		}
 	}
 
