@@ -141,10 +141,15 @@ class Model_Node extends Model_Entity
 
 	protected function getCurrentDeployment()
 	{
+		$date = time();
 		foreach($this->deployments as $deployment)
 		{
-			return $deployment;
+			if($deployment->startDate->getTimestamp() <  $date && ($deployment->endDate === null || $deployment->endDate->getTimestamp() > $date))
+			{
+				return $deployment;
+			}
 		}
+		return null;
 	}
 
 	/**
