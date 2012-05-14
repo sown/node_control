@@ -177,6 +177,14 @@ Route::set('package_test', 'test/<hostname>/backfire/<package>/<version>/<reques
 		'action'     => 'default',
 	));
 
+Route::set('package_test_home', 'test', array(
+	))
+	->defaults(array(
+		'directory'  => 'test/config',
+		'controller' => 'backfire',
+		'action'     => 'home',
+	));
+
 Route::set('package_list', 'package/list/backfire')
 	->defaults(array(
 		'directory'  => 'package/list',

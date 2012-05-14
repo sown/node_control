@@ -14,6 +14,16 @@ class Controller_Test_Config_Backfire extends Controller
 		$this->removeKeys($keyfiles);
 	}
 
+	public function action_home()
+	{
+		$repository = Doctrine::em()->getRepository('Model_Node');
+		foreach($repository->findAll() as $node)
+		{
+			echo "<hr/>";
+			echo $node->toString()."<br/>";
+		}
+	}
+
 	private function storeKeys($hostname)
 	{
 		$node = Model_Node::getByHostname($hostname);
