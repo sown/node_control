@@ -103,6 +103,10 @@ class Model_Interface extends Model_Entity
 		{
 			case "mode":
 				return $this->getMode();
+			case "IPv4":
+				return $this->IPv4Addr."/".$this->IPv4AddrCidr;
+			case "IPv6":
+				return $this->IPv6Addr."/".$this->IPv6AddrCidr;
 			default:
 				if (property_exists($this, $name))
 				{
@@ -153,7 +157,7 @@ class Model_Interface extends Model_Entity
 
 	public function toString()
 	{
-		$str  = "Interface: {$this->id}, IPv4Addr={$this->IPv4Addr}, IPv4AddrCidr={$this->IPv4AddrCidr}, IPv6Addr={$this->IPv6Addr}, IPv6AddrCidr={$this->IPv6AddrCidr}, name={$this->name}, ssid={$this->ssid}, type={$this->type}, offerDhcp={$this->offerDhcp}, is1x={$this->is1x}";
+		$str  = "Interface: {$this->id}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, name={$this->name}, ssid={$this->ssid}, type={$this->type}, offerDhcp={$this->offerDhcp}, is1x={$this->is1x}";
 		$str .= "<br/>";
 		$str .= "networkAdapter={$this->networkAdapter->toString()}";
 		return $str;
