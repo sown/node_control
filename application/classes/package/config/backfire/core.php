@@ -230,29 +230,28 @@ class Package_Config_Backfire_Core extends Package_Config
 		$radio_id = array();
 		foreach ($node->interfaces as $interface)
 		{
-			//if ($radio->type == 'atheros')
-			//{
-			//	// Madwifi requires this to match the actual device name
-			//	$dev_name = 'wifi'.$count;
-			//}
-			//else
-			//{
-				// mac80211 uses this identifier for co-ordination only
-				// it looks up the actual device name using the mac address
-				// TODO test this is ok
-				$dev_name = 'radio'.$interface->id;
-			//}
+			// mac80211 uses this identifier for co-ordination only
+			// it looks up the actual device name using the 
+			// mac address
+
+			// the 'dev_name' of the radio can be anything, as long
+			// as the wifi-iface->device uses the same name
+			$dev_name = 'radio'.$interface->id;
 			
 			$radio_id[$interface->id] = $dev_name;
 			
+			// 'mac80211' is hard coded, as all our nodes use this
+			// for their wireless interfaces
 			$config['wifi-device'] = array(
 					$dev_name => array(
-						'type' => $interface->type,
+						'type' => "mac80211",
 						'channel' => $interface->networkAdapter->wirelessChannel,
 						'macaddr' => $interface->networkAdapter->mac,
 					),
 				);
-				
+			// Also optional 'hwmode' which can be set to '11g',
+			// we can use the database 'type' field here
+
 			$last_mod = max($last_mod, $interface->lastModified->getTimestamp());
 			$count++;
 		}
