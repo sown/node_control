@@ -34,14 +34,14 @@ class Model_VpnEndpoint extends Model_Entity
 	 *
 	 * @Column(name="ipv4_network", type="ipv4networkaddress", nullable=true)
 	 */
-	protected $IPv4Network;
+	protected $IPv4;
 
 	/**
 	 * @var string $IPv6Network
 	 *
 	 * @Column(name="ipv6_network", type="ipv6networkaddress", nullable=true)
 	 */
-	protected $IPv6Network;
+	protected $IPv6;
 
 	/**
 	 * @var Model_VpnServer
@@ -55,7 +55,7 @@ class Model_VpnEndpoint extends Model_Entity
 
 	public function toString()
 	{
-		$str  = "VpnEndpoint: {$this->id}, port={$this->port}, protocol={$this->protocol}, IPv4Network={$this->IPv4Network}, IPv6Network={$this->IPv6Network}";
+		$str  = "VpnEndpoint: {$this->id}, port={$this->port}, protocol={$this->protocol}, IPv4={$this->IPv4}, IPv6={$this->IPv6}";
 		$str .= "<br/>";
 		$str .= "vpnServer={$this->vpnServer->toString()}";
 		return $str;
