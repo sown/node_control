@@ -32,4 +32,48 @@ class Model_Certificate extends Model_Entity
 	 * @Column(name="current", type="boolean", nullable=false)
 	 */
 	protected $current;
+
+	public function __get($name)
+	{
+		switch($name)
+		{
+			case "publicKeyFingerprint":
+				return static::getFingerprint($this->publicKey);
+			case "privateKeyFingerprint":
+				return static::getFingerprint($this->privateKey);
+			default:
+				if (property_exists($this, $name))
+				{
+					return $this->$name;
+				}
+				else
+				{
+					return parent::__get($name);
+				}
+		}
+	}
+	
+	public function __set($name, $value)
+	{
+		switch($name)
+		{
+			case "publicKeyFingerprint":
+			case "privateKeyFingerprint":
+				parent::__throwReadOnlyException($name);
+			default:
+				if (property_exists($this, $name))
+				{
+					$this->$name = $value;
+				}
+				else
+				{
+					parent::__set($name, $value);
+				}
+		}
+	}
+
+	public static function getFingerprint($cert)
+	{
+		return openssl_digest($cert, "sha1");
+	}
 }
