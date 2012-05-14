@@ -76,4 +76,10 @@ class Model_Certificate extends Model_Entity
 	{
 		return openssl_digest($cert, "sha1");
 	}
+
+	public function toString()
+	{
+		$str  = "Certificate: {$this->id}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
+		return $str;
+	}
 }

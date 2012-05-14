@@ -189,4 +189,29 @@ class Model_Node extends Model_Entity
 		$params = array($pubkey);
 		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
 	}
+
+	public function toString()
+	{
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}, notes={$this->notes}";
+		$str .= "<br/>";
+		$str .= "certificate={$this->certificate->toString()}";
+		$str .= "<br/>";
+		$str .= "vpnEndpoint={$this->vpnEndpoint->toString()}";
+		foreach($this->interfaces as $interface)
+		{
+			$str .= "<br/>";
+			$str .= "interface={$interface->toString()}";
+		}
+		if($this->currentDeployment != null)
+		{
+			$str .= "<br/>";
+			$str .= "currentDeployment={$this->currentDeployment->toString()}";
+		}
+		foreach($this->deployments as $deployment)
+		{
+			$str .= "<br/>";
+			$str .= "deployment={$deployment->toString()}";
+		}
+		return $str;
+	}
 }

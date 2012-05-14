@@ -54,7 +54,7 @@ class Model_VpnServer extends Model_Entity
 	 *
 	 * @Column(name="IPv4_network", type="ipv4networkaddress", nullable=true)
 	 */
-	protected $ipv4Network;
+	protected $IPv4Network;
 
 	/**
 	 * @var string $IPv6Network
@@ -77,4 +77,9 @@ class Model_VpnServer extends Model_Entity
 	 */
 	protected $portEnd;
 
+	public function toString()
+	{
+		$str  = "VpnServer: {$this->id}, name={$this->name}, externalIPv4={$this->externalIPv4}, internalIPv4={$this->internalIPv4}, IPv4Network={$this->IPv4Network}, externalIPv6={$this->externalIPv6}, internalIPv6={$this->internalIPv6}, IPv6Network={$this->IPv6Network}, portStart={$this->portStart}, portEnd={$this->portEnd}";
+		return $str;
+	}
 }

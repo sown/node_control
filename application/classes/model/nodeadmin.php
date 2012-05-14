@@ -39,4 +39,9 @@ class Model_NodeAdmin extends Model_Entity
 	 */
 	protected $nodeDeployment;
 
+	public function toString()
+	{
+		$str  = "NodeAdmin: {$this->id}, userId={$this->userId}, startDate={$this->startDate}, endDate={$this->endDate}";
+		return $str;
+	}
 }

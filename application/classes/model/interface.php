@@ -150,4 +150,12 @@ class Model_Interface extends Model_Entity
 	{
 		$this->offerDhcp = ($value == 'dhcp');
 	}
+
+	public function toString()
+	{
+		$str  = "Interface: {$this->id}, IPv4Addr={$this->IPv4Addr}, IPv4AddrCidr={$this->IPv4AddrCidr}, IPv6Addr={$this->IPv6Addr}, IPv6AddrCidr={$this->IPv6AddrCidr}, name={$this->name}, ssid={$this->ssid}, type={$this->type}, offerDhcp={$this->offerDhcp}, is1x={$this->is1x}";
+		$str .= "<br/>";
+		$str .= "networkAdapter={$this->networkAdapter->toString()}";
+		return $str;
+	}
 }

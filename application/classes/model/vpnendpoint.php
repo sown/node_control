@@ -53,4 +53,11 @@ class Model_VpnEndpoint extends Model_Entity
 	 */
 	protected $vpnServer;
 
+	public function toString()
+	{
+		$str  = "VpnEndpoint: {$this->id}, port={$this->port}, protocol={$this->protocol}, IPv4Network={$this->IPv4Network}, IPv6Network={$this->IPv6Network}";
+		$str .= "<br/>";
+		$str .= "vpnServer={$this->vpnServer->toString()}";
+		return $str;
+	}
 }

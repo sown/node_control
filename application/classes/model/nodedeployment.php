@@ -129,4 +129,14 @@ class Model_NodeDeployment extends Model_Entity
 	 */
 	protected $node;
 
+	public function toString()
+	{
+		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->getTimestamp()}, endDate={$this->endDate->getTimestamp()}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}";
+		foreach($this->admins as $admin)
+		{
+			$str .= "<br/>";
+			$str .= "admin={$admin->toString()}";
+		}
+		return $str;
+	}
 }

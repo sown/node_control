@@ -45,4 +45,9 @@ class Model_NetworkAdapter extends Model_Entity
 	 */
 	protected $node;
 
+	public function toString()
+	{
+		$str  = "NetworkAdapter: {$this->id}, mac={$this->mac}, wirelessChannel={$this->wirelessChannel}, type={$this->type}";
+		return $str;
+	}
 }
