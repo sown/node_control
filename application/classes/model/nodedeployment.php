@@ -4,6 +4,7 @@ use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
 /**
@@ -128,6 +129,11 @@ class Model_NodeDeployment extends Model_Entity
 	 * })
 	 */
 	protected $node;
+
+	/**
+	 * @OneToMany(targetEntity="Model_NodeAdmin", mappedBy="nodeDeployment")
+	 */
+	protected $admins;
 
 	public function toString()
 	{
