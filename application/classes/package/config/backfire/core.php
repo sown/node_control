@@ -163,9 +163,9 @@ class Package_Config_Backfire_Core extends Package_Config
 			
 			$iface_config['ifname'] = $iface->name;
 			
-			$iface_config['proto'] = $iface->mode;
+			$iface_config['proto'] = $iface->type;
 			
-			if ($iface->mode == 'static')
+			if($iface->type == 'static')
 			{
 				$v4_net_addr = IPv4_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
 				
