@@ -170,7 +170,6 @@ class Package_Config_Backfire_Core extends Package_Config
 				$v4_net_addr = IPv4_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
 				
 				$iface_config['ipaddr'] = $v4_net_addr->get_address();
-				// TODO should tap0 be given a subnet mask?
 				$iface_config['netmask'] = $v4_net_addr->get_subnet_mask();
 				// TODO get DNS servers for static IPs from the database
 				$iface_config['dns'] = '10.13.0.254';
