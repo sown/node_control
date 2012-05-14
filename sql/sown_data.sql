@@ -27,8 +27,10 @@ CREATE TABLE `vpn_servers` (
 	`internal_ipv4`			varchar(15)						default NULL           											COMMENT 'internal (SOWN) IPv4 address',
 	`external_ipv6`			varchar(39)						default NULL           											COMMENT 'external (ECS)	 IPv6 address',
 	`internal_ipv6`			varchar(39)						default NULL           											COMMENT 'internal (SOWN) IPv6 address',
-	`ipv4_network`			varchar(18)						default NULL           											COMMENT '',
-	`ipv6_network`			varchar(43)						default NULL           											COMMENT '',
+	`ipv4_addr`				varchar(15)						NOT NULL														COMMENT 'IPv4 address',
+	`ipv4_addr_cidr`		int(2)							NOT NULL														COMMENT 'IPv6 address cidr prefix size (eg 24)',
+	`ipv6_addr`				varchar(39)						NOT NULL														COMMENT 'IPv6 address',
+	`ipv6_addr_cidr`		int(3)							NOT NULL														COMMENT 'IPv6 address cidr prefix size (eg 48)',
 	`port_start`			int(5)							default NULL           											COMMENT '',
 	`port_end`				int(5)							default NULL           											COMMENT '',
 	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
@@ -41,8 +43,10 @@ CREATE TABLE `vpn_endpoints` (
 	`vpn_server_id`			int(11)							default NULL													COMMENT 'id of the server',
 	`port`					int(5)							default NULL													COMMENT 'port to use',
 	`protocol`				enum('tcp','udp')				default 'udp'													COMMENT 'protocol to use',
-	`ipv4_network`			varchar(18)						default NULL													COMMENT '(SOWN) IPv4 address of node',
-	`ipv6_network`			varchar(43)						default NULL													COMMENT '(SOWN) IPv6 address of node',
+	`ipv4_addr`				varchar(15)						NOT NULL														COMMENT 'IPv4 address',
+	`ipv4_addr_cidr`		int(2)							NOT NULL														COMMENT 'IPv6 address cidr prefix size (eg 24)',
+	`ipv6_addr`				varchar(39)						NOT NULL														COMMENT 'IPv6 address',
+	`ipv6_addr_cidr`		int(3)							NOT NULL														COMMENT 'IPv6 address cidr prefix size (eg 48)',
 	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
 	
 	PRIMARY KEY	 (`id`),
@@ -140,8 +144,8 @@ CREATE TABLE `node_admins` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-INSERT INTO `vpn_servers` (id,name,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6,ipv4_network,ipv6_network,port_start,port_end) VALUES (1,'vpn','152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253','10.13.128.0/17','2001:630:d0:f780::/57',5000,5200);
-INSERT INTO `vpn_servers` (id,name,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6,ipv4_network,ipv6_network,port_start,port_end) VALUES (2,'dev','152.78.189.39','10.13.0.250','2001:630:d0:f104::5032:250','2001:630:d0:f700::250','10.13.112.0/20','2001:630:d0:f770::/60',5000,5200);
+INSERT INTO `vpn_servers` (id,name,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (1,'vpn','152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253','10.13.128.0',17,'2001:630:d0:f780::',57,5000,5200);
+INSERT INTO `vpn_servers` (id,name,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (2,'dev','152.78.189.39','10.13.0.250','2001:630:d0:f104::5032:250','2001:630:d0:f700::250','10.13.112.0',20,'2001:630:d0:f770::',60,5000,5200);
 
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (1,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (2,'','',true);
@@ -149,11 +153,11 @@ INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (3,'','',t
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (4,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (5,'','',true);
 
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_network,ipv6_network) VALUES (1,2,5001,'udp','10.13.112.0/30','2001:630:d0:f770::/126');
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_network,ipv6_network) VALUES (2,2,5001,'udp','10.13.112.4/30','2001:630:d0:f770::4/126');
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_network,ipv6_network) VALUES (3,2,5002,'udp','10.13.112.8/30','2001:630:d0:f770::8/126');
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_network,ipv6_network) VALUES (4,1,5002,'udp','10.13.128.0/30','2001:630:d0:f780::/126');
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_network,ipv6_network) VALUES (5,1,5003,'udp','10.13.128.4/30','2001:630:d0:f780::4/126');
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (1,2,5001,'udp','10.13.112.0',30,'2001:630:d0:f770::',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (2,2,5001,'udp','10.13.112.4',30,'2001:630:d0:f770::4',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (3,2,5002,'udp','10.13.112.8',30,'2001:630:d0:f770::8',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (4,1,5002,'udp','10.13.128.0',30,'2001:630:d0:f780::',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (5,1,5003,'udp','10.13.128.4',30,'2001:630:d0:f780::4',126);
 
 INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image,notes) VALUES (1,1,1,900,'',NULL);
 INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image,notes) VALUES (2,2,2,901,'',NULL);

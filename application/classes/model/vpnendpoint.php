@@ -30,18 +30,32 @@ class Model_VpnEndpoint extends Model_Entity
 	protected $protocol;
 
 	/**
-	 * @var string $IPv4Network
+	 * @var string $IPv4Addr
 	 *
-	 * @Column(name="ipv4_network", type="ipv4networkaddress", nullable=true)
+	 * @Column(name="ipv4_addr", type="ipv4address", nullable=false)
 	 */
-	protected $IPv4;
+	protected $IPv4Addr;
 
 	/**
-	 * @var string $IPv6Network
+	 * @var integer $IPv4AddrCidr
 	 *
-	 * @Column(name="ipv6_network", type="ipv6networkaddress", nullable=true)
+	 * @Column(name="ipv4_addr_cidr", type="integer", nullable=false)
 	 */
-	protected $IPv6;
+	protected $IPv4AddrCidr;
+
+	/**
+	 * @var string $IPv6Addr
+	 *
+	 * @Column(name="ipv6_addr", type="ipv6address", nullable=false)
+	 */
+	protected $IPv6Addr;
+
+	/**
+	 * @var integer $IPv6AddrCidr
+	 *
+	 * @Column(name="ipv6_addr_cidr", type="integer", nullable=false)
+	 */
+	protected $IPv6AddrCidr;
 
 	/**
 	 * @var Model_VpnServer
@@ -52,6 +66,26 @@ class Model_VpnEndpoint extends Model_Entity
 	 * })
 	 */
 	protected $vpnServer;
+
+	public function __get($name)
+	{
+		switch($name)
+		{
+			case "IPv4":
+				return $this->IPv4Addr."/".$this->IPv4AddrCidr;
+			case "IPv6":
+				return $this->IPv6Addr."/".$this->IPv6AddrCidr;
+			default:
+				if (property_exists($this, $name))
+				{
+					return $this->$name;
+				}
+				else
+				{
+					return parent::__get($name);
+				}
+		}
+	}
 
 	public function toString()
 	{
