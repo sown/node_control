@@ -162,17 +162,12 @@ class Model_Node extends Model_Entity
 
 	public static function getByMac($mac)
 	{
-		$q = "SELECT nodes.id FROM nodes JOIN network_adapters ON nodes.id = network_adapters.node_id WHERE network_adapters.mac = ?";
-		$params = array(strtolower($mac));
-		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
+		return Doctrine::em()->getRepository('Model_NetworkAdapter')->findOneByMac(strtolower($mac))->node;
 	}
 
 	public static function getByHostname($hostname)
 	{
-		$boxNumber = Model_Node::getBoxNumberFromHostname($hostname);
-		$q = "SELECT nodes.id FROM nodes WHERE box_number = ?";
-		$params = array($boxNumber);
-		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
+		return Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber(static::getBoxNumberFromHostname($hostname));
 	}
 
 	public static function getBoxNumberFromHostname($hostname)
@@ -181,13 +176,6 @@ class Model_Node extends Model_Entity
 		{
 			return substr($hostname, 4);
 		}
-	}
-
-	public static function getByCertificate($pubkey)
-	{
-		$q = "SELECT nodes.id FROM nodes JOIN certificates ON nodes.certificate_id = certificates.id WHERE certificates.public_key = ?";
-		$params = array($pubkey);
-		return Doctrine::em('node_config')->find('Model_Node', queryID($q, $params));
 	}
 
 	public function toString()
