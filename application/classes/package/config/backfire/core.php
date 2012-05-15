@@ -312,8 +312,10 @@ class Package_Config_Backfire_Core extends Package_Config
 			if ($iface->offerDhcp)
 			{
 				$v4_net_addr = IP_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
-				$if_config['start'] = $v4_net_addr->get_address_in_network(0);
-				$if_config['limit'] = $v4_net_addr->get_address_in_network(-2);
+
+				# TODO check the subnet is big enough for these addresses, and calculate the limit to use the whole subnet
+				$if_config['start'] = '10';
+				$if_config['limit'] = '240';
 				$if_config['leasetime'] = '1h';
 				$if_config['dhcp_option'] = '42,193.62.22.74';
 			}
