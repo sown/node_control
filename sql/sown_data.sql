@@ -153,7 +153,7 @@ INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (3,'','',t
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (4,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (5,'','',true);
 
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (1,1,5035,'udp','10.13.128.140',30,'2001:630:d0:f780::8c',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (1,1,5035,'udp','10.13.128.148',30,'2001:630:d0:f780::94',126);
 INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (2,2,5001,'udp','10.13.112.4',30,'2001:630:d0:f770::4',126);
 INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (3,2,5002,'udp','10.13.112.8',30,'2001:630:d0:f770::8',126);
 INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (4,1,5002,'udp','10.13.128.0',30,'2001:630:d0:f780::',126);
