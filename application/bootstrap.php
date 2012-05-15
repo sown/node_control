@@ -68,7 +68,7 @@ elseif (isset($_SERVER['REMOTE_ADDR']))
 {
 	$developmentAddrs = array(
 			/* Leth	 */ '152.78.65.7', '152.78.65.101',
-			/* crwilliams */ '152.78.65.26',
+			/* crwilliams */// '152.78.65.26',
 			/* localhost :/ *//* '152.78.189.90',*/
 			);
 
@@ -154,7 +154,7 @@ Kohana::modules(array(
 #		'action'     => 'index',
 #	));
 
-Route::set('package_config', 'package/config/backfire/<package>/<version>/<request_name>', array(
+Route::set('package_config_backfire', 'package/config/backfire/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
 		'request_name' => '[A-Za-z0-9_]+',
@@ -164,16 +164,29 @@ Route::set('package_config', 'package/config/backfire/<package>/<version>/<reque
 		'controller' => 'backfire',
 		'action'     => 'default',
 	));
+
+Route::set('package_config_lucid', 'package/<hostname>/lucid/<package>/<version>/<request_name>', array(
+		'package'	=> '[A-Za-z0-9_]+',
+		'version'	=> '[0-9.]+',
+		'request_name' => '[A-Za-z0-9_]+',
+		'hostname'	=> '[A-Za-z0-9_]+',
+	))
+	->defaults(array(
+		'directory'  => 'package/config',
+		'controller' => 'lucid',
+		'action'     => 'default',
+	));
 	
-Route::set('package_test', 'test/<hostname>/backfire/<package>/<version>/<request_name>', array(
+Route::set('package_test', 'test/<hostname>/<os>/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
 		'request_name'  => '[A-Za-z0-9_]+',
 		'hostname'	=> '[A-Za-z0-9_]+',
+		'os'		=> '[A-Za-z0-9_]+',
 	))
 	->defaults(array(
 		'directory'  => 'test/config',
-		'controller' => 'backfire',
+		'controller' => 'generic',
 		'action'     => 'default',
 	));
 
@@ -181,7 +194,7 @@ Route::set('package_test_home', 'test', array(
 	))
 	->defaults(array(
 		'directory'  => 'test/config',
-		'controller' => 'backfire',
+		'controller' => 'generic',
 		'action'     => 'home',
 	));
 
