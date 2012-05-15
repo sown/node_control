@@ -313,9 +313,8 @@ class Package_Config_Backfire_Core extends Package_Config
 			{
 				$v4_net_addr = IP_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
 
-				# TODO check the subnet is big enough for these addresses, and calculate the limit to use the whole subnet
 				$if_config['start'] = '10';
-				$if_config['limit'] = '240';
+				$if_config['limit'] = $v4_net_addr->get_network_address_count() - 20;
 				$if_config['leasetime'] = '1h';
 				$if_config['dhcp_option'] = '42,193.62.22.74';
 			}
