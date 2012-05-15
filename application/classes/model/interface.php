@@ -104,9 +104,13 @@ class Model_Interface extends Model_Entity
 			case "mode":
 				return $this->getMode();
 			case "IPv4":
-				return $this->IPv4Addr."/".$this->IPv4AddrCidr;
+				if($this->IPv4Addr == "")
+					return "";
+				return IP_Network_Address::factory($this->IPv4Addr."/".$this->IPv4AddrCidr);
 			case "IPv6":
-				return $this->IPv6Addr."/".$this->IPv6AddrCidr;
+				if($this->IPv6Addr == "")
+					return "";
+				return IP_Network_Address::factory($this->IPv6Addr."/".$this->IPv6AddrCidr);
 			default:
 				if (property_exists($this, $name))
 				{

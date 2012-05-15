@@ -96,9 +96,9 @@ class Model_VpnServer extends Model_Entity
 		switch($name)
 		{
 			case "IPv4":
-				return $this->IPv4Addr."/".$this->IPv4AddrCidr;
+				return IP_Network_Address::factory($this->IPv4Addr."/".$this->IPv4AddrCidr);
 			case "IPv6":
-				return $this->IPv6Addr."/".$this->IPv6AddrCidr;
+				return IP_Network_Address::factory($this->IPv6Addr."/".$this->IPv6AddrCidr);
 			default:
 				if (property_exists($this, $name))
 				{
