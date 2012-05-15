@@ -177,15 +177,15 @@ INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (9,
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (10,5,'00:20:6a:15:67:3e','6','n');
 
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (1,1,'',0,'',0,'eth0','',1,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (2,1,'10.0.1.254',24,'2001:630:d0:f701::1',64,'wlan0','SOWN',2,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (2,1,'10.13.1.254',24,'2001:630:d0:f701::1',64,'wlan0','SOWN',2,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (3,2,'',0,'',0,'eth0','',3,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (4,2,'10.0.113.254',24,'2001:630:d0:f771::1',64,'wlan0','teduroam',4,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (4,2,'10.13.113.254',24,'2001:630:d0:f771::1',64,'wlan0','teduroam',4,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (5,3,'',0,'',0,'eth0','',5,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (6,3,'10.0.114.254',24,'2001:630:d0:f772::1',64,'wlan0','beduroam',6,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (6,3,'10.13.114.254',24,'2001:630:d0:f772::1',64,'wlan0','beduroam',6,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (7,4,'',0,'',0,'eth0','',7,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (8,4,'10.0.151.254',24,'2001:630:d0:f797::1',64,'wlan0','feeduroam',8,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (8,4,'10.13.151.254',24,'2001:630:d0:f797::1',64,'wlan0','feeduroam',8,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (9,5,'',0,'',0,'eth0','',9,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (10,5,'10.0.152.254',24,'2001:630:d0:f798::1',64,'wlan0','qeduroam',10,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (10,5,'10.13.152.254',24,'2001:630:d0:f798::1',64,'wlan0','qeduroam',10,'STATIC',1,1);
 
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (1,1,'London Avenue',1,0,0,0,0,'2011-12-13 17:06:28','0000-00-00 00:00:00',20,NULL,'home',NULL,'-1.07','50.9','');
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (2,2,'Paris Avenue',1,0,0,0,0,'2011-12-13 17:06:28','0000-00-00 00:00:00',20,NULL,'home',NULL,'-1.07','50.9','');
