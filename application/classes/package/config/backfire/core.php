@@ -298,7 +298,8 @@ class Package_Config_Backfire_Core extends Package_Config
 					'leasefile'     => '/var/state/dhcp.leases',
 					'domain'        => 'sown.org.uk',
 					'authoritative' => 1,
-					'dhcp_script'   => '/usr/sbin/dhcp_event',
+					# TODO we don't need this yet
+					#'dhcp_script'   => '/usr/sbin/dhcp_event',
 				),
 			),
 		);
