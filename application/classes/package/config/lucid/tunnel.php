@@ -40,6 +40,7 @@ dh /etc/openvpn/dh1024.pem
 server {$ep->IPv4->get_network_address()} {$ep->IPv4->get_subnet_mask()}
 
 # Push these routes to the client
+# TODO get routes from the database
 push "route 10.12.0.0 255.254.0.0"
 push "route 152.78.189.82 255.255.255.255"
 push "route 152.78.189.90 255.255.255.255"
@@ -51,6 +52,7 @@ push "route 152.78.189.90 255.255.255.255"
 ;explicit-exit-notify
 
 # Push these configurations to the client
+# TODO get DNS servers from the database
 push "dhcp-option DNS 10.13.0.254"
 
 # Allow clients to see each other
