@@ -112,27 +112,16 @@ class Package_Config_Backfire_Core extends Package_Config
 
 	public static function config_sown_core_v0_1_78(Model_Node $node)
 	{
-		$deployment = $node->currentDeployment;
 		$mod[] = __FILE__;
 		$mod[] = $node;
 		$mod[] = Kohana::$config->load('system.default.filename');
 
-		if ($deployment !== NULL)
-		{
-			$node_name = $deployment->name;
-			$mod[] = $deployment;
-		}
-		else
-		{
-			$node_name = $node->hostname;
-		}
-		
 		$config = array(
 			'node' => array(
 				array(
 					'config_URL' => Kohana::$config->load('system.default.node_config.url').'/package/config/backfire/',
 					'hostname'   => $node->hostname,
-					'node_name'  => $node_name,
+					'node_name'  => $node->name,
 					'id'         => $node->id,
 				)
 			)

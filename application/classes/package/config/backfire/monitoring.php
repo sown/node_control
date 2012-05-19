@@ -46,8 +46,7 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 		$mod[] = Kohana::$config->load('system.default.filename');
 
 		$node_location = '';
-		$deployment = $node->currentDeployment;
-		$node_name = ($deployment != null ? $deployment->name : $node->hostname);
+		$node_name = $node->name;
 		$sown_oid = Kohana::$config->load('system.default.oid');
 		
 		$config = array(
