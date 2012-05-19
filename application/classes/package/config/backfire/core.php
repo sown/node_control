@@ -88,6 +88,9 @@ class Package_Config_Backfire_Core extends Package_Config
 
 	public static function config_system_v0_1_78(Model_Node $node)
 	{
+		$mod[] = __FILE__;
+		$mod[] = $node;
+
 		$config = array(
 			'system' => array(
 				array(
@@ -103,7 +106,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			),
 		);
 		
-		static::send_uci_config('sown_core', $config);
+		static::send_uci_config('sown_core', $config, $mod);
 	}
 
 
@@ -208,7 +211,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			)
 		);
 		
-		static::send_uci_config('sown_firewall', $config, filemtime(__FILE__));
+		static::send_uci_config('sown_firewall', $config, array(__FILE__));
 	}
 
 	public static function config_wireless_v0_1_78(Model_Node $node)

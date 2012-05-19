@@ -15,6 +15,11 @@ class Package_Config_Backfire_Tunnel extends Package_Config
 
 	public static function config_openvpn_v0_1_78(Model_Node $node)
 	{
+		$mod[] = __FILE__;
+		$mod[] = $node;
+		$mod[] = $node->vpnEndpoint;
+		$mod[] = $node->vpnEndpoint->vpnServer;
+
 		$config = array(
 			'openvpn' => array(
 				'sown_tunnel' => array(
@@ -63,6 +68,6 @@ class Package_Config_Backfire_Tunnel extends Package_Config
 			)
 		);
 
-		static::send_uci_config('openvpn', $config);
+		static::send_uci_config('openvpn', $config, $mod);
 	}
 }

@@ -41,6 +41,9 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 
 	public static function snmpd_v0_1_78(Model_Node $node)
 	{
+		$mod[] = __FILE__;
+		$mod[] = $node;
+
 		$node_location = '';
 		$deployment = $node->currentDeployment;
 		$node_name = ($deployment != null ? $deployment->name : $node->hostname);
