@@ -73,6 +73,7 @@ class Model_Node extends Model_Entity
 			case "FQDN":
 				return $this->getFQDN();
 			case "name":
+				return $this->getName();
 			case "hostname":
 				return $this->getHostname();
 			case "updatePoint":
@@ -123,6 +124,18 @@ class Model_Node extends Model_Entity
 		return 'node'.$this->boxNumber;
 	}
 
+	protected function getName()
+	{
+		if ($this->currentDeployment !== NULL)
+		{
+			return $this->currentDeployment->name;
+		}
+		else
+		{
+			return $node->hostname;
+		}
+	}
+	
 	protected function getUpdatePoint()
 	{
 		$now2 = time();
