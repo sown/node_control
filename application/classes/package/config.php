@@ -14,8 +14,7 @@ abstract class Package_Config
 	
 	public static function send_uci_config($package, $config, $last_mod = NULL)
 	{
-		if ($last_mod === NULL)
-			$last_mod = time();
+		$last_mod = static::get_last_modified($last_mod);
 
 		$req = Request::$current;
 		$r = $req->response();
@@ -47,8 +46,21 @@ abstract class Package_Config
 		$r->send_file(TRUE, $package, $options);
 	}
 	
-	public static function send_tgz($files)
+	public static function send_tgz($files, $mod = NULL)
 	{
+		$last_mod = static::get_last_modified($mod);
+		
+		if ($since = strtotime(Request::$current->headers('if-modified-since')))
+		{
+			if ($since >= $last_mod)
+			{
+				// No need to send data
+				$r->status(304);
+				// This request is finished
+				return;
+			}
+		}
+
 		$dirname = sys_get_temp_dir() .'/sown_tgz_'. time();
 		if(! mkdir($dirname))
 			throw new Exception("Failed to create dir '$dirname'");
@@ -180,5 +192,25 @@ abstract class Package_Config
 	public static function makeHeader($commentchar, Model_Node $node, $version)
 	{
 		return "$commentchar\n$commentchar Config created for ".$node->getHostname().", running version $version of ". static::package_name .".\n\n";
+	}
+
+	private static function get_last_modified($mod)
+	{
+		if ($mod === NULL)
+			$last_mod = time();
+		else if (is_array($mod))
+		{
+			$last_mod = 0;
+			foreach($mod as $m)
+			{
+				if(is_string($m))
+					$last_mod = max($last_mod, filemtime($m));
+				else
+					$last_mod = max($last_mod, $m->lastModified->getTimestamp());
+			}
+		}
+		else
+			$last_mod = $mod;
+		return $last_mod;
 	}
 }
