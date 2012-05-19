@@ -116,7 +116,7 @@ class Model_Node extends Model_Entity
 
 	protected function getFQDN()
 	{
-		return $this->hostname.'.sown.org.uk.';
+		return $this->hostname.'.'.Kohana::$config->load('system.config.domain');
 	}
 
 	protected function getHostname()

@@ -115,6 +115,7 @@ class Package_Config_Backfire_Core extends Package_Config
 		$deployment = $node->currentDeployment;
 		$mod[] = __FILE__;
 		$mod[] = $node;
+		$mod[] = Kohana::$config->load('system.default.filename');
 
 		if ($deployment !== NULL)
 		{
@@ -129,7 +130,7 @@ class Package_Config_Backfire_Core extends Package_Config
 		$config = array(
 			'node' => array(
 				array(
-					'config_URL' => 'https://sown-auth2.ecs.soton.ac.uk/package/config/backfire/',
+					'config_URL' => Kohana::$config->load('system.default.node_config.url').'/package/config/backfire/',
 					'hostname'   => $node->hostname,
 					'node_name'  => $node_name,
 					'id'         => $node->id,
@@ -152,6 +153,8 @@ class Package_Config_Backfire_Core extends Package_Config
 		);
 
 		$mod[] = __FILE__;
+		$mod[] = Kohana::$config->load('system.default.filename');
+
 		foreach ($node->interfaces as $iface)
 		{
 			$iface_config = array();
@@ -167,7 +170,7 @@ class Package_Config_Backfire_Core extends Package_Config
 				$iface_config['ipaddr'] = $v4_net_addr->get_address();
 				$iface_config['netmask'] = $v4_net_addr->get_subnet_mask();
 				// TODO get DNS servers for static IPs from the database
-				$iface_config['dns'] = '10.13.0.254';
+				$iface_config['dns'] = Kohana::$config->load('system.default.dns.host');
 				
 				if($iface->IPv6Addr)
 				{
@@ -183,7 +186,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			
 			if(false /* TODO Node is a campus node*/ && $iface->name == 'eth0')
 			{
-				$iface_config['gateway'] = '10.13.0.254';
+				$iface_config['gateway'] = Kohana::$config->load('system.default.gateway');
 			}
 			
 			$config['interface'][$iface->name] = $iface_config;
@@ -267,10 +270,11 @@ class Package_Config_Backfire_Core extends Package_Config
 			
 			if($interface->is1x)
 			{
+				$mod[] = Kohana::$config->load('system.default.filename');
 				$config['wifi-iface'][$interface->name]['encryption'] = 'wpa2+aes';
-				$config['wifi-iface'][$interface->name]['server'] = '10.13.0.252';
-				$config['wifi-iface'][$interface->name]['port'] = 1812;
-				$config['wifi-iface'][$interface->name]['key'] = 'accidentswillhappen';
+				$config['wifi-iface'][$interface->name]['server'] = Kohana::$config('system.default.radius.host');
+				$config['wifi-iface'][$interface->name]['port'] = Kohana::$config('system.default.radius.port');
+				$config['wifi-iface'][$interface->name]['key'] = Kohana::$config('system.default.radius.key');
 				foreach(array('server', 'port', 'key') as $x)
 				{
 					$config['wifi-iface'][$interface->name]['auth_'.$x] = $config['wifi-iface'][$interface->name][$x];
@@ -288,12 +292,13 @@ class Package_Config_Backfire_Core extends Package_Config
 	public static function config_dhcp_v0_1_78(Model_Node $node)
 	{
 		$mod[] = __FILE__;
+		$mod[] = Kohana::$config->load('system.default.filename');
 		
 		$config = array(
 			'dnsmasq' => array(
 				array(
 					'leasefile'     => '/var/state/dhcp.leases',
-					'domain'        => 'sown.org.uk',
+					'domain'        => Kohana::$config->load('system.default.domain'),
 					'authoritative' => 1,
 					# TODO we don't need this yet
 					#'dhcp_script'   => '/usr/sbin/dhcp_event',
@@ -313,7 +318,7 @@ class Package_Config_Backfire_Core extends Package_Config
 				$if_config['start'] = '10';
 				$if_config['limit'] = $v4_net_addr->get_network_address_count() - 20;
 				$if_config['leasetime'] = '1h';
-				$if_config['dhcp_option'] = '42,193.62.22.74';
+				$if_config['dhcp_option'] = '42,'.Kohana::$config->load('system.default.ntp.host');
 			}
 			else
 			{
