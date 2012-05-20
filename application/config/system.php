@@ -19,7 +19,7 @@ return array
 		),
 		'softflow'	=> array
 		(
-			'host'	=> '152.78.189.84',
+			'host'	=> '10.13.0.239',
 		),
 		'ntp'		=> array
 		(
