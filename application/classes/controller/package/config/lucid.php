@@ -49,14 +49,14 @@ class Controller_Package_Config_Lucid extends Controller
 			Package_Config::send_shell_script("echo \"Request '$request_name' at version '$version' for package '$package' not supported.\" >&2; return 1\n");
 		}
 		
-		$node = $classname::get_node($this->request);
-		if ($node == null)
-		{
-			SOWN::send_irc_message('Node config: Unable to determine node from client '.Request::$client_ip.'.');
-			Package_Config::send_shell_script("echo \"Unable to determine node from request for '$request_name' at version '$version' for package '$package'.\" >&2; return 1\n");
-		}
+		//$node = $classname::get_node($this->request);
+		//if ($node == null)
+		//{
+		//	SOWN::send_irc_message('Node config: Unable to determine node from client '.Request::$client_ip.'.');
+		//	Package_Config::send_shell_script("echo \"Unable to determine node from request for '$request_name' at version '$version' for package '$package'.\" >&2; return 1\n");
+		//}
 		
 		//SOWN::send_irc_message('calling '.$classname.'::'.$versions.'['.$found.']["method"]('.$node.', '.$version.');');
-		$classname::$versions[$found]['method']($node, $version);
+		$classname::$versions[$found]['method'](null, $version);
 	}
 }

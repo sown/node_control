@@ -19,8 +19,19 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 		),
 	);
 
-	public static function config_openvpn_v0_1_78(Model_Node $node)
+	public static function config_openvpn_v0_1_78(Model_Node $node = null)
 	{
+		if($node === null)
+		{
+			$files = array();
+			$repository = Doctrine::em()->getRepository('Model_Node');
+			foreach($repository->findAll() as $node)
+			{
+				$fn =  __function__;
+				$files = array_merge($files, static::$fn($node));
+			}
+			static::send_tgz($files, $mod);
+		}
 		$ep = $node->vpnEndpoint;
 		$dns_host = Kohana::$config->load('system.default.dns.host');
 		$routes = trim(Kohana::$config->load('system.default.routes'));
@@ -85,23 +96,43 @@ status /var/log/openvpn/server{$ep->id}-status.log
 verb 3
 
 script-security 3 system
-client-connect "/usr/bin/sudo /etc/openvpn/client-routes/client{$node->boxNumber}"
+client-connect "/etc/openvpn/client-routes/client{$node->boxNumber}"
 
 EOB;
 
-		echo $conf;
+		return array('server'.$ep->id.'.conf' => array(
+			'content' => $conf,
+			'mtime'   => $ep->lastModified->getTimestamp(),
+		));
 	}
 
-	public static function config_client_routes_v0_1_78(Model_Node $node)
+	public static function config_client_routes_v0_1_78(Model_Node $node = null)
 	{
-		echo "#!/bin/bash\n\n";
+		if($node === null)
+		{
+			$files = array();
+			$repository = Doctrine::em()->getRepository('Model_Node');
+			foreach($repository->findAll() as $node)
+			{
+				$fn =  __function__;
+				$files = array_merge($files, static::$fn($node));
+			}
+			static::send_tgz($files, $mod);
+		}
+
+		$conf = "#!/bin/bash\n\n";
 		foreach($node->interfaces as $iface)
 		{
 			if(!$iface->offerDhcp)
 				continue;
-			echo "/sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+			$conf .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
 		}
-		echo "\nexit 0\n";
+		$conf .= "\nexit 0\n";
+
+		return array('client'.$node->boxNumber => array(
+			'content' => $conf,
+			'mtime'   => $node->lastModified->getTimestamp(),
+		));
 	}
 
 }
