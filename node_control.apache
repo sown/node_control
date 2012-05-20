@@ -1,0 +1,61 @@
+<VirtualHost *:80>
+	ServerAdmin support@sown.org.uk
+
+	DocumentRoot /srv/www/default
+	<Directory />
+		Options FollowSymLinks
+		AllowOverride None
+	</Directory>
+	<Directory /srv/www/default>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride All
+		Order allow,deny
+		allow from all
+	</Directory>
+
+	ErrorLog /var/log/apache2/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog /var/log/apache2/access.log combined
+
+</VirtualHost>
+
+
+<VirtualHost *:443>
+    ServerAdmin support@sown.org.uk
+
+    DocumentRoot "/srv/www/default"
+
+    SSLEngine on
+
+    # StdEnvVars is required to pass SSL values on to php
+    # ExportCertData is required to give php the _whole_ certificate
+    SSLOptions +StrictRequire +StdEnvVars +ExportCertData
+
+    <Directory />
+        SSLRequireSSL
+    </Directory>
+
+    <Location /package/config/backfire>
+	SSLCACertificatePath /etc/apache2/ssl/
+	SSLVerifyClient require
+    </Location>
+
+
+    SSLProtocol -all +TLSv1 +SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
+
+    SSLCertificateFile /etc/apache2/ssl/server.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/server.key
+
+    SSLProxyEngine off
+
+    <IfModule mime.c>
+        AddType application/x-x509-ca-cert      .crt
+        AddType application/x-pkcs7-crl         .crl
+    </IfModule>
+
+</VirtualHost>
