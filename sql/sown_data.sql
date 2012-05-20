@@ -114,8 +114,8 @@ CREATE TABLE `node_deployments` (
 	`firewall`				tinyint(1)						NOT NULL default '0'											COMMENT 'is the firewall enabled',
 	`advanced_firewall`		tinyint(1)						NOT NULL default '0'											COMMENT 'is the advanced firewall enabled',
 	`cap`					bigint(20)						NOT NULL default '0'											COMMENT 'bandwidth cap per month in MB',
-	`start_date`			timestamp						NOT NULL default '0000-00-00 00:00:00'							COMMENT 'start date of the deployment',
-	`end_date`				timestamp						NOT NULL default '0000-00-00 00:00:00'							COMMENT 'end date of the deployment',
+	`start_date`			timestamp						NOT NULL default CURRENT_TIMESTAMP							COMMENT 'start date of the deployment',
+	`end_date`				timestamp						NOT NULL default '2037-12-31 23:59:59'							COMMENT 'end date of the deployment',
 	`range`					int(11)							NOT NULL default '20'											COMMENT 'range of the circle to draw on google maps',
 	`allowed_ports`			varchar(255)					default NULL													COMMENT 'DEPRECATED. DO NOT USE.',
 	`type`					enum('campus','home')			default 'home'													COMMENT 'type of deployment',
@@ -134,8 +134,8 @@ CREATE TABLE `node_admins` (
 	`id`					int(11)							NOT NULL auto_increment											COMMENT 'admin id',
 	`user_id`				int(11)							NOT NULL														COMMENT 'link to users table in other database',
 	`node_deployment_id`	int(11)							NOT NULL														COMMENT 'id of the node deployment',
-	`start_date`			timestamp						NOT NULL default '0000-00-00 00:00:00'							COMMENT 'start date that the admin is admin of the node',
-	`end_date`				timestamp						NOT NULL default '0000-00-00 00:00:00'							COMMENT 'end date that the admin is admin of the node',
+	`start_date`			timestamp						NOT NULL default CURRENT_TIMESTAMP							COMMENT 'start date that the admin is admin of the node',
+	`end_date`				timestamp						NOT NULL default '2037-12-31 23:59:59'							COMMENT 'end date that the admin is admin of the node',
 	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
 
 	PRIMARY KEY	 (`id`),
@@ -187,11 +187,11 @@ INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_add
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (9,5,'',0,'',0,'eth0','',9,'DHCP',0,0);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (10,5,'10.13.152.254',24,'2001:630:d0:f798::1',64,'wlan0','qeduroam',10,'STATIC',1,1);
 
-INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (1,1,'London Avenue',1,0,0,0,0,'2011-12-13 17:06:28','0000-00-00 00:00:00',20,NULL,'home',NULL,'-1.07','50.9','');
-INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (2,2,'Paris Avenue',1,0,0,0,0,'2011-12-13 17:06:28','0000-00-00 00:00:00',20,NULL,'home',NULL,'-1.07','50.9','');
-INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (3,3,'Madrid Avenue',1,0,0,0,0,'2011-12-13 17:06:28','0000-00-00 00:00:00',20,NULL,'home',NULL,'-1.07','50.9','');
-INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (4,4,'Rome Avenue',1,0,0,0,0,'2011-12-13 17:06:28','0000-00-00 00:00:00',20,NULL,'home',NULL,'-1.07','50.9','');
-INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (5,5,'Lisbon Avenue',1,0,0,0,0,'2011-12-13 17:06:28','0000-00-00 00:00:00',20,NULL,'home',NULL,'-1.07','50.9','');
+INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (1,1,'London Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
+INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (2,2,'Paris Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
+INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (3,3,'Madrid Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
+INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (4,4,'Rome Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
+INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (5,5,'Lisbon Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
 
 
 
