@@ -22,10 +22,13 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 	public static function config_openvpn_v0_1_78(Model_Node $node)
 	{
 		$ep = $node->vpnEndpoint;
+		$dns_host = Kohana::$config->load('system.default.dns.host');
+		$routes = trim(Kohana::$config->load('system.default.routes'));
+
 $conf = <<< EOB
 # Comments are preceded with '#' or ';'
 
-# Accept Connectionions on this port.
+# Accept Connections on this port.
 port {$ep->port}
 
 # sown-vpn is correctly configured to use udp
@@ -46,10 +49,7 @@ dh /etc/openvpn/dh1024.pem
 server {$ep->IPv4->get_network_address()} {$ep->IPv4->get_subnet_mask()}
 
 # Push these routes to the client
-# TODO get routes from the database
-push "route 10.12.0.0 255.254.0.0"
-push "route 152.78.189.82 255.255.255.255"
-push "route 152.78.189.90 255.255.255.255"
+{$routes}
 
 # Tell the client it must tell us when it is
 # disconnecting. This prevents time-out errors
@@ -58,8 +58,7 @@ push "route 152.78.189.90 255.255.255.255"
 ;explicit-exit-notify
 
 # Push these configurations to the client
-# TODO get DNS servers from the database
-push "dhcp-option DNS 10.13.0.254"
+push "dhcp-option DNS {$dns_host}"
 
 # Allow clients to see each other
 # This is useless in sown-vpns configuration
@@ -71,8 +70,8 @@ keepalive 10 120
 # Maximum number of clients for this server
 
 # Downgrade priveleges after initialization
-user nobody
-group nogroup
+user openvpn
+group openvpn
 
 # Preserve as much as possible between restarts
 persist-key

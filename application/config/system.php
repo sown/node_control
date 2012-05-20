@@ -33,6 +33,11 @@ return array
 			'authorized_keys'	=>	'/srv/www/static_files/authorized_keys',
 			'passwd'		=>	'/srv/www/static_files/passwd',
 		),
+		'routes'	=> '
+push "route 10.12.0.0 255.254.0.0"
+push "route 152.78.189.82 255.255.255.255"
+push "route 152.78.189.90 255.255.255.255"
+',
 		'filename'	=> __FILE__,
 	),
 );
