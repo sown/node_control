@@ -4,9 +4,14 @@ abstract class Package_Config
 {
 	public static function send_shell_script($script)
 	{
+		static::send_file($script, 'script.sh', 'text/x-sh');
+	}
+
+	public static function send_file($data, $filename, $mimetype)
+	{
 		$r = Request::$current;
-		$r->response()->body($script);
-		$options = array('inline' => 'script.sh', 'mime_type' => 'text/x-sh');
+		$r->response()->body($data);
+		$options = array('inline' => $filename, 'mime_type' => $mimetype);
 		
 		// This function never returns.
 		$r->response()->send_file(TRUE, TRUE, $options);
