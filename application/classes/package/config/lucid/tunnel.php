@@ -96,7 +96,8 @@ status /var/log/openvpn/server{$ep->id}-status.log
 verb 3
 
 script-security 3 system
-client-connect "/etc/openvpn/client-routes/client{$node->boxNumber}"
+client-connect "/etc/openvpn/client-routes/connect-{$node->certificate->cn}"
+client-disconnect "/etc/openvpn/client-routes/disconnect-{$node->certificate->cn}"
 
 EOB;
 
@@ -120,19 +121,28 @@ EOB;
 			static::send_tgz($files, $mod);
 		}
 
-		$conf = "#!/bin/bash\n\n";
+		$confconnect = "#!/bin/bash\n\n";
+		$confdisconnect = "#!/bin/bash\n\n";
 		foreach($node->interfaces as $iface)
 		{
 			if(!$iface->offerDhcp)
 				continue;
-			$conf .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+			$confconnect    .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+			$confdisconnect .= "/usr/bin/sudo /sbin/ip route del ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
 		}
-		$conf .= "\nexit 0\n";
+		$confconnect .= "\nexit 0\n";
+		$confdisconnect .= "\nexit 0\n";
 
-		return array('client'.$node->boxNumber => array(
-			'content' => $conf,
-			'mtime'   => $node->lastModified->getTimestamp(),
-		));
+		return array(
+			'connect-'.$node->certificate->cn => array(
+				'content' => $confconnect,
+				'mtime'   => $node->lastModified->getTimestamp(),
+			),
+			'disconnect-'.$node->certificate->cn => array(
+				'content' => $confdisconnect,
+				'mtime'   => $node->lastModified->getTimestamp(),
+			),
+		);
 	}
 
 }
