@@ -41,6 +41,8 @@ class Model_Certificate extends Model_Entity
 				return static::getFingerprint($this->publicKey);
 			case "privateKeyFingerprint":
 				return static::getFingerprint($this->privateKey);
+			case "cn":
+				return $this->getCN();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -59,6 +61,7 @@ class Model_Certificate extends Model_Entity
 		{
 			case "publicKeyFingerprint":
 			case "privateKeyFingerprint":
+			case "cn":
 				parent::__throwReadOnlyException($name);
 			default:
 				if (property_exists($this, $name))
@@ -77,9 +80,15 @@ class Model_Certificate extends Model_Entity
 		return openssl_digest($cert, "sha1");
 	}
 
+	public function getCN()
+	{
+		$data = openssl_x509_parse($this->publicKey);
+		return $data['subject']['CN'];
+	}
+
 	public function toString()
 	{
-		$str  = "Certificate: {$this->id}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
+		$str  = "Certificate: {$this->id}, cn={$this->cn}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
 		return $str;
 	}
 }
