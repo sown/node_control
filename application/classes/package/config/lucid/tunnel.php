@@ -11,6 +11,12 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 				'method' => 'config_openvpn_v0_1_78'
 			),
 		),
+		'config_client_routes' => array(
+			array(
+				'>=' => '0.1.78',
+				'method' => 'config_client_routes_v0_1_78'
+			),
+		),
 	);
 
 	public static function config_openvpn_v0_1_78(Model_Node $node)
@@ -78,8 +84,25 @@ status /var/log/openvpn/server{$ep->id}-status.log
 
 # Set logging verbosity to 3
 verb 3
+
+script-security 3 system
+client-connect "/usr/bin/sudo /etc/openvpn/client-routes/client{$node->boxNumber}"
+
 EOB;
 
 		echo $conf;
 	}
+
+	public static function config_client_routes_v0_1_78(Model_Node $node)
+	{
+		echo "#!/bin/bash\n\n";
+		foreach($node->interfaces as $iface)
+		{
+			if(!$iface->offerDhcp)
+				continue;
+			echo "/sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+		}
+		echo "\nexit 0\n";
+	}
+
 }
