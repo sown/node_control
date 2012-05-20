@@ -341,7 +341,7 @@ class Package_Config_Backfire_Core extends Package_Config
 						// 'timeout' => '',
 						'max_flows' => 8192,
 						// TODO this port number is a bit random.
-						'host_port' => Kohana::$config('system.default.softflow.host').':'.$node->vpnEndpoint->port,
+						'host_port' => Kohana::$config->load('system.default.softflow.host').':'.$node->vpnEndpoint->port,
 						'pid_file' => '/var/run/softflowd.pid',
 						'control_socket' => '/var/run/softflowd.ctl',
 						'export_version' => 5,
