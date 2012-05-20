@@ -64,13 +64,11 @@ class Package_Config_Backfire_Core extends Package_Config
 
 	public static function credentials_v0_1_78(Model_Node $node, $version)
 	{
-		$authorized_keys = '/srv/www/auth/config/authorized_keys';
-# SHOULDN'T PASS THIS FILE
-		$passwd_file = '/srv/www/auth/config/passwd';
+		$static_files = Kohana::$config->load('system.default.static_files');
 		
 		$mod[] = $node->certificate;
-		$mod[] = $authorized_keys;
-		$mod[] = $passwd_file;
+		$mod[] = $static_files['authorized_keys'];
+		$mod[] = $static_files['passwd'];
 		
 		static::send_tgz(array(
 			'client.crt'      => array(
@@ -81,8 +79,9 @@ class Package_Config_Backfire_Core extends Package_Config
 				'content' => $node->certificate->privateKey,
 				'mtime'   => $node->certificate->lastModified->getTimestamp(),
 			),
-			'authorized_keys' => $authorized_keys,
-#			'passwd'          => $passwd_file,
+			'authorized_keys' => $static_files['authorized_keys'],
+# SHOULDN'T PASS THIS FILE
+# 			'passwd'          => $static_files['passwd'],
 		), $mod);
 	}
 

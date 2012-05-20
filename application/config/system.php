@@ -28,6 +28,11 @@ return array
 		'gateway'	=> '10.13.0.254',
 		'domain'	=> 'sown.org.uk',
 		'oid'		=> '.1.3.6.1.4.1.12275.5032',
+		'static_files'	=> array
+		(
+			'authorized_keys'	=>	'/srv/www/static_files/authorized_keys',
+			'passwd'		=>	'/srv/www/static_files/passwd',
+		),
 		'filename'	=> __FILE__,
 	),
 );
