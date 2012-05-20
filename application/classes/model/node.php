@@ -80,6 +80,8 @@ class Model_Node extends Model_Entity
 				return $this->getUpdatePoint();
 			case "currentDeployment":
 				return $this->getCurrentDeployment();
+			case "radiusSecret":
+				return $this->getRadiusSecret();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -101,6 +103,7 @@ class Model_Node extends Model_Entity
 			case "hostname":
 			case "updatePoint":
 			case "currentDeployment":
+			case "radiusSecret":
 				parent::__throwReadOnlyException($name);
 			default:
 				if (property_exists($this, $name))
@@ -134,6 +137,11 @@ class Model_Node extends Model_Entity
 		{
 			return $node->hostname;
 		}
+	}
+
+	protected function getRadiusSecret()
+	{
+		return $this->certificate->privateKeyFingerprint;
 	}
 	
 	protected function getUpdatePoint()

@@ -16,7 +16,6 @@ return array
 		(
 			'host'	=> '10.13.0.252',
 			'port'	=> 1812,
-			'key'	=> 'accidentswillhappen',
 		),
 		'softflow'	=> array
 		(

@@ -263,7 +263,7 @@ class Package_Config_Backfire_Core extends Package_Config
 				$config['wifi-iface'][$interface->name]['encryption'] = 'wpa2+aes';
 				$config['wifi-iface'][$interface->name]['server'] = Kohana::$config('system.default.radius.host');
 				$config['wifi-iface'][$interface->name]['port'] = Kohana::$config('system.default.radius.port');
-				$config['wifi-iface'][$interface->name]['key'] = Kohana::$config('system.default.radius.key');
+				$config['wifi-iface'][$interface->name]['key'] = $interface->radiusSecret;
 				foreach(array('server', 'port', 'key') as $x)
 				{
 					$config['wifi-iface'][$interface->name]['auth_'.$x] = $config['wifi-iface'][$interface->name][$x];
