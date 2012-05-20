@@ -129,13 +129,13 @@ class Model_Node extends Model_Entity
 
 	protected function getName()
 	{
-		if ($this->currentDeployment !== NULL)
+		if ($this->currentDeployment !== null)
 		{
 			return $this->currentDeployment->name;
 		}
 		else
 		{
-			return $node->hostname;
+			return $this->hostname;
 		}
 	}
 
