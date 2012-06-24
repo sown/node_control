@@ -45,16 +45,16 @@ class Controller_Package_Config_Lucid extends Controller
 
 		if ($found === FALSE)
 		{
-			SOWN::send_irc_message('Node config: client '.Request::$client_ip.' requested a resource which could not be found: '."$package:$version:$request_name.");
+			SOWN::send_irc_message('Server config: client '.Request::$client_ip.' requested a resource which could not be found: '."$package:$version:$request_name.");
 			Package_Config::send_shell_script("echo \"Request '$request_name' at version '$version' for package '$package' not supported.\" >&2; return 1\n");
 		}
 		
-		//$node = $classname::get_node($this->request);
-		//if ($node == null)
-		//{
-		//	SOWN::send_irc_message('Node config: Unable to determine node from client '.Request::$client_ip.'.');
-		//	Package_Config::send_shell_script("echo \"Unable to determine node from request for '$request_name' at version '$version' for package '$package'.\" >&2; return 1\n");
-		//}
+		$server = $classname::get_server($this->request);
+		if ($server == null)
+		{
+			SOWN::send_irc_message('Server config: Unable to determine server from client '.Request::$client_ip.'.');
+			Package_Config::send_shell_script("echo \"Unable to determine server from request for '$request_name' at version '$version' for package '$package'.\" >&2; return 1\n");
+		}
 		
 		//SOWN::send_irc_message('calling '.$classname.'::'.$versions.'['.$found.']["method"]('.$node.', '.$version.');');
 		$classname::$versions[$found]['method'](null, $version);
