@@ -39,7 +39,7 @@
         SSLRequireSSL
     </Directory>
 
-    <Location /package/config/backfire>
+    <Location /package>
 	SSLCACertificatePath /etc/apache2/ssl/
 	SSLVerifyClient require
     </Location>
