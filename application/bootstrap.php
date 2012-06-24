@@ -169,7 +169,7 @@ Route::set('package_config_lucid', 'package/<hostname>/lucid/<package>/<version>
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
 		'request_name' => '[A-Za-z0-9_]+',
-		'hostname'	=> '[A-Za-z0-9_]+',
+		'hostname'	=> '[A-Za-z0-9_.-]+',
 	))
 	->defaults(array(
 		'directory'  => 'package/config',
@@ -181,7 +181,7 @@ Route::set('package_test', 'test/<hostname>/<os>/<package>/<version>/<request_na
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
 		'request_name'  => '[A-Za-z0-9_]+',
-		'hostname'	=> '[A-Za-z0-9_]+',
+		'hostname'	=> '[A-Za-z0-9_.-]+',
 		'os'		=> '[A-Za-z0-9_]+',
 	))
 	->defaults(array(
