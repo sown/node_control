@@ -10,7 +10,7 @@ class Controller_Test_Config_Generic extends Controller
 		$request_name = $this->request->param('request_name');
 		$hostname     = $this->request->param('hostname');
 
-		$keyfiles = $this->storeKeys($hostname);
+		$keyfiles = $this->storeKeys($hostname, $os);
 		$this->curl($os, $package, $version, $request_name, $keyfiles);
 		$this->removeKeys($keyfiles);
 	}
@@ -25,10 +25,18 @@ class Controller_Test_Config_Generic extends Controller
 		}
 	}
 
-	private function storeKeys($hostname)
+	private function storeKeys($hostname, $os)
 	{
-		$node = Model_Node::getByHostname($hostname);
-		$cert = $node->certificate;
+		switch($os)
+		{
+			case "backfire":
+				$entity = Model_Node::getByHostname($hostname);
+				break;
+			case "lucid":
+				$entity = Model_Server::getByName($hostname);
+				break;
+		}
+		$cert = $entity->certificate;
 		$fpub = tempnam('/tmp/', 'pub_key_');
 		$fh = fopen($fpub, 'w+');
 		fputs($fh, $cert->publicKey);
