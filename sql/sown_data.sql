@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS `network_adapters`;
 DROP TABLE IF EXISTS `nodes`;
 DROP TABLE IF EXISTS `vpn_endpoints`;
 DROP TABLE IF EXISTS `vpn_servers`;
+DROP TABLE IF EXISTS `servers`;
 DROP TABLE IF EXISTS `certificates`;
 
 CREATE TABLE `certificates` (
@@ -20,13 +21,25 @@ CREATE TABLE `certificates` (
 	PRIMARY KEY	 (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='certificates';
 
-CREATE TABLE `vpn_servers` (
+CREATE TABLE `servers` (
 	`id`					int(11)							NOT NULL auto_increment											COMMENT 'id',
+	`type`					varchar(10)					default NULL												COMMENT 'child type',
 	`name`					varchar(255)					default NULL	           										COMMENT 'short name (eg. auth)',
+	`certificate_id`		int(11)							default NULL													COMMENT 'certificate to use from certificate file',
 	`external_ipv4`			varchar(15)						default NULL           											COMMENT 'external (ECS)	 IPv4 address',
 	`internal_ipv4`			varchar(15)						default NULL           											COMMENT 'internal (SOWN) IPv4 address',
 	`external_ipv6`			varchar(39)						default NULL           											COMMENT 'external (ECS)	 IPv6 address',
 	`internal_ipv6`			varchar(39)						default NULL           											COMMENT 'internal (SOWN) IPv6 address',
+	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
+	
+	PRIMARY KEY	 (`id`),
+	KEY `server_to_certificate` (`certificate_id`),
+	CONSTRAINT `server_to_certificate`	FOREIGN KEY (`certificate_id`)	REFERENCES `certificates` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `vpn_servers` (
+	`id`					int(11)							NOT NULL auto_increment											COMMENT 'id',
+	`server_id`			int(11)							default NULL													COMMENT 'id of the server',
 	`ipv4_addr`				varchar(15)						NOT NULL														COMMENT 'IPv4 address',
 	`ipv4_addr_cidr`		int(2)							NOT NULL														COMMENT 'IPv6 address cidr prefix size (eg 24)',
 	`ipv6_addr`				varchar(39)						NOT NULL														COMMENT 'IPv6 address',
@@ -36,11 +49,13 @@ CREATE TABLE `vpn_servers` (
 	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
 	
 	PRIMARY KEY	 (`id`)
+	KEY `server_id` (`server_id`),
+	CONSTRAINT `vpn_server_to_server`	FOREIGN KEY (`server_id`)	REFERENCES `servers` (`id`)	ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `vpn_endpoints` (
 	`id`					int(11)							NOT NULL auto_increment											COMMENT 'endpoint id',
-	`vpn_server_id`			int(11)							default NULL													COMMENT 'id of the server',
+	`vpn_server_id`			int(11)							default NULL													COMMENT 'id of the vpn server',
 	`port`					int(5)							default NULL													COMMENT 'port to use',
 	`protocol`				enum('tcp','udp')				default 'udp'													COMMENT 'protocol to use',
 	`ipv4_addr`				varchar(15)						NOT NULL														COMMENT 'IPv4 address',
@@ -144,20 +159,21 @@ CREATE TABLE `node_admins` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-INSERT INTO `vpn_servers` (id,name,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (1,'sown-vpn.ecs.soton.ac.uk','152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253','10.13.128.0',17,'2001:630:d0:f780::',57,5000,5200);
-INSERT INTO `vpn_servers` (id,name,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (2,'sown-dev.ecs.soton.ac.uk','152.78.189.39','10.13.0.250','2001:630:d0:f104::5032:250','2001:630:d0:f700::250','10.13.112.0',20,'2001:630:d0:f770::',60,5000,5200);
+INSERT INTO `servers` (id,child,name,certificate_id,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6) VALUES (1,'vpn','sown-vpn.ecs.soton.ac.uk',6,'152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253');
+INSERT INTO `vpn_servers` (id,server_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (1,1,'10.13.112.0',17,'2001:630:d0:f780::',57,5000,5200);
 
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (1,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (2,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (3,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (4,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (5,'','',true);
+INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (6,'','',true);
 
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (1,1,5035,'udp','10.13.128.148',30,'2001:630:d0:f780::94',126);
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (2,2,5001,'udp','10.13.112.4',30,'2001:630:d0:f770::4',126);
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (3,2,5002,'udp','10.13.112.8',30,'2001:630:d0:f770::8',126);
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (4,1,5002,'udp','10.13.128.0',30,'2001:630:d0:f780::',126);
-INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (5,1,5003,'udp','10.13.128.4',30,'2001:630:d0:f780::4',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (1,1,5035,'udp','10.13.112.148',30,'2001:630:d0:f770::94',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (2,1,5005,'udp','10.13.112.20',30,'2001:630:d0:f770::14',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (3,1,5006,'udp','10.13.112.24',30,'2001:630:d0:f770::18',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (4,1,5002,'udp','10.13.112.0',30,'2001:630:d0:f770::',126);
+INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (5,1,5015,'udp','10.13.112.4',30,'2001:630:d0:f770::4',126);
 
 INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image,notes) VALUES (1,1,1,900,'',NULL);
 INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image,notes) VALUES (2,2,2,901,'',NULL);
@@ -166,26 +182,26 @@ INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image
 INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image,notes) VALUES (5,5,5,904,'',NULL);
 
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (1,1,'00:11:5b:e4:7e:cb','0','100M');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (2,1,'00:0b:6b:56:2e:7e','1','n');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (3,2,'00:0d:b9:20:a4:55','0','100M');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (4,2,'00:20:6a:15:67:3b','6','n');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (5,3,'00:0d:b9:20:a5:66','0','100M');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (6,3,'00:20:6a:15:67:3c','11','n');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (7,4,'00:0d:b9:20:a6:77','0','100M');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (8,4,'00:20:6a:15:67:3d','1','n');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (9,5,'00:0d:b9:20:a7:88','0','100M');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (10,5,'00:20:6a:15:67:3e','6','n');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (2,1,'00:0b:6b:56:2e:7e','1','g');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (3,2,'00:12:cf:ca:f4:38','0','100M');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (4,2,'00:20:6a:15:67:3b','6','g');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (5,3,'00:18:0a:01:40:3d','0','100M');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (6,3,'00:18:0a:01:40:3d','11','g');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (7,4,'00:18:0a:01:3f:75','0','100M');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (8,4,'00:18:0a:01:3f:75','1','n');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (9,5,'00:18:0a:01:40:58','0','100M');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (10,5,'00:18:0a:01:40:58','6','n');
 
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (1,1,'',0,'',0,'eth0','',1,'DHCP',0,0);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (2,1,'10.13.195.254',24,'2001:630:d0:f701::1',64,'wlan0','SOWN',2,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (3,2,'',0,'',0,'eth0','',3,'DHCP',0,0);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (4,2,'10.13.113.254',24,'2001:630:d0:f771::1',64,'wlan0','teduroam',4,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (5,3,'',0,'',0,'eth0','',5,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (6,3,'10.13.114.254',24,'2001:630:d0:f772::1',64,'wlan0','beduroam',6,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (6,3,'10.13.114.254',24,'2001:630:d0:f772::1',64,'wlan0','eduroam',6,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (7,4,'',0,'',0,'eth0','',7,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (8,4,'10.13.151.254',24,'2001:630:d0:f797::1',64,'wlan0','feeduroam',8,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (8,4,'10.13.151.254',24,'2001:630:d0:f797::1',64,'wlan0','eduroam',8,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (9,5,'',0,'',0,'eth0','',9,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (10,5,'10.13.152.254',24,'2001:630:d0:f798::1',64,'wlan0','qeduroam',10,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (10,5,'10.13.152.254',24,'2001:630:d0:f798::1',64,'wlan0','eduroam',10,'STATIC',1,1);
 
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (1,1,'London Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (2,2,'Paris Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
