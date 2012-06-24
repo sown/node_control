@@ -165,6 +165,24 @@ abstract class Package_Config
 		if($node === null) SOWN::send_irc_message('Node config: failed to find node by certificate.');
 		return $node;
 	}
+
+	public static function get_server(Request $request)
+	{
+		$cert = static::get_client_cert();
+
+		if ($cert === NULL)
+		{
+                        SOWN::send_irc_message('Server config: client '.Request::$client_ip.' with CN '.$_SERVER['SSL_CLIENT_S_DN_CN'].' did not send a certificate in a request.');
+			return null;
+		}
+		
+		openssl_x509_export($cert, $dump);
+
+		// Get node object
+		$server = Model_Server::getByName(static::get_cert_cn());
+		if($server === null) SOWN::send_irc_message('Server config: failed to find server by certificate.');
+		return $server;
+	}
 	
 	public static function get_client_cert()
 	{
