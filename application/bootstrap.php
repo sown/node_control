@@ -79,9 +79,6 @@ elseif (isset($_SERVER['REMOTE_ADDR']))
 		Kohana::$environment = Kohana::PRODUCTION;
 	}
 }
-// Force us to improve the codebase when we're developing.
-if (Kohana::$environment === Kohana::PRODUCTION)
-	error_reporting(E_ALL & ~ E_NOTICE & ~ E_DEPRECATED & ~ E_STRICT & ~ E_USER_DEPRECATED & ~ E_USER_WARNING);
 
 /**
  * Enable xdebug parameter collection in development mode to improve fatal stack traces.
