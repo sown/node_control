@@ -19,7 +19,7 @@ class UCIUtils
 			unset($config['meta'][0]['hash']);
 		}
 		
-		return $config['meta'][0]['hash'] = sha1(static::render_UCI_config($package, $config));
+		return $config['meta'][0]['hash'] = md5(static::render_UCI_config($package, $config));
 	}
 
 	public static function render_UCI_config($package, array $config)
