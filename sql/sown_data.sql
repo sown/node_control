@@ -184,7 +184,7 @@ INSERT INTO `nodes` (id,vpn_endpoint_id,certificate_id,box_number,firmware_image
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (1,1,'00:11:5b:e4:7e:cb','0','100M');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (2,1,'00:0b:6b:56:2e:7e','1','g');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (3,2,'00:12:cf:ca:f4:38','0','100M');
-INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (4,2,'00:20:6a:15:67:3b','6','g');
+INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (4,2,'00:12:cf:ca:f4:39','6','g');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (5,3,'00:18:0a:01:40:3d','0','100M');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (6,3,'00:18:0a:01:40:3d','11','g');
 INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (7,4,'00:18:0a:01:3f:75','0','100M');
@@ -195,13 +195,13 @@ INSERT INTO `network_adapters` (id,node_id,mac,wireless_channel,type) VALUES (10
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (1,1,'',0,'',0,'eth0','',1,'DHCP',0,0);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (2,1,'10.13.195.254',24,'2001:630:d0:f701::1',64,'wlan0','SOWN',2,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (3,2,'',0,'',0,'eth0','',3,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (4,2,'10.13.113.254',24,'2001:630:d0:f771::1',64,'wlan0','teduroam',4,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (4,2,'10.13.113.254',24,'2001:630:d0:f771::1',64,'wlan0','eduroam',4,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (5,3,'',0,'',0,'eth0','',5,'DHCP',0,0);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (6,3,'10.13.114.254',24,'2001:630:d0:f772::1',64,'wlan0','eduroam',6,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (7,4,'',0,'',0,'eth0','',7,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (8,4,'10.13.151.254',24,'2001:630:d0:f797::1',64,'wlan0','eduroam',8,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (8,4,'10.13.115.254',24,'2001:630:d0:f797::1',64,'wlan0','eduroam',8,'STATIC',1,1);
 INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (9,5,'',0,'',0,'eth0','',9,'DHCP',0,0);
-INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (10,5,'10.13.152.254',24,'2001:630:d0:f798::1',64,'wlan0','eduroam',10,'STATIC',1,1);
+INSERT INTO `interfaces` (id,node_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,name,ssid,network_adapter_id,type,offer_dhcp,is_1x) VALUES (10,5,'10.13.116.254',24,'2001:630:d0:f798::1',64,'wlan0','eduroam',10,'STATIC',1,1);
 
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (1,1,'London Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (2,2,'Paris Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
