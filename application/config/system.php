@@ -14,8 +14,9 @@ return array
 		),
 		'radius'	=> array
 		(
-			'host'	=> '10.13.0.252',
-			'port'	=> 1812,
+			'host'	=> '10.13.0.239',
+			'auth_port'	=> 1812,
+			'acct_port'	=> 1813,
 		),
 		'softflow'	=> array
 		(
