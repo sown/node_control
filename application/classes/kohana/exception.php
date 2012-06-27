@@ -24,7 +24,13 @@ class Kohana_Exception extends Kohana_Kohana_Exception {
 				{
 					$attributes['action'] = $e->getCode();
 				}
- 
+
+				// If an exception happens in bootstrap, we might not have a request object.
+				if ( ! Request::$initial)
+				{
+					Request::factory();
+				}
+
 				// Error sub-request.
 				echo Request::factory(Route::get('error')->uri($attributes))
 					->execute()

@@ -21,7 +21,7 @@ h1 { align: center; }
 <body>
 <h1>Oops!</h1>
 <p>An error has occured! We've logged this incident and will be looking into as soon we can.</p>
-<p style="color: #aaa; font-size: 80%;">To show a debug trace, enable development mode in <code><?php echo APPPATH; ?>/bootstrap.php</code>.</p>
+<p style="color: #aaa; font-size: 80%;">To show a debug trace, enable development mode in <code><?php echo APPPATH; ?>bootstrap.php</code>.</p>
 <p style="color: #aaa; font-size: 80%;">The address you are connected from is <?php echo $_SERVER['REMOTE_ADDR'];?>.</p>
 </body>
 </html>

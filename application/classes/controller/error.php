@@ -3,27 +3,30 @@
 class Controller_Error extends Controller_Template
 {
 	public $template = 'error';
-	
+
 	public function before()
 	{
-		parent::before();
-
-		//$this->template->page = URL::site(rawurldecode(Request::$initial->uri()));
-
-		// Internal request only!
-		if (Request::$initial !== Request::$current || $this->request->action() == '404')
-		{
-			if ($message = rawurldecode($this->request->param('message')))
-			{
-				$this->template->message = $message;
-			}
-		}
-		else
+		// Don't answer external requests for this controller
+		if (Request::$initial === Request::$current)
 		{
 			$this->request->action(404);
 		}
 
-		$this->response->status((int) $this->request->action());
+		$status = (int) $this->request->action();
+
+		if (500 == $status)
+		{
+			$this->template = 'kohana/error';
+		}
+
+		parent::before();
+
+		if ($message = rawurldecode($this->request->param('message')))
+		{
+			$this->template->message = $message;
+		}
+
+		$this->response->status($status);
 	}
 
 	public function action_404()
