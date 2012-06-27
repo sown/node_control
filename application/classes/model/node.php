@@ -119,7 +119,7 @@ class Model_Node extends Model_Entity
 
 	protected function getFQDN()
 	{
-		return $this->hostname.'.'.Kohana::$config->load('system.config.domain');
+		return $this->hostname.'.'.Kohana::$config->load('system.default.domain');
 	}
 
 	protected function getHostname()
