@@ -76,13 +76,7 @@ elseif (isset($_SERVER['REMOTE_ADDR']))
 		Kohana::$environment = Kohana::DEVELOPMENT;
 	else
 	{
-		if(session_id() == '')
-			session_start();
-		// DPA Admins now get development mode. Enjoy.
-		if (isset($_SESSION['sgroups']['cn=DPAAdmin,ou=Group,dc=sown,dc=org,dc=uk']))
-			Kohana::$environment = Kohana::DEVELOPMENT;
-		else
-			Kohana::$environment = Kohana::PRODUCTION;
+		Kohana::$environment = Kohana::PRODUCTION;
 	}
 }
 // Force us to improve the codebase when we're developing.
