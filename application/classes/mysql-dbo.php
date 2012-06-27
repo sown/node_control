@@ -1,4 +1,4 @@
-<?
+<?php
 
 //$dbh = new PDO("mysql:dbname=node_config;host=localhost", "auth-https", "6itL6cbuwz=fd");
 global $dbh;
@@ -24,5 +24,3 @@ function insert($q, $params) {
         $sth->execute($params);
         return $dbh->lastInsertId();
 }
-
-?>
