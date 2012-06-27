@@ -2,8 +2,17 @@
 
 class Controller_Test_Config_Generic extends Controller
 {
+	public function check_login()
+	{
+		if (!Auth::instance()->logged_in())
+		{
+			$this->request->redirect("http://sown-auth2.ecs.soton.ac.uk/?url=".urlencode($this->request->detect_uri()));
+		}
+	}
+
 	public function action_default()
 	{
+		$this->check_login();
 		$os           = $this->request->param('os');
 		$package      = $this->request->param('package');
 		$version      = $this->request->param('version');
@@ -17,6 +26,7 @@ class Controller_Test_Config_Generic extends Controller
 
 	public function action_home()
 	{
+		$this->check_login();
 		$repository = Doctrine::em()->getRepository('Model_Node');
 		foreach($repository->findAll() as $node)
 		{
