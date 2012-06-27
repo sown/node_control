@@ -126,6 +126,7 @@ abstract class Package_Config
 		$archive->createModify($list, '', $dirname);
 		
 		// PHP doesn't have a nice way of doing this
+		// TODO: find a better way of doing this
 		`rm -rf $dirname`;
 		
 		Request::$current->response()->send_file($file, FALSE, array(
