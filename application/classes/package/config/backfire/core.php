@@ -266,10 +266,12 @@ class Package_Config_Backfire_Core extends Package_Config
 			{
 				$mod[] = Kohana::$config->load('system.default.filename');
 				$config['wifi-iface'][$interface->name]['encryption'] = 'wpa2+aes';
-				$config['wifi-iface'][$interface->name]['server'] = Kohana::$config('system.default.radius.host');
-				$config['wifi-iface'][$interface->name]['port'] = Kohana::$config('system.default.radius.port');
-				$config['wifi-iface'][$interface->name]['key'] = $interface->radiusSecret;
-				foreach(array('server', 'port', 'key') as $x)
+				$config['wifi-iface'][$interface->name]['server'] = Kohana::$config->load('system.default.radius.host');
+				$config['wifi-iface'][$interface->name]['port'] = Kohana::$config->load('system.default.radius.auth_port');
+				$config['wifi-iface'][$interface->name]['auth_port'] = Kohana::$config->load('system.default.radius.auth_port');
+				$config['wifi-iface'][$interface->name]['acct_port'] = Kohana::$config->load('system.default.radius.acct_port');
+				$config['wifi-iface'][$interface->name]['key'] = $node->radiusSecret;
+				foreach(array('server', 'key') as $x)
 				{
 					$config['wifi-iface'][$interface->name]['auth_'.$x] = $config['wifi-iface'][$interface->name][$x];
 					$config['wifi-iface'][$interface->name]['acct_'.$x] = $config['wifi-iface'][$interface->name][$x];
