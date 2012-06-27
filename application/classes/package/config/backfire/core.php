@@ -192,12 +192,18 @@ class Package_Config_Backfire_Core extends Package_Config
 			'feature' => array(
 				'port_filter' => array(
 					'enabled' => 'false',
+					'list' => '80 443 3353 3653 10000 1723 5000 5000 22 389 636 406 143 220 993 110 995 21 465 587 3389 5900 1494 6667 6668 6669 7000 7001',
 				),
 				'layer7' => array(
 					'enabled' => 'false',
 				),
 				'IP_blacklist' => array(
 					'enabled' => 'false',
+					'list' => '4.3.3.2',
+				),
+				'Host_blacklist' => array(
+					'enabled' => 'false',
+					'list' => 'www.google.co.uk www.facebook.com',
 				),
 			)
 		);
