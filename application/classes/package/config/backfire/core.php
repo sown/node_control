@@ -294,6 +294,7 @@ class Package_Config_Backfire_Core extends Package_Config
 					'leasefile'     => '/var/state/dhcp.leases',
 					'domain'        => Kohana::$config->load('system.default.domain'),
 					'authoritative' => 1,
+					'addnhosts'	=> array('/tmp/sown-banned-hosts'),
 					# TODO we don't need this yet
 					#'dhcp_script'   => '/usr/sbin/dhcp_event',
 				),
