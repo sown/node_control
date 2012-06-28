@@ -134,6 +134,59 @@ class Model_NodeDeployment extends Model_Entity
 	 * @OneToMany(targetEntity="Model_NodeAdmin", mappedBy="nodeDeployment")
 	 */
 	protected $admins;
+	
+	public function __get($name)
+	{
+		switch($name)
+		{
+			case "bandwidth":
+				return $this->getBandwidth();
+			default:
+				if (property_exists($this, $name))
+				{
+					return $this->$name;
+				}
+				else
+				{
+					return parent::__get($name);
+				}
+		}
+	}
+	
+	public function __set($name, $value)
+	{
+		switch($name)
+		{
+			case "bandwidth":
+				parent::__throwReadOnlyException($name);
+			default:
+				if (property_exists($this, $name))
+				{
+					$this->$name = $value;
+				}
+				else
+				{
+					parent::__set($name, $value);
+				}
+		}
+	}
+
+	public function getBandwidth() 
+	{
+		$path = Kohana::$config->load('system.default.rrd_deployment_path'); 
+		if (substr($path,-1) != "/") 
+		{
+			$path .= "/";
+		}
+
+		$rrd_file = $path .  "deployment" . $this->id;
+		
+		/* TODO LINK THIS TO /src/www/radacct-tg/functions.php */
+
+		# return get_bandwidth_usage($rrd_file,30);
+
+		return 0;
+	}
 
 	public function toString()
 	{

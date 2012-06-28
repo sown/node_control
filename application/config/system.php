@@ -34,6 +34,7 @@ return array
 			'authorized_keys'	=>	'/srv/www/static_files/authorized_keys',
 			'passwd'		=>	'/srv/www/static_files/passwd',
 		),
+		'rrd_deployment_path'	=> '/srv/radacct-tg/nas-rrds/',
 		'routes'	=> '
 push "route 10.12.0.0 255.254.0.0"
 push "route 152.78.189.82 255.255.255.255"
