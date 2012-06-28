@@ -75,7 +75,16 @@ class Controller_Test_Config_Generic extends Controller
 
 	private function curl($os, $package, $version, $request_name, $keyfiles)
 	{
-		$url = "https://sown-auth2.ecs.soton.ac.uk/package/config/$os/$package/$version/$request_name";
+		if ('backfire' == $os || 'lucid' == $os)
+			$route = 'package_config_'.$os;
+		else
+			throw new Exception("Unsupported OS type");
+		
+		$url = 'http://localhost'.Route::url($route, array(
+				'package' => $package,
+				'version' => $version,
+				'request_name' => $request_name,
+			)/*, TRUE <- This gets the hostname/port from the request, but it doesn't work when port forwarding */);
 
 		$mac = "00:11:5b:e4:7e:cb";
 
@@ -95,7 +104,7 @@ class Controller_Test_Config_Generic extends Controller
 		$ret = curl_exec($ch);
 		if(!$ret)
 		{
-			echo "<h1>Error</h1>";
+			echo "<h1>CURL Error</h1>";
 			echo $url."</br>";
 			echo curl_error($ch);
 		}
