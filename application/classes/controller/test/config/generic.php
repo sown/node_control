@@ -6,7 +6,7 @@ class Controller_Test_Config_Generic extends Controller
 	{
 		if (!Auth::instance()->logged_in())
 		{
-			$this->request->redirect("http://sown-auth2.ecs.soton.ac.uk/?url=".urlencode($this->request->detect_uri()));
+			$this->request->redirect(Route::url('package_login').URL::query(array('url' => $this->request->url())));
 		}
 	}
 
