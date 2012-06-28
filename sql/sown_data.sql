@@ -48,7 +48,7 @@ CREATE TABLE `vpn_servers` (
 	`port_end`				int(5)							default NULL           											COMMENT '',
 	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
 	
-	PRIMARY KEY	 (`id`)
+	PRIMARY KEY	 (`id`),
 	KEY `server_id` (`server_id`),
 	CONSTRAINT `vpn_server_to_server`	FOREIGN KEY (`server_id`)	REFERENCES `servers` (`id`)	ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -129,7 +129,8 @@ CREATE TABLE `node_deployments` (
 	`firewall`				tinyint(1)						NOT NULL default '0'											COMMENT 'is the firewall enabled',
 	`advanced_firewall`		tinyint(1)						NOT NULL default '0'											COMMENT 'is the advanced firewall enabled',
 	`cap`					bigint(20)						NOT NULL default '0'											COMMENT 'bandwidth cap per month in MB',
-	`start_date`			timestamp						NOT NULL default CURRENT_TIMESTAMP							COMMENT 'start date of the deployment',
+-- 															TODO change to CURRENT_TIMESTAMP once mysql supports it
+	`start_date`			timestamp						NOT NULL default '0000-00-00 00:00:00'							COMMENT 'start date of the deployment',
 	`end_date`				timestamp						NOT NULL default '2037-12-31 23:59:59'							COMMENT 'end date of the deployment',
 	`range`					int(11)							NOT NULL default '20'											COMMENT 'range of the circle to draw on google maps',
 	`allowed_ports`			varchar(255)					default NULL													COMMENT 'DEPRECATED. DO NOT USE.',
@@ -149,7 +150,8 @@ CREATE TABLE `node_admins` (
 	`id`					int(11)							NOT NULL auto_increment											COMMENT 'admin id',
 	`user_id`				int(11)							NOT NULL														COMMENT 'link to users table in other database',
 	`node_deployment_id`	int(11)							NOT NULL														COMMENT 'id of the node deployment',
-	`start_date`			timestamp						NOT NULL default CURRENT_TIMESTAMP							COMMENT 'start date that the admin is admin of the node',
+-- 															TODO change to CURRENT_TIMESTAMP once mysql supports it
+	`start_date`			timestamp						NOT NULL default '0000-00-00 00:00:00'							COMMENT 'start date that the admin is admin of the node',
 	`end_date`				timestamp						NOT NULL default '2037-12-31 23:59:59'							COMMENT 'end date that the admin is admin of the node',
 	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
 
@@ -158,8 +160,9 @@ CREATE TABLE `node_admins` (
 	CONSTRAINT `admin_to_deployment`	FOREIGN KEY (`node_deployment_id`)	REFERENCES `node_deployments` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+SET FOREIGN_KEY_CHECKS=0;
 
-INSERT INTO `servers` (id,child,name,certificate_id,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6) VALUES (1,'vpn','sown-vpn.ecs.soton.ac.uk',6,'152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253');
+INSERT INTO `servers` (id,type,name,certificate_id,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6) VALUES (1,'vpn','sown-vpn.ecs.soton.ac.uk',6,'152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253');
 INSERT INTO `vpn_servers` (id,server_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (1,1,'10.13.112.0',17,'2001:630:d0:f780::',57,5000,5200);
 
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (1,'','',true);
@@ -209,5 +212,6 @@ INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewa
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (4,4,'Rome Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (5,5,'Lisbon Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
 
+SET FOREIGN_KEY_CHECKS=1;
 
 
