@@ -160,10 +160,6 @@ CREATE TABLE `node_admins` (
 	CONSTRAINT `admin_to_deployment`	FOREIGN KEY (`node_deployment_id`)	REFERENCES `node_deployments` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-SET FOREIGN_KEY_CHECKS=0;
-
-INSERT INTO `servers` (id,type,name,certificate_id,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6) VALUES (1,'vpn','sown-vpn.ecs.soton.ac.uk',6,'152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253');
-INSERT INTO `vpn_servers` (id,server_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (1,1,'10.13.112.0',17,'2001:630:d0:f780::',57,5000,5200);
 
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (1,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (2,'','',true);
@@ -171,6 +167,9 @@ INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (3,'','',t
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (4,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (5,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (6,'','',true);
+
+INSERT INTO `servers` (id,type,name,certificate_id,external_ipv4,internal_ipv4,external_ipv6,internal_ipv6) VALUES (1,'vpn','sown-vpn.ecs.soton.ac.uk',6,'152.78.189.83','10.13.0.253','2001:630:d0:f104::5032:253','2001:630:d0:f700::253');
+INSERT INTO `vpn_servers` (id,server_id,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr,port_start,port_end) VALUES (1,1,'10.13.112.0',17,'2001:630:d0:f780::',57,5000,5200);
 
 INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (1,1,5035,'udp','10.13.112.148',30,'2001:630:d0:f770::94',126);
 INSERT INTO `vpn_endpoints` (id,vpn_server_id,port,protocol,ipv4_addr,ipv4_addr_cidr,ipv6_addr,ipv6_addr_cidr) VALUES (2,1,5005,'udp','10.13.112.20',30,'2001:630:d0:f770::14',126);
@@ -211,7 +210,5 @@ INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewa
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (3,3,'Madrid Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (4,4,'Rome Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
 INSERT INTO `node_deployments` (id,node_id,name,is_development,is_private,firewall,advanced_firewall,cap,start_date,end_date,`range`,allowed_ports,type,url,longitude,latitude,address) VALUES (5,5,'Lisbon Avenue',1,0,0,0,0,'2011-12-13 17:06:28','2037-12-31 23:59:59',20,NULL,'home',NULL,'-1.07','50.9','');
-
-SET FOREIGN_KEY_CHECKS=1;
 
 
