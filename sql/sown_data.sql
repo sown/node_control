@@ -170,6 +170,17 @@ CREATE TABLE `node_admins` (
 	CONSTRAINT `admin_to_user`	FOREIGN KEY (`user_id`)	REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `devices` (
+	`id`					int(11)							NOT NULL auto_increment											COMMENT 'admin id',
+	`user_id`				int(11)							NOT NULL														COMMENT 'link to users table in other database',
+	`mac`					text				  	  		NOT NULL														COMMENT 'mac address of the device',
+	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
+
+	PRIMARY KEY	 (`id`),
+	KEY `device_to_user` (`user_id`),
+	CONSTRAINT `device_to_user`	FOREIGN KEY (`user_id`)	REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (1,'','',true);
 INSERT INTO `certificates` (id,public_key,private_key,current) VALUES (2,'','',true);
