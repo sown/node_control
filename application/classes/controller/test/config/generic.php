@@ -40,6 +40,13 @@ class Controller_Test_Config_Generic extends Controller
 			echo "<hr/>";
 			echo $server->toString()."<br/>";
 		}
+
+		$repository = Doctrine::em()->getRepository('Model_User');
+		foreach($repository->findAll() as $user)
+		{
+			echo "<hr/>";
+			echo $user->toString()."<br/>";
+		}
 	}
 
 	private function storeKeys($hostname, $os)

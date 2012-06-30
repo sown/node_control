@@ -15,11 +15,14 @@ use Doctrine\ORM\Mapping\JoinColumn;
 class Model_NodeAdmin extends Model_Entity
 {
 	/**
-	 * @var integer $userId
+	 * @var Model_User
 	 *
-	 * @Column(name="user_id", type="integer", nullable=false)
+	 * @ManyToOne(targetEntity="Model_User")
+	 * @JoinColumns({
+	 *   @JoinColumn(name="user_id", referencedColumnName="id")
+	 * })
 	 */
-	protected $userId;
+	protected $user;
 
 	/**
 	 * @var datetime $startDate
@@ -47,7 +50,7 @@ class Model_NodeAdmin extends Model_Entity
 
 	public function toString()
 	{
-		$str  = "NodeAdmin: {$this->id}, userId={$this->userId}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
+		$str  = "NodeAdmin: {$this->id}, user={$this->user->email}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
 		return $str;
 	}
 }

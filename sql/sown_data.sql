@@ -146,6 +146,14 @@ CREATE TABLE `node_deployments` (
 	CONSTRAINT `deployment_to_node`	FOREIGN KEY	(`node_id`)	REFERENCES `nodes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `users` (
+	`id`					int(11)							NOT NULL auto_increment											COMMENT 'user id',
+	`email`					varchar(255)					NOT NULL													COMMENT 'email address',
+	`is_system_admin`			tinyint(1)						NOT NULL														COMMENT 'is the user a system level admin',
+	`last_modified`			timestamp						NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP	COMMENT 'time the row was last modified',
+	PRIMARY KEY	 (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE `node_admins` (
 	`id`					int(11)							NOT NULL auto_increment											COMMENT 'admin id',
 	`user_id`				int(11)							NOT NULL														COMMENT 'link to users table in other database',
@@ -157,7 +165,9 @@ CREATE TABLE `node_admins` (
 
 	PRIMARY KEY	 (`id`),
 	KEY `admin_to_deployment` (`node_deployment_id`),
-	CONSTRAINT `admin_to_deployment`	FOREIGN KEY (`node_deployment_id`)	REFERENCES `node_deployments` (`id`)
+	CONSTRAINT `admin_to_deployment`	FOREIGN KEY (`node_deployment_id`)	REFERENCES `node_deployments` (`id`),
+	KEY `admin_to_user` (`user_id`),
+	CONSTRAINT `admin_to_user`	FOREIGN KEY (`user_id`)	REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
