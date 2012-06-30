@@ -79,6 +79,8 @@ class Model_VpnServer extends Model_Server
 	public function toString()
 	{
 		$str  = "VpnServer: {$this->id}, name={$this->name}, externalIPv4={$this->externalIPv4}, internalIPv4={$this->internalIPv4}, IPv4={$this->IPv4}, externalIPv6={$this->externalIPv6}, internalIPv6={$this->internalIPv6}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}";
+		$str .= "<br/>";
+		$str .= "certificate={$this->certificate->toString()}";
 		return $str;
 	}
 }
