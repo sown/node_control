@@ -24,7 +24,7 @@ sudo /etc/init.d/mysql restart
 cd /srv/www
 sudo git clone https://github.com/Flynsarmy/KODoctrine2.git
 sudo ln -s /srv/www/KODoctrine2/modules/doctrine2/ /usr/share/php/kohana3.2/modules/doctrine2
-sudo git clone https://github.com/leth/PHP-IPAddress.git
+sudo git clone -b 3.2/master https://github.com/leth/PHP-IPAddress.git
 sudo ln -s /srv/www/PHP-IPAddress/ /usr/share/php/kohana3.2/modules/php-ipaddress
 
 cd /tmp
