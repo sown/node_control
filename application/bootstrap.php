@@ -156,11 +156,10 @@ Route::set('package_config_backfire', 'package/config/backfire/<package>/<versio
 		'action'     => 'default',
 	));
 
-Route::set('package_config_lucid', 'package/<hostname>/lucid/<package>/<version>/<request_name>', array(
+Route::set('package_config_lucid', 'package/config/lucid/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
 		'request_name' => '[A-Za-z0-9_]+',
-		'hostname'	=> '[A-Za-z0-9_.-]+',
 	))
 	->defaults(array(
 		'directory'  => 'package/config',
