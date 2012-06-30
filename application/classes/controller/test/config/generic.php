@@ -80,7 +80,7 @@ class Controller_Test_Config_Generic extends Controller
 		else
 			throw new Exception("Unsupported OS type");
 		
-		$url = 'http://localhost'.Route::url($route, array(
+		$url = 'https://localhost'.Route::url($route, array(
 				'package' => $package,
 				'version' => $version,
 				'request_name' => $request_name,
