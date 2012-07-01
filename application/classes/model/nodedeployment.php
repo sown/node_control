@@ -141,6 +141,10 @@ class Model_NodeDeployment extends Model_Entity
 		{
 			case "bandwidth":
 				return $this->getBandwidth();
+			case "privilegedDevices":
+				return $this->getPrivilegedDevices();
+			case "privilegedUsers":
+				return $this->getPrivilegedUsers();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -158,6 +162,8 @@ class Model_NodeDeployment extends Model_Entity
 		switch($name)
 		{
 			case "bandwidth":
+			case "privilegedDevices":
+			case "privilegedUsers":
 				parent::__throwReadOnlyException($name);
 			default:
 				if (property_exists($this, $name))
@@ -188,6 +194,29 @@ class Model_NodeDeployment extends Model_Entity
 		return 0;
 	}
 
+	public function getPrivilegedUsers()
+	{
+		$users = array();
+		foreach($this->admins as $admin)
+		{
+			$users[] = $admin->user;
+		}
+		return $users;
+	}
+
+	public function getPrivilegedDevices()
+	{
+		$devices = array();
+		foreach($this->privilegedUsers as $user)
+		{
+			foreach($user->devices as $device)
+			{
+				$devices[] = $device;
+			}
+		}
+		return $devices;
+	}
+
 	public function toString()
 	{
 		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}";
@@ -195,6 +224,11 @@ class Model_NodeDeployment extends Model_Entity
 		{
 			$str .= "<br/>";
 			$str .= "admin={$admin->toString()}";
+		}
+		foreach($this->privilegedDevices as $device)
+		{
+			$str .= "<br/>";
+			$str .= "privilegedDevice={$device->toString()}";
 		}
 		return $str;
 	}
