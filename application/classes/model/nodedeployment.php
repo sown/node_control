@@ -141,6 +141,8 @@ class Model_NodeDeployment extends Model_Entity
 		{
 			case "consumption":
 				return $this->getConsumption();
+			case "exceedsCap":
+				return $this->getExceedsCap();
 			case "privilegedDevices":
 				return $this->getPrivilegedDevices();
 			case "privilegedUsers":
@@ -162,6 +164,7 @@ class Model_NodeDeployment extends Model_Entity
 		switch($name)
 		{
 			case "consumption":
+			case "exceedsCap":
 			case "privilegedDevices":
 			case "privilegedUsers":
 				parent::__throwReadOnlyException($name);
@@ -194,6 +197,11 @@ class Model_NodeDeployment extends Model_Entity
 		return 0;
 	}
 
+	public function getExceedsCap()
+	{
+		return $this->cap > 0 && $this->consumption > $this->cap;
+	}
+
 	public function getPrivilegedUsers()
 	{
 		$users = array();
@@ -219,7 +227,7 @@ class Model_NodeDeployment extends Model_Entity
 
 	public function toString()
 	{
-		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}";
+		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
