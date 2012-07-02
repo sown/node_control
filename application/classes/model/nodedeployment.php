@@ -188,13 +188,11 @@ class Model_NodeDeployment extends Model_Entity
 			$path .= "/";
 		}
 
-		$rrd_file = $path .  "deployment" . $this->id;
+		$rrd_file = $path .  "deployment" . $this->id . ".rrd";
 		
-		/* TODO LINK THIS TO /src/www/radacct-tg/functions.php */
+		require_once '/srv/radacct-tg/www/functions.php';
 
-		# return get_bandwidth_usage($rrd_file,30);
-
-		return 0;
+		return get_bandwidth_usage($rrd_file,30)/1024/1024;
 	}
 
 	public function getExceedsCap()
