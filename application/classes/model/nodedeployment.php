@@ -139,8 +139,8 @@ class Model_NodeDeployment extends Model_Entity
 	{
 		switch($name)
 		{
-			case "bandwidth":
-				return $this->getBandwidth();
+			case "consumption":
+				return $this->getConsumption();
 			case "privilegedDevices":
 				return $this->getPrivilegedDevices();
 			case "privilegedUsers":
@@ -161,7 +161,7 @@ class Model_NodeDeployment extends Model_Entity
 	{
 		switch($name)
 		{
-			case "bandwidth":
+			case "consumption":
 			case "privilegedDevices":
 			case "privilegedUsers":
 				parent::__throwReadOnlyException($name);
@@ -177,7 +177,7 @@ class Model_NodeDeployment extends Model_Entity
 		}
 	}
 
-	public function getBandwidth() 
+	public function getConsumption() 
 	{
 		$path = Kohana::$config->load('system.default.rrd_deployment_path'); 
 		if (substr($path,-1) != "/") 
@@ -219,7 +219,7 @@ class Model_NodeDeployment extends Model_Entity
 
 	public function toString()
 	{
-		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}";
+		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
