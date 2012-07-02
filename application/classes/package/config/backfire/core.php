@@ -54,12 +54,6 @@ class Package_Config_Backfire_Core extends Package_Config
 				'method' => 'config_dhcp_v0_1_78'
 			),
 		),
-		'uci_config_softflowd' => array(
-			array(
-				'>=' => '0.1.78',
-				'method' => 'config_softflowd_v0_1_78'
-			),
-		),
 	);
 
 	public static function credentials_v0_1_78(Model_Node $node, $version)
@@ -324,43 +318,5 @@ class Package_Config_Backfire_Core extends Package_Config
 		}
 
 		static::send_uci_config('dhcp', $config, $mod);
-	}
-
-	public static function config_softflowd_v0_1_78(Model_Node $node)
-	{
-		$mod[] = __FILE__;
-		$mod[] = $node;
-		$mod[] = $node->vpnEndpoint;
-		$mod[] = Kohana::$config->load('system.default.filename');
-
-		$ifaces = $node->interfaces;
-		foreach($ifaces as $iface)
-		{
-			if(!$iface->offerDhcp)
-				continue;
-			$config = array(
-				'softflowd' => array(
-					// TODO create one of these for each interface which offers dhcp.
-					array(
-						'interface' => $iface->name,
-						// 'pcap_file' => '',
-						// 'timeout' => '',
-						'max_flows' => 8192,
-						// TODO this port number is a bit random.
-						'host_port' => Kohana::$config->load('system.default.softflow.host').':'.$node->vpnEndpoint->port,
-						'pid_file' => '/var/run/softflowd.pid',
-						'control_socket' => '/var/run/softflowd.ctl',
-						'export_version' => 5,
-						// 'hoplimit' => '',
-						'tracking_level' => 'full',
-						'track_ipv6' => 1,
-						'enabled' => 1,
-					)
-				),
-			);
-			$mod[] = $iface;
-		}
-		
-		static::send_uci_config('softflowd', $config, $mod);
 	}
 }
