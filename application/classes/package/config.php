@@ -31,7 +31,9 @@ abstract class Package_Config
 		$r->check_cache('"'.$hash.'"', $req);
 
 		// check if the client sent an 'if-modified-since' header
-		if ($since = strtotime($req->headers('if-modified-since')))
+		$since = strtotime($req->headers('If-Modified-Since'));
+
+		if($since !== FALSE)
 		{
 			if ($since >= $last_mod)
 			{
