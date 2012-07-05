@@ -234,10 +234,16 @@ class Package_Config_Backfire_Core extends Package_Config
 						'macaddr' => $interface->networkAdapter->mac,
 					),
 				);
+
+			if($node->currentDeployment->exceedsCap)
+			{
+				$config['wifi-device'][$dev_name]['disabled'] = 1;
+			}
 			// Also optional 'hwmode' which can be set to '11g',
 			// we can use the database 'type' field here
 
 			$mod[] = $interface;
+			$mod[] = $node->currentDeployment;
 			$mod[] = $interface->networkAdapter;
 			$count++;
 		}
