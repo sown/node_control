@@ -25,7 +25,7 @@ abstract class Model_Entity
 		if (property_exists($this, $name))
 			return $this->$name;
 		else
-			throw new OutOfBoundsException('Class '.get_class($this).' does not have the property \''.$name.'\'.');
+			throw new OutOfBoundsException('Class \''.get_class($this).'\' does not have the property \''.$name.'\'.');
 	}
 	
 	public function __set($name, $value)
