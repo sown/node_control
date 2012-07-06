@@ -223,7 +223,9 @@ abstract class Package_Config
 	private static function get_last_modified($mod)
 	{
 		if ($mod === NULL)
+		{
 			$last_mod = time();
+		}
 		else if (is_array($mod))
 		{
 			$last_mod = 0;
@@ -236,7 +238,9 @@ abstract class Package_Config
 			}
 		}
 		else
+		{
 			$last_mod = $mod;
+		}
 		return $last_mod;
 	}
 }
