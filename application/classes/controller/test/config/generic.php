@@ -31,21 +31,21 @@ class Controller_Test_Config_Generic extends Controller
 		foreach($repository->findAll() as $node)
 		{
 			echo "<hr/>";
-			echo $node->toString()."<br/>";
+			echo $node."<br/>";
 		}
 
 		$repository = Doctrine::em()->getRepository('Model_Server');
 		foreach($repository->findAll() as $server)
 		{
 			echo "<hr/>";
-			echo $server->toString()."<br/>";
+			echo $server."<br/>";
 		}
 
 		$repository = Doctrine::em()->getRepository('Model_User');
 		foreach($repository->findAll() as $user)
 		{
 			echo "<hr/>";
-			echo $user->toString()."<br/>";
+			echo $user."<br/>";
 		}
 	}
 
