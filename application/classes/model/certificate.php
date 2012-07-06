@@ -87,7 +87,7 @@ class Model_Certificate extends Model_Entity
 		return $data['subject']['CN'];
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$this->logUse();
 		$str  = "Certificate: {$this->id}, cn={$this->cn}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";

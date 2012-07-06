@@ -87,12 +87,12 @@ class Model_Server extends Model_Entity
 		return Doctrine::em()->getRepository('Model_Server')->findOneByName($name);
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$this->logUse();
 		$str  = "Server: {$this->id}, name={$this->name}, externalIPv4={$this->externalIPv4}, internalIPv4={$this->internalIPv4}, externalIPv6={$this->externalIPv6}, internalIPv6={$this->internalIPv6}";
 		$str .= "<br/>";
-		$str .= "certificate={$this->certificate->toString()}";
+		$str .= "certificate={$this->certificate}";
 		return $str;
 	}
 }

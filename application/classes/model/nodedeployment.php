@@ -224,19 +224,19 @@ class Model_NodeDeployment extends Model_Entity
 		return $devices;
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$this->logUse();
 		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
-			$str .= "admin={$admin->toString()}";
+			$str .= "admin={$admin}";
 		}
 		foreach($this->privilegedDevices as $device)
 		{
 			$str .= "<br/>";
-			$str .= "privilegedDevice={$device->toString()}";
+			$str .= "privilegedDevice={$device}";
 		}
 		return $str;
 	}

@@ -200,28 +200,28 @@ class Model_Node extends Model_Entity
 		}
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$this->logUse();
 		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}, notes={$this->notes}";
 		$str .= "<br/>";
-		$str .= "certificate={$this->certificate->toString()}";
+		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
-		$str .= "vpnEndpoint={$this->vpnEndpoint->toString()}";
+		$str .= "vpnEndpoint={$this->vpnEndpoint}";
 		foreach($this->interfaces as $interface)
 		{
 			$str .= "<br/>";
-			$str .= "interface={$interface->toString()}";
+			$str .= "interface={$interface}";
 		}
 		if($this->currentDeployment != null)
 		{
 			$str .= "<br/>";
-			$str .= "currentDeployment={$this->currentDeployment->toString()}";
+			$str .= "currentDeployment={$this->currentDeployment}";
 		}
 		foreach($this->deployments as $deployment)
 		{
 			$str .= "<br/>";
-			$str .= "deployment={$deployment->toString()}";
+			$str .= "deployment={$deployment}";
 		}
 		return $str;
 	}

@@ -88,12 +88,12 @@ class Model_VpnEndpoint extends Model_Entity
 		}
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$this->logUse();
 		$str  = "VpnEndpoint: {$this->id}, port={$this->port}, protocol={$this->protocol}, IPv4={$this->IPv4}, IPv6={$this->IPv6}";
 		$str .= "<br/>";
-		$str .= "vpnServer={$this->vpnServer->toString()}";
+		$str .= "vpnServer={$this->vpnServer}";
 		return $str;
 	}
 }

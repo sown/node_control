@@ -69,7 +69,7 @@ class Model_Device extends Model_Entity
 		}
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$this->logUse();
 		$str  = "Device: {$this->id}, mac={$this->mac}";

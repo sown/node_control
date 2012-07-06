@@ -76,19 +76,19 @@ class Model_User extends Model_Entity
 		}
 	}
 
-	public function toString()
+	public function __toString()
 	{
 		$this->logUse();
 		$str  = "User: {$this->id}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
-			$str .= "admin={$admin->toString()}";
+			$str .= "admin={$admin}";
 		}
 		foreach($this->devices as $device)
 		{
 			$str .= "<br/>";
-			$str .= "device={$device->toString()}";
+			$str .= "device={$device}";
 		}
 		return $str;
 	}
