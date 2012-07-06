@@ -241,6 +241,10 @@ abstract class Package_Config
 		{
 			$last_mod = $mod;
 		}
+		foreach(Model_Entity::get_entities() as $m)
+		{
+			$last_mod = max($last_mod, $m->lastModified->getTimestamp());
+		}
 		return $last_mod;
 	}
 }
