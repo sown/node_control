@@ -16,9 +16,12 @@ abstract class Model_Entity
 	
 	/** @Column(name="last_modified", type="datetime") */
 	protected $lastModified;
+
+	private static $entities = array();
 	
 	public function __get($name)
 	{
+		$this->logUse();
 		if (property_exists($this, $name))
 			return $this->$name;
 		else
@@ -40,11 +43,32 @@ abstract class Model_Entity
 
 	public function __toString()
 	{
+		$this->logUse();
 		$name = "";
 		try {
 			$name = ' name:'.$this->name;
 		} catch (OutOfBoundsException $ex) {
 		}
 		return '['.get_class($this).' id:'.var_export($this->id,TRUE).$name.']';
+	}
+
+	public function logUse()
+	{
+		Model_Entity::add_entity($this);
+	}
+
+	public static function add_entity($entity)
+	{
+		Model_Entity::$entities[] = $entity;
+	}
+
+	public static function reset_entities()
+	{
+		Model_Entity::$entities = array();
+	}
+
+	public static function get_entities()
+	{
+		return Model_Entity::$entities;
 	}
 }

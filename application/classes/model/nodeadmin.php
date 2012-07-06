@@ -50,6 +50,7 @@ class Model_NodeAdmin extends Model_Entity
 
 	public function toString()
 	{
+		$this->logUse();
 		$str  = "NodeAdmin: {$this->id}, user={$this->user->email}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
 		return $str;
 	}

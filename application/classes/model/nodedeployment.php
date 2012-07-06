@@ -137,6 +137,7 @@ class Model_NodeDeployment extends Model_Entity
 	
 	public function __get($name)
 	{
+		$this->logUse();
 		switch($name)
 		{
 			case "consumption":
@@ -225,6 +226,7 @@ class Model_NodeDeployment extends Model_Entity
 
 	public function toString()
 	{
+		$this->logUse();
 		$str  = "NodeDeployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
 		foreach($this->admins as $admin)
 		{

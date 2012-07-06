@@ -34,6 +34,7 @@ class Model_Device extends Model_Entity
 
 	public function __get($name)
 	{
+		$this->logUse();
 		switch($name)
 		{
 //			case "bandwidth":
@@ -70,6 +71,7 @@ class Model_Device extends Model_Entity
 
 	public function toString()
 	{
+		$this->logUse();
 		$str  = "Device: {$this->id}, mac={$this->mac}";
 		return $str;
 	}

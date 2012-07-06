@@ -68,6 +68,7 @@ class Model_Node extends Model_Entity
 
 	public function __get($name)
 	{
+		$this->logUse();
 		switch($name)
 		{
 			case "FQDN":
@@ -201,6 +202,7 @@ class Model_Node extends Model_Entity
 
 	public function toString()
 	{
+		$this->logUse();
 		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}, notes={$this->notes}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate->toString()}";

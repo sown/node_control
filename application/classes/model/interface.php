@@ -99,6 +99,7 @@ class Model_Interface extends Model_Entity
 
 	public function __get($name)
 	{
+		$this->logUse();
 		switch($name)
 		{
 			case "mode":
@@ -161,6 +162,7 @@ class Model_Interface extends Model_Entity
 
 	public function toString()
 	{
+		$this->logUse();
 		$str  = "Interface: {$this->id}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, name={$this->name}, ssid={$this->ssid}, type={$this->type}, offerDhcp={$this->offerDhcp}, is1x={$this->is1x}";
 		$str .= "<br/>";
 		$str .= "networkAdapter={$this->networkAdapter->toString()}";

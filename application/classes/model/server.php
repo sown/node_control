@@ -67,6 +67,7 @@ class Model_Server extends Model_Entity
 
 	public function __get($name)
 	{
+		$this->logUse();
 		switch($name)
 		{
 			default:
@@ -88,6 +89,7 @@ class Model_Server extends Model_Entity
 
 	public function toString()
 	{
+		$this->logUse();
 		$str  = "Server: {$this->id}, name={$this->name}, externalIPv4={$this->externalIPv4}, internalIPv4={$this->internalIPv4}, externalIPv6={$this->externalIPv6}, internalIPv6={$this->internalIPv6}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate->toString()}";

@@ -35,6 +35,7 @@ class Model_Certificate extends Model_Entity
 
 	public function __get($name)
 	{
+		$this->logUse();
 		switch($name)
 		{
 			case "publicKeyFingerprint":
@@ -88,6 +89,7 @@ class Model_Certificate extends Model_Entity
 
 	public function toString()
 	{
+		$this->logUse();
 		$str  = "Certificate: {$this->id}, cn={$this->cn}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
 		return $str;
 	}
