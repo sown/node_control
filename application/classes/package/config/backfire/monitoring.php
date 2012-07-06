@@ -48,7 +48,6 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 	public static function snmpd_v0_1_78(Model_Node $node)
 	{
 		$mod[] = __FILE__;
-		$mod[] = $node;
 		$mod[] = Kohana::$config->load('system.default.filename');
 
 		$node_location = '';
@@ -177,8 +176,6 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 	public static function config_softflowd_v0_1_78(Model_Node $node)
 	{
 		$mod[] = __FILE__;
-		$mod[] = $node;
-		$mod[] = $node->vpnEndpoint;
 		$mod[] = Kohana::$config->load('system.default.filename');
 
 		$ifaces = $node->interfaces;
@@ -206,7 +203,6 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 					)
 				),
 			);
-			$mod[] = $iface;
 		}
 		
 		static::send_uci_config('softflowd', $config, $mod);

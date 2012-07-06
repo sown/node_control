@@ -60,7 +60,6 @@ class Package_Config_Backfire_Core extends Package_Config
 	{
 		$static_files = Kohana::$config->load('system.default.static_files');
 		
-		$mod[] = $node->certificate;
 		$mod[] = $static_files['authorized_keys'];
 		$mod[] = $static_files['passwd'];
 		
@@ -82,7 +81,6 @@ class Package_Config_Backfire_Core extends Package_Config
 	public static function config_system_v0_1_78(Model_Node $node)
 	{
 		$mod[] = __FILE__;
-		$mod[] = $node;
 
 		$config = array(
 			'system' => array(
@@ -106,7 +104,6 @@ class Package_Config_Backfire_Core extends Package_Config
 	public static function config_sown_core_v0_1_78(Model_Node $node)
 	{
 		$mod[] = __FILE__;
-		$mod[] = $node;
 		$mod[] = Kohana::$config->load('system.default.filename');
 
 		$config = array(
@@ -172,8 +169,6 @@ class Package_Config_Backfire_Core extends Package_Config
 			}
 			
 			$config['interface'][$iface->name] = $iface_config;
-			
-			$mod[] = $iface;
 		}
 		
 		static::send_uci_config('network', $config, $mod);
@@ -242,9 +237,6 @@ class Package_Config_Backfire_Core extends Package_Config
 			// Also optional 'hwmode' which can be set to '11g',
 			// we can use the database 'type' field here
 
-			$mod[] = $interface;
-			$mod[] = $node->currentDeployment;
-			$mod[] = $interface->networkAdapter;
 			$count++;
 		}
 		
@@ -275,8 +267,6 @@ class Package_Config_Backfire_Core extends Package_Config
 				$config['wifi-iface'][$interface->name]['acct_key'] = $config['wifi-iface'][$interface->name]['key'];
 				$config['wifi-iface'][$interface->name]['nasid'] = $node->FQDN;
 			}
-			$mod[] = $interface;
-			$mod[] = $interface->networkAdapter;
 		}
 		
 		static::send_uci_config('wireless', $config, $mod);
@@ -320,7 +310,6 @@ class Package_Config_Backfire_Core extends Package_Config
 			}
 			
 			$config['dhcp'][$iface->name] = $if_config;
-			$mod[] = $iface;
 		}
 
 		static::send_uci_config('dhcp', $config, $mod);
