@@ -30,7 +30,7 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 				$fn =  __function__;
 				$files = array_merge($files, static::$fn($node));
 			}
-			static::send_tgz($files, $mod);
+			static::send_tgz($files, array());
 		}
 		$ep = $node->vpnEndpoint;
 		$dns_host = Kohana::$config->load('system.default.dns.host');
@@ -118,7 +118,7 @@ EOB;
 				$fn =  __function__;
 				$files = array_merge($files, static::$fn($node));
 			}
-			static::send_tgz($files, $mod);
+			static::send_tgz($files, array());
 		}
 
 		$confconnect = "#!/bin/bash\n\n";
