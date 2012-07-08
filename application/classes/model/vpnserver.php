@@ -85,4 +85,40 @@ class Model_VpnServer extends Model_Server
 		$str .= "certificate={$this->certificate}";
 		return $str;
 	}
+
+	public function getFreeAddr($cidr)
+	{
+		foreach(array('Model_Interface', 'Model_VpnEndpoint') as $class)
+		{
+			$repository = Doctrine::em()->getRepository($class);
+			foreach($repository->findAll() as $entity)
+			{
+				if($entity->IPv4 != "")
+				{
+					$usedspace[] = $entity->IPv4;
+				}
+			}
+		}
+
+		$candidate = IP_Network_Address::factory($this->IPv4->get_network_start(), $cidr);
+		while($this->IPv4->encloses_subnet($candidate))
+		{
+			$free = true;
+			foreach($usedspace as $used)
+			{
+				if($used->shares_subnet_space($candidate))
+				{
+					$free = false;
+					break;
+				}
+			}
+			if($free)
+			{
+				return $candidate;
+			}
+			
+			$candidate = IP_Network_Address::factory($candidate->get_network_end()->add(1), $cidr);
+		}
+		return null;
+	}
 }
