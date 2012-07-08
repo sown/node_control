@@ -284,8 +284,8 @@ class Package_Config_Backfire_Core extends Package_Config
 					'domain'        => Kohana::$config->load('system.default.domain'),
 					'authoritative' => 1,
 					'addnhosts'	=> array('/tmp/sown-banned-hosts'),
-					# TODO we don't need this yet
-					#'dhcp_script'   => '/usr/sbin/dhcp_event',
+					 # the default version reports data to syslog
+					'dhcp_script'   => '/usr/sbin/dhcp_event',
 				),
 			),
 		);
