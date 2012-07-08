@@ -31,5 +31,20 @@ return array
 		'charset'      => 'utf8',
 		'caching'      => FALSE,
 		'profiling'    => Kohana::$environment !== Kohana::PRODUCTION,
-	)
+	),
+	'radius' => array
+	(
+		'type'       => 'mysql',
+		'connection' => array(
+			'hostname'   => 'localhost',
+			'username'   => 'sown',
+			'password'   => 'password',
+			// 'persistent' => FALSE,
+			'database'   => 'radius',
+		),
+		'table_prefix' => '',
+		'charset'      => 'utf8',
+		'caching'      => FALSE,
+		'profiling'    => Kohana::$environment !== Kohana::PRODUCTION,
+	),
 );
