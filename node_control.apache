@@ -44,6 +44,11 @@
 	SSLVerifyClient require
     </Location>
 
+    <Location /status>
+	SSLCACertificatePath /etc/apache2/ssl/
+	SSLVerifyClient require
+    </Location>
+
 
     SSLProtocol -all +TLSv1 +SSLv3
     SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
