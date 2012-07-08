@@ -146,22 +146,18 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 			),
 			'exec'   => array(
 				array(
-					'execname'=> 'hostap_check',
+					'name'=> 'hostap_check',
 					'miboid'  => $sown_oid .'.1',
 					'prog' => '/usr/bin/hostap_check',
 				),
-				array(
-					'execname' => 'boot_time',
-					'miboid'  => $sown_oid .'.2',
-					'prog' =>'/usr/bin/booted_check',
-				),
 			),
-			'pass' => array(
-				array(
-					'miboid'  => $sown_oid .'.3',
-					'prog' =>'/usr/bin/snmp-in',
-				),
-			),
+			# morse 4/7/2012 - anyone know what this is for?
+			#'pass' => array(
+			#	array(
+			#		'miboid'  => $sown_oid .'.3',
+			#		'prog' =>'/usr/bin/snmp-in',
+			#	),
+			#),
 			'disk' => array(
 				array(
 					'path' => 'includeAllDisks',
