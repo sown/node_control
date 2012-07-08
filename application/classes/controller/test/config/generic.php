@@ -14,13 +14,14 @@ class Controller_Test_Config_Generic extends Controller
 	{
 		$this->check_login();
 		$os           = $this->request->param('os');
+		$type         = $this->request->param('type');
 		$package      = $this->request->param('package');
 		$version      = $this->request->param('version');
 		$request_name = $this->request->param('request_name');
 		$hostname     = $this->request->param('hostname');
 
 		$keyfiles = $this->storeKeys($hostname, $os);
-		$this->curl($os, $package, $version, $request_name, $keyfiles);
+		$this->curl($type, $os, $package, $version, $request_name, $keyfiles, $hostname);
 		$this->removeKeys($keyfiles);
 	}
 
@@ -80,18 +81,34 @@ class Controller_Test_Config_Generic extends Controller
 		}
 	}
 
-	private function curl($os, $package, $version, $request_name, $keyfiles)
+	private function curl($type, $os, $package, $version, $request_name, $keyfiles, $hostname)
 	{
-		if ('backfire' == $os || 'lucid' == $os)
-			$route = 'package_config_'.$os;
+		if ('config' == $type)
+		{
+			if ('backfire' == $os || 'lucid' == $os)
+				$route = 'package_config_'.$os;
+			else
+				throw new Exception("Unsupported OS type");
+			$url = 'https://localhost'.Route::url($route, array(
+					'package' => $package,
+					'version' => $version,
+					'request_name' => $request_name,
+				)/*, TRUE <- This gets the hostname/port from the request, but it doesn't work when port forwarding */);
+		}
+		elseif ('status' == $type)
+		{
+			$route = 'package_status';
+			$url = 'https://localhost'.Route::url($route, array(
+					'request_name' => $request_name,
+					'hostname' => $hostname,
+					'os' => $os,
+			));
+		}
 		else
-			throw new Exception("Unsupported OS type");
+		{
+			throw new Exception("Unsupported type");
+		}
 		
-		$url = 'https://localhost'.Route::url($route, array(
-				'package' => $package,
-				'version' => $version,
-				'request_name' => $request_name,
-			)/*, TRUE <- This gets the hostname/port from the request, but it doesn't work when port forwarding */);
 
 		$mac = "00:11:5b:e4:7e:cb";
 
@@ -114,6 +131,7 @@ class Controller_Test_Config_Generic extends Controller
 			echo "<h1>CURL Error</h1>";
 			echo $url."</br>";
 			echo curl_error($ch);
+			print_r(curl_getinfo($ch));
 		}
 		else
 		{

@@ -167,7 +167,7 @@ Route::set('package_config_lucid', 'package/config/lucid/<package>/<version>/<re
 		'action'     => 'default',
 	));
 	
-Route::set('package_test', 'test/<hostname>/<os>/<package>/<version>/<request_name>', array(
+Route::set('package_test_config', 'test/config/<hostname>/<os>/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
 		'request_name'  => '[A-Za-z0-9_]+',
@@ -176,6 +176,30 @@ Route::set('package_test', 'test/<hostname>/<os>/<package>/<version>/<request_na
 	))
 	->defaults(array(
 		'directory'  => 'test/config',
+		'controller' => 'generic',
+		'action'     => 'default',
+		'type'       => 'config',
+	));
+
+Route::set('package_test_status', 'test/status/<hostname>/<os>/<request_name>', array(
+		'request_name'  => '[A-Za-z0-9_]+',
+		'hostname'	=> '[A-Za-z0-9_.-]+',
+		'os'		=> '[A-Za-z0-9_]+',
+	))
+	->defaults(array(
+		'directory'  => 'test/config',
+		'controller' => 'generic',
+		'action'     => 'default',
+		'type'       => 'status',
+	));
+
+Route::set('package_status', 'status/<hostname>/<os>/<request_name>', array(
+		'request_name'  => '[A-Za-z0-9_]+',
+		'hostname'	=> '[A-Za-z0-9_.-]+',
+		'os'		=> '[A-Za-z0-9_]+',
+	))
+	->defaults(array(
+		'directory'  => 'status/config',
 		'controller' => 'generic',
 		'action'     => 'default',
 	));
