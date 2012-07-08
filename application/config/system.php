@@ -41,5 +41,24 @@ push "route 152.78.189.82 255.255.255.255"
 push "route 152.78.189.90 255.255.255.255"
 ',
 		'filename'	=> __FILE__,
+		'check'		=> array
+		(
+			'limit'		=> array
+			(
+				'RadiusDatabaseSize'	=> array
+				(
+					'default'	=> array
+					(
+						'warning'	=> 5000,
+						'critical'	=> 10000,
+					),
+					'radpostauth'	=> array
+					(
+						'warning'	=> 50000,
+						'critical'	=> 100000,
+					),
+				),
+			),
+		),
 	),
 );
