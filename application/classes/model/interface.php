@@ -131,6 +131,30 @@ class Model_Interface extends Model_Entity
 			case "mode":
 				$this->setMode($value);
 				break;
+			case "IPv4":
+				if($value == '')
+				{
+					$this->IPv4Addr = '';
+					$this->IPv4AddrCidr = '';
+				}
+				else
+				{
+					$this->IPv4Addr = $value->get_address();
+					$this->IPv4AddrCidr = $value->get_cidr();
+				}
+				break;
+			case "IPv6":
+				if($value == '')
+				{
+					$this->IPv6Addr = '';
+					$this->IPv6AddrCidr = '';
+				}
+				else
+				{
+					$this->IPv6Addr = $value->get_address();
+					$this->IPv6AddrCidr = $value->get_cidr();
+				}
+				break;
 			default:
 				if (property_exists($this, $name))
 				{

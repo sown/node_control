@@ -88,6 +88,46 @@ class Model_VpnEndpoint extends Model_Entity
 		}
 	}
 
+	public function __set($name, $value)
+	{
+		switch($name)
+		{
+			case "IPv4":
+				if($value == '')
+				{
+					$this->IPv4Addr = '';
+					$this->IPv4AddrCidr = '';
+				}
+				else
+				{
+					$this->IPv4Addr = $value->get_address();
+					$this->IPv4AddrCidr = $value->get_cidr();
+				}
+				break;
+			case "IPv6":
+				if($value == '')
+				{
+					$this->IPv6Addr = '';
+					$this->IPv6AddrCidr = '';
+				}
+				else
+				{
+					$this->IPv6Addr = $value->get_address();
+					$this->IPv6AddrCidr = $value->get_cidr();
+				}
+				break;
+			default:
+				if (property_exists($this, $name))
+				{
+					$this->$name = $value;
+				}
+				else
+				{
+					parent::__set($name, $value);
+				}
+		}
+	}
+
 	public function __toString()
 	{
 		$this->logUse();
