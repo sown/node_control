@@ -17,6 +17,7 @@ class Model_Type_IPv6Address extends Type
 
 	public function convertToDatabaseValue($value, AbstractPlatform $platform)
 	{
+		if($value == '') return "";
 		$ipv6address = IPv6_Address::factory($value);
 		return $value;
 	}
