@@ -77,4 +77,10 @@ abstract class Model_Entity
 		Doctrine::em()->persist($this);
 		Doctrine::em()->flush();
 	}
+
+	public function delete()
+	{
+		Doctrine::em()->remove($this);
+		Doctrine::em()->flush();
+	}
 }
