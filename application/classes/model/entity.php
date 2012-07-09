@@ -71,4 +71,10 @@ abstract class Model_Entity
 	{
 		return Model_Entity::$entities;
 	}
+
+	public function save()
+	{
+		Doctrine::em()->persist($this);
+		Doctrine::em()->flush();
+	}
 }
