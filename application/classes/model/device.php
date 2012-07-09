@@ -25,7 +25,7 @@ class Model_Device extends Model_Entity
 	/**
 	 * @var Model_User
 	 *
-	 * @ManyToOne(targetEntity="Model_User")
+	 * @ManyToOne(targetEntity="Model_User", cascade={"persist"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="user_id", referencedColumnName="id")
 	 * })

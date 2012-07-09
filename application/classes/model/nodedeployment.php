@@ -123,7 +123,7 @@ class Model_NodeDeployment extends Model_Entity
 	/**
 	 * @var Model_Node
 	 *
-	 * @ManyToOne(targetEntity="Model_Node")
+	 * @ManyToOne(targetEntity="Model_Node", cascade={"persist"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="node_id", referencedColumnName="id")
 	 * })

@@ -39,7 +39,7 @@ class Model_Node extends Model_Entity
 	/**
 	 * @var Model_Certificate
 	 *
-	 * @ManyToOne(targetEntity="Model_Certificate")
+	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="certificate_id", referencedColumnName="id")
 	 * })
@@ -49,7 +49,7 @@ class Model_Node extends Model_Entity
 	/**
 	 * @var Model_VpnEndpoint
 	 *
-	 * @ManyToOne(targetEntity="Model_VpnEndpoint")
+	 * @ManyToOne(targetEntity="Model_VpnEndpoint", cascade={"persist"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="vpn_endpoint_id", referencedColumnName="id")
 	 * })
