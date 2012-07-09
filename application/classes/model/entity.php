@@ -18,6 +18,10 @@ abstract class Model_Entity
 	protected $lastModified;
 
 	private static $entities = array();
+
+	public function __construct()
+	{
+	}
 	
 	public function __get($name)
 	{

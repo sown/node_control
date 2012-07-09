@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Model_Node
  *
@@ -65,6 +66,13 @@ class Model_Node extends Model_Entity
 	 * @OneToMany(targetEntity="Model_Interface", mappedBy="node", cascade={"persist", "remove"})
 	 */
 	protected $interfaces;
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->deployments = new ArrayCollection();
+		$this->interfaces = new ArrayCollection();
+	}
 
 	public function __get($name)
 	{
