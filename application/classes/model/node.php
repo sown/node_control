@@ -255,4 +255,24 @@ class Model_Node extends Model_Entity
 		$obj->vpnEndpoint = $vpnEndpoint;
 		return $obj;
 	}
+
+	public function save()
+	{
+		parent::save();
+		foreach($this->interfaces as $interface)
+		{
+			$interface->save();
+		}
+	}
+
+	public function delete()
+	{
+		foreach($this->interfaces as $interface)
+		{
+			$networkAdapter = $interface->networkAdapter;
+			$interface->delete();
+			$networkAdapter->delete();
+		}
+		parent::delete();
+	}
 }
