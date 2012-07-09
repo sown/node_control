@@ -96,4 +96,15 @@ class Model_VpnEndpoint extends Model_Entity
 		$str .= "vpnServer={$this->vpnServer}";
 		return $str;
 	}
+
+	public static function build($port, $protocol, $ipv4, $ipv6, $vpnServer)
+	{
+		$obj = new Model_VpnEndpoint();
+		$obj->port = $port;
+		$obj->protocol = $protocol;
+		$obj->IPv4 = $ipv4;
+		$obj->IPv6 = $ipv6;
+		$obj->vpnServer = $vpnServer;
+		return $obj;
+	}
 }

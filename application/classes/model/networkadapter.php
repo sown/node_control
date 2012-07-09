@@ -51,4 +51,14 @@ class Model_NetworkAdapter extends Model_Entity
 		$str  = "NetworkAdapter: {$this->id}, mac={$this->mac}, wirelessChannel={$this->wirelessChannel}, type={$this->type}";
 		return $str;
 	}
+
+	public static function build($mac, $wirelessChannel, $type, $node)
+	{
+		$obj = new Model_NetworkAdapter();
+		$obj->mac = $mac;
+		$obj->wirelessChannel = $wirelessChannel;
+		$obj->type = $type;
+		$obj->node = $node;
+		return $obj;
+	}
 }

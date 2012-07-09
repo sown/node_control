@@ -168,4 +168,19 @@ class Model_Interface extends Model_Entity
 		$str .= "networkAdapter={$this->networkAdapter}";
 		return $str;
 	}
+
+	public static function build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $networkAdapter, $node)
+	{
+		$obj = new Model_Interface();
+		$obj->IPv4 = $ipv4;
+		$obj->IPv6 = $ipv6;
+		$obj->name = $name;
+		$obj->ssid = $ssid;
+		$obj->type = $type;
+		$obj->offerDhcp = $offerDhcp;
+		$obj->is1x = $is1x;
+		$obj->networkAdapter = $networkAdapter;
+		$obj->node = $node;
+		return $obj;
+	}
 }

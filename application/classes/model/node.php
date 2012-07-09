@@ -225,4 +225,15 @@ class Model_Node extends Model_Entity
 		}
 		return $str;
 	}
+
+	public static function build($boxNumber, $firmwareImage, $notes, $certificate, $vpnEndpoint)
+	{
+		$obj = new Model_Node();
+		$obj->boxNumber = $boxNumber;
+		$obj->firmwareImage = $firmwareImage;
+		$obj->notes = $notes;
+		$obj->certificate = $certificate;
+		$obj->vpnEndpoint = $vpnEndpoint;
+		return $obj;
+	}
 }

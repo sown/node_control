@@ -93,4 +93,11 @@ class Model_Certificate extends Model_Entity
 		$str  = "Certificate: {$this->id}, cn={$this->cn}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
 		return $str;
 	}
+
+	public static function build()
+	{
+		$obj = new Model_Certificate();
+		$obj->current = 1;
+		return $obj;
+	}
 }
