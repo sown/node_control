@@ -1,4 +1,4 @@
-<?
+<?php
 class Check_SocketConnected extends Check
 {
 	protected $file;
@@ -32,4 +32,3 @@ class Check_SocketConnected extends Check
 		$this->message = "Node not connected to " . $this->name;
 	}
 }
-?>

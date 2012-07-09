@@ -1,4 +1,4 @@
-<?
+<?php
 class Check_NodeExceedsCap extends Check
 {
 	public function Check_NodeExceedsCap($host)
@@ -27,4 +27,3 @@ class Check_NodeExceedsCap extends Check
 		}
 	}
 }
-?>

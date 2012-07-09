@@ -1,4 +1,4 @@
-<?
+<?php
 class Check_NfsenConnected extends Check_SocketConnected
 {
 	public function Check_NfsenConnected($host)
@@ -8,4 +8,3 @@ class Check_NfsenConnected extends Check_SocketConnected
 		parent::__construct($host);
 	}
 }
-?>

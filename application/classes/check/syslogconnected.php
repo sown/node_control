@@ -1,4 +1,4 @@
-<?
+<?php
 class Check_SyslogConnected extends Check_SocketConnected
 {
 	public function Check_SyslogConnected($host)
@@ -8,4 +8,3 @@ class Check_SyslogConnected extends Check_SocketConnected
 		parent::__construct($host);
 	}
 }
-?>

@@ -1,4 +1,4 @@
-<?
+<?php
 class Check_RadiusDatabaseSize extends Check
 {
 	public function Check_RadiusDatabaseSize($host)
@@ -51,4 +51,3 @@ class Check_RadiusDatabaseSize extends Check
 		return $limits[$type];
 	}
 }
-?>
