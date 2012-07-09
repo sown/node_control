@@ -86,22 +86,52 @@ class Model_VpnServer extends Model_Server
 		return $str;
 	}
 
-	public function getFreeAddr($cidr)
+	public function getFreePort()
+	{
+		$repository = Doctrine::em()->getRepository('Model_VpnEndpoint');
+		foreach($repository->findAll() as $entity)
+		{
+			if($entity->port != "")
+			{
+				$usedports[] = $entity->port;
+			}
+		}
+		for($i = $this->portStart; $i <= $this->portEnd; $i++)
+		{
+			if(!in_array($i, $usedports))
+			{
+				return $i;
+			}
+		}
+		return null;
+	}
+
+	public function getFreeIPv4Addr($cidr)
+	{
+		return $this->getFreeAddr($cidr, 'IPv4');
+	}
+
+	public function getFreeIPv6Addr($cidr)
+	{
+		return $this->getFreeAddr($cidr, 'IPv6');
+	}
+
+	private function getFreeAddr($cidr, $type)
 	{
 		foreach(array('Model_Interface', 'Model_VpnEndpoint') as $class)
 		{
 			$repository = Doctrine::em()->getRepository($class);
 			foreach($repository->findAll() as $entity)
 			{
-				if($entity->IPv4 != "")
+				if($entity->$type != "")
 				{
-					$usedspace[] = $entity->IPv4;
+					$usedspace[] = $entity->$type;
 				}
 			}
 		}
 
-		$candidate = IP_Network_Address::factory($this->IPv4->get_network_start(), $cidr);
-		while($this->IPv4->encloses_subnet($candidate))
+		$candidate = IP_Network_Address::factory($this->$type->get_network_start(), $cidr);
+		while($this->$type->encloses_subnet($candidate))
 		{
 			$free = true;
 			foreach($usedspace as $used)
