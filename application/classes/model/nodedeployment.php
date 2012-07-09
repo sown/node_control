@@ -123,7 +123,7 @@ class Model_NodeDeployment extends Model_Entity
 	/**
 	 * @var Model_Node
 	 *
-	 * @ManyToOne(targetEntity="Model_Node", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_Node")
 	 * @JoinColumns({
 	 *   @JoinColumn(name="node_id", referencedColumnName="id")
 	 * })
@@ -131,7 +131,7 @@ class Model_NodeDeployment extends Model_Entity
 	protected $node;
 
 	/**
-	 * @OneToMany(targetEntity="Model_NodeAdmin", mappedBy="nodeDeployment")
+	 * @OneToMany(targetEntity="Model_NodeAdmin", mappedBy="nodeDeployment", cascade={"persist", "remove"})
 	 */
 	protected $admins;
 	

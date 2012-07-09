@@ -41,7 +41,7 @@ class Model_NodeAdmin extends Model_Entity
 	/**
 	 * @var Model_NodeDeployment
 	 *
-	 * @ManyToOne(targetEntity="Model_NodeDeployment", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_NodeDeployment")
 	 * @JoinColumns({
 	 *   @JoinColumn(name="node_deployment_id", referencedColumnName="id")
 	 * })

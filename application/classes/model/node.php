@@ -39,7 +39,7 @@ class Model_Node extends Model_Entity
 	/**
 	 * @var Model_Certificate
 	 *
-	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist", "remove"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="certificate_id", referencedColumnName="id")
 	 * })
@@ -49,7 +49,7 @@ class Model_Node extends Model_Entity
 	/**
 	 * @var Model_VpnEndpoint
 	 *
-	 * @ManyToOne(targetEntity="Model_VpnEndpoint", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_VpnEndpoint", cascade={"persist", "remove"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="vpn_endpoint_id", referencedColumnName="id")
 	 * })
@@ -62,7 +62,7 @@ class Model_Node extends Model_Entity
 	protected $deployments;
 
 	/**
-	 * @OneToMany(targetEntity="Model_Interface", mappedBy="node")
+	 * @OneToMany(targetEntity="Model_Interface", mappedBy="node", cascade={"persist", "remove"})
 	 */
 	protected $interfaces;
 

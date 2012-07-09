@@ -60,7 +60,7 @@ class Model_VpnEndpoint extends Model_Entity
 	/**
 	 * @var Model_VpnServer
 	 *
-	 * @ManyToOne(targetEntity="Model_VpnServer", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_VpnServer")
 	 * @JoinColumns({
 	 *   @JoinColumn(name="vpn_server_id", referencedColumnName="id")
 	 * })

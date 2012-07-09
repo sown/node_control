@@ -80,7 +80,7 @@ class Model_Interface extends Model_Entity
 	/**
 	 * @var Model_NetworkAdapter
 	 *
-	 * @ManyToOne(targetEntity="Model_NetworkAdapter", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_NetworkAdapter", cascade={"persist", "delete"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="network_adapter_id", referencedColumnName="id")
 	 * })
@@ -90,7 +90,7 @@ class Model_Interface extends Model_Entity
 	/**
 	 * @var Model_Node
 	 *
-	 * @ManyToOne(targetEntity="Model_Node", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_Node")
 	 * @JoinColumns({
 	 *   @JoinColumn(name="node_id", referencedColumnName="id")
 	 * })

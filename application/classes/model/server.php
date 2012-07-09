@@ -30,7 +30,7 @@ class Model_Server extends Model_Entity
 	/**
 	 * @var Model_Certificate
 	 *
-	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist", "remove"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="certificate_id", referencedColumnName="id")
 	 * })

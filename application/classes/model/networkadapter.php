@@ -38,7 +38,7 @@ class Model_NetworkAdapter extends Model_Entity
 	/**
 	 * @var Model_Node
 	 *
-	 * @ManyToOne(targetEntity="Model_Node", cascade={"persist"})
+	 * @ManyToOne(targetEntity="Model_Node")
 	 * @JoinColumns({
 	 *   @JoinColumn(name="node_id", referencedColumnName="id")
 	 * })
