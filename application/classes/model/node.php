@@ -226,6 +226,17 @@ class Model_Node extends Model_Entity
 		return $str;
 	}
 
+	public static function getNextBoxNumber()
+	{
+		$n = 0;
+		$repository = Doctrine::em()->getRepository('Model_Node');
+		foreach($repository->findAll() as $entity)
+		{
+			$n = max($n, $entity->boxNumber);
+		}
+		return $n + 1;
+	}
+
 	public static function build($boxNumber, $firmwareImage, $notes, $certificate, $vpnEndpoint)
 	{
 		$obj = new Model_Node();
