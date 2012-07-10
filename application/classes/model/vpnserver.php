@@ -118,6 +118,61 @@ class Model_VpnServer extends Model_Server
 
 	private function getFreeAddr($cidr, $type)
 	{
+		$free = $this->getFreeAddrs($this->$type, $this->getUsedAddrs($type));
+		if(count($free) == 0)
+		{
+			return null;
+		}
+		$bycidr = array();
+		foreach($free as $f)
+		{
+			$fcidr = $f->get_cidr();
+			if($fcidr == $cidr)
+			{
+				return $f;
+			}
+			else if($fcidr < $cidr && !isset($bycidr[$fcidr]))
+			{
+				$bycidr[$fcidr] = $f;
+			}
+		}
+		if(count($bycidr) == 0)
+		{
+			return null;
+		}
+		return IP_Network_Address::factory($bycidr[max(array_keys($bycidr))]->get_address(), $cidr);
+	}
+
+	private function getFreeAddrs($network, $used)
+	{
+		if(count($used) == 0)
+		{
+			return array($network);
+		}
+		if(count($used) == 1 && $used[0] == $network)
+		{
+			return array();
+		}
+		$lower = IP_Network_Address::factory($network->get_network_start(), $network->get_cidr()+1);
+		$upper = IP_Network_Address::factory(IP_Network_Address::factory($network->get_network_end(), $network->get_cidr()+1)->get_network_start(), $network->get_cidr()+1);
+		$lowerused = array();
+		$upperused = array();
+		foreach($used as $u)
+		{
+			if($lower->encloses_subnet($u))
+			{
+				$lowerused[] = $u;
+			}
+			else if($upper->encloses_subnet($u))
+			{
+				$upperused[] = $u;
+			}
+		}
+		return array_merge($this->getFreeAddrs($lower, $lowerused), $this->getFreeAddrs($upper, $upperused));
+	}
+
+	private function getUsedAddrs($type)
+	{
 		foreach(array('Model_Interface', 'Model_VpnEndpoint') as $class)
 		{
 			$repository = Doctrine::em()->getRepository($class);
@@ -129,26 +184,6 @@ class Model_VpnServer extends Model_Server
 				}
 			}
 		}
-
-		$candidate = IP_Network_Address::factory($this->$type->get_network_start(), $cidr);
-		while($this->$type->encloses_subnet($candidate))
-		{
-			$free = true;
-			foreach($usedspace as $used)
-			{
-				if($used->shares_subnet_space($candidate))
-				{
-					$free = false;
-					break;
-				}
-			}
-			if($free)
-			{
-				return $candidate;
-			}
-			
-			$candidate = IP_Network_Address::factory($candidate->get_network_end()->add(1), $cidr);
-		}
-		return null;
+		return $usedspace;
 	}
 }
