@@ -108,67 +108,12 @@ class Model_VpnServer extends Model_Server
 
 	public function getFreeIPv4Addr($cidr)
 	{
-		return $this->getFreeAddr($cidr, 'IPv4');
+		return IP_Network_Address::get_smallest_free_block_for($this->IPv4->get_free_network_addresses($this->getUsedAddrs('IPv4')), $cidr);
 	}
 
 	public function getFreeIPv6Addr($cidr)
 	{
-		return $this->getFreeAddr($cidr, 'IPv6');
-	}
-
-	private function getFreeAddr($cidr, $type)
-	{
-		$free = $this->getFreeAddrs($this->$type, $this->getUsedAddrs($type));
-		if(count($free) == 0)
-		{
-			return null;
-		}
-		$bycidr = array();
-		foreach($free as $f)
-		{
-			$fcidr = $f->get_cidr();
-			if($fcidr == $cidr)
-			{
-				return $f;
-			}
-			else if($fcidr < $cidr && !isset($bycidr[$fcidr]))
-			{
-				$bycidr[$fcidr] = $f;
-			}
-		}
-		if(count($bycidr) == 0)
-		{
-			return null;
-		}
-		return IP_Network_Address::factory($bycidr[max(array_keys($bycidr))]->get_address(), $cidr);
-	}
-
-	private function getFreeAddrs($network, $used)
-	{
-		if(count($used) == 0)
-		{
-			return array($network);
-		}
-		if(count($used) == 1 && $used[0] == $network)
-		{
-			return array();
-		}
-		$lower = IP_Network_Address::factory($network->get_network_start(), $network->get_cidr()+1);
-		$upper = IP_Network_Address::factory(IP_Network_Address::factory($network->get_network_end(), $network->get_cidr()+1)->get_network_start(), $network->get_cidr()+1);
-		$lowerused = array();
-		$upperused = array();
-		foreach($used as $u)
-		{
-			if($lower->encloses_subnet($u))
-			{
-				$lowerused[] = $u;
-			}
-			else if($upper->encloses_subnet($u))
-			{
-				$upperused[] = $u;
-			}
-		}
-		return array_merge($this->getFreeAddrs($lower, $lowerused), $this->getFreeAddrs($upper, $upperused));
+		return IP_Network_Address::get_smallest_free_block_for($this->IPv6->get_free_network_addresses($this->getUsedAddrs('IPv6')), $cidr);
 	}
 
 	private function getUsedAddrs($type)
