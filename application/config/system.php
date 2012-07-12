@@ -54,8 +54,8 @@ push "route 152.78.189.90 255.255.255.255"
 					),
 					'radpostauth'	=> array
 					(
-						'warning'	=> 50000,
-						'critical'	=> 100000,
+						'warning'	=> 500000,
+						'critical'	=> 1000000,
 					),
 				),
 			),
