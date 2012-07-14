@@ -80,7 +80,7 @@ class Model_Interface extends Model_Entity
 	/**
 	 * @var Model_NetworkAdapter
 	 *
-	 * @ManyToOne(targetEntity="Model_NetworkAdapter", cascade={"persist", "delete"})
+	 * @ManyToOne(targetEntity="Model_NetworkAdapter", cascade={"persist", "remove"})
 	 * @JoinColumns({
 	 *   @JoinColumn(name="network_adapter_id", referencedColumnName="id")
 	 * })
