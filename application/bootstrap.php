@@ -212,6 +212,14 @@ Route::set('package_test_home', 'test', array(
 		'action'     => 'home',
 	));
 
+Route::set('package_test_info', 'info', array(
+	))
+	->defaults(array(
+		'directory'  => 'test/config',
+		'controller' => 'generic',
+		'action'     => 'info',
+	));
+
 Route::set('package_login', '', array(
 	))
 	->defaults(array(
