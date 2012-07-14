@@ -271,7 +271,6 @@ class Model_Node extends Model_Entity
 		{
 			$networkAdapter = $interface->networkAdapter;
 			$interface->delete();
-			$networkAdapter->delete();
 		}
 		parent::delete();
 	}
