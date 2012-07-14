@@ -33,6 +33,7 @@ return array
 		(
 			'authorized_keys'	=>	'/srv/www/static_files/authorized_keys',
 			'passwd'		=>	'/srv/www/static_files/passwd',
+			'radutmp'		=>	'/var/log/freeradius/sradutmp',
 		),
 		'rrd_deployment_path'	=> '/srv/radacct-tg/nas-rrds/',
 		'routes'	=> '
