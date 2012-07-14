@@ -75,4 +75,23 @@ class Model_Device extends Model_Entity
 		$str  = "Device: {$this->id}, mac={$this->mac}";
 		return $str;
 	}
+
+	public static function getFromDeviceIP($ip)
+	{
+		$mac = radutmp::get_mac_from_device_ip($ip);
+		if(!is_null($mac))
+		{
+			$obj = Doctrine::em()->getRepository('Model_Device')->findOneByMac($mac);
+			if(is_null($obj))
+			{
+				$obj = new Model_Device();
+				$obj->mac = $mac;
+			}
+			return $obj;
+		}
+		else
+		{
+			return null;
+		}
+	}
 }

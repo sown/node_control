@@ -275,4 +275,28 @@ class Model_Node extends Model_Entity
 		}
 		parent::delete();
 	}
+
+	public static function getFromDeviceIP($ip)
+	{
+		$nip = radutmp::get_node_ip_from_device_ip($ip);
+		if(!is_null($nip))
+		{
+			$repository = Doctrine::em()->getRepository('Model_VpnEndpoint');
+			foreach($repository->findAll() as $entity)
+			{
+				if($entity->IPv4->encloses_address($nip))
+				{
+					if(!is_null($entity->nodes))
+					{
+						return $entity->nodes[0];
+					}
+				}
+			}
+			return null;
+		}
+		else
+		{
+			return null;
+		}
+	}
 }
