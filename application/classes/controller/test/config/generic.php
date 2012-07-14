@@ -25,6 +25,51 @@ class Controller_Test_Config_Generic extends Controller
 		$this->removeKeys($keyfiles);
 	}
 
+	public function action_info()
+	{
+		$mydevice = Model_Device::getFromDeviceIP($_SERVER['REMOTE_ADDR']);
+		echo "<div>";
+		if(!is_null($mydevice))
+		{
+			echo "Your device is connected to SOWN.<br/>";
+			echo "MAC address: ".$mydevice->mac."<br/>";
+			if(!is_null($mydevice->user))
+			{
+				echo "This device is associated with a user.<br/>";
+			}
+		}
+		echo "</div>";
+
+		echo "<hr />";
+
+		echo "<div>";
+		$mynode = Model_Node::getFromDeviceIP($_SERVER['REMOTE_ADDR']);
+		if(!is_null($mynode))
+		{
+			echo "You are connected to node: ".$mynode->currentDeployment->name."<br/>";
+		}
+		echo "</div>";
+
+		echo "<hr />";
+
+		echo "<div>";
+		if(in_array($mydevice, $mynode->currentDeployment->privilegedDevices))
+		{
+			echo "Your device enjoys special privileges when connected to this node.<br/>";
+		}
+		echo "</div>";
+
+		echo "<hr />";
+
+		echo "<div>";
+		if(!is_null($mydevice))
+		{
+			echo "Your data consumption over the past 24 hours:<br/>";
+			echo "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=sta-rrds&entry=".str_replace(':', '-', strtoupper($mydevice->mac))."'>";
+		}
+		echo "</div>";
+	}
+
 	public function action_home()
 	{
 		$this->check_login();
