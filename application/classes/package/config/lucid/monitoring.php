@@ -52,6 +52,10 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 			}
 			static::send_file($data, 'icinga-nodes.cfg', 'text/plain');
 		}
+		if($node->currentDeployment == null)
+		{
+			return "";
+		}
 		$email = "support@example.org";
 		$name = $node->hostname;
 		$alias = $node->name;
