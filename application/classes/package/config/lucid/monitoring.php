@@ -65,15 +65,23 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$range = $node->currentDeployment->range;
 		$box_number = $node->boxNumber;
 		$node_id = $node->id;
-		foreach($node->interfaces as $i)
+		$vpn_endpoint = null;
+		if($node->vpnEndpoint != null)
 		{
-			if($i->IPv4 != null)
-			{
-				$ipv4_addrs[] = $i->name."=".$i->IPv4->get_address();
-			}
+			$vpn_endpoint = preg_replace('/\..*/', '', $node->vpnEndpoint->vpnServer->name);
+			$address = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
 		}
-		$address = implode(',', $ipv4_addrs);
-		$vpn_endpoint = preg_replace('/\..*/', '', $node->vpnEndpoint->vpnServer->name);
+		else
+		{
+			foreach($node->interfaces as $i)
+			{
+				if($i->IPv4 != null)
+				{
+					$ipv4_addrs[] = $i->name."=".$i->IPv4->get_address();
+				}
+			}
+			$address = implode(',', $ipv4_addrs);
+		}
 
 		$o['alias'] = $alias;
 		//$o['notes_url'] = $url;
