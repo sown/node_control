@@ -49,16 +49,17 @@ class Package_Config_Backfire_Tunnel extends Package_Config
 					'user' => 'nobody',
 					'group' => 'nogroup',
 					
-					// Try to preserve some state across restarts.
+					// preserve keys, because they drain entropy to negotiate
 					'persist_key' => 1,
-					'persist_tun' => 1,
+
+					// we need to not persist-tun, so that the tunnel_down script is called sooner, rather then later
+					'persist_tun' => 0,
 					
 					// Turn on some stuff for logging
 					'verb' => 3,
 					
 					'script_security' => 2,
 					
-					// TODO port these scripts from vpn6Up and vpn6Down
 					'up'   => '/etc/sown/events/tunnel_up',
 					'down' => '/etc/sown/events/tunnel_down'
 				),
