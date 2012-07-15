@@ -108,12 +108,14 @@ class Model_VpnServer extends Model_Server
 
 	public function getFreeIPv4Addr($cidr)
 	{
-		return IP_Network_Address::get_smallest_free_block_for($this->IPv4->excluding($this->getUsedAddrs('IPv4')), $cidr);
+		$blocks = IP_Network_Address::get_block_in_smallest($this->IPv4->excluding($this->getUsedAddrs('IPv4')), $cidr);
+		return $blocks[0];
 	}
 
 	public function getFreeIPv6Addr($cidr)
 	{
-		return IP_Network_Address::get_smallest_free_block_for($this->IPv6->excluding($this->getUsedAddrs('IPv6')), $cidr);
+		$blocks = IP_Network_Address::get_block_in_smallest($this->IPv6->excluding($this->getUsedAddrs('IPv6')), $cidr);
+		return $blocks[0];
 	}
 
 	private function getUsedAddrs($type)
