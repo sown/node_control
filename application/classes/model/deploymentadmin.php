@@ -7,12 +7,12 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
 /**
- * Model_NodeAdmin
+ * Model_DeploymentAdmin
  *
- * @Table(name="node_admins")
+ * @Table(name="deployment_admins")
  * @Entity
  */
-class Model_NodeAdmin extends Model_Entity
+class Model_DeploymentAdmin extends Model_Entity
 {
 	/**
 	 * @var Model_User
@@ -39,19 +39,19 @@ class Model_NodeAdmin extends Model_Entity
 	protected $endDate;
 
 	/**
-	 * @var Model_NodeDeployment
+	 * @var Model_Deployment
 	 *
-	 * @ManyToOne(targetEntity="Model_NodeDeployment")
+	 * @ManyToOne(targetEntity="Model_Deployment")
 	 * @JoinColumns({
-	 *   @JoinColumn(name="node_deployment_id", referencedColumnName="id")
+	 *   @JoinColumn(name="deployment_id", referencedColumnName="id")
 	 * })
 	 */
-	protected $nodeDeployment;
+	protected $deployment;
 
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "NodeAdmin: {$this->id}, user={$this->user->email}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
+		$str  = "DeploymentAdmin: {$this->id}, user={$this->user->email}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
 		return $str;
 	}
 }

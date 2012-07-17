@@ -60,7 +60,7 @@ class Model_Node extends Model_Entity
 	/**
 	 * @OneToMany(targetEntity="Model_NodeDeployment", mappedBy="node")
 	 */
-	protected $deployments;
+	protected $nodeDeployments;
 
 	/**
 	 * @OneToMany(targetEntity="Model_Interface", mappedBy="node", cascade={"persist", "remove"})
@@ -70,7 +70,7 @@ class Model_Node extends Model_Entity
 	public function __construct()
 	{
 		parent::__construct();
-		$this->deployments = new ArrayCollection();
+		$this->nodeDeployments = new ArrayCollection();
 		$this->interfaces = new ArrayCollection();
 	}
 
@@ -172,11 +172,11 @@ class Model_Node extends Model_Entity
 	protected function getCurrentDeployment()
 	{
 		$date = time();
-		foreach($this->deployments as $deployment)
+		foreach($this->nodeDeployments as $nodeDeployment)
 		{
-			if($deployment->startDate->getTimestamp() <  $date && ($deployment->endDate === null || $deployment->endDate->getTimestamp() > $date))
+			if($nodeDeployment->startDate->getTimestamp() <  $date && ($nodeDeployment->endDate === null || $nodeDeployment->endDate->getTimestamp() > $date))
 			{
-				return $deployment;
+				return $nodeDeployment->deployment;
 			}
 		}
 		return null;
@@ -226,10 +226,10 @@ class Model_Node extends Model_Entity
 			$str .= "<br/>";
 			$str .= "currentDeployment={$this->currentDeployment}";
 		}
-		foreach($this->deployments as $deployment)
+		foreach($this->nodeDeployments as $nodeDeployment)
 		{
 			$str .= "<br/>";
-			$str .= "deployment={$deployment}";
+			$str .= "nodeDeployment={$nodeDeployment}";
 		}
 		return $str;
 	}

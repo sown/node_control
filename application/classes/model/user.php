@@ -30,7 +30,7 @@ class Model_User extends Model_Entity
 	protected $isSystemAdmin;
 	
 	/**
-	 * @OneToMany(targetEntity="Model_NodeAdmin", mappedBy="user")
+	 * @OneToMany(targetEntity="Model_DeploymentAdmin", mappedBy="user")
 	 */
 	protected $admins;
 
