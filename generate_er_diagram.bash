@@ -17,4 +17,5 @@ if [ `diff $sqlfile sql/sown_data.sql | wc -l` -gt 4 ]; then
 	sqlt-diagram -d=MySQL -t="sown_data - `date`" -o=diagrams/sown_data.png sql/sown_data.sql >/dev/null
 else
 	rm $sqlfile
+	touch diagrams/sown_data.png
 fi
