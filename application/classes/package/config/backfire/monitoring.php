@@ -144,20 +144,34 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 					'sysContact'  => 'support@sown.org.uk',
 				),
 			),
-			'exec'   => array(
+			'exec\' \'1'   => array(
 				array(
 					'name'=> 'hostap_check',
 					'miboid'  => $sown_oid .'.1',
 					'prog' => '/usr/bin/hostap_check',
 				),
 			),
-			# morse 4/7/2012 - anyone know what this is for?
-			#'pass' => array(
-			#	array(
-			#		'miboid'  => $sown_oid .'.3',
-			#		'prog' =>'/usr/bin/snmp-in',
-			#	),
-			#),
+			'exec\' \'2'   => array(
+				array(
+					'name'=> 'softflowd_check',
+					'miboid'  => $sown_oid .'.2',
+					'prog' => '/usr/bin/softflowd_check',
+				),
+			),
+			'exec\' \'3'   => array(
+				array(
+					'name'=> 'changed_config_files',
+					'miboid'  => $sown_oid .'.3',
+					'prog' => '/bin/opkg list-changed-conffiles',
+				),
+			),
+			'exec\' \'4'   => array(
+				array(
+					'name'=> 'available_updates',
+					'miboid'  => $sown_oid .'.4',
+					'prog' => '/bin/opkg list-upgradable',
+				),
+			),
 			'disk' => array(
 				array(
 					'path' => 'includeAllDisks',
