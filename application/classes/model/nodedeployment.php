@@ -126,16 +126,6 @@ class Model_NodeDeployment extends Model_Entity
 	{
 		$this->logUse();
 		$str  = "NodeDeployment: {$this->id}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
-		foreach($this->admins as $admin)
-		{
-			$str .= "<br/>";
-			$str .= "admin={$admin}";
-		}
-		foreach($this->privilegedDevices as $device)
-		{
-			$str .= "<br/>";
-			$str .= "privilegedDevice={$device}";
-		}
 		return $str;
 	}
 }
