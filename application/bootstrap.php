@@ -15,6 +15,8 @@ else
 	require SYSPATH.'classes/kohana'.EXT;
 }
 
+include '/usr/share/php/Math/BigInteger.php';
+
 /**
  * Set the default time zone.
  *
@@ -66,11 +68,11 @@ if (isset($_SERVER['KOHANA_ENV']))
 }
 elseif (isset($_SERVER['REMOTE_ADDR']))
 {
-	$developmentAddrs = array(
-			/* Leth	 */ '152.78.65.7', '152.78.65.101',
-			/* crwilliams */// '152.78.65.26',
-			/* localhost :/ *//* '152.78.189.90',*/
-			);
+	$developmentAddrs = array();
+	if (file_exists(APPPATH.'config/dev_ips'.EXT))
+	{
+		include APPPATH.'config/dev_ips'.EXT;
+	}
 
 	if (in_array($_SERVER['REMOTE_ADDR'], $developmentAddrs))
 		Kohana::$environment = Kohana::DEVELOPMENT;
@@ -233,6 +235,15 @@ Route::set('package_list', 'package/list/backfire')
 		'controller' => 'backfire',
 		'action'     => 'default',
 	));
+
+
+Route::set('usage', 'usage')
+        ->defaults(array(
+                'directory'  => 'usage/config',
+                'controller' => 'generic',
+                'action'     => 'default',
+        ));
+
 
 Route::set('error', 'error/<action>(/<message>)', array(
 		'action' => '[0-9]++',
