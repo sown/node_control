@@ -4,7 +4,7 @@ class Controller_Test_Config_Generic extends Controller
 {
 	public function check_login()
 	{
-		if (!Auth::instance()->logged_in())
+		if (!Auth::instance()->logged_in('systemadmin'))
 		{
 			$this->request->redirect(Route::url('package_login').URL::query(array('url' => $this->request->url())));
 		}
@@ -38,6 +38,10 @@ class Controller_Test_Config_Generic extends Controller
 				echo "This device is associated with a user.<br/>";
 			}
 		}
+		else
+		{
+			echo "Your device is <em>not</em> connected to SOWN.<br/>";
+		}
 		echo "</div>";
 
 		echo "<hr />";
@@ -53,9 +57,16 @@ class Controller_Test_Config_Generic extends Controller
 		echo "<hr />";
 
 		echo "<div>";
-		if(in_array($mydevice, $mynode->currentDeployment->privilegedDevices))
+		if(!is_null($mydevice))
 		{
-			echo "Your device enjoys special privileges when connected to this node.<br/>";
+			if(!is_null($mynode) && in_array($mydevice, $mynode->currentDeployment->privilegedDevices))
+			{
+				echo "Your device enjoys special privileges when connected to this node.<br/>";
+			}
+			else
+			{
+				echo "Your device <em>does not</em> enjoy special privileges when connected to this node.<br/>";
+			}
 		}
 		echo "</div>";
 
@@ -65,7 +76,17 @@ class Controller_Test_Config_Generic extends Controller
 		if(!is_null($mydevice))
 		{
 			echo "Your data consumption over the past 24 hours:<br/>";
-			echo "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=sta-rrds&entry=".str_replace(':', '-', strtoupper($mydevice->mac))."'>";
+			echo "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=sta-rrds&entry=".str_replace(':', '-', strtoupper($mydevice->mac))."' />";
+		}
+		echo "</div>";
+
+		echo "<hr />";
+
+		echo "<div>";
+		if(!is_null($mydevice) && !is_null($mynode) && in_array($mydevice, $mynode->currentDeployment->privilegedDevices))
+		{
+			echo "Your node's data consumption over the past 24 hours:<br/>";
+			echo "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=nas-rrds&entry=deployment".$mynode->currentDeployment->id."' />";
 		}
 		echo "</div>";
 	}
@@ -73,25 +94,58 @@ class Controller_Test_Config_Generic extends Controller
 	public function action_home()
 	{
 		$this->check_login();
+		echo "<style>";
+		echo "
+.ID {
+	font-style: italic;
+	color: white;
+	background-color: navy;
+}
+
+th {
+	text-align: left;
+	vertical-align: top;
+	width: 150px;
+}
+
+div {
+	border: solid 1px black;
+}
+
+td, th {
+	padding: 2px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+.empty {
+	display: none;
+	color: gray;
+}
+";
+		echo "</style>";
 		$repository = Doctrine::em()->getRepository('Model_Node');
 		foreach($repository->findAll() as $node)
 		{
 			echo "<hr/>";
-			echo $node."<br/>";
+			echo $node->toHTML()."<br/>";
 		}
 
 		$repository = Doctrine::em()->getRepository('Model_Server');
 		foreach($repository->findAll() as $server)
 		{
 			echo "<hr/>";
-			echo $server."<br/>";
+			echo $server->toHTML()."<br/>";
 		}
 
 		$repository = Doctrine::em()->getRepository('Model_User');
 		foreach($repository->findAll() as $user)
 		{
 			echo "<hr/>";
-			echo $user."<br/>";
+			echo $user->toHTML()."<br/>";
 		}
 	}
 
