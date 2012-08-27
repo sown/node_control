@@ -56,6 +56,22 @@ abstract class Model_Entity
 		return '['.get_class($this).' id:'.var_export($this->id,TRUE).$name.']';
 	}
 
+	public function fieldHTML($field, $value = null)
+	{
+		if(is_null($value))
+		{
+			$value = $this->$field;
+		}
+		if(trim($value) == '')
+		{
+			return "<tr class='empty'><th>$field</th><td>$value</td></tr>";
+		}
+		else
+		{
+			return "<tr><th>$field</th><td>$value</td></tr>";
+		}
+	}
+
 	public function logUse()
 	{
 		Model_Entity::add_entity($this);

@@ -128,4 +128,16 @@ class Model_NodeDeployment extends Model_Entity
 		$str  = "NodeDeployment: {$this->id}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
 		return $str;
 	}
+
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='nodeDeployment' id='nodeDeployment_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Node Deployment</th><td>{$this->id}</td></tr>";
+		$str .= $this->fieldHTML('date', $this->startDate->format('Y-m-d H:i:s').' - '.$this->endDate->format('Y-m-d H:i:s'));
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
 }

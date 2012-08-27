@@ -52,6 +52,21 @@ class Model_NetworkAdapter extends Model_Entity
 		return $str;
 	}
 
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='networkAdapter' id='networkAdapter_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Network Adapter</th><td>{$this->id}</td></tr>";
+		foreach(array('mac', 'wirelessChannel', 'type') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
+
 	public static function build($mac, $wirelessChannel, $type, $node)
 	{
 		$obj = new Model_NetworkAdapter();

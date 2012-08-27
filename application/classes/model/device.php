@@ -72,7 +72,20 @@ class Model_Device extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Device: {$this->id}, mac={$this->mac}";
+		$str  = "Device: {$this->id}, user={$this->user->email}, mac={$this->mac}";
+		return $str;
+	}
+
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='device' id='device_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Device</th><td>{$this->id}</td></tr>";
+		$str .= $this->fieldHTML('user', $this->user->email);
+		$str .= $this->fieldHTML('mac');
+		$str .= "</table>";
+		$str .= "</div>";
 		return $str;
 	}
 

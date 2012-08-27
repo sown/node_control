@@ -46,6 +46,8 @@ class Model_User extends Model_Entity
 		{
 //			case "bandwidth":
 //				return $this->getBandwidth();
+			case "deploymentsAsAdmin":
+				return $this->getDeploymentsAsAdmin();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -92,4 +94,38 @@ class Model_User extends Model_Entity
 		}
 		return $str;
 	}
+
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='user' id='user_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>User</th><td>{$this->id}</td></tr>";
+		foreach(array('email', 'isSystemAdmin') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		foreach($this->admins as $admin)
+		{
+			$str .= $this->fieldHTML('admin', $admin->toHTML());
+		}
+		foreach($this->devices as $device)
+		{
+			$str .= $this->fieldHTML('device', $device->toHTML());
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
+
+	public function getDeploymentsAsAdmin()
+        {
+                $deployments = array();
+                foreach($this->admins as $admin)
+                {
+                        $deployments[] = $admin->deployment;
+                }
+                return $deployments;
+        }
+
 }

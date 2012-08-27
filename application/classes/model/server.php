@@ -95,4 +95,23 @@ class Model_Server extends Model_Entity
 		$str .= "certificate={$this->certificate}";
 		return $str;
 	}
+
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='server' id='server_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Server</th><td>{$this->id}</td></tr>";
+		foreach(array('name', 'externalIPv4', 'internalIPv4', 'externalIPv6', 'internalIPv6') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		foreach(array('certificate') as $field)
+		{
+			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
 }

@@ -234,6 +234,37 @@ class Model_Node extends Model_Entity
 		return $str;
 	}
 
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='node' id='node_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
+		foreach(array('boxNumber', 'firmwareImage', 'notes') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		foreach(array('certificate', 'vpnEndpoint') as $field)
+		{
+			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+		}
+		foreach($this->interfaces as $interface)
+		{
+			$str .= $this->fieldHTML('interface', $interface->toHTML());
+		}
+		if($this->currentDeployment != null)
+		{
+			$str .= $this->fieldHTML('currentDeployment', $this->currentDeployment->toHTML());
+		}
+		foreach($this->nodeDeployments as $nodeDeployment)
+		{
+			$str .= $this->fieldHTML('nodeDeployment', $nodeDeployment->toHTML());
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
+
 	public static function getNextBoxNumber()
 	{
 		$n = 0;

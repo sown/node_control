@@ -143,6 +143,25 @@ class Model_VpnEndpoint extends Model_Entity
 		return $str;
 	}
 
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='vpnEndpoint' id='vpnEndpoint_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>VPN Endpoint</th><td>{$this->id}</td></tr>";
+		foreach(array('port', 'protocol', 'IPv4', 'IPv6') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		foreach(array('vpnServer') as $field)
+		{
+			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
+
 	public static function build($port, $protocol, $ipv4, $ipv6, $vpnServer)
 	{
 		$obj = new Model_VpnEndpoint();

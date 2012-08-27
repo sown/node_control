@@ -86,6 +86,26 @@ class Model_VpnServer extends Model_Server
 		return $str;
 	}
 
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='vpnServer' id='vpnServer_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>VPN Server</th><td>{$this->id}</td></tr>";
+		foreach(array('name', 'externalIPv4', 'internalIPv4', 'IPv4', 'externalIPv6', 'internalIPv6', 'IPv6') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		$str .= $this->fieldHTML('port', $this->portStart.' - '.$this->portEnd);
+		foreach(array('certificate') as $field)
+		{
+			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
+
 	public function getFreePort()
 	{
 		$repository = Doctrine::em()->getRepository('Model_VpnEndpoint');

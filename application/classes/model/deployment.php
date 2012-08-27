@@ -230,4 +230,28 @@ class Model_Deployment extends Model_Entity
 		}
 		return $str;
 	}
+
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='deployment' id='deployment_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Deployment</th><td>{$this->id}</td></tr>";
+		$str .= $this->fieldHTML('date', $this->startDate->format('Y-m-d H:i:s').' - '.$this->endDate->format('Y-m-d H:i:s'));
+		foreach(array('name', 'isDevelopment', 'isPrivate', 'firewall', 'advancedFirewall', 'cap', 'range', 'allowedPorts', 'type', 'url', 'latitude', 'longitude', 'address', 'consumption', 'exceedsCap') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		foreach($this->admins as $admin)
+		{
+			$str .= $this->fieldHTML('admin', $admin->toHTML());
+		}
+		foreach($this->privilegedDevices as $device)
+		{
+			$str .= $this->fieldHTML('privilegedDevice', $device->toHTML());
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
 }

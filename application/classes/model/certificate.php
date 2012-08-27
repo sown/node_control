@@ -78,6 +78,12 @@ class Model_Certificate extends Model_Entity
 
 	public static function getFingerprint($cert)
 	{
+		$digest_algos = openssl_get_md_methods();
+		if(!in_array("sha1", openssl_get_md_methods()))
+		{
+			# going to fail
+			return openssl_digest($cert, "sha1");
+		}
 		return openssl_digest($cert, "sha1");
 	}
 
@@ -91,6 +97,21 @@ class Model_Certificate extends Model_Entity
 	{
 		$this->logUse();
 		$str  = "Certificate: {$this->id}, cn={$this->cn}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
+		return $str;
+	}
+
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='certificate' id='certificate_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Certificate</th><td>{$this->id}</td></tr>";
+		foreach(array('cn', 'publicKeyFingerprint', 'privateKeyFingerprint') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		$str .= "</table>";
+		$str .= "</div>";
 		return $str;
 	}
 

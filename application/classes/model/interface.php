@@ -193,6 +193,25 @@ class Model_Interface extends Model_Entity
 		return $str;
 	}
 
+	public function toHTML()
+	{
+		$this->logUse();
+		$str  = "<div class='interface' id='interface_{$this->id}'>";
+		$str .= "<table>";
+		$str .= "<tr class='ID'><th>Interface</th><td>{$this->id}</td></tr>";
+		foreach(array('IPv4', 'IPv6', 'name', 'ssid', 'type', 'offerDhcp', 'is1x') as $field)
+		{
+			$str .= $this->fieldHTML($field);
+		}
+		foreach(array('networkAdapter') as $field)
+		{
+			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+		}
+		$str .= "</table>";
+		$str .= "</div>";
+		return $str;
+	}
+
 	public static function build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $networkAdapter, $node)
 	{
 		$obj = new Model_Interface();
