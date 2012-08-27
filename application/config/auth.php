@@ -2,7 +2,7 @@
 
 return array(
 
-	'driver'       => 'file',
+	'driver'       => 'radius',/* use 'file' or 'radius' */
 	'hash_method'  => 'sha256',
 	'hash_key'     => '12345',
 	'lifetime'     => 1209600,
