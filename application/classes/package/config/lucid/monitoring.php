@@ -93,7 +93,8 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 
 		$use = "node";
 
-		$hostgroups = "*Home Nodes,*OpenWRT Nodes";
+//		$hostgroups = "*Home Nodes,*OpenWRT Nodes";
+		$hostgroups = "*Backfire Nodes";
 
 		//$address = new Addr($ipv4_addrs);
 
@@ -101,8 +102,8 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 return "
 define Contact {
 	contact_name			{$name}_admin
-	host_notification_period	24x7
-	service_notification_period	24x7
+	host_notification_period	none
+	service_notification_period	none
 	host_notification_options	d,r
 	service_notification_options	n
 	host_notification_commands	nodeadmin-notify-by-email
@@ -122,7 +123,7 @@ define Host {
 	_BOXNUMBER	{$box_number}
 	_NODEID		{$node_id}
 	contacts	+{$name}_admin
-}		
+}
 ";
 //	notes_url	{$url}
 	}
