@@ -27,6 +27,10 @@ abstract class Package_Config
 
 		$hash = UCIUtils::set_hash($package, $config);
 
+
+		# TODO: run send_nsca to tell nagios node  $_SERVER['SSL_CLIENT_S_DN_CN'] requested updates for $package
+	
+
 		// Sets the Etag. If the client request etag matches, sends the 304 and exits
 		$r->check_cache('"'.$hash.'"', $req);
 
