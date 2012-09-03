@@ -54,6 +54,12 @@ class Package_Config_Backfire_Core extends Package_Config
 				'method' => 'config_dhcp_v0_1_78'
 			),
 		),
+		'uci_config_crontabs' => array(
+                        array(
+                                '>=' => '0.1.78',
+                                'method' => 'config_crontabs_v0_1_78'
+                        ),
+                ),
 	);
 
 	public static function credentials_v0_1_78(Model_Node $node, $version)
@@ -313,5 +319,33 @@ class Package_Config_Backfire_Core extends Package_Config
 		}
 
 		static::send_uci_config('dhcp', $config, $mod);
+	}
+
+	public static function config_crontabs_v0_1_78(Model_Node $node) 
+	{
+		$config = array(
+                        'feature' => array(
+                                'cron_check' => array(
+                                        'enabled' => 'true',
+                                        'command' => '5 * * * * /usr/sbin/cron_check',
+                                ),
+				'server_status' => array(
+					'enabled' => 'false',
+					'command' => '* * * * * /usr/sbin/server_status_check',
+				),
+				'tunnel' => array(
+					'enabled' => 'true',
+					'command' => '*/5 * * * * /usr/sbin/maintain_sown_tunnel > /dev/null',
+				),
+				'update_sown_config' => array(
+					'enabled' => 'false',
+					'command' => '0 * * * * /usr/sbin/update_sown_config',
+				),		
+			),
+                );
+
+		$mod[] = __FILE__;
+
+		static::send_uci_config('crontabs', $config, $mod);
 	}
 }
