@@ -137,6 +137,7 @@ Kohana::modules(array(
 #	'kohana-jelly-reverse-engineer' => MODPATH.'kohana-jelly-reverse-engineer',
 	));
 
+
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of
  * defaults for the URI.
@@ -229,6 +230,13 @@ Route::set('package_login', '', array(
 		'action'     => 'login_page',
 	));
 
+Route::set('package_logout', 'logout', array(
+        ))
+        ->defaults(array(
+                'controller' => 'login',
+                'action'     => 'logout',
+        ));
+
 Route::set('package_list', 'package/list/backfire')
 	->defaults(array(
 		'directory'  => 'package/list',
@@ -237,13 +245,19 @@ Route::set('package_list', 'package/list/backfire')
 	));
 
 
-Route::set('usage', 'usage')
+Route::set('node_usage', 'node/usage')
         ->defaults(array(
                 'directory'  => 'usage/config',
                 'controller' => 'generic',
                 'action'     => 'default',
         ));
 
+Route::set('node_usage_all', 'node/usage/all')
+        ->defaults(array(
+                'directory'  => 'usage/config',
+                'controller' => 'generic',
+                'action'     => 'all',
+        ));
 
 Route::set('error', 'error/<action>(/<message>)', array(
 		'action' => '[0-9]++',

@@ -28,4 +28,10 @@ class Controller_Login extends Controller
 		echo "</html>";
 	
 	}
+	
+	public function action_logout(){
+		$success = Auth::instance()->logout();
+		if ($success)
+			$this->request->redirect(Route::url('package_login'));
+	}
 }

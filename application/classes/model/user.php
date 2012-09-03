@@ -46,8 +46,8 @@ class Model_User extends Model_Entity
 		{
 //			case "bandwidth":
 //				return $this->getBandwidth();
-			case "deploymentsAsAdmin":
-				return $this->getDeploymentsAsAdmin();
+			case "deploymentsAsCurrentAdmin":
+				return $this->getDeploymentsAsCurrentAdmin();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -118,7 +118,7 @@ class Model_User extends Model_Entity
 		return $str;
 	}
 
-	public function getDeploymentsAsAdmin()
+	public function getDeploymentsAsCurrentAdmin()
         {
                 $deployments = array();
                 foreach($this->admins as $admin)

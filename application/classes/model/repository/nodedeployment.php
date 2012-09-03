@@ -8,19 +8,27 @@ class Model_Repository_NodeDeployment extends EntityRepository {
 	public function where_is_finished(QueryBuilder $qb = null)
 	{
 		if ($qb === NULL)
-			$qb = $this->_em->createQueryBuilder();
+                	$qb = $this->createQueryBuilder('nd');
 
-		return $qb->where('endDate < NOW()');
+                $qb->where("nd.endDate < :now");
+                $qb->orderBy('nd.name', 'ASC');
+                $qb->setParameter('now', new \DateTime());
+
+                return $qb->getQuery()->getResult();
+
 	}
 	
 	public function where_is_active(QueryBuilder $qb = null)
 	{
 		if ($qb === NULL)
-			$qb = $this->_em->createQueryBuilder();
+                        $qb = $this->createQueryBuilder('nd');
 
-		return $qb
-			->where('endDate >= NOW()');
-			->andWhere('startDate <= NOW()');
+                $qb->where("nd.endDate >= :now");
+                $qb->andWhere("nd.startDate <= :now");
+                $qb->orderBy('nd.name', 'ASC');
+                $qb->setParameter('now', new \DateTime());
+
+                return $qb->getQuery()->getResult();
 	}
 
 }

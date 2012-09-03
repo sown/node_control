@@ -29,6 +29,11 @@ class Controller_Error extends Controller_Template
 		$this->response->status($status);
 	}
 
+	public function action_403()
+        {
+                $this->template->title = '403 Forbidden';
+        }
+
 	public function action_404()
 	{
 		$this->template->title = '404 Not Found';
