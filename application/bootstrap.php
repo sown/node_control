@@ -148,6 +148,20 @@ Kohana::modules(array(
 #		'action'     => 'index',
 #	));
 
+Route::set('login', '', array(
+        ))
+        ->defaults(array(
+                'controller' => 'login',
+                'action'     => 'login_page',
+        ));
+
+Route::set('logout', 'logout', array(
+        ))
+        ->defaults(array(
+                'controller' => 'login',
+                'action'     => 'logout',
+        ));
+
 Route::set('package_config_backfire', 'package/config/backfire/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
@@ -223,20 +237,6 @@ Route::set('package_test_info', 'info', array(
 		'action'     => 'info',
 	));
 
-Route::set('package_login', '', array(
-	))
-	->defaults(array(
-		'controller' => 'login',
-		'action'     => 'login_page',
-	));
-
-Route::set('package_logout', 'logout', array(
-        ))
-        ->defaults(array(
-                'controller' => 'login',
-                'action'     => 'logout',
-        ));
-
 Route::set('package_list', 'package/list/backfire')
 	->defaults(array(
 		'directory'  => 'package/list',
@@ -245,17 +245,15 @@ Route::set('package_list', 'package/list/backfire')
 	));
 
 
-Route::set('node_usage', 'node/usage')
+Route::set('deployments_usage', 'admin/deployments/usage')
         ->defaults(array(
-                'directory'  => 'usage/config',
-                'controller' => 'generic',
+		'controller' => 'deployments_usage',
                 'action'     => 'default',
         ));
 
-Route::set('node_usage_all', 'node/usage/all')
+Route::set('deployments_usage_all', 'admin/deployments/usage/all')
         ->defaults(array(
-                'directory'  => 'usage/config',
-                'controller' => 'generic',
+                'controller' => 'deployments_usage',
                 'action'     => 'all',
         ));
 
@@ -270,6 +268,12 @@ Route::set('foo', 'foo/<action>')
 	->defaults(array(
 		'controller' => 'JellyReverseEngineer'
 	));
+
+Route::set('home', 'admin')
+        ->defaults(array(
+                'controller' => 'home',
+                'action'     => 'default',
+        ));
 
 require_once(APPPATH.'/classes/mysql-dbo.php');
 Doctrine\DBAL\Types\Type::addType('ipv4address', 'Model_Type_IPv4Address');

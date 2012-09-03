@@ -6,7 +6,7 @@ class Controller_Test_Config_Generic extends Controller
 	{
 		if (!Auth::instance()->logged_in('systemadmin'))
 		{
-			$this->request->redirect(Route::url('package_login').URL::query(array('url' => $this->request->url())));
+			$this->request->redirect(Route::url('login').URL::query(array('url' => $this->request->url())));
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Usage_Config_Generic extends Controller
+class Controller_Deployments_Usage extends Controller
 {
 	public function check_login($isSystemAdmin = false)
 	{
@@ -13,7 +13,7 @@ class Controller_Usage_Config_Generic extends Controller
 				throw new HTTP_Exception_403('Forbidden: You do not have permission to access this page.');
 		}
 		else
-			$this->request->redirect(Route::url('package_login').URL::query(array('url' => $this->request->url())));
+			$this->request->redirect(Route::url('login').URL::query(array('url' => $this->request->url())));
 	}
 
 	public function action_default()
