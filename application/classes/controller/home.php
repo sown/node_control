@@ -24,6 +24,7 @@ class Controller_Home extends Controller
 		
 		echo "<h2>Menu</h2>";
 		echo "<ul>";
+		echo "<li><a href='admin/test'>Test</a></li>";
 		echo "<li><a href='admin/deployments/usage'>My Deployments Usage</a></li>";
 		echo "<li><a href='admin/deployments/usage/all'>All Deployments Usage (Admin only)</a></li>";
 		echo "</ul>";

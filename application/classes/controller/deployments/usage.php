@@ -10,7 +10,7 @@ class Controller_Deployments_Usage extends Controller
 				return;
 			$user = Doctrine::em()->getRepository('Model_User')->findOneByEmail(Auth::instance()->get_user());
 			if (empty($user) || !$user->isSystemAdmin)
-				throw new HTTP_Exception_403('Forbidden: You do not have permission to access this page.');
+				throw new HTTP_Exception_403('You do not have permission to access this page.');
 		}
 		else
 			$this->request->redirect(Route::url('login').URL::query(array('url' => $this->request->url())));
@@ -26,8 +26,7 @@ class Controller_Deployments_Usage extends Controller
 			$deployments = $user->deploymentsAsCurrentAdmin;
 			foreach ($deployments as $deployment)
 			{
-				echo "<h2>".$deployment->name."</h2>";
-				Doctrine\Common\Util\Debug::dump($deployment);
+				$this->_display_deployment_usage($deployment);
 			}
 		}
 	}
@@ -39,9 +38,19 @@ class Controller_Deployments_Usage extends Controller
 			$deployments = Doctrine::em()->getRepository('Model_Deployment')->where_is_active();
                         foreach ($deployments as $deployment)
 			{
-                                echo "<h2>".$deployment->name."</h2>";
-				Doctrine\Common\Util\Debug::dump($deployment);
+				$this->_display_deployment_usage($deployment);
                         }
 		}
 	}
+
+	private function _display_deployment_usage($deployment)
+	{
+		echo "<h2>" . $deployment->name . "</h2>";
+                if ($deployment->cap == 0) 
+			$cap = "(unlimited)";
+                else 
+			$cap = "/ " . $deployment->cap . " MB";
+                echo "<p>Usage: ". round($deployment->consumption, 2). " MB " . $cap . "</p>";
+	}
+
 }
