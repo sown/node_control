@@ -6,7 +6,10 @@ class Controller_Test_Config_Generic extends Controller
 	{
 		if (!Auth::instance()->logged_in('systemadmin'))
 		{
-			$this->request->redirect(Route::url('login').URL::query(array('url' => $this->request->url())));
+			if (!Auth::instance()->logged_in())
+				$this->request->redirect(Route::url('login').URL::query(array('url' => $this->request->url())));
+			else
+				throw new HTTP_Exception_403('You do not have permission to access this page.');				
 		}
 	}
 
