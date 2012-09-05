@@ -1,0 +1,72 @@
+/**
+ * This CSS file is used across SOWN's servers that generate
+ * web based content for SOWN.  It is intended to be used on multiple servers
+ * in order to maintain a consistent style across SOWN's web presence,
+ * regardless of the server.
+ *
+ * The official version of this file is located at
+ *   http://sown.org.uk/css/screen.css
+ * and all SOWN servers that make use of it should update from that copy.
+ */
+#sidebar{
+	position: relative;
+	float:left; 
+	width:250px; 
+	padding:5px;
+	padding-left: 0px;
+}
+#sidebar .gadget {
+	font-size: 0.8em;
+        padding:5px;
+        margin:5px;
+        border: solid 2px #336699;
+	text-align: left;
+	background-color:#9999FF; 
+}
+#sidebar .gadget_light{
+	font-size: 0.8em;
+        padding:5px;
+        margin:5px;
+        border: solid 2px #336699;
+	text-align: center; 
+	background: none;
+}
+#sidebar .banner{
+	font-size: 1.25em;
+	font-weight: bold;
+	background: none;
+	padding-bottom: 7px;
+}
+#sidebar .content{
+	background: none;
+	clear: both;
+}
+#sidebar .banner .field{
+	float: left;
+}
+#sidebar .banner .value{
+	float: right;
+	text-align: right;
+}
+
+#column-content
+{
+	/*width: 92%;*/
+}
+
+#main_body{
+	position: relative;
+}
+
+#main_body .content{
+	width:98%;
+	float:left;
+}
+
+.news_entry { 
+	margin: 5px 0px;
+}
+.date {
+	font-weight: bold;
+}
+.summary{}

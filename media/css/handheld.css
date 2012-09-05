@@ -1,0 +1,16 @@
+/**
+ * This CSS file is used across SOWN's servers that generate
+ * web based content for SOWN.  It is intended to be used on multiple servers
+ * in order to maintain a consistent style across SOWN's web presence,
+ * regardless of the server.
+ *
+ * The official version of this file is located at
+ *   http://sown.org.uk/css/handheld.css
+ * and all SOWN servers that make use of it should update from that copy.
+ */
+#sidebar{
+	display: none;
+}
+#main_body .content{
+	width: 100%;
+}

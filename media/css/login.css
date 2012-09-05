@@ -1,0 +1,59 @@
+#valid_institutions {
+	width: 60%;
+	float: left;
+}
+
+#contact_sown dl dt,
+#valid_institutions dl dt {
+	font-weight: bold;
+	list-style-type: disc;
+	display: list-item;
+	margin-left: 2em;
+}
+
+#contact_sown dl dd,
+#valid_institutions dl dd {
+	margin-bottom: .5em;
+}
+
+#contact_sown dl dd {
+	font-size: 90%;
+}
+
+#contact_sown {
+	width: 35%;
+	float: right;
+}
+#contact_sown p {
+	font-size: 90%;
+}
+.list {
+	margin-left: inherit;
+}
+h4 {
+	margin-bottom: 1em;
+}
+#login {
+	text-align: center;
+}
+#login_form table {
+	margin: auto;
+}
+#login_form table td {
+	padding: 5px
+}
+.legend {
+	text-align: right;
+}
+.fields {
+	text-align: left;
+}
+label {
+	font-weight: bold;
+}
+#submit {
+	margin-bottom: 2em;
+}
+.no_bold {
+	font-weight: normal;
+}

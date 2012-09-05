@@ -19,38 +19,54 @@ class Controller_Deployments_Usage extends Controller
 	public function action_default()
 	{
 		$this->check_login();
+		$content = "";
 		$user = Doctrine::em()->getRepository('Model_User')->findOneByEmail(Auth::instance()->get_user());
-		echo "<h1>Node Usage</h1>";
 		if(is_object($user))
 		{
 			$deployments = $user->deploymentsAsCurrentAdmin;
 			foreach ($deployments as $deployment)
 			{
-				$this->_display_deployment_usage($deployment);
+				$content .= $this->_render_deployment_usage($deployment);
 			}
 		}
+		$this->_render_page("Your Deployment(s) Usage", $content);
 	}
 
-	public function action_all(){
-		$this->check_login(true);
-		echo "<h1>All Node Usage</h1>";
-                {
-			$deployments = Doctrine::em()->getRepository('Model_Deployment')->where_is_active();
-                        foreach ($deployments as $deployment)
-			{
-				$this->_display_deployment_usage($deployment);
-                        }
-		}
-	}
-
-	private function _display_deployment_usage($deployment)
+	public function action_all()
 	{
-		echo "<h2>" . $deployment->name . "</h2>";
+		$this->check_login(true);
+		$content = "";
+		$deployments = Doctrine::em()->getRepository('Model_Deployment')->where_is_active();
+                foreach ($deployments as $deployment)
+		{
+			$content .= $this->_render_deployment_usage($deployment);
+                }
+		$this->_render_page("All Deployments Usage", $content);
+	}
+
+	private function _render_deployment_usage($deployment)
+	{
+		$content = "<h2>" . $deployment->name . "</h2>\n";
                 if ($deployment->cap == 0) 
 			$cap = "(unlimited)";
                 else 
 			$cap = "/ " . $deployment->cap . " MB";
-                echo "<p>Usage: ". round($deployment->consumption, 2). " MB " . $cap . "</p>";
+                $content .= "<p>Usage: ". round($deployment->consumption, 2). " MB " . $cap . "</p>\n";
+		return $content;
+	}
+
+	private function _render_page($title, $content) 
+	{
+		$view = View::factory('template');
+                $view->title = $title;
+
+                $sidebar = View::factory('partial/sidebar');
+                $sidebar->username = Auth::instance()->get_user();
+                $view->sidebar = $sidebar;
+
+                $view->content = $content;
+
+                echo (string) $view->render();
 	}
 
 }

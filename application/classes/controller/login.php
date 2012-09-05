@@ -4,6 +4,8 @@ class Controller_Login extends Controller
 {
 	public function action_login_page()
 	{
+		$view = View::Factory("pages/login");
+	
 		if ($this->request->method() == 'POST')
 		{
 			$post = $this->request->post();
@@ -17,29 +19,14 @@ class Controller_Login extends Controller
 					$this->request->redirect(Route::url('home'));
 			}
 			else
-				$msg = "Login Failed";
+				$view->message = "Login Failed";
 		}
 		elseif (Auth::instance()->logged_in()) 
 		{
 			$this->request->redirect(Route::url('home'));	
 		}
-	
-		echo "<html>";
-		echo "<head>";
-		echo "</head>";
-		echo "<body>";
-		if (!empty($msg))
-			echo "<p><b>$msg</b></p>";
-		echo "<form method='POST'>";
-		echo "<table>";
-		echo "<tr><td>Username:</td><td><input name='username' /></td></tr>";
-		echo "<tr><td>Password:</td><td><input name='password' type='password' /></td></tr>";
-		echo "<tr><td /><td><input type='submit' value='Login' /></td></tr>";
-		echo "</table>";
-		echo "</form>";
-		echo "</body>";
-		echo "</html>";
-	
+			
+		echo (string) $view->render();
 	}
 	
 	public function action_logout(){

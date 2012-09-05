@@ -97,59 +97,67 @@ class Controller_Test_Config_Generic extends Controller
 	public function action_home()
 	{
 		$this->check_login();
-		echo "<style>";
-		echo "
-.ID {
+		$content="<style>
+.test .ID {
 	font-style: italic;
 	color: white;
 	background-color: navy;
 }
 
-th {
+.test th {
 	text-align: left;
 	vertical-align: top;
 	width: 150px;
 }
 
-div {
+.test div {
 	border: solid 1px black;
 }
 
-td, th {
+.test td, .test th {
 	padding: 2px;
 }
 
-table {
+.test table {
 	border-collapse: collapse;
 	width: 100%;
 }
 
-.empty {
+.test .empty {
 	display: none;
 	color: gray;
 }
-";
-		echo "</style>";
+</style>";
+		$content .= "<div class=\"test\">";
 		$repository = Doctrine::em()->getRepository('Model_Node');
 		foreach($repository->findAll() as $node)
 		{
-			echo "<hr/>";
-			echo $node->toHTML()."<br/>";
+			$content .= "<hr/>\n" . $node->toHTML()."<br/>";
 		}
 
 		$repository = Doctrine::em()->getRepository('Model_Server');
 		foreach($repository->findAll() as $server)
 		{
-			echo "<hr/>";
-			echo $server->toHTML()."<br/>";
+			$content .= "<hr/>\n" . $server->toHTML()."<br/>";
 		}
 
 		$repository = Doctrine::em()->getRepository('Model_User');
 		foreach($repository->findAll() as $user)
 		{
-			echo "<hr/>";
-			echo $user->toHTML()."<br/>";
+			$content .= "<hr/>\n" . $user->toHTML()."<br/>";
 		}
+		$content .= "</div>";
+
+		$view = View::factory('template');
+                $view->title = "Test";
+
+                $sidebar = View::factory('partial/sidebar');
+                $sidebar->username = Auth::instance()->get_user();
+                $view->sidebar = $sidebar;
+
+                $view->content = $content;
+
+                echo (string) $view->render();
 	}
 
 	private function storeKeys($hostname, $os)

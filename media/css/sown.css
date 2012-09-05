@@ -1,0 +1,361 @@
+/**
+ * This CSS file is used across SOWN's servers that generate
+ * web based content for SOWN.  It is intended to be used on multiple servers
+ * in order to maintain a consistent style across SOWN's web presence,
+ * regardless of the server.
+ *
+ * The official version of this file is located at
+ *   http://sown.org.uk/css/sown.css
+ * and all SOWN servers that make use of it should update from that copy.
+ */
+body{  
+	font-family: Georgia;
+	background-color: #CCFFFF;
+	border: 0;
+}
+table{
+	border-collapse: collapse;
+}
+.header {
+	width: 100%;
+}
+.hr {
+	color: #336699;
+	background-color: #336699;
+	height: 2px;
+	clear: both;
+}
+hr {
+	display: none;
+}
+.break {
+	clear: both;
+}
+h1 {
+	font-size: 2em;
+	text-align: center;
+	margin-top: 0px;
+	padding-bottom: 10px;
+	border-bottom: solid 2px #336699;
+}
+h2{
+	margin-bottom: 10px;
+}
+p{ 
+	margin: 10px 5px; 
+}
+p.center{
+	text-align: center;
+}
+p.right{
+	text-align: right;
+}
+
+.logo {
+}
+.title_text {
+	font-size: 1.5em;
+	font-weight: bold;
+	text-align: center;
+}
+#main_body .content {
+	font-size: 1em;
+	text-align: left;
+	padding: 10px;
+	float: right;
+}
+.full_body_text{
+	font-size: 1em;
+        text-align: left;
+        padding: 10px;
+}
+
+#footer {
+	margin-top: 2px;
+	text-align: right;
+	font-size: 0.8em;
+}
+.list {
+	font-size: 0.9em;
+	text-align: left;
+	margin-left: 3em;
+}
+.red a {
+        font-size: 0.9em;
+	text-align: center;
+	color: red;
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+}
+a:link {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+img{
+	border: 0;
+}
+.columnHeader {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #EEEEEE;
+        background-image: url(../pics/col_header_bg.gif);
+        padding: 3px;
+        border-top-width: 1px;
+        border-right-width: 1px;
+        border-bottom-width: 1px;
+        border-left-width: 1px;
+        border-left-style: solid;
+        border-top-color: #006699;
+        border-right-color: #006699;
+        border-bottom-color: #006699;
+        border-left-color: #006699;
+        border-top-style: solid;
+        text-align: left;
+        height: 20px;
+}
+.odd {
+        font-size:0.7em;
+        font-weight: normal;
+        color: #666666;
+        text-decoration: none;
+        background-color: #F2F9FD;
+        padding: 4px;
+        text-align: left;
+}
+.even {
+        font-size: 0.7em;
+        font-weight: normal;
+        color: #666666;
+        text-decoration: none;
+        background-color: #FFFFFF;
+        padding: 4px;
+        text-align: left;
+}
+.container {
+	background-color: #3399FF;
+	border: 0px solid #3399FF;
+	width: 180px;
+}
+.sowntable,.smwtable td,.smwtable th{
+	background-color: #3399FF;
+	border: 2px solid #336699;
+	width: 100%;	
+}
+.sowntable2{
+        background-color: #3399FF;
+        border: 2px solid #336699;
+}
+.sowntable2 td{
+        padding: 3px 10px;
+}
+.sowntablerow {
+	background-color: #FFFFFF;
+	font-size: 0.8em;
+}
+.sowntablerow td {
+	text-align: center;
+}
+.banner {
+	background-color: #3399FF;
+	border: 0px solid #3399FF;
+	width: 100%;
+}
+.bannerItem {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #EEEEEE;
+        padding: 3px;
+	text-align: center;
+        height: 20px;
+}
+.bannerItem a:link {
+	color: #EEEEEE;
+}
+.bannerItem a:visited {
+	color: #EEEEEE;
+}
+.tabletitle {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #EEEEEE;
+        padding: 3px;
+	text-align: center;
+        height: 20px;
+}
+td.formbox{
+	padding: 3px 0px;
+ 	vertical-align: top;
+}
+td.formkeybox{
+	padding: 3px 0px;
+	text-align: right; 
+	vertical-align: top;
+	font-weight: bold;
+}
+td.naformkeybox{
+      padding: 3px 0px;
+      text-align: right; 
+      vertical-align: top;
+      font-weight: bold;
+      font-size: 0.8em;
+}
+td.naformbox{
+	padding: 3px 0px;
+ 	vertical-align: top;
+       font-size: 0.8em;
+       text-align: left;
+}
+td.namainbox{
+	padding: 10px;
+       vertical-align: top;
+	text-align: center;
+	border: 2px solid #336699;
+       border-collapse: collapse;
+}
+
+td.message, .message{ 
+	font-size: 14px; 
+	font-weight: bold; 
+	background-color: #99FFFF; 
+	padding: 20px; 
+	border: 2px solid #336699; 
+	text-align: center;
+}
+tr.tabletitle td a{
+	color: #FFFFFF;
+}
+td.shade{
+	background-color: #e0e0e0;
+}
+#top_menu .menucontainer{
+	width: 19.8%;
+	float: left;
+}
+#top_menu .menucontainer div{
+	margin: 7px;
+	text-align: center;
+}
+
+#top_menu .menucontainer .item{
+	border: solid 2px #336699;
+	padding: 0;
+	background-color:#9999FF;
+	font-weight: bold;
+}
+
+#top_menu .menucontainer .item a{
+	display: block;
+	color: black;
+	cursor: pointer;
+	padding: 10px;
+}
+#top_menu .menucontainer .item a:hover {
+	text-decoration: none;
+	background-color: #CCFFFF;
+}
+
+.button {
+	border: solid 2px #336699; 
+	padding: 0; background-color:#9999FF; 
+	font-weight: bold; margin: 7px; 
+	text-align: center;
+}
+.button a {
+	display: block; 
+	color: black; 
+	cursor: pointer; 
+	padding: 10px;
+}
+.button a:hover {
+        text-decoration: none;
+        background-color: #CCFFFF;
+}
+
+
+
+/*div#globalWrapper div#column-content div#content{*/
+/*div#globalWrapper div#column-content{*/
+div#globalWrapper{
+	width:99%;
+}
+
+.logout{
+	float: right;
+	width: 60px;
+	border: 2px solid #336699;
+	text-align: center;
+}
+.logout a{
+	line-height: 2;
+	font-weight: bold;
+	background-color: #3399FF;
+	color: #FFFFFF;
+	display: block;
+}
+.logout a:hover {
+	text-decoration: none;
+	background-color: #FFFFFF;
+	color: #3399FF;
+}
+span.num
+{
+	font-weight: bold;
+	font-size: 1.5em;
+	color: #336699;
+}
+table.big td
+{
+	padding: 5px;
+}
+td.icon{
+	height: 16px;
+	width: 16px;
+}
+td.icon a, td.icon a:hover {
+	background-repeat: no-repeat;
+        display: block;
+        text-decoration: none;
+}
+a.edit, a.edit:hover {
+	background-image:  url(../img/edit.png);
+}
+a.delete, a.delete:hover {
+        background-image:  url(../img/delete.png);
+}
+a.ban, a.ban:hover {
+        background-image:  url(../img/ban.png);
+}
+a.configure, a.configure:hover {	
+        background-image:  url(../img/config.png);
+}
+a.stats, a.stats:hover {
+        background-image:  url(../img/usage.png);
+}
+
+#branding
+{
+	float: right;
+	width: 80%;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	margin: 10px;
+	z-index: 100;
+}
+
+
+table.calendar {border: 1px}
+table.calendar td, th {text-align: center; border: 0}
+table.calendar th {height: 10px; font-size: 7pt;  background:#aaeeee;}
+table.calendar td {width: 19px; height: 10px; font-size: 9pt; background:#aaeeee;}
+table.calendar .calendar-month {font-weight: bold; margin-top: 3px; font-size: 12pt; text-align: center}
+table.calendar .calendar-month a{text-decoration: none}
+table.calendar .calendar-prev, table.calendar .calendar-next {font-weight: normal;}
+table.calendar th {color: #336699; text-align: center; border-top: solid 1px #336699; border-bottom: solid 1px #336699;}
+table.calendar td.linked-day {font-size: 11pt}
+
+div.smwfact table.smwfacttable {display:block}
