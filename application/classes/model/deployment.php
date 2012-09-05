@@ -124,6 +124,12 @@ class Model_Deployment extends Model_Entity
 	 * @OneToMany(targetEntity="Model_DeploymentAdmin", mappedBy="deployment", cascade={"persist", "remove"})
 	 */
 	protected $admins;
+
+	 /**
+         * @OneToMany(targetEntity="Model_NodeDeployment", mappedBy="deployment")
+         */
+        protected $node_deployments;
+
 	
 	public function __get($name)
 	{
@@ -179,11 +185,13 @@ class Model_Deployment extends Model_Entity
 			$path .= "/";
 		}
 
-		$rrd_file = $path .  "deployment" . $this->id . ".rrd";
-		
-		require_once '/srv/radacct-tg/www/functions.php';
-
-		return get_bandwidth_usage($rrd_file,30)/1024/1024;
+		$usage = 0;
+		foreach($this->node_deployments as $node_deployment)
+		{
+			$rrd_file = $path .  "node_deployment" . $node_deployment->id . ".rrd";
+			$usage += RadAcctUtils::getBandwidthUsage($rrd_file,30)/1024/1024;
+		}
+		return $usage;
 	}
 
 	public function getExceedsCap()
