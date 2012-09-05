@@ -6,7 +6,9 @@ return array
 	(
 		'node_config'	=> array
 		(
-			'url'	=> 'https://sown-auth2.ecs.soton.ac.uk',
+                        # We need to use the 10.13 address because of the firewall
+                        # We can't change the route, because the tunnel needs to come up too
+			'url'	=> 'https://auth2.sown.org.uk',
 		),
 		'dns'		=> array
 		(
@@ -39,7 +41,6 @@ return array
 		'routes'	=> '
 push "route 10.12.0.0 255.254.0.0"
 push "route 152.78.189.82 255.255.255.255"
-push "route 152.78.189.90 255.255.255.255"
 ',
 		'filename'	=> __FILE__,
 		'check'		=> array
