@@ -221,7 +221,7 @@ Route::set('package_status', 'status/<hostname>/<os>/<request_name>', array(
 		'action'     => 'default',
 	));
 
-Route::set('package_test_home', 'test', array(
+Route::set('test', 'admin/test', array(
 	))
 	->defaults(array(
 		'directory'  => 'test/config',
@@ -229,7 +229,7 @@ Route::set('package_test_home', 'test', array(
 		'action'     => 'home',
 	));
 
-Route::set('package_test_info', 'info', array(
+Route::set('test_info', 'info', array(
 	))
 	->defaults(array(
 		'directory'  => 'test/config',
