@@ -4,11 +4,11 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title><?= $title ?> | SOWN Admin System</title>
-  <?= HTML::style('media/css/sown.css', array("media" => "all")) ?>
-
-  <?= HTML::style('media/css/screen.css', array("media" => "screen")) ?>
-
-  <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?>
+  <?= HTML::style('media/css/sown.css', array("media" => "all")) ?> 
+  <?= HTML::style('media/css/screen.css', array("media" => "screen")) ?> 
+  <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?> 
+  <link <?= HTML::attributes(array("rel" => "icon", "href" => "media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
+  <link <?= HTML::attributes(array("rel" => "shortcut icon", "href" => "media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
 </head>
 <body>
   <div id="top_menu">

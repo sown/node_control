@@ -17,9 +17,9 @@
     <div class="gadget">
       <div class="banner">Main Menu</div>
       <div class="content">
-        <a href="admin/test">Test</a><br/>
-        <a href="admin/deployments/usage">Your Deployment(s) Usage</a><br/>
-        <a href="admin/deployments/usage/all">All Deployments Usage</a><br/>
+        <a href="/admin/test">Test</a><br/>
+        <a href="/admin/deployments/usage">Your Deployment(s) Usage</a><br/>
+        <a href="/admin/deployments/usage/all">All Deployments Usage</a><br/>
       </div>
     </div>
   </div>

@@ -3,13 +3,12 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <title>Login | SOWN Admin System</title>
-  <?= HTML::style('media/css/sown.css', array("media" => "all")) ?>
-
-  <?= HTML::style('media/css/screen.css', array("media" => "screen")) ?>
-
-  <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?>
-
-  <?= HTML::style('media/css/login.css', array("media" => "all")) ?>
+  <?= HTML::style('media/css/sown.css', array("media" => "all")) ?> 
+  <?= HTML::style('media/css/screen.css', array("media" => "screen")) ?> 
+  <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?> 
+  <?= HTML::style('media/css/login.css', array("media" => "all")) ?> 
+  <link<?= HTML::attributes(array("rel" => "icon", "href" => "media/images/favicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
+  <link<?= HTML::attributes(array("rel" => "shortcut icon", "href" => "media/images/favicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
 </head>
 <body>
    <div id="top_menu">
@@ -30,6 +29,7 @@
 	<div id='login'>
 		<h3>Welcome to the <abbr title="Southampton Open Wireless Network">SOWN</abbr> Admin System</h3>
 		<!-- Process node messages -->
+		<?php if (isset($message)) echo '<div class="message">' . $message . '</div>'; ?>
 		<p>Please enter your login and password below</p>
 		<br />
 		<form method="post" action="" id='login_form'>
@@ -78,7 +78,7 @@
 				<dd>&raquo; for problems logging in and accessing websites.</dd>
 			<dt>wish to <a href="http://www.sown.org.uk/contact/accountrequest">request a Community Account</a></dt>
 				<dd>&raquo; for new users.</dd>
-			<dt>have <a href="http://www.sown.org.uk/contact/">any other enquiries</a></dt>
+			<dt>have <a href="http://www.sown.org.uk/contact/?no_links">any other enquiries</a></dt>
 				<dd>&raquo; for any questions or proposals.</dd>
 		</dl>
 	</div>
