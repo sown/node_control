@@ -162,6 +162,13 @@ Route::set('logout', 'logout', array(
                 'action'     => 'logout',
         ));
 
+Route::set('forgot_password', 'forgot_password', array(
+        ))
+        ->defaults(array(
+                'controller' => 'login',
+                'action'     => 'forgot_password',
+        ));
+
 Route::set('package_config_backfire', 'package/config/backfire/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',

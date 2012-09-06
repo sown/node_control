@@ -29,9 +29,18 @@ class Controller_Login extends Controller
 		echo (string) $view->render();
 	}
 	
-	public function action_logout(){
+	public function action_logout()
+	{
 		$success = Auth::instance()->logout();
 		if ($success)
 			$this->request->redirect(Route::url('login'));
+	}
+
+	public function action_forgot_password()
+	{
+		$view = View::Factory("template");
+		$view->title = "Forgot Password";
+		$view->content = View::Factory("pages/forgot_password");
+		echo (string) $view->render();
 	}
 }

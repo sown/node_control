@@ -67,7 +67,7 @@
 			<dt><abbr title="Electronics and Computer Science">ECS</abbr> <span class='no_bold'>(@ecs.soton.ac.uk)</span></dt>
 				<dd>&raquo; This uses your ECS username and password.</dd>
 			<dt><abbr title="Southampton Open Wireless Network">SOWN</abbr> <span class='no_bold'>(@sown.org.uk)</span></dt>
-				<dd>&raquo; If you have forgotten your password <a href="admin/forgot_password">click here</a>.</dd>
+				<dd>&raquo; If you have forgotten your password <a href="forgot_password">click here</a>.</dd>
 		</dl>
 	</div>
 	<div id='contact_sown'>
