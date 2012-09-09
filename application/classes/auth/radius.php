@@ -108,12 +108,24 @@ class Auth_Radius extends Auth {
 		return RadAcctUtils::IsLocalUser($username);
 	}
 
+	public function is_deploymentadmin()
+	{
+		$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
+		if(is_object($user))
+		{
+			return count($user->admins) > 0;
+		}
+		return false;
+	}
+
 	public function is($usertype)
 	{
 		switch($usertype)
 		{
 			case 'local':
 				return $this->is_local();
+			case 'deploymentadmin':
+				return $this->is_deploymentadmin();
 			default:
 				return $this->logged_in($usertype);
 		}
