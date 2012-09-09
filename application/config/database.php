@@ -47,4 +47,19 @@ return array
 		'caching'      => FALSE,
 		'profiling'    => Kohana::$environment !== Kohana::PRODUCTION,
 	),
+	'accounts' => array
+	(
+		'type'       => 'mysql',
+		'connection' => array(
+			'hostname'   => 'radius2.sown.org.uk',
+			'username'   => 'account-manager',
+			'password'   => '',
+			// 'persistent' => FALSE,
+			'database'   => 'radius',
+		),
+		'table_prefix' => '',
+		'charset'      => 'utf8',
+		'caching'      => FALSE,
+		'profiling'    => Kohana::$environment !== Kohana::PRODUCTION,
+	),
 );
