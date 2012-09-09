@@ -23,10 +23,16 @@ if(!isset($user))
     <div class="gadget">
       <div class="banner">Main Menu</div>
       <div class="content">
+<?php if($user->is('systemadmin')) { ?>
         <a href="/admin/test">Test</a><br/>
+<?php } ?>
         <a href="/admin/deployments/usage">Your Deployment(s) Usage</a><br/>
+<?php if($user->is('systemadmin')) { ?>
         <a href="/admin/deployments/usage/all">All Deployments Usage</a><br/>
+<?php } ?>
+<?php if($user->is('local')) { ?>
         <a href="/admin/change_password">Change Password</a><br/>
+<?php } ?>
       </div>
     </div>
   </div>
