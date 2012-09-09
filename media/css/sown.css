@@ -359,3 +359,23 @@ table.calendar th {color: #336699; text-align: center; border-top: solid 1px #33
 table.calendar td.linked-day {font-size: 11pt}
 
 div.smwfact table.smwfacttable {display:block}
+
+div.error
+{
+	background-color: #F99;
+	border: solid 3px #F00;
+}
+
+div.notice
+{
+	background-color: #9F9;
+	border: solid 3px #0F0;
+}
+
+div.error, div.notice
+{
+	width: 98%;
+	padding: 1%;
+	margin: 0px;
+	margin-bottom: 1em;
+}

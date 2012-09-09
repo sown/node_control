@@ -28,6 +28,50 @@ class Controller_Test_Config_Generic extends Controller
 		$this->removeKeys($keyfiles);
 	}
 
+	public function action_change_password()
+	{
+		$this->check_login();
+		$view = View::Factory("template");
+		$view->title = "Change Password";
+		$sidebar = View::factory('partial/sidebar');
+		$sidebar->username = Auth::instance()->get_user();
+		$view->sidebar = $sidebar;
+
+		if(!Auth::instance()->is_local())
+		{
+			$view->content = "Sorry, but your account password cannot be changed via our system.";
+		}
+		else
+		{
+			$content = View::factory('pages/change_password');
+			$content->username = Auth::instance()->get_user();
+			$content->info = array();
+			if($this->request->method() == "POST")
+			{
+				$oldpassword = $this->request->post('oldpassword');
+				$password1 = $this->request->post('password1');
+				$password2 = $this->request->post('password2');
+				if($password1 != $password2)
+				{
+					$content->info['error'][] = "New passwords do not match";
+				}
+				else
+				{
+					if(!Auth::instance()->change_password($oldpassword, $password1))
+					{
+						$content->info['error'][] = "Failed to update password";
+					}
+					else
+					{
+						$content->info['notice'][] = "Password updated successfully";
+					}
+				}
+			}
+			$view->content = $content;
+		}
+		echo (string) $view->render();
+	}
+
 	public function action_info()
 	{
 		$mydevice = Model_Device::getFromDeviceIP($_SERVER['REMOTE_ADDR']);

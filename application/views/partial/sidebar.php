@@ -20,6 +20,7 @@
         <a href="/admin/test">Test</a><br/>
         <a href="/admin/deployments/usage">Your Deployment(s) Usage</a><br/>
         <a href="/admin/deployments/usage/all">All Deployments Usage</a><br/>
+        <a href="/admin/change_password">Change Password</a><br/>
       </div>
     </div>
   </div>
