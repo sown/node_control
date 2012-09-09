@@ -108,6 +108,17 @@ class Auth_Radius extends Auth {
 		return RadAcctUtils::IsLocalUser($username);
 	}
 
+	public function is($usertype)
+	{
+		switch($usertype)
+		{
+			case 'local':
+				return $this->is_local();
+			default:
+				return $this->logged_in($usertype);
+		}
+	}
+
 	public function logged_in($role = NULL)
 	{
 		$status = FALSE;
