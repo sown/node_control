@@ -2,9 +2,9 @@
 
 class Controller_Test_Config_Generic extends Controller
 {
-	public function check_login()
+	public function check_login($role = NULL)
 	{
-		if (!Auth::instance()->logged_in('systemadmin'))
+		if (!Auth::instance()->logged_in($role))
 		{
 			if (!Auth::instance()->logged_in())
 				$this->request->redirect(Route::url('login').URL::query(array('url' => $this->request->url())));
@@ -15,7 +15,7 @@ class Controller_Test_Config_Generic extends Controller
 
 	public function action_default()
 	{
-		$this->check_login();
+		$this->check_login('systemadmin');
 		$os           = $this->request->param('os');
 		$type         = $this->request->param('type');
 		$package      = $this->request->param('package');
@@ -96,7 +96,7 @@ class Controller_Test_Config_Generic extends Controller
 
 	public function action_home()
 	{
-		$this->check_login();
+		$this->check_login('systemadmin');
 		$content="<style>
 .test .ID {
 	font-style: italic;
