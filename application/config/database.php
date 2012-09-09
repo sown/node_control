@@ -47,7 +47,7 @@ return array
 		'caching'      => FALSE,
 		'profiling'    => Kohana::$environment !== Kohana::PRODUCTION,
 	),
-	'accounts' => array
+	'accounts-sown_org_uk' => array
 	(
 		'type'       => 'mysql',
 		'connection' => array(

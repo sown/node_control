@@ -271,7 +271,7 @@ class RadAcctUtils {
 		$query = DB::insert('radcheck')->set(array('username' => ':username', 'attribute' => 'NT-Password', 'Op' => ':=', 'value' => ':hash'));
 		$query->param(':username', RadAcctUtils::GetUserPart($username));
 		$query->param(':hash', $hash);
-		$res = $query->execute('accounts');
+		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
 		return ($res[1] == 1);
 	}
 	
@@ -286,7 +286,7 @@ class RadAcctUtils {
 		$query->param(':username', RadAcctUtils::GetUserPart($username));
 		$query->param(':hash', $hash);
 		$query->param(':oldhash', $oldhash);
-		$res = $query->execute('accounts');
+		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
 		return ($res == 1);
 	}
 }
