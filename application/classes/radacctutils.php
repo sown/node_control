@@ -240,7 +240,8 @@ class RadAcctUtils {
 
 	public static function IsLocalUser($username)
 	{
-		return in_array(RadAcctUtils::GetDomainPart($username), array('sown.org.uk'));
+		$config = Kohana::$config->load('database')->get('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
+		return !is_null($config);
 	}
 	
 	private static function GetUserPart($username)
