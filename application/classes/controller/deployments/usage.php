@@ -8,7 +8,7 @@ class Controller_Deployments_Usage extends Controller
 		{
 			if (!$isSystemAdmin)	
 				return;
-			$user = Doctrine::em()->getRepository('Model_User')->findOneByEmail(Auth::instance()->get_user());
+			$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
 			if (empty($user) || !$user->isSystemAdmin)
 				throw new HTTP_Exception_403('You do not have permission to access this page.');
 		}
@@ -20,7 +20,7 @@ class Controller_Deployments_Usage extends Controller
 	{
 		$this->check_login();
 		$content = "";
-		$user = Doctrine::em()->getRepository('Model_User')->findOneByEmail(Auth::instance()->get_user());
+		$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
 		if(is_object($user))
 		{
 			$deployments = $user->deploymentsAsCurrentAdmin;
