@@ -238,4 +238,55 @@ class RadAcctUtils {
 		return $total;
 	}
 
+	public static function IsLocalUser($username)
+	{
+		return in_array(RadAcctUtils::GetDomainPart($username), array('sown.org.uk'));
+	}
+	
+	private static function GetUserPart($username)
+	{
+		list($username, $domain) = explode('@', $username, 2);
+		return $username;
+	}
+	
+	private static function GetDomainPart($username)
+	{
+		list($username, $domain) = explode('@', $username, 2);
+		return $domain;
+	}
+	
+	private static function Hash($password)
+	{
+		$hash = new smbHash();
+		return $hash->nthash($password);
+	}
+	
+	public static function AddUser($username, $password)
+	{
+		return RadAcctUtils::AddUserHash($username, RadAcctUtils::Hash($password));
+	}
+	
+	private static function AddUserHash($username, $hash)
+	{
+		$query = DB::insert('radcheck')->set(array('username' => ':username', 'attribute' => 'NT-Password', 'Op' => ':=', 'value' => ':hash'));
+		$query->param(':username', RadAcctUtils::GetUserPart($username));
+		$query->param(':hash', $hash);
+		$res = $query->execute('accounts');
+		return ($res[1] == 1);
+	}
+	
+	public static function UpdateUser($username, $password, $oldpassword)
+	{
+		return RadAcctUtils::UpdateUserHash($username, RadAcctUtils::Hash($password), RadAcctUtils::Hash($oldpassword));
+	}
+	
+	private static function UpdateUserHash($username, $hash, $oldhash)
+	{
+		$query = DB::update('radcheck')->set(array('value' => ':hash'))->where('username', '=', ':username')->where('attribute', '=', 'NT-Password')->where('Op', '=', ':=')->where('value', '=', ':oldhash');
+		$query->param(':username', RadAcctUtils::GetUserPart($username));
+		$query->param(':hash', $hash);
+		$query->param(':oldhash', $oldhash);
+		$res = $query->execute('accounts');
+		return ($res == 1);
+	}
 }
