@@ -69,7 +69,7 @@ class Model_DeploymentAdmin extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "DeploymentAdmin: {$this->id}, user={$this->user->email}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
+		$str  = "DeploymentAdmin: {$this->id}, user={$this->user->username}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}";
 		return $str;
 	}
 
@@ -80,7 +80,7 @@ class Model_DeploymentAdmin extends Model_Entity
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>DeploymentAdmin</th><td>{$this->id}</td></tr>";
 		$str .= $this->fieldHTML('date', $this->startDate->format('Y-m-d H:i:s').' - '.$this->endDate->format('Y-m-d H:i:s'));
-		$str .= $this->fieldHTML('user', $this->user->email);
+		$str .= $this->fieldHTML('user', $this->user->username);
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;

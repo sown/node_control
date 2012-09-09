@@ -16,6 +16,13 @@ use Doctrine\ORM\Mapping\JoinColumn;
 class Model_User extends Model_Entity
 {
 	/**
+	 * @var text $username
+	 *
+	 * @Column(name="username", type="text", nullable=false)
+	 */
+	protected $username;
+
+	/**
 	 * @var text $email
 	 *
 	 * @Column(name="email", type="text", nullable=false)
@@ -81,7 +88,7 @@ class Model_User extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "User: {$this->id}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}";
+		$str  = "User: {$this->id}, username={$this->username}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
@@ -101,7 +108,7 @@ class Model_User extends Model_Entity
 		$str  = "<div class='user' id='user_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>User</th><td>{$this->id}</td></tr>";
-		foreach(array('email', 'isSystemAdmin') as $field)
+		foreach(array('username', 'email', 'isSystemAdmin') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}

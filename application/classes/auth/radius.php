@@ -93,7 +93,7 @@ class Auth_Radius extends Auth {
 
 			if($role == 'systemadmin')
 			{
-				$user = Doctrine::em()->getRepository('Model_User')->findOneByEmail($username);
+				$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername($username);
 				if($user == null || !$user->isSystemAdmin)
 				{
 					$status = FALSE;
