@@ -26,7 +26,9 @@ if(!isset($user))
 <?php if($user->is('systemadmin')) { ?>
         <a href="/admin/test">Test</a><br/>
 <?php } ?>
+<?php if($user->is('deploymentadmin')) { ?>
         <a href="/admin/deployments/usage">Your Deployment(s) Usage</a><br/>
+<?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="/admin/deployments/usage/all">All Deployments Usage</a><br/>
 <?php } ?>
