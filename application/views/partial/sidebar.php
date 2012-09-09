@@ -1,3 +1,9 @@
+<?php
+if(!isset($user))
+{
+	$user = Auth::instance();
+}
+?>
 <div id="sidebar">
   <div class="gadget">
     <div class="logout">
@@ -9,7 +15,7 @@
         <br/>
         <div style='text-align:center'>
           <br/>
-          <b><?= $username ?></b>
+          <b><?= $user->get_user() ?></b>
           <br/>
         </div>
       </div>

@@ -19,7 +19,6 @@ class Controller_Home extends Controller
 		$view->heading = "Welcome to the SOWN Admin System";
 	
 		$sidebar = View::factory('partial/sidebar');
-		$sidebar->username = Auth::instance()->get_user();
 		$view->sidebar = $sidebar;
 
 		$content = View::factory('pages/home');	

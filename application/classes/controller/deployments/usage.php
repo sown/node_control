@@ -61,7 +61,6 @@ class Controller_Deployments_Usage extends Controller
                 $view->title = $title;
 
                 $sidebar = View::factory('partial/sidebar');
-                $sidebar->username = Auth::instance()->get_user();
                 $view->sidebar = $sidebar;
 
                 $view->content = $content;

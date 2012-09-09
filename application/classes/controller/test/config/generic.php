@@ -34,7 +34,6 @@ class Controller_Test_Config_Generic extends Controller
 		$view = View::Factory("template");
 		$view->title = "Change Password";
 		$sidebar = View::factory('partial/sidebar');
-		$sidebar->username = Auth::instance()->get_user();
 		$view->sidebar = $sidebar;
 
 		if(!Auth::instance()->is_local())
@@ -196,7 +195,6 @@ class Controller_Test_Config_Generic extends Controller
                 $view->title = "Test";
 
                 $sidebar = View::factory('partial/sidebar');
-                $sidebar->username = Auth::instance()->get_user();
                 $view->sidebar = $sidebar;
 
                 $view->content = $content;
