@@ -79,6 +79,35 @@ class Auth_Radius extends Auth {
 		return $this->check_credentials($username, $password);
 	}
 
+	public function change_password($old, $new)
+	{
+		$username = $this->get_user();
+
+		if ($username === FALSE)
+		{
+			return FALSE;
+		}
+
+		if(!RadAcctUtils::IsLocalUser($username))
+		{
+			return FALSE;
+		}
+		
+		return RadAcctUtils::UpdateUser($username, $new, $old);
+	}
+
+	public function is_local()
+	{
+		$username = $this->get_user();
+
+		if ($username === FALSE)
+		{
+			return FALSE;
+		}
+
+		return RadAcctUtils::IsLocalUser($username);
+	}
+
 	public function logged_in($role = NULL)
 	{
 		$status = FALSE;
