@@ -12,7 +12,7 @@ return array
 		),
 		'admin_system'	=> array
 		(
-                        'url'   => 'https://sown-auth2.ecs.soron.ac.uk',
+                        'url'   => 'https://sown-auth2.ecs.soton.ac.uk',
 			'contact_email' => 'support@sown.org.uk',
 			'sender_email' => 'NO-REPLY@sown.org.uk',
 			'sender_name' => 'Southampton Open Wireless Network team',
