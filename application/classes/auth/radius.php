@@ -7,7 +7,7 @@ class Auth_Radius extends Auth {
 	 *
 	 * @param   string   username
 	 * @param   string   password
-	 * @param   boolean  enable autologin (not supported)
+	 * @param   boolean  remember (not supported)
 	 * @return  boolean
 	 */
 	protected function _login($username, $password, $remember)
@@ -22,6 +22,13 @@ class Auth_Radius extends Auth {
 		return FALSE;
 	}
 
+	/**
+	 * Checks that the a user credentials can be validated over Radius.
+	 *
+	 * @param   string   username
+	 * @param   string   password
+	 * @return  boolean
+	 */
 	private function check_credentials($username, $password)
 	{
 		$ssid = 'web-login';
@@ -37,6 +44,12 @@ class Auth_Radius extends Auth {
 		return FALSE;
 	}
 
+	/**
+ 	 * Creates an anonymous username for the domain to be used in the outer request.
+	 *
+	 * @param   string   username
+         * @return  string
+         */
 	private function create_anonymous_username($username)
 	{
 		$usernameparts = explode('@', $username, 2);
@@ -51,7 +64,7 @@ class Auth_Radius extends Auth {
 	}
 
 	/**
-	 * Get the stored password for a username. (Not supported by this auth driver, obviously.)
+	 * Get the stored password for a username. (Not supported by this auth driver, obviously).
 	 *
 	 * @param   mixed   username
 	 * @return  string
@@ -62,9 +75,9 @@ class Auth_Radius extends Auth {
 	}
 
 	/**
-	 * Compare password with original (plain text). Works for current (logged in) user
+	 * Compare password with original (plain text). Works for current (logged in) user.
 	 *
-	 * @param   string  $password
+	 * @param   string  password
 	 * @return  boolean
 	 */
 	public function check_password($password)
@@ -79,6 +92,13 @@ class Auth_Radius extends Auth {
 		return $this->check_credentials($username, $password);
 	}
 
+	/** 
+	 * Change the authenticated users password, confirming the user with their old password.
+	 * 
+	 * @param   string  old
+	 * @param   string  new
+         * @return  boolean
+	 */
 	public function change_password($old, $new)
 	{
 		$username = $this->get_user();
@@ -96,6 +116,11 @@ class Auth_Radius extends Auth {
 		return RadAcctUtils::UpdateUser($username, $new, $old);
 	}
 
+        /**
+ 	 * Is the Auth instance for a local user.
+	 *
+         * @return  boolean
+         */
 	public function is_local()
 	{
 		$username = $this->get_user();
@@ -108,6 +133,11 @@ class Auth_Radius extends Auth {
 		return RadAcctUtils::IsLocalUser($username);
 	}
 
+	/**
+         * Is the Auth instance for a user who is a deployment admin.
+         *
+         * @return  boolean
+         */ 
 	public function is_deploymentadmin()
 	{
 		$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
@@ -118,6 +148,12 @@ class Auth_Radius extends Auth {
 		return false;
 	}
 
+        /**
+	 * Is the Auth instance for a user that is of a certain type.
+	 *
+	 * @param   string  usertype
+	 * @return  boolean
+	 */
 	public function is($usertype)
 	{
 		switch($usertype)
@@ -131,6 +167,12 @@ class Auth_Radius extends Auth {
 		}
 	}
 
+	/**
+	 * Is the Auth instance for a user who is currently logged in
+	 *
+	 * @param   string  role
+	 * @return  boolean
+	 */
 	public function logged_in($role = NULL)
 	{
 		$status = FALSE;
