@@ -172,16 +172,14 @@ Route::set('forgot_password', 'forgot_password', array(
 Route::set('change_password', 'admin/change_password', array(
         ))
         ->defaults(array(
-		'directory'  => 'test/config',
-		'controller' => 'generic',
+		'controller' => 'login',
                 'action'     => 'change_password',
         ));
 
-Route::set('change_password', 'reset_password', array(
+Route::set('reset_password', 'reset_password/<hash>', array(
         ))
         ->defaults(array(
-                'directory'  => 'test/config',
-                'controller' => 'generic',
+                'controller' => 'login',
                 'action'     => 'reset_password',
         ));
 

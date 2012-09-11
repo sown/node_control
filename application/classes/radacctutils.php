@@ -275,9 +275,25 @@ class RadAcctUtils {
 		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
 		return ($res[1] == 1);
 	}
+
+	public static function ResetPassword($username, $newpassword)
+        {
+		if (empty($username))
+                {
+                        return FALSE;
+                }
+                if(!RadAcctUtils::IsLocalUser($username))
+                {
+                        return FALSE;
+                }
+
+                return RadAcctUtils::UpdateUser($username, $newpassword);
+        }
 	
-	public static function UpdateUser($username, $password, $oldpassword)
+	public static function UpdateUser($username, $password, $oldpassword = NULL)
 	{
+		if ($oldpassword === NULL)
+			return RadAcctUtils::UpdateUserHashNoOldPassword($username, RadAcctUtils::Hash($password));
 		return RadAcctUtils::UpdateUserHash($username, RadAcctUtils::Hash($password), RadAcctUtils::Hash($oldpassword));
 	}
 	
@@ -289,5 +305,14 @@ class RadAcctUtils {
 		$query->param(':oldhash', $oldhash);
 		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
 		return ($res == 1);
+	}
+
+	private static function UpdateUserHashNoOldPassword($username, $hash)
+	{
+                $query = DB::update('radcheck')->set(array('value' => ':hash'))->where('username', '=', ':username')->where('attribute', '=', 'NT-Password')->where('Op', '=', ':=');
+                $query->param(':username', RadAcctUtils::GetUserPart($username));
+                $query->param(':hash', $hash);
+                $res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
+                return ($res == 1);
 	}
 }

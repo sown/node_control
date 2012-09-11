@@ -230,6 +230,8 @@ CREATE TABLE `users` (
   `username` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL COMMENT 'email address',
   `is_system_admin` tinyint(1) NOT NULL COMMENT 'is the user a system level admin',
+  `reset_password_hash` varchar(255) NOT NULL,
+  `reset_password_time` timestamp NULL DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -290,4 +292,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-09-10  4:23:01
+-- Dump completed on 2012-09-11 19:20:21

@@ -6,6 +6,8 @@ foreach($info as $class => $classinfo)
 		echo '<div class=\''.$class.'\'>'.$i.'</div>';
 	}
 }
+if ($show_form)
+{
 ?>
 <form method="POST">
 	<input name='reset_password_hash' type='hidden' />
@@ -16,3 +18,4 @@ foreach($info as $class => $classinfo)
 		<tr><th></th><td><input type='submit' name='submit' value='Reset Password' /></td></tr>
 	</table>
 </form>
+<?php } ?>
