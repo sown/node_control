@@ -177,6 +177,14 @@ Route::set('change_password', 'admin/change_password', array(
                 'action'     => 'change_password',
         ));
 
+Route::set('change_password', 'reset_password', array(
+        ))
+        ->defaults(array(
+                'directory'  => 'test/config',
+                'controller' => 'generic',
+                'action'     => 'reset_password',
+        ));
+
 Route::set('package_config_backfire', 'package/config/backfire/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',

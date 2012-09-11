@@ -10,6 +10,14 @@ return array
                         # We can't change the route, because the tunnel needs to come up too
 			'url'	=> 'https://auth2.sown.org.uk',
 		),
+		'admin_system'	=> array
+		(
+                        'url'   => 'https://sown-auth2.ecs.soron.ac.uk',
+			'contact_email' => 'support@sown.org.uk',
+			'sender_email' => 'NO-REPLY@sown.org.uk',
+			'sender_name' => 'Southampton Open Wireless Network team',
+			'email_subject_prefix' => '[sown-accounts]',
+		),
 		'dns'		=> array
 		(
 			'host'	=> '10.13.0.254',

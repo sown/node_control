@@ -71,6 +71,51 @@ class Controller_Test_Config_Generic extends Controller
 		echo (string) $view->render();
 	}
 
+	public function action_reset_password()
+        {
+                $view = View::Factory("template");
+                $view->title = "Reset Password";
+                $content = View::factory('pages/reset_password');
+                $content->username = Auth::instance()->get_user();
+                $content->info = array();
+
+		$user = null;
+		$reset_password_hash = $this->request->param('hash');
+		if (!empty($reset_password_hash))
+			$user = findOneByResetPasswordHash($reset_password_hash);
+		
+		if (!empty($user))
+		{
+			$content->username = $user->username;
+			if($this->request->method() == "POST")
+                	{
+                		$password1 = $this->request->post('password1');
+	                        $password2 = $this->request->post('password2');
+                	        if($password1 != $password2)
+                        	{
+                                	$content->info['error'][] = "New passwords do not match";
+                        	}
+	                        else
+        	                {
+					// We need a RadAcctUtils function that can change a password without knowing the old password.
+                                	if(!RadAcctUtils::UpdateUser($user->username, $password1, $OLD_PASSWORD_UNKNOWN))
+	                                {
+        	                                $content->info['error'][] = "Failed to update password";
+                	                }
+                        	        else
+                                	{
+                                        	$content->info['notice'][] = "Password updated successfully";
+	                                }
+        	                }
+               		}
+		}
+		else
+			$content->info['error'][] = "User account cannot be found for reset password hash";
+		
+		$view->content = $content;
+                echo (string) $view->render();
+        }
+
 	public function action_info()
 	{
 		$mydevice = Model_Device::getFromDeviceIP($_SERVER['REMOTE_ADDR']);

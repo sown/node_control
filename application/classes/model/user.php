@@ -35,6 +35,13 @@ class Model_User extends Model_Entity
 	 * @Column(name="is_system_admin", type="boolean", nullable=false)
 	 */
 	protected $isSystemAdmin;
+
+	/**
+	 * @var text @resetPasswordHash
+	 * 
+	 * @Column(name="reset_password_hash", type="text", nullable=true)
+	 */
+	protected $resetPasswordHash;
 	
 	/**
 	 * @OneToMany(targetEntity="Model_DeploymentAdmin", mappedBy="user")
