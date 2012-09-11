@@ -60,6 +60,12 @@ class Package_Config_Backfire_Core extends Package_Config
                                 'method' => 'config_crontabs_v0_1_78'
                         ),
                 ),
+		'uci_config_locations' => array(
+                        array(
+                                '>=' => '0.1.78',
+                                'method' => 'config_locations_v0_1_78'
+                        ),
+		),
 	);
 
 	public static function credentials_v0_1_78(Model_Node $node, $version)
@@ -155,7 +161,8 @@ class Package_Config_Backfire_Core extends Package_Config
 				$iface_config['ipaddr'] = $v4_net_addr->get_address();
 				$iface_config['netmask'] = $v4_net_addr->get_subnet_mask();
 				// TODO get DNS servers for static IPs from the database
-				$iface_config['dns'] = Kohana::$config->load('system.default.dns.host');
+				// morse: Currently disabled while I work out how the node should handle DNS
+				// $iface_config['dns'] = Kohana::$config->load('system.default.dns.host');
 				
 				if($iface->IPv6Addr)
 				{
@@ -348,4 +355,39 @@ class Package_Config_Backfire_Core extends Package_Config
 
 		static::send_uci_config('crontabs', $config, $mod);
 	}
+
+
+	public static function config_locations_v0_1_78(Model_Node $node) 
+	{
+		$config = array(
+                        'feature' => array(
+                                'sown_native' => array(
+                                        'name' => 'sown_native',
+                                        'macs' => '00:15:17:2f:0a:7a 00:1e:c9:b4:87:39 00:21:f2:24:21:10',
+                                        'auth_type' => 'bridge',
+                                        'client_type' => 'bridge',
+				),
+
+                                'sown_home' => array(
+                                        'name' => 'sown_home',
+                                        'macs' => '00:30:48:bf:e0:19',
+                                        'auth_type' => 'tunnel',
+                                        'client_type' => 'nat',
+				),
+
+
+                                'tunnelled_auth' => array(
+                                        'name' => 'tunnelled_auth',
+                                        'macs' => '00:30:48:bf:e0:1X',
+                                        'auth_type' => 'tunnel',
+                                        'client_type' => 'nat',
+				),
+			),
+                );
+
+		$mod[] = __FILE__;
+
+		static::send_uci_config('locations', $config, $mod);
+	}
+
 }
