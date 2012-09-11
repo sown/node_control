@@ -378,4 +378,6 @@ div.error, div.notice
 	padding: 1%;
 	margin: 0px;
 	margin-bottom: 1em;
+	text-align: center;
+	font-weight: bold;
 }
