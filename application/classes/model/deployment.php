@@ -209,6 +209,20 @@ class Model_Deployment extends Model_Entity
 		return $users;
 	}
 
+	public function isCurrentDeploymentAdmin($user_id)
+	{	
+		foreach($this->admins as $admin)
+                {
+			if ($admin->user->id == $user_id)
+			{
+				if ($admin->endDate->getTimestamp() > time())
+					return TRUE;
+				return FALSE;
+			}
+                }
+		return FALSE;
+	}
+
 	public function getPrivilegedDevices()
 	{
 		$devices = array();

@@ -296,6 +296,18 @@ Route::set('home', 'admin')
                 'action'     => 'default',
         ));
 
+Route::set('deployments_usage_monthly_graph', 'admin/deployments/usage/graphs/monthly/<deployment_id>')
+        ->defaults(array(
+                'controller' => 'deployments_usage',
+                'action'     => 'monthly_graph',
+        ));
+
+Route::set('deployments_usage_daily_graph', 'admin/deployments/usage/graphs/daily/<deployment_id>')
+        ->defaults(array(
+                'controller' => 'deployments_usage',
+                'action'     => 'daily_graph',
+        ));
+
 require_once(APPPATH.'/classes/mysql-dbo.php');
 Doctrine\DBAL\Types\Type::addType('ipv4address', 'Model_Type_IPv4Address');
 Doctrine\DBAL\Types\Type::addType('ipv6address', 'Model_Type_IPv6Address');

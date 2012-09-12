@@ -83,6 +83,31 @@ class RadAcctUtils {
 		return $rv;
 	}
 
+	public static function combineNodeDeploymentsData($node_deployments)
+	{
+		if (sizeof($node_deployments) == 1)
+			return array_shift($node_deployments);
+		
+		$deployment_data = array();
+		foreach ($node_deployments as $node_deployment)
+		{
+			foreach($years as $year)
+	                {
+				foreach($months as $month)
+	                        {
+	                                foreach($days as $day)
+	                                {
+						if (!isset($deployment_data[$year][$month][$day]))
+							$deployment_data[$year][$month][$day] = $node_deployment[$year][$month][$day];
+						else
+							$deployment_data[$year][$month][$day] += $node_deployment[$year][$month][$day];
+					}
+				}	
+			}
+		}
+		return $deployment_data;
+	}
+						
 	private static function mergeData($data_one, $data_two)
 	{
 		$rv = $data_one;
@@ -157,7 +182,7 @@ class RadAcctUtils {
 		return $rv;
 	}
 
-	private static function getData($rrd_file)
+	public static function getData($rrd_file)
 	{
 		$rv = array();
 
@@ -219,6 +244,29 @@ class RadAcctUtils {
 		}
 
 		return array($total, $string);
+	}
+
+	public static function getMonthlyTotals($data)
+	{
+		
+		if (!is_array($data))
+                        return FALSE;
+
+                $monthly_totals = array();
+
+		foreach($data as $year => $year_data)
+                {
+                        foreach($year_data as $month => $days)
+                        {
+				$monthly_total = 0;
+                                foreach($days as $day)
+                                {
+					$monthly_total += $day['up'] + $day['down'];
+                                }
+				$monthly_totals[date('M y', mktime(0, 0, 0, $month, 1, $year))] = $monthly_total;
+			}
+		}
+		return $monthly_totals;
 	}
 
 	public static function getBandwidthUsage($rrd_file,$duration = 30) {
