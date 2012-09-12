@@ -1,15 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Status_Config_Generic extends Controller
+class Controller_Status_Config_Generic extends Controller_AbstractAdmin
 {
-	public function check_login()
-	{
-		if (!Auth::instance()->logged_in())
-		{
-			$this->request->redirect(Route::url('login').URL::query(array('url' => $this->request->url())));
-		}
-	}
-
 	public function action_default()
 	{
 		$request_name = $this->request->param('request_name');
