@@ -15,12 +15,12 @@ class SOWN
 		fclose($fp);
 	}
 
-	public static function notify_icinga($host, $service, $status, $message)
+	public static function notify_icinga($hostname, $service, $status, $message)
 	{
 		$host = 'monitor.sown.org.uk';
 		$port = 8080;
 
-		$post = '{"host": "'.$host.'", "service": "'.$service.'", "status": '.$status.', "output": "'.$message.'"}';
+		$post = '{"host": "'.$hostname.'", "service": "'.$service.'", "status": '.$status.', "output": "'.$message.'"}';
 		$url = "http://$host:$port/submit_result";
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
