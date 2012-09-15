@@ -29,10 +29,12 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 	{
 		$graph = new Graph(600, 200);
                 $graph->SetScale('textlin');
-                $graph->img->SetMargin(80,30,40,40);
+                $graph->img->SetMargin(70,10,30,60);
                 $graph->title->Set($title);
                 $graph->xaxis->title->Set($xlabel);
                 $graph->yaxis->title->Set($ylabel);
+		$graph->xaxis->SetTitleMargin(30); 
+		$graph->yaxis->SetTitleMargin(50); 
 		$graph->xaxis->SetLabelAngle(50);	
                 $graph->xaxis->SetTickLabels($xdata);
                 $barplot= new BarPlot($ydata);
