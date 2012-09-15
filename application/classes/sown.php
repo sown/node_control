@@ -15,6 +15,20 @@ class SOWN
 		fclose($fp);
 	}
 
+	public static function notify_icinga($host, $service, $status, $message)
+	{
+		$host = 'monitor.sown.org.uk';
+		$port = 8080;
+
+		$post = '{"host": "'.$host.'", "service": "'.$service.'", "status": '.$status.', "output": "'.$message.'"}';
+		$url = "http://$host:$port/submit_result";
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+		return curl_exec($ch);
+	}
 
 	public static function send_nsca($host, $service, $status, $message)
 	{
