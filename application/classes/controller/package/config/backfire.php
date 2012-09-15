@@ -57,7 +57,7 @@ class Controller_Package_Config_Backfire extends Controller
 		}
 		
 		//SOWN::send_irc_message('calling '.$classname.'::'.$versions.'['.$found.']["method"]('.$node.', '.$version.');');
-		SOWN::notify_icinga($node->hostname, "UPDATE-CONFIG", 0, "UPDATES OK: Node requested '.$request_name.' for '.$package.'");
+		SOWN::notify_icinga($node->hostname, "UPDATE-CONFIG", 0, "UPDATES OK: Node requested '$request_name' for '$package'");
 		$classname::$versions[$found]['method']($node, $version);
 	}
 }
