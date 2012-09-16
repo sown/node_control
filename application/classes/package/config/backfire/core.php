@@ -260,7 +260,11 @@ class Package_Config_Backfire_Core extends Package_Config
 			if (!isset($radio_id[$interface->id]))
 				continue;
 
-			$config['wifi-iface'][$interface->name] = array(
+			// the wifi-iface name should not be $interface->name
+			// this causes some exotic race in hostapd, which
+			// prevents the interface from being started cleanly
+			$fake_iface_name = md5($interface->name);
+			$config['wifi-iface'][$fake_iface_name] = array(
 				'device' => $radio_id[$interface->id],
 				'mode' => 'ap',
 				'ssid' => $interface->ssid,
@@ -270,15 +274,15 @@ class Package_Config_Backfire_Core extends Package_Config
 			if($interface->is1x)
 			{
 				$mod[] = Kohana::$config->load('system.default.filename');
-				$config['wifi-iface'][$interface->name]['encryption'] = 'wpa2+aes';
-				$config['wifi-iface'][$interface->name]['auth_server'] = Kohana::$config->load('system.default.radius.host');
-				$config['wifi-iface'][$interface->name]['acct_server'] = Kohana::$config->load('system.default.radius.host');
-				$config['wifi-iface'][$interface->name]['auth_port'] = Kohana::$config->load('system.default.radius.auth_port');
-				$config['wifi-iface'][$interface->name]['acct_port'] = Kohana::$config->load('system.default.radius.acct_port');
-				$config['wifi-iface'][$interface->name]['key'] = $node->radiusSecret;
-				$config['wifi-iface'][$interface->name]['auth_key'] = $config['wifi-iface'][$interface->name]['key'];
-				$config['wifi-iface'][$interface->name]['acct_key'] = $config['wifi-iface'][$interface->name]['key'];
-				$config['wifi-iface'][$interface->name]['nasid'] = $node->FQDN;
+				$config['wifi-iface'][$fake_iface_name]['encryption'] = 'wpa2+aes';
+				$config['wifi-iface'][$fake_iface_name]['auth_server'] = Kohana::$config->load('system.default.radius.host');
+				$config['wifi-iface'][$fake_iface_name]['acct_server'] = Kohana::$config->load('system.default.radius.host');
+				$config['wifi-iface'][$fake_iface_name]['auth_port'] = Kohana::$config->load('system.default.radius.auth_port');
+				$config['wifi-iface'][$fake_iface_name]['acct_port'] = Kohana::$config->load('system.default.radius.acct_port');
+				$config['wifi-iface'][$fake_iface_name]['key'] = $node->radiusSecret;
+				$config['wifi-iface'][$fake_iface_name]['auth_key'] = $config['wifi-iface'][$fake_iface_name]['key'];
+				$config['wifi-iface'][$fake_iface_name]['acct_key'] = $config['wifi-iface'][$fake_iface_name]['key'];
+				$config['wifi-iface'][$fake_iface_name]['nasid'] = $node->FQDN;
 			}
 		}
 		
