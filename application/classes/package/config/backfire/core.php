@@ -101,10 +101,19 @@ class Package_Config_Backfire_Core extends Package_Config
 					'timezone' => 'UTC',
 				)
 			),
+
 			// We want to use NTP not rdate. Set it to a non-existant interface
 			'rdate' => array(
 				array(
 					'interface' => 'disabled',
+				),
+			),
+
+			// We need to configure ntpd to make it work
+			'timeserver' => array(
+				'ntp' => array(
+					'server' => array('pool.ntp.org'),
+					'enable_server' => '0',
 				),
 			),
 		);
