@@ -340,16 +340,12 @@ class Package_Config_Backfire_Core extends Package_Config
                                         'enabled' => 'true',
                                         'command' => '5 * * * * /usr/sbin/cron_check',
                                 ),
-				'server_status' => array(
-					'enabled' => 'false',
-					'command' => '* * * * * /usr/sbin/server_status_check',
-				),
 				'tunnel' => array(
 					'enabled' => 'true',
 					'command' => '*/5 * * * * /usr/sbin/maintain_sown_tunnel > /dev/null',
 				),
 				'update_sown_config' => array(
-					'enabled' => 'false',
+					'enabled' => 'true',
 					'command' => '0 * * * * /usr/sbin/update_sown_config',
 				),		
 			),
