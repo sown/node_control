@@ -1,8 +1,8 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Error extends Controller_Template
+class Controller_Error extends Controller_AbstractAdmin
 {
-	public $template = 'error';
+	public $template = 'template';
 
 	public function before()
 	{
@@ -32,11 +32,18 @@ class Controller_Error extends Controller_Template
 	public function action_403()
         {
                 $this->template->title = '403 Forbidden';
+		$this->template->content = '<p style="text-align: center; font-weight: bold; font-size: 1em;">You do not have permission to access this page!</p>';
+		if ($this->test_login())
+			$this->template->sidebar =  View::factory('partial/sidebar');
         }
 
 	public function action_404()
 	{
 		$this->template->title = '404 Not Found';
+		$this->template->content = '<p style="text-align: center; font-weight: bold; font-size: 1em;">This page could not be found!</p>';
+
+		if ($this->test_login())
+                        $this->template->sidebar =  View::factory('partial/sidebar');
 
 		// Here we check to see if a 404 came from our website. This allows the
 		// webmaster to find broken links and update them in a shorter amount of time.
@@ -50,6 +57,7 @@ class Controller_Error extends Controller_Template
 	public function action_503()
 	{
 		$this->template->title = 'Maintenance Mode';
+		$this->template->content = '<p style="text-align: center; font-weight: bold; font-size: 1em;">The SOWN Admin site is currently down for maintenance but should be available again shortly!</p>';
 	}
 
 	public function action_500()

@@ -14,4 +14,12 @@ abstract class Controller_AbstractAdmin extends Controller_Template
                                 throw new HTTP_Exception_403('You do not have permission to access this page.');
                 }
         }
+
+	protected function test_login($role = NULL)
+        {
+                if (!Auth::instance()->logged_in($role))
+			return FALSE; 
+		return TRUE;
+        }
+
 }
