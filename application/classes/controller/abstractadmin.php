@@ -1,7 +1,9 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-abstract class Controller_AbstractAdmin extends Controller
+abstract class Controller_AbstractAdmin extends Controller_Template
 {
+	public $template = 'template';
+
         protected function check_login($role = NULL)
         {
                 if (!Auth::instance()->logged_in($role))

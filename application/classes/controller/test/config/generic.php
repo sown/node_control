@@ -137,15 +137,9 @@ class Controller_Test_Config_Generic extends Controller_AbstractAdmin
 		}
 		$content .= "</div>";
 
-		$view = View::factory('template');
-                $view->title = "Test";
-
-                $sidebar = View::factory('partial/sidebar');
-                $view->sidebar = $sidebar;
-
-                $view->content = $content;
-
-                echo (string) $view->render();
+                $this->template->title = "Test";
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->content = $content;
 	}
 
 	private function storeKeys($hostname, $os)

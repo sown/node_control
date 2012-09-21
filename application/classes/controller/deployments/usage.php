@@ -4,7 +4,6 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 {
 	private function _initialize_graph()
 	{
-		ini_set('display_errors', 1);
 		$response = $this->request->response();
                 // Changed /usr/share/php/kohana3.2/system/classes/kohana/http/header.php replaceing Text:: with Kohana_Text::
                 $response->headers('Content-Type', 'image/png');
@@ -140,7 +139,6 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 
 	public function action_all()
 	{
-		ini_set('display_errors', 1);
 		$this->check_login('systemadmin');
 		$content = "";
 		$deployments = Doctrine::em()->getRepository('Model_Deployment')->where_is_active();
@@ -153,6 +151,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 
 	private function _render_deployment_usage($deployment)
 	{
+		// This should be moved to view/partial
 		$content = "<h2>" . $deployment->name . "</h2>\n";
                 if ($deployment->cap == 0) 
 			$cap = "(unlimited)";
@@ -175,15 +174,9 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 
 	private function _render_page($title, $content) 
 	{
-		$view = View::factory('template');
-                $view->title = $title;
-
-                $sidebar = View::factory('partial/sidebar');
-                $view->sidebar = $sidebar;
-
-                $view->content = $content;
-
-                echo (string) $view->render();
+                $this->template->title = $title;
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->content = $content;
 	}
 
 }

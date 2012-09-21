@@ -2,10 +2,15 @@
 
 class Controller_Login extends Controller_AbstractAdmin
 {
+	public function before()
+	{
+		if ($this->request->action() == "login_page")
+			$this->template = "pages/login";
+                parent::before();
+	}
+
 	public function action_login_page()
 	{
-		$view = View::Factory("pages/login");
-	
 		if ($this->request->method() == 'POST')
 		{
 			$post = $this->request->post();
@@ -19,15 +24,13 @@ class Controller_Login extends Controller_AbstractAdmin
 					$this->request->redirect(Route::url('home'));
 			}
 			else
-				$view->message = "Login Failed";
+				$this->template->message = "Login Failed";
 		}
 		elseif (Auth::instance()->logged_in()) 
 		{
 			$this->request->redirect(Route::url('home'));	
 		}
-			
-		echo (string) $view->render();
-	}
+	}			
 	
 	public function action_logout()
 	{
@@ -40,8 +43,7 @@ class Controller_Login extends Controller_AbstractAdmin
 	{
 		$domain = Kohana::$config->load('system.default.domain');
 
-		$view = View::Factory("template");
-                $view->title = "Forgot Password";
+                $this->template->title = "Forgot Password";
                 $content =  View::Factory("pages/forgot_password");
 		$content->info = array();
 
@@ -85,21 +87,18 @@ class Controller_Login extends Controller_AbstractAdmin
 				$content->info['error'][] = "Username / Email address does not belong to a @". $domain ." user";
 		}
 		
-		$view->content = $content;
-		echo (string) $view->render();
+		$this->template->content = $content;
 	}
 	
         public function action_change_password()
         {
                 $this->check_login();
-                $view = View::Factory("template");
-                $view->title = "Change Password";
-                $sidebar = View::factory('partial/sidebar');
-                $view->sidebar = $sidebar;
+                $this->template->title = "Change Password";
+                $this->template->sidebar = View::factory('partial/sidebar');
 
                 if(!Auth::instance()->is_local())
                 {
-                        $view->content = "Sorry, but your account password cannot be changed via our system.";
+                        $this->template->content = "<p style=\"text-align: center; font-weight: bold; font-size: 1em;\">Sorry, but your account password cannot be changed via our system.</p>";
                 }
                 else
                 {
@@ -127,15 +126,13 @@ class Controller_Login extends Controller_AbstractAdmin
                                         }
                                 }
                         }
-                        $view->content = $content;
+                        $this->template->content = $content;
                 }
-                echo (string) $view->render();
         }
 
         public function action_reset_password()
         {
-                $view = View::Factory("template");
-                $view->title = "Reset Password";
+                $this->template->title = "Reset Password";
                 $content = View::factory('pages/reset_password');
                 $content->username = Auth::instance()->get_user();
                 $content->info = array();
@@ -191,8 +188,7 @@ class Controller_Login extends Controller_AbstractAdmin
                         $content->info['error'][] = "User account cannot be found for reset password hash";
                         $content->show_form = false;
                 }
-                $view->content = $content;
-                echo (string) $view->render();
+                $this->template->content = $content;
         }
 
 }
