@@ -14,7 +14,7 @@
   <div id="top_menu">
     <div class="menucontainer">
       <div>
-        <a href="http://www.sown.org.uk/"><img class="logo" src="/media/images/logo-40.png" alt="SOWN logo"/></a>
+        <a href="/"><img class="logo" src="/media/images/sown_adminsys.png" alt="SOWN Admin System logo"/></a>
       </div>
     </div>
     <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/connect/">Connect to SOWN</a></div></div>
