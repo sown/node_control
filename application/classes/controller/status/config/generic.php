@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
-class Controller_Status_Config_Generic extends Controller_AbstractAdmin
+class Controller_Status_Config_Generic extends Controller
 {
 	public function action_default()
 	{
