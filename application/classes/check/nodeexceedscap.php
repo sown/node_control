@@ -19,11 +19,11 @@ class Check_NodeExceedsCap extends Check
 		}
 		if($cap == 0)
 		{
-			$this->message = "Current consumption is " . byte_units($con*1024*1024, true) . ", no limit set.";
+			$this->message = "Current consumption is " . RadAcctUtils::byteUnits($con*1024*1024, true) . ", no limit set.";
 		}
 		else
 		{
-			$this->message = "Current consumption is " . byte_units($con*1024*1024, true) . ", limit is " . byte_units($cap*1024*1024, true) . " (" . floor(100*$con/$cap) . "%).";
+			$this->message = "Current consumption is " . RadAcctUtils::byteUnits($con*1024*1024, true) . ", limit is " . RadAcctUtils::byteUnits($cap*1024*1024, true) . " (" . floor(100*$con/$cap) . "%).";
 		}
 	}
 }

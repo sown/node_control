@@ -2,7 +2,7 @@
 
 class RadAcctUtils {
 
-	private static function byteUnits($num_bytes, $as_string = false)
+	public static function byteUnits($num_bytes, $as_string = false)
 	{
         	$rv['unit'] = ' B';
         	$rv['value'] = $num_bytes;
