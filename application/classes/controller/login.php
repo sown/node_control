@@ -18,6 +18,15 @@ class Controller_Login extends Controller_AbstractAdmin
 
 			if($success)
 			{
+				$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername($post['username']);
+				if (!is_object($user)){
+					$user = new Model_User();
+					$user->username = $post['username'];
+					$user->email = $post['username'];
+					$user->isSystemAdmin = 0;
+					$user->resetPasswordHash = "";
+					$user->save();
+				}
 				if ($this->request->query('url'))	
 					$this->request->redirect($this->request->query('url'));
 				else
