@@ -278,6 +278,12 @@ Route::set('deployments_usage_all', 'admin/deployments/usage/all')
                 'action'     => 'all',
         ));
 
+Route::set('nodes', 'admin/nodes')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'default',
+        ));
+
 Route::set('error', 'error/<action>(/<message>)', array(
 		'action' => '[0-9]++',
 		'message' => '.+'))

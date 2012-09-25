@@ -1,8 +1,7 @@
 <?
 	$columns = array(
 		'id'          => 'ID',
-		'description' => 'Name',
-		'type'	  => 'Type'
+		'boxNumber' => 'Name',
 	);
 	
 	if(isset($remove) && is_array($remove))
@@ -16,9 +15,9 @@
 ?>
 <table class="sowntable">
 	<thead>
-		<tr>
+		<tr class="tabletitle">
 		<?php foreach ($columns as $key => $title): ?>
-			<?php echo "<th class='$key'>$title</th>\n"; ?>
+			<?php echo "<th id='$key'>$title</th>\n"; ?>
 		<?php endforeach ?>
 		</tr>
 	</thead>

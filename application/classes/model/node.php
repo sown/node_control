@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Model_Node
  *
  * @Table(name="nodes")
- * @Entity
+ * @Entity(repositoryClass="Model_Repository_Node")
  */
 class Model_Node extends Model_Entity
 {

@@ -154,10 +154,13 @@ img{
 }
 .sowntablerow {
 	background-color: #FFFFFF;
-	font-size: 0.8em;
 }
-.sowntablerow td {
+.sowntablerowshade {
+        background-color: #E0E0E0;
+}
+.sowntablerow td, .sowntablerowshade td {
 	text-align: center;
+	font-size: 0.8em;
 }
 .banner {
 	background-color: #3399FF;
@@ -178,7 +181,7 @@ img{
 .bannerItem a:visited {
 	color: #EEEEEE;
 }
-.tabletitle {
+.tabletitle th{
         font-size: 0.8em;
         font-weight: bold;
         color: #EEEEEE;
