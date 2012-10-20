@@ -124,6 +124,13 @@ define Host {
 	_NODEID		{$node_id}
 	contacts	+{$name}_admin
 }
+
+define Service {
+	host_name	{$parents}
+	use		vpnserver
+	service_description	VPNSERVER-{$name}
+	check_command	check_via_node_control_lucid!{$name}!OpenvpnRunning
+}
 ";
 //	notes_url	{$url}
 	}
