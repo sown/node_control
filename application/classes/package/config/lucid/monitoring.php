@@ -129,7 +129,7 @@ define Service {
 	host_name	{$parents}
 	use		vpnserver
 	service_description	VPNSERVER-{$name}
-	check_command	check_via_node_control_lucid!{$name}!OpenvpnRunning
+	check_command	check_via_node_control!backfire!{$name}!OpenvpnRunning
 }
 ";
 //	notes_url	{$url}
