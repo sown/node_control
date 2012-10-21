@@ -20,67 +20,72 @@ class Controller_Test_Config_Generic extends Controller_AbstractAdmin
 	public function action_info()
 	{
 		$mydevice = Model_Device::getFromDeviceIP($_SERVER['REMOTE_ADDR']);
-		echo "<div>";
+		$content = "";
+		$content .= "<div>";
 		if(!is_null($mydevice))
 		{
-			echo "Your device is connected to SOWN.<br/>";
-			echo "MAC address: ".$mydevice->mac."<br/>";
+			$content .= "Your device is connected to SOWN.<br/>";
+			$content .= "MAC address: ".$mydevice->mac."<br/>";
 			if(!is_null($mydevice->user))
 			{
-				echo "This device is associated with a user.<br/>";
+				$content .= "This device is associated with a user.<br/>";
 			}
 		}
 		else
 		{
-			echo "Your device is <em>not</em> connected to SOWN.<br/>";
+			$content .= "Your device is <em>not</em> connected to SOWN.<br/>";
 		}
-		echo "</div>";
+		$content .= "</div>";
 
-		echo "<hr />";
+		$content .= "<hr style='display:block' />";
 
-		echo "<div>";
+		$content .= "<div>";
 		$mynode = Model_Node::getFromDeviceIP($_SERVER['REMOTE_ADDR']);
 		if(!is_null($mynode))
 		{
-			echo "You are connected to node: ".$mynode->currentDeployment->name."<br/>";
+			$content .= "You are connected to node: ".$mynode->currentDeployment->name."<br/>";
 		}
-		echo "</div>";
+		$content .= "</div>";
 
-		echo "<hr />";
+		$content .= "<hr style='display:block' />";
 
-		echo "<div>";
+		$content .= "<div>";
 		if(!is_null($mydevice))
 		{
 			if(!is_null($mynode) && in_array($mydevice, $mynode->currentDeployment->privilegedDevices))
 			{
-				echo "Your device enjoys special privileges when connected to this node.<br/>";
+				$content .= "Your device enjoys special privileges when connected to this node.<br/>";
 			}
 			else
 			{
-				echo "Your device <em>does not</em> enjoy special privileges when connected to this node.<br/>";
+				$content .= "Your device <em>does not</em> enjoy special privileges when connected to this node.<br/>";
 			}
 		}
-		echo "</div>";
+		$content .= "</div>";
 
-		echo "<hr />";
+		$content .= "<hr style='display:block' />";
 
-		echo "<div>";
+		$content .= "<div>";
 		if(!is_null($mydevice))
 		{
-			echo "Your data consumption over the past 24 hours:<br/>";
-			echo "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=sta-rrds&entry=".str_replace(':', '-', strtoupper($mydevice->mac))."' />";
+			$content .= "Your device's data consumption over the past 24 hours:<br/>";
+			$content .= "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=sta-rrds&entry=".str_replace(':', '-', strtoupper($mydevice->mac))."' />";
 		}
-		echo "</div>";
+		$content .= "</div>";
 
-		echo "<hr />";
+		$content .= "<hr style='display:block' />";
 
-		echo "<div>";
+		$content .= "<div>";
 		if(!is_null($mydevice) && !is_null($mynode) && in_array($mydevice, $mynode->currentDeployment->privilegedDevices))
 		{
-			echo "Your node's data consumption over the past 24 hours:<br/>";
-			echo "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=nas-rrds&entry=deployment".$mynode->currentDeployment->id."' />";
+			$content .= "This node's data consumption over the past 24 hours:<br/>";
+			$content .= "<img src='http://sown-auth2.ecs.soton.ac.uk/radacct-tg/graphs.php?col=nas-rrds&entry=node_deployment".$mynode->currentDeployment->id."' />";
 		}
-		echo "</div>";
+		$content .= "</div>";
+
+                $this->template->title = "Connection Information";
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->content = $content;
 	}
 
 	public function action_home()
