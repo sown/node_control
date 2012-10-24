@@ -252,9 +252,13 @@ class Package_Config_Backfire_Core extends Package_Config
 					),
 				);
 
-			if($node->currentDeployment->exceedsCap)
+			/* Node might not have a deployment ... */
+			if($node->currentDeployment !== NULL)
 			{
-				$config['wifi-device'][$dev_name]['disabled'] = 1;
+				if($node->currentDeployment->exceedsCap)
+				{
+					$config['wifi-device'][$dev_name]['disabled'] = 1;
+				}
 			}
 			// Also optional 'hwmode' which can be set to '11g',
 			// we can use the database 'type' field here
