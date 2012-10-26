@@ -19,6 +19,8 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 		),
 	);
 
+	# If called with no node, this function will call itself
+	# to generate a tar file of config files
 	public static function config_openvpn_v0_1_78(Model_Node $node = null)
 	{
 		if($node === null)
@@ -31,7 +33,16 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 				$files = array_merge($files, static::$fn($node));
 			}
 			static::send_tgz($files, array());
+
+			# morse: Can this fall-through?
 		}
+
+		if($node->certificate->cn == "")
+		{
+			# No certificate defined
+			return array();
+		}
+
 		$ep = $node->vpnEndpoint;
 		$dns_host = Kohana::$config->load('system.default.dns.host');
 		$routes = trim(Kohana::$config->load('system.default.routes'));
@@ -107,6 +118,10 @@ EOB;
 		));
 	}
 
+
+
+	# If called with no node, this function will call itself
+	# to generate a tar file of config files
 	public static function config_client_routes_v0_1_78(Model_Node $node = null)
 	{
 		if($node === null)
@@ -119,6 +134,14 @@ EOB;
 				$files = array_merge($files, static::$fn($node));
 			}
 			static::send_tgz($files, array());
+
+			# morse: Can this fall-through?
+		}
+
+		if($node->certificate->cn == "")
+		{
+			# No certificate defined
+			return array();
 		}
 
 		$confconnect = "#!/bin/bash\n\n";
