@@ -284,6 +284,12 @@ Route::set('nodes', 'admin/nodes')
                 'action'     => 'default',
         ));
 
+Route::set('nodes', 'admin/nodes/create')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'create',
+        ));
+
 Route::set('error', 'error/<action>(/<message>)', array(
 		'action' => '[0-9]++',
 		'message' => '.+'))

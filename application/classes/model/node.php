@@ -276,6 +276,16 @@ class Model_Node extends Model_Entity
 		return $n + 1;
 	}
 
+	public static function nonUniqueBoxNumber($boxNumber)
+	{
+		if (empty($boxNumber)) 
+		{
+			return FALSE;
+		}
+		$result = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
+		return empty($result->id);
+	}
+
 	public static function build($boxNumber, $firmwareImage, $notes, $certificate, $vpnEndpoint)
 	{
 		$obj = new Model_Node();

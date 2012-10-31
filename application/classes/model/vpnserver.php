@@ -153,4 +153,16 @@ class Model_VpnServer extends Model_Server
 		}
 		return $usedspace;
 	}
+	
+	public static function getVpnServerNames(){
+		$vpnServers = Doctrine::em()->getRepository('Model_VpnServer')->findAll();
+		$vpnServerNames = array();
+		foreach ($vpnServers as $vpnServer)
+		{
+        		$vpnServerNames[$vpnServer->name] = $vpnServer->name;
+		}
+		return $vpnServerNames;
+	}
+
+		
 }

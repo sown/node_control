@@ -26,14 +26,25 @@ if(!isset($user))
 <?php if($user->is('systemadmin')) { ?>
         <a href="/admin/test">Test</a><br/>
 <?php } ?>
+<?php if($user->is('local')) { ?>
+        <a href="/admin/change_password">Change Password</a><br/>
+<?php } ?>
+      </div>
+    </div>
+    <div class="gadget">
+      <div class="banner">Nodes/Deployments</div>
+      <div class="content">
+<?php if($user->is('systemadmin')) { ?>
+        <a href="/admin/nodes">Nodes List</a><br/>
+<?php } ?>
+<?php if($user->is('systemadmin')) { ?>
+        <a href="/admin/nodes/create">Create Node</a><br/>
+<?php } ?>
 <?php if($user->is('deploymentadmin')) { ?>
         <a href="/admin/deployments/usage">Your Deployment(s) Usage</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="/admin/deployments/usage/all">All Deployments Usage</a><br/>
-<?php } ?>
-<?php if($user->is('local')) { ?>
-        <a href="/admin/change_password">Change Password</a><br/>
 <?php } ?>
       </div>
     </div>
