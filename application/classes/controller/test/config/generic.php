@@ -4,6 +4,7 @@ class Controller_Test_Config_Generic extends Controller_AbstractAdmin
 {
 	public function action_default()
 	{
+		$this->template = 'blank';
 		$this->check_login('systemadmin');
 		$os           = $this->request->param('os');
 		$type         = $this->request->param('type');
@@ -84,7 +85,7 @@ class Controller_Test_Config_Generic extends Controller_AbstractAdmin
 		$content .= "</div>";
 
                 $this->template->title = "Connection Information";
-                $this->template->sidebar = View::factory('partial/sidebar');
+                //$this->template->sidebar = View::factory('partial/sidebar');
                 $this->template->content = $content;
 	}
 
