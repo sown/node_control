@@ -44,6 +44,8 @@ class Controller_Error extends Controller_AbstractAdmin
 
 		if ($this->test_login())
                         $this->template->sidebar =  View::factory('partial/sidebar');
+		else
+			$this->template->content = '<p style="text-align: center; font-weight: bold; font-size: 1em;">This page could not be found! Click <a href="/">here</a> to login</p>';			
 
 		// Here we check to see if a 404 came from our website. This allows the
 		// webmaster to find broken links and update them in a shorter amount of time.
