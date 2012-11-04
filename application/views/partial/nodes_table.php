@@ -2,6 +2,11 @@
 	$columns = array(
 		'id'          => 'ID',
 		'boxNumber' => 'Name',
+		'firmwareImage' => 'Firmware Image',
+		'notes' => 'Notes',
+		'view' => '',
+		'edit' => '',
+		'delete' => '',
 	);
 	
 	if(isset($remove) && is_array($remove))

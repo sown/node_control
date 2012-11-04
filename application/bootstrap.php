@@ -284,10 +284,28 @@ Route::set('nodes', 'admin/nodes')
                 'action'     => 'default',
         ));
 
-Route::set('nodes', 'admin/nodes/create')
+Route::set('create_node', 'admin/nodes/create')
         ->defaults(array(
                 'controller' => 'nodes',
                 'action'     => 'create',
+        ));
+
+Route::set('delete_node', 'admin/nodes/<boxNumber>/delete')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_node', 'admin/nodes/<boxNumber>/edit')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'edit',
+        ));
+
+Route::set('view_node', 'admin/nodes/<boxNumber>')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'view',
         ));
 
 Route::set('error', 'error/<action>(/<message>)', array(

@@ -384,3 +384,78 @@ div.error, div.notice
 	text-align: center;
 	font-weight: bold;
 }
+
+dl div {
+  display: table-row;
+}
+dl div dt {
+  padding-bottom: 0.5em;
+  font-weight: bold;
+  display: table-cell;
+  vertical-align: top;
+  text-align: right;
+}
+dl div dd {
+  display: table-cell;
+  padding: 0 0 0.5em 0.5em;
+}
+legend {
+	font-weight: bold;
+}
+fieldset {
+	margin: 0.5em 0 1em 0;
+	padding-bottom: 0;
+}
+span.hint {
+	font-style: italic;
+	color: gray;
+	font-size: 0.8em;
+	padding-left: 0.5em;
+}
+
+div.buttons {
+	text-align: center;
+}
+
+a.edit, a.edit:hover {
+        background-image:  url(../images/edit.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+}
+a.delete, a.delete:hover {
+        background-image:  url(../images/delete.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+}
+a.ban, a.ban:hover {
+        background-image:  url(../images/ban.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+
+}
+a.unban, a.unban:hover {
+        background-image:  url(../images/accept.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+
+}
+a.configure, a.configure:hover {
+        background-image:  url(../images/config.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+}
+a.stats, a.stats:hover {
+        background-image:  url(../images/usage.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+}
+a.view, a.view:hover {
+        background-image:  url(../images/view.png);
+	  background-repeat: no-repeat;
+	  text-decoration: none;
+}
+a.users, a.users:hover {
+        background-image:  url(../images/users.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+}

@@ -1,6 +1,25 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 class FormUtils {
+	public static function parseForm($fields) {
+		$formValues = array();
+		foreach ($fields as $field => $value)
+                {
+	                $fieldParts = explode("_", $field);
+                        switch (sizeof($fieldParts))
+                        {
+        	                case 2:
+                	                $formValues[$fieldParts[0]][$fieldParts[1]] = $value;
+                                        break;
+                                case 3:
+                                        $formValues[$fieldParts[0]][$fieldParts[1]][$fieldParts[2]] = $value;
+                                        break;
+                                default:
+                                        $formValues[$fieldParts[0]] = $value;
+                        }
+                }
+		return $formValues;
+	}
 
 	public static function drawForm($fields, $values, $submits = array(), $errors = array(), $success = "")
 	{
@@ -22,30 +41,160 @@ class FormUtils {
 		$formHtml .= "  <dl>\n";
 		foreach ($fields as $f => $field) 
 		{
-			$formHtml .= "    <dt>" . Form::label($f, $field['title']) . "</dt>\n";
-			$formHtml .= "    <dd>" . FormUtils::drawElement($field, $f, $values[$f]);
-			if (!empty($field['hint'])) 
+			if(!isset($values[$f]))
 			{
-				$formHtml .= "&nbsp;" . $field['hint'];
+				$values[$f] = '';
 			}
-			$formHtml .= "</dd>\n";
-	
+			$formHtml .= FormUtils::drawField($field, $f, $values[$f]);
 		}
-		if (!empty($submits)) 
+		$formHtml .= "  </dl>\n";
+		
+		if (is_array($submits)) 
 		{
-			$formHtml .= "  ".Form::submit(NULL, 'Submit');
-		}
-		else 
-		{		
-			foreach ($submits as $s => $submit) {
-				$formHtml .= "  ".Form::submit($s, $submit) . "&nsbp;";
+			$formHtml .= "  <div class=\"buttons\">\n";
+			if (sizeof($submits) == 0) 
+			{
+				$formHtml .= "    ".Form::submit(NULL, 'Submit')."\n";
 			}
+			else
+			{		
+				foreach ($submits as $s => $submit) {
+					$formHtml .= "    ".Form::submit($s, $submit) . "&nbsp;\n";
+				}
+			}
+			$formHtml .= "  </div>\n";
 		}
        		$formHtml .= Form::close();
 		return $formHtml;
 	}
 
-	private static function drawElement($field, $name, $value) 
+	public static function makeStaticForm($formTemplate) 
+	{
+		foreach ($formTemplate as $f => $field) 
+                {
+                        if ($field['type'] == 'hidden')
+                        {
+                                unset($formTemplate[$f]);
+                        }
+                        elseif (in_array($field['type'], array('fieldset', 'table')))
+                        {
+				$formTemplate[$f]['fields'] = FormUtils::makeStaticForm($field['fields']);
+                        }
+                        else
+                        {
+                                unset($formTemplate[$f]['type']); 
+				unset($formTemplate[$f]['hint']);
+                        }
+                }
+		return $formTemplate;
+	}
+
+	private static function drawFormTable($table, $name, $values)
+	{
+		$formHtml = "    <fieldset>\n      <legend>" . $table['title'] ."</legend>\n";
+		$formHtml .= "      <table class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n        <tr class=\"tabletitle\">\n";
+		foreach ($table['fields'] as $f => $field) 
+		{
+			if (empty($field['type']))
+			{
+				$field['type'] = 'static';
+			}
+			if ($field['type'] != "hidden")
+			{
+				$formHtml .= "          <th>" . $field['title'] . "</th>\n";
+			}
+		}
+		$formHtml .= "        </tr>\n";
+		$shade = "";
+		foreach ($values as $r => $row)
+		{
+			$formHtml .= "        <tr class=\"sowntablerow\">\n";
+			foreach ($table['fields'] as $f => $field)
+			{
+				if (empty($field['type'])) 
+				{
+					$field['type'] = "static";
+				}
+				if (!isset($row[$f]))
+				{
+					$row[$f] = '';
+				}
+				if ($field['type'] == "hidden")
+				{
+					$formHtml .= "          " . FormUtils::drawFormElement($field, $name.'_'.$r.'_'.$f, $row[$f])."\n";
+				}
+				else 
+				{
+					$formHtml .= "          <td$shade>" . FormUtils::drawFormElement($field, $name.'_'.$r.'_'.$f, $row[$f]) . "</td>\n";
+				}
+			}
+			$formHtml .= "        </tr>\n";
+			if (empty($shade)) {
+				$shade = " class=\"shade\"";
+			}
+			else
+			{
+				$shade = "";
+			}
+		}
+		$formHtml .= "      </table>\n    </fieldset>\n";	
+		return $formHtml;	
+	}
+
+	private static function drawFieldset($fieldset, $name, $values)
+	{
+		$formHtml = "    <fieldset>\n      <legend>" . $fieldset['title'] ."</legend>\n";
+		foreach ($fieldset['fields'] as $f => $field)
+		{
+			if (!isset($values[$f])) 
+			{
+				$values[$f] = '';
+			}	
+			$formHtml .= FormUtils::drawField($field, $name.'_'.$f, $values[$f]);
+		}
+		$formHtml .= "    </fieldset>\n"; 
+		return $formHtml;
+	}
+
+	private static function drawField($field, $name, $value)
+	{
+		$formHtml = "";
+		if (empty($field['type']))
+	        {
+                        $field['type'] = "static";
+                }
+                if ($field['type'] == "hidden")
+                {
+                        $formHtml .= "    " . Form::hidden($name, $value) . "\n";
+                }
+                elseif ($field['type'] == "message")
+                {
+                        $formHtml .= "    <p>" . $value . "</p>\n";
+                }
+		elseif ($field['type'] == "fieldset")
+		{
+			$formHtml .= FormUtils::drawFieldset($field, $name, $value);
+		}
+		elseif ($field['type'] == "table") 
+		{
+			$formHtml .= FormUtils::drawFormTable($field, $name, $value);
+		}
+                else
+                {
+             		$formHtml .= "    <div>\n";
+                        $formHtml .= "      <dt>" . Form::label($name, $field['title']) . ":</dt>\n";
+                        $formHtml .= "      <dd>" . FormUtils::drawFormElement($field, $name, $value);
+                        if (!empty($field['hint']))
+                        {
+                                $formHtml .= "<span class=\"hint\">" . $field['hint'] . "</span>";
+                        }
+                        $formHtml .= "</dd>\n";
+                        $formHtml .= "    </div>\n";
+                }
+		return $formHtml;
+	}
+
+	private static function drawFormElement($field, $name, $value) 
 	{
 		if (!isset($value)) {
 			$value = "";
@@ -53,13 +202,25 @@ class FormUtils {
 		switch($field['type'])
 		{
 			case 'input':
-				return Form::input($name, $value);
+				if (empty($field['size']))
+				{
+					$field['size'] = 30;
+				}
+				return Form::input($name, $value, array('size' => $field['size']));
 			case 'textarea':
 				return Form::textarea($name, $value);
 			case 'select':
 				return Form::select($name, $field['options'], $value);
+			case 'checkbox':	
+				return Form::checkbox($name, 1, !empty($value));
+			case 'hidden':
+				return Form::hidden($name, $value);
+			case 'static':
+				return $value;
+			case 'statichidden':
+				return $value . " " . Form::hidden($name, $value);
 			default:
-				return "Do not recognise type $type";
+				return "Do not recognise type " . $field['type'];
 		}
 	}	
 

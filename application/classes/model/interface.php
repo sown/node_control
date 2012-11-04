@@ -226,4 +226,24 @@ class Model_Interface extends Model_Entity
 		$obj->node = $node;
 		return $obj;
 	}
+
+	public static function unusedIPSubnet($address, $cidr, $version = 4, $interfaceId = 0)
+	{
+		$interfaces = Doctrine::em()->getRepository('Model_Interface')->findAll();
+                $IPSubnet = IP_Network_Address::factory($address, $cidr);
+                $IPAddrName = "IPv" . $version . "Addr";
+                $IPCidrName = "IPv" . $version . "AddrCidr";
+                foreach ($interfaces as $i => $interface) {
+			
+			if (empty($interface->$IPAddrName) || $interface->id == $interfaceId)
+                        {
+                                continue;
+                        }
+                        if ($IPSubnet->shares_subnet_space(IP_Network_Address::factory($interface->$IPAddrName, $interface->$IPCidrName)))
+                        {
+                                return FALSE;
+                        }
+                }
+                return TRUE;
+	}
 }

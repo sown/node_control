@@ -1,7 +1,7 @@
 <?php
 class Model_Builder
 {
-	public static function create_node($boxNumber = '', $vpnServerName = 'sown-auth2.ecs.soton.ac.uk', $firmwareImage = '', $notes = '', $wiredMac = '', $wirelessMac = '')
+	public static function create_node($boxNumber = '', $vpnServerName = 'sown-auth2.ecs.soton.ac.uk', $wiredMac = '', $wirelessMac = '', $firmwareImage = '', $notes = '')
 	{
 		$certificate = Model_Certificate::build();
 		$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($vpnServerName);
@@ -50,6 +50,11 @@ class Model_Builder
 	public static function destroy_node($boxNumber)
 	{
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
-		$node->delete();
+		if (!empty($node)) 
+		{
+			$node->delete();
+			return TRUE;
+		}
+		return FALSE;
 	}
 }

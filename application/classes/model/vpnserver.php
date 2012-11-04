@@ -154,7 +154,8 @@ class Model_VpnServer extends Model_Server
 		return $usedspace;
 	}
 	
-	public static function getVpnServerNames(){
+	public static function getVpnServerNames()
+	{
 		$vpnServers = Doctrine::em()->getRepository('Model_VpnServer')->findAll();
 		$vpnServerNames = array();
 		foreach ($vpnServers as $vpnServer)
@@ -164,5 +165,26 @@ class Model_VpnServer extends Model_Server
 		return $vpnServerNames;
 	}
 
-		
+	public static function validPort($port, $vpnServerName)
+        {
+                if (!is_numeric($port) || $port < 1 || $port > 65535)
+                {
+                        return FALSE;
+                }
+                $vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($vpnServerName);
+                if ($port < $vpnServer->portStart || $port > $vpnServer->portEnd)
+                {
+                        return FALSE;
+                }
+                return TRUE;
+
+        }
+
+	public static function validIPSubnet($address, $cidr, $version = 4, $vpnServerName = 'sown-auth2.ecs.soton.ac.uk')
+        {
+		$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($vpnServerName);
+		$IPAddrName = "IPv" . $version . "Addr";
+		$IPCidrName = "IPv" . $version . "AddrCidr";
+		return IP_Network_Address::factory($vpnServer->$IPAddrName, $vpnServer->$IPCidrName)->encloses_subnet(IP_Network_Address::factory($address, $cidr));	
+	}
 }
