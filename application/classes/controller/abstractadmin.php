@@ -3,6 +3,7 @@
 abstract class Controller_AbstractAdmin extends Controller_Template
 {
 	public $template = 'template';
+	public $bannerItems;
 
         protected function check_login($role = NULL)
         {

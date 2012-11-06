@@ -36,6 +36,9 @@ if (empty($content)) $content = "NO CONTENT SET";
     <?php } ?>
       <div class="content">
         <h1><?= $heading ?></h1>
+        <?php if (!empty($banner)) { ?>
+    	<?= $banner ?>
+        <?php } ?>
         <?= $content ?>
       </div>
     </div>

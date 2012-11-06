@@ -35,10 +35,10 @@ if(!isset($user))
       <div class="banner">Nodes/Deployments</div>
       <div class="content">
 <?php if($user->is('systemadmin')) { ?>
-        <a href="/admin/nodes">Nodes List</a><br/>
+        <a href="/admin/nodes">Nodes</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
-        <a href="/admin/nodes/create">Create Node</a><br/>
+        <a href="/admin/deployments">Deployments</a><br/>
 <?php } ?>
 <?php if($user->is('deploymentadmin')) { ?>
         <a href="/admin/deployments/usage">Your Deployment(s) Usage</a><br/>

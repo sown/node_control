@@ -125,16 +125,34 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		$this->check_login();
 
 		$content = "";
+		$id = $this->request->param('id');
 		$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
-		if(is_object($user))
+		if (!empty($id))
 		{
-			$deployments = $user->deploymentsAsCurrentAdmin;
-			foreach ($deployments as $deployment)
+			$deployment = Doctrine::em()->getRepository('Model_Deployment')->findOneById($this->request->param('id'));
+			if (is_object($user) && ($user->isSystemAdmin || $deployment->isCurrentDeploymentAdmin(Auth::instance()->get_user())))
 			{
-				$content .= $this->_render_deployment_usage($deployment);
+				$title = "Usage for ".$deployment->name;
+				$content = $this->_render_deployment_usage($deployment);
+			}	
+			else
+			{
+				throw new HTTP_Exception_403('You do not have permission to access this page.');
 			}
 		}
-		$this->_render_page("Your Deployment(s) Usage", $content);
+		else
+		{
+			if(is_object($user))
+			{
+				$deployments = $user->deploymentsAsCurrentAdmin;
+				foreach ($deployments as $deployment)
+				{
+					$content .= $this->_render_deployment_usage($deployment);
+				}
+			}
+			$title = "Your Deployment(s) Usage";
+		}
+		$this->_render_page($title, $content);
 	}
 
 	public function action_all()

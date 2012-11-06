@@ -2,22 +2,45 @@
 
 class Controller_Nodes extends Controller_AbstractAdmin
 {
+	public function before()
+        {
+		$this->bannerItems = array("Create Node" => Route::url('create_node'), "Node List" => Route::url('nodes'));
+		parent::before();
+	}
+
 	public function action_default()
 	{
 		$this->check_login("systemadmin");
-
-		$this->template->title = "Nodes List";
+		$title = "Node List";
+		View::bind_global('title', $title);
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
-		$content = View::factory('partial/nodes_table');	
-		$content->nodes = Doctrine::em()->getRepository('Model_Node')->findAll();
-	
+		$fields = array(
+                	'id' => 'ID',
+               		'boxNumber' => 'Name',
+               		'firmwareImage' => 'Firmware Image',
+               		'notes' => 'Notes',
+               		'view' => '',
+               		'edit' => '',
+               		'delete' => '',
+       		);
+		$rows = Doctrine::em()->getRepository('Model_Node')->findAll();
+		$objectType = 'node';
+		$idField = 'boxNumber';
+		$content = View::factory('partial/table')
+			->bind('fields', $fields)
+			->bind('rows', $rows)
+			->bind('objectType', $objectType)
+			->bind('idField', $idField);
 		$this->template->content = $content;	
 	}
 
 	public function action_create()
 	{
 		$this->check_login("systemadmin");
+		$title = "Create Node";
+		View::bind_global('title', $title);
 		$errors = array();
 		$success = "";
 		if ($this->request->method() == 'POST')
@@ -63,15 +86,16 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'notes' => array('title' => 'Notes', 'type' => 'textarea'),
 		);
 	
-                $this->template->title = "Create Node";
                 $this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('createNode' => 'Create Node'), $errors, $success);
 	}
 
 	public function action_view()
 	{
 		$this->check_login("systemadmin");
-		$this->template->title = "View Node";
+		$title = "View Node";
+		View::bind_global('title', $title);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'view');
 		$formTemplate = $this->_load_form_template('view');
@@ -81,7 +105,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	public function action_edit()
         {
                 $this->check_login("systemadmin");
-                $this->template->title = "Edit Node";
+		$title = "Edit Node";
+		View::bind_global('title', $title);
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$errors = array();
                 $success = "";
@@ -108,7 +133,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
         {
                 $this->check_login("systemadmin");
                 $success = "";
-		$this->template->title = "Delete Node";
+		$title = "Delete Node";
+		View::bind_global('title', $title);
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();

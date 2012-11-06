@@ -307,6 +307,43 @@ Route::set('view_node', 'admin/nodes/<boxNumber>')
                 'controller' => 'nodes',
                 'action'     => 'view',
         ));
+Route::set('deployments', 'admin/deployments')
+        ->defaults(array(
+                'controller' => 'deployments_main',
+                'action'     => 'default',
+        ));
+
+Route::set('create_deployment', 'admin/deployments/create')
+        ->defaults(array(
+                'controller' => 'deployments_main',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_deployment', 'admin/deployments/<id>/delete')
+        ->defaults(array(
+                'controller' => 'deployments_main',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_deployment', 'admin/deployments/<id>/edit')
+        ->defaults(array(
+                'controller' => 'deployments_main',
+                'action'     => 'edit',
+        ));
+
+Route::set('view_deployment', 'admin/deployments/<id>')
+        ->defaults(array(
+                'controller' => 'deployments_main',
+                'action'     => 'view',
+        ));
+
+Route::set('usage_deployment', 'admin/deployments/<id>/usage')
+        ->defaults(array(
+                'controller' => 'deployments_usage',
+                'action'     => 'default',
+        ));
+
+
 
 Route::set('error', 'error/<action>(/<message>)', array(
 		'action' => '[0-9]++',

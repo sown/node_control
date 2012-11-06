@@ -50,7 +50,9 @@ p.center{
 p.right{
 	text-align: right;
 }
-
+big {
+	font-size: 1.5em;
+}
 .logo {
 }
 .title_text {
@@ -166,6 +168,9 @@ img{
 	background-color: #3399FF;
 	border: 0px solid #3399FF;
 	width: 100%;
+}
+table.banner {
+	margin-bottom: 1em;
 }
 .bannerItem {
         font-size: 0.8em;
@@ -444,7 +449,7 @@ a.configure, a.configure:hover {
         background-repeat: no-repeat;
         text-decoration: none;
 }
-a.stats, a.stats:hover {
+a.usage, a.usage:hover {
         background-image:  url(../images/usage.png);
         background-repeat: no-repeat;
         text-decoration: none;
