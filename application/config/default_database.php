@@ -51,9 +51,9 @@ return array
 	(
 		'type'       => 'mysql',
 		'connection' => array(
-			'hostname'   => 'radius2.sown.org.uk',
-			'username'   => 'account-manager',
-			'password'   => '',
+			'hostname'   => 'localhost',
+			'username'   => 'sown',
+			'password'   => 'password',
 			// 'persistent' => FALSE,
 			'database'   => 'radius',
 		),
