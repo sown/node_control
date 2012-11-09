@@ -1,3 +1,4 @@
 db.bash
 application/config/dev_ips.php
+application/config/database.php
 atheros
