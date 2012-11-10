@@ -94,7 +94,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$use = "node";
 
 //		$hostgroups = "*Home Nodes,*OpenWRT Nodes";
-		$hostgroups = "*Backfire Nodes";
+		$hostgroups = "*Backfire Nodes,*Home Nodes";
 
 		//$address = new Addr($ipv4_addrs);
 
