@@ -99,6 +99,16 @@ class Model_User extends Model_Entity
 		}
 	}
 
+	public static function build($username, $email, $isSystemAdmin = FALSE)
+        {
+                $obj = new Model_User();
+                $obj->username = $username;
+                $obj->email = $email;
+                $obj->isSystemAdmin = $isSystemAdmin;
+		$obj->resetPasswordHash = "";
+                return $obj;
+        }
+
 	public function __toString()
 	{
 		$this->logUse();
@@ -149,5 +159,27 @@ class Model_User extends Model_Entity
                 }
                 return $deployments;
         }
+
+	public static function nonUniqueUsername($username)
+        {
+                if (empty($username))
+                {
+                        return FALSE;
+                }
+                $result = Doctrine::em()->getRepository('Model_User')->findOneByUsername($username. '@sown.org.uk');
+                return empty($result->id);
+        }
+
+	public static function nonUniqueEmail($email)
+        {
+                if (empty($email))
+                {
+                        return FALSE;
+                }
+                $result = Doctrine::em()->getRepository('Model_User')->findOneByEmail($email);
+                return empty($result->id);
+        }
+
+
 
 }

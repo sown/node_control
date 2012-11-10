@@ -24,10 +24,13 @@ if(!isset($user))
       <div class="banner">Main Menu</div>
       <div class="content">
 <?php if($user->is('systemadmin')) { ?>
-        <a href="/admin/test">Test</a><br/>
+        <a href="<?= Route::url('test') ?>">Test</a><br/>
+<?php } ?>
+<?php if($user->is('systemadmin')) { ?>
+        <a href="<?= Route::url('users') ?>">Users</a><br/>
 <?php } ?>
 <?php if($user->is('local')) { ?>
-        <a href="/admin/change_password">Change Password</a><br/>
+        <a href="<?= Route::url('change_password') ?>">Change Password</a><br/>
 <?php } ?>
       </div>
     </div>
@@ -35,16 +38,16 @@ if(!isset($user))
       <div class="banner">Nodes/Deployments</div>
       <div class="content">
 <?php if($user->is('systemadmin')) { ?>
-        <a href="/admin/nodes">Nodes</a><br/>
+        <a href="<?= Route::url('nodes') ?>">Nodes</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
-        <a href="/admin/deployments">Deployments</a><br/>
+        <a href="<?= Route::url('deployments') ?>">Deployments</a><br/>
 <?php } ?>
 <?php if($user->is('deploymentadmin')) { ?>
-        <a href="/admin/deployments/usage">Your Deployment(s) Usage</a><br/>
+        <a href="<?= Route::url('deployments_usage') ?>">Your Deployment(s) Usage</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
-        <a href="/admin/deployments/usage/all">All Deployments Usage</a><br/>
+        <a href="<?= Route::url('deployments_usage_all') ?>">All Deployments Usage</a><br/>
 <?php } ?>
       </div>
     </div>

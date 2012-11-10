@@ -162,27 +162,6 @@ Route::set('logout', 'logout', array(
                 'action'     => 'logout',
         ));
 
-Route::set('forgot_password', 'forgot_password', array(
-        ))
-        ->defaults(array(
-                'controller' => 'login',
-                'action'     => 'forgot_password',
-        ));
-
-Route::set('change_password', 'admin/change_password', array(
-        ))
-        ->defaults(array(
-		'controller' => 'login',
-                'action'     => 'change_password',
-        ));
-
-Route::set('reset_password', 'reset_password/<hash>', array(
-        ))
-        ->defaults(array(
-                'controller' => 'login',
-                'action'     => 'reset_password',
-        ));
-
 Route::set('package_config_backfire', 'package/config/backfire/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
@@ -343,7 +322,66 @@ Route::set('usage_deployment', 'admin/deployments/<id>/usage')
                 'action'     => 'default',
         ));
 
+Route::set('users', 'admin/users')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'default',
+        ));
+Route::set('user_autocomplete', 'admin/users/autocomplete')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'autocomplete',
+        ));
+Route::set('user_autocomplete_where', 'admin/users/autocomplete/<where>', array('path' => '.*'))
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'autocomplete',
+        ));
 
+Route::set('create_user', 'admin/users/create')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_user', 'admin/users/<id>/delete')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_user', 'admin/users/<id>/edit')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'edit',
+        ));
+
+Route::set('view_user', 'admin/users/<id>')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'view',
+        ));
+
+Route::set('forgot_password', 'forgot_password', array(
+        ))
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'forgot_password',
+        ));
+
+Route::set('change_password', 'admin/change_password', array(
+        ))
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'change_password',
+        ));
+
+Route::set('reset_password', 'reset_password/<hash>', array(
+        ))
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'reset_password',
+        ));
 
 Route::set('error', 'error/<action>(/<message>)', array(
 		'action' => '[0-9]++',

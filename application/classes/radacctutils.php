@@ -303,6 +303,27 @@ class RadAcctUtils {
 		list($username, $domain) = explode('@', $username, 2);
 		return $domain;
 	}
+
+	public static function UserNotExists($username)
+	{
+		$query = DB::select('username')->from('radcheck')->where('username', '=', ':username')->where('attribute', '=', 'NT-Password')->and_where('Op', '=', ':=');
+		$query->param(':username', RadAcctUtils::GetUserPart($username));
+                $users = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
+		return (sizeof($users) == 0);
+	}
+
+	public static function generateRandomString($stringLength = 8)
+        {
+                $string = "";
+                $stringChars = "0123456789";
+                $stringChars .= "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                $stringChars .= "abcdefghijklmnopqrstuvwxyz";
+
+                for ($i=0; $i<$stringLength; $i++){
+                        $string .= $stringChars[(rand() % strlen($stringChars))];
+                }
+                return $string;
+        }
 	
 	private static function Hash($password)
 	{
@@ -317,7 +338,7 @@ class RadAcctUtils {
 	
 	private static function AddUserHash($username, $hash)
 	{
-		$query = DB::insert('radcheck')->set(array('username' => ':username', 'attribute' => 'NT-Password', 'Op' => ':=', 'value' => ':hash'));
+		$query = DB::insert('radcheck', array('username', 'attribute', 'Op', 'value'))->values(array(':username', 'NT-Password', ':=', ':hash'));
 		$query->param(':username', RadAcctUtils::GetUserPart($username));
 		$query->param(':hash', $hash);
 		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
@@ -343,6 +364,14 @@ class RadAcctUtils {
 		if ($oldpassword === NULL)
 			return RadAcctUtils::UpdateUserHashNoOldPassword($username, RadAcctUtils::Hash($password));
 		return RadAcctUtils::UpdateUserHash($username, RadAcctUtils::Hash($password), RadAcctUtils::Hash($oldpassword));
+	}
+	
+	public static function DeleteUser($username)
+	{
+		$query = DB::delete('radcheck')->where('username', '=', ':username')->and_where('attribute', '=', 'NT-Password')->and_where('Op', '=', ':=');
+		$query->param(':username', RadAcctUtils::GetUserPart($username));
+		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
+                return ($res == 1);
 	}
 	
 	private static function UpdateUserHash($username, $hash, $oldhash)
