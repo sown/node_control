@@ -58,7 +58,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		}
 		$email = "support@example.org";
 		$name = $node->hostname;
-		$alias = $node->name;
+		$alias = $node->name . " (#" . $node->boxNumber .")";
 		$url = "";
 		$latitude = $node->currentDeployment->latitude;
 		$longitude = $node->currentDeployment->longitude;
