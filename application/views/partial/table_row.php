@@ -14,6 +14,11 @@ foreach ($fields as $f => $field)
 		$url = Route::url($f . "_" . $objectType, array($idField => $row->$idField));
 		echo "          <td class=\"icon\"><a class=\"$f\" title=\"" . ucfirst($f) . "\" href=\"$url\">&nbsp;</a></td>\n";
 	}
+	// Need to figure out how to do this generically
+	elseif ($f == "certificateWritten")
+	{
+			echo "          <td>" . ( (strlen($row->certificate->privateKey) > 0) ? 'Yes' : 'No')  . "</td>\n";
+	}
 	else
 	{
 		if (gettype($row->$f) == "object" && get_class($row->$f) == "DateTime")

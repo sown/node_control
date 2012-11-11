@@ -20,6 +20,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 	'id' => 'ID',
                		'boxNumber' => 'Name',
                		'firmwareImage' => 'Firmware Image',
+			'certificateWritten' => 'Certificate Written',
                		'notes' => 'Notes',
                		'view' => '',
                		'edit' => '',
@@ -94,12 +95,16 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	public function action_view()
 	{
 		$this->check_login("systemadmin");
+		if ($this->request->method() == 'POST')
+                {
+                        $this->request->redirect(Route::url('edit_node', array('boxNumber' => $this->request->param('boxNumber'))));
+                }
 		$title = "View Node";
 		View::bind_global('title', $title);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, NULL);
+		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('editNode' => 'Edit Node'));
 	}
 
 	public function action_edit()
@@ -255,6 +260,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		       	'id' => $node->id,
                        	'boxNumber' => $node->boxNumber,
                        	'firmwareImage' => $node->firmwareImage,
+			'certificateWritten' => ( (strlen($node->certificate->privateKey) > 0) ? 'Yes' : 'No' ),
                        	'notes' => $node->notes,
 			'vpnEndpoint' => array(	
 	               		'id' => $node->vpnEndpoint->id,
@@ -307,6 +313,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 20),
+			'certificateWritten' => array('title' => 'Certificate written', 'type' => 'statichidden'),
                         'notes' => array('title' => 'Notes', 'type' => 'textarea'),
                         'vpnEndpoint' => array(
                                 'title' => 'VPN Endpoint',
