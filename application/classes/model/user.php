@@ -160,24 +160,32 @@ class Model_User extends Model_Entity
                 return $deployments;
         }
 
-	public static function nonUniqueUsername($username)
+	public static function nonUniqueUsername($username, $id = 0)
         {
                 if (empty($username))
                 {
                         return FALSE;
                 }
-                $result = Doctrine::em()->getRepository('Model_User')->findOneByUsername($username. '@sown.org.uk');
-                return empty($result->id);
+                $result = Doctrine::em()->getRepository('Model_User')->findByUsername($username. '@sown.org.uk');
+                if (!empty($result->id) && $result->id == $id)
+		{
+			return TRUE;
+		}
+		return empty($result->id);
         }
 
-	public static function nonUniqueEmail($email)
+	public static function nonUniqueEmail($email, $id = 0)
         {
                 if (empty($email))
                 {
                         return FALSE;
                 }
                 $result = Doctrine::em()->getRepository('Model_User')->findOneByEmail($email);
-                return empty($result->id);
+                if (!empty($result->id) && $result->id == $id)
+                {
+                        return TRUE;
+                }
+		return empty($result->id);
         }
 
 
