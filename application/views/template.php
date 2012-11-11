@@ -10,7 +10,21 @@ if (empty($content)) $content = "NO CONTENT SET";
   <title><?= $title ?> | SOWN Admin System</title>
   <?= HTML::style('media/css/sown.css', array("media" => "all")) ?> 
   <?= HTML::style('media/css/screen.css', array("media" => "screen")) ?> 
-  <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?> 
+  <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?>
+<?php
+if (isset($cssFiles))
+{
+        foreach ($cssFiles as $c => $cssFile){
+                echo "  " . HTML::style('media/css/' . $cssFile) . "\n";
+        }       
+}
+if (isset($jsFiles))
+{
+        foreach ($jsFiles as $j => $jsFile){
+                echo "  " . HTML::script('media/js/' . $jsFile) . "\n";
+        }       
+}
+?> 
   <link <?= HTML::attributes(array("rel" => "icon", "href" => "media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
   <link <?= HTML::attributes(array("rel" => "shortcut icon", "href" => "media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
 </head>

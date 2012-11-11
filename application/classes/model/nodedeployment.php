@@ -122,6 +122,16 @@ class Model_NodeDeployment extends Model_Entity
 		}
 	}
 
+	public static function build($nodeId, $deploymentId)
+	{
+		$nodeDeployment = new Model_NodeDeployment();
+		$nodeDeployment->node = Doctrine::em()->getRepository('Model_Node')->find($nodeId);
+		$nodeDeployment->deployment = Doctrine::em()->getRepository('Model_Deployment')->find($deploymentId);
+		$nodeDeployment->startDate = new \DateTime();
+		$nodeDeployment->endDate = new \DateTime('2037-12-31 23:59:59');
+		return $nodeDeployment;
+	}
+
 	public function __toString()
 	{
 		$this->logUse();

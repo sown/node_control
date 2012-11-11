@@ -14,6 +14,9 @@ class FormUtils {
                                 case 3:
                                         $formValues[$fieldParts[0]][$fieldParts[1]][$fieldParts[2]] = $value;
                                         break;
+				case 4:
+                                        $formValues[$fieldParts[0]][$fieldParts[1]][$fieldParts[2]][$fieldParts[3]] = $value;
+                                        break;
                                 default:
                                         $formValues[$fieldParts[0]] = $value;
                         }
@@ -91,8 +94,7 @@ class FormUtils {
 
 	private static function drawFormTable($table, $name, $values)
 	{
-		$formHtml = "    <fieldset>\n      <legend>" . $table['title'] ."</legend>\n";
-		$formHtml .= "      <table class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n        <tr class=\"tabletitle\">\n";
+		$formHtml = "    <table class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n      <tr class=\"tabletitle\">\n";
 		foreach ($table['fields'] as $f => $field) 
 		{
 			if (empty($field['type']))
@@ -101,14 +103,14 @@ class FormUtils {
 			}
 			if ($field['type'] != "hidden")
 			{
-				$formHtml .= "          <th>" . $field['title'] . "</th>\n";
+				$formHtml .= "        <th>" . $field['title'] . "</th>\n";
 			}
 		}
-		$formHtml .= "        </tr>\n";
+		$formHtml .= "      </tr>\n";
 		$shade = "";
 		foreach ($values as $r => $row)
 		{
-			$formHtml .= "        <tr class=\"sowntablerow\">\n";
+			$formHtml .= "      <tr class=\"sowntablerow\">\n";
 			foreach ($table['fields'] as $f => $field)
 			{
 				if (empty($field['type'])) 
@@ -121,14 +123,14 @@ class FormUtils {
 				}
 				if ($field['type'] == "hidden")
 				{
-					$formHtml .= "          " . FormUtils::drawFormElement($field, $name.'_'.$r.'_'.$f, $row[$f])."\n";
+					$formHtml .= "        " . FormUtils::drawFormElement($field, $name.'_'.$r.'_'.$f, $row[$f], FormUtils::getTextValue($f, $row)) . "\n";
 				}
 				else 
 				{
-					$formHtml .= "          <td$shade>" . FormUtils::drawFormElement($field, $name.'_'.$r.'_'.$f, $row[$f]) . "</td>\n";
+					$formHtml .= "        <td$shade>" . FormUtils::drawFormElement($field, $name.'_'.$r.'_'.$f, $row[$f], FormUtils::getTextValue($f, $row)) . "</td>\n";
 				}
 			}
-			$formHtml .= "        </tr>\n";
+			$formHtml .= "      </tr>\n";
 			if (empty($shade)) {
 				$shade = " class=\"shade\"";
 			}
@@ -137,7 +139,7 @@ class FormUtils {
 				$shade = "";
 			}
 		}
-		$formHtml .= "      </table>\n    </fieldset>\n";	
+		$formHtml .= "    </table>\n";	
 		return $formHtml;	
 	}
 
@@ -150,13 +152,13 @@ class FormUtils {
 			{
 				$values[$f] = '';
 			}	
-			$formHtml .= FormUtils::drawField($field, $name.'_'.$f, $values[$f]);
+			$formHtml .= FormUtils::drawField($field, $name.'_'.$f, $values[$f], FormUtils::getTextValue($f, $values));
 		}
 		$formHtml .= "    </fieldset>\n"; 
 		return $formHtml;
 	}
 
-	private static function drawField($field, $name, $value)
+	private static function drawField($field, $name, $value, $textValue = '')
 	{
 		$formHtml = "";
 		if (empty($field['type']))
@@ -183,7 +185,7 @@ class FormUtils {
                 {
              		$formHtml .= "    <div>\n";
                         $formHtml .= "      <dt>" . Form::label($name, $field['title']) . ":</dt>\n";
-                        $formHtml .= "      <dd>" . FormUtils::drawFormElement($field, $name, $value);
+                        $formHtml .= "      <dd>" . FormUtils::drawFormElement($field, $name, $value, $textValue);
                         if (!empty($field['hint']))
                         {
                                 $formHtml .= "<span class=\"hint\">" . $field['hint'] . "</span>";
@@ -194,7 +196,7 @@ class FormUtils {
 		return $formHtml;
 	}
 
-	private static function drawFormElement($field, $name, $value) 
+	private static function drawFormElement($field, $name, $value, $textValue = '') 
 	{
 		if (!isset($value)) {
 			$value = "";
@@ -209,10 +211,14 @@ class FormUtils {
 				return Form::input($name, $value, array('size' => $field['size']));
 			case 'textarea':
 				return Form::textarea($name, $value);
+			case 'password':
+				return Form::password($name);
 			case 'select':
 				return Form::select($name, $field['options'], $value);
 			case 'checkbox':	
 				return Form::checkbox($name, 1, !empty($value));
+			case 'autocomplete':
+				return FormUtils::autocomplete($name, $value, $textValue, $field['autocompleteUrl'], array('size' => $field['size']));
 			case 'hidden':
 				return Form::hidden($name, $value);
 			case 'static':
@@ -222,6 +228,31 @@ class FormUtils {
 			default:
 				return "Do not recognise type " . $field['type'];
 		}
-	}	
+	}
 
+	private static function autocomplete($name, $value, $textValue, $autocompleteUrl, $attributes = array())
+	{
+		global $autocompleteJs;
+		$autocomplete = Form::hidden($name, $value, array('id' => $name)) . "\n";
+		$attributes['id'] = $name . "Text";
+		$autocomplete .= Form::input($name . "Text", $textValue, $attributes) . "\n";
+            	$autocomplete .= "      <div class=\"autocomplete\" id=\"{$name}SuggestBox\">&nbsp;</div>
+      <script type=\"text/javascript\" language=\"javascript\">
+      var {$name}AutoCompleter = new Ajax.Autocompleter('{$name}Text', '{$name}SuggestBox', '{$autocompleteUrl}', { afterUpdateElement : get{$name}SelectionId });
+      function get{$name}SelectionId(text, li){
+            elem = document.getElementById(\"{$name}\");
+            elem.value = li.id;
+      }
+      </script>";
+		return $autocomplete;
+	}
+	
+	private static function getTextValue($fieldName, $values)
+	{
+		if (isset($values[$fieldName . "Text"]))
+		{
+			return $values[$fieldName . "Text"];
+		}
+		return '';
+	}
 }

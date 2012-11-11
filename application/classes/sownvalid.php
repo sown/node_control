@@ -52,4 +52,9 @@ class SownValid extends Valid {
 	{
 		return empty($value);
 	}
+	
+	public static function csvlist($value)
+	{
+		return (bool) preg_match('/^([1-9][0-9]*,)*[1-9][0-9]*$/', $value);
+	}
 }

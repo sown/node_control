@@ -66,6 +66,16 @@ class Model_DeploymentAdmin extends Model_Entity
 		}
 	}
 
+	public static function build($deploymentId, $userId)
+	{
+		$deploymentAdmin = new Model_DeploymentAdmin();
+		$deploymentAdmin->deployment = Doctrine::em()->getRepository('Model_Deployment')->find($deploymentId);
+		$deploymentAdmin->user = Doctrine::em()->getRepository('Model_User')->find($userId);
+		$deploymentAdmin->startDate = new \DateTime();
+                $deploymentAdmin->endDate = new \DateTime('2037-12-31 23:59:59');
+		return $deploymentAdmin;
+	}
+
 	public function __toString()
 	{
 		$this->logUse();

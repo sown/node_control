@@ -1,0 +1,46 @@
+div.autocomplete {
+  position:absolute;
+  width:250px;
+  background-color:white;
+  border:1px solid #888;
+  margin:0;
+  padding:0;
+}
+div.autocomplete ul {
+  list-style-type:none;
+  margin:0;
+  padding:0;
+}
+span.autocomplete ul li.selected { background-color: #bbf;}
+span.autocomplete ul li {
+  font-size: 8pt;
+  list-style-type:none;
+  display:block;
+  margin:0;
+  padding:2px;
+  height:16px;
+  cursor:pointer;
+}
+span.autocomplete {
+  position:absolute;
+  width:250px;
+  background-color:white;
+  border:1px solid #888;
+  margin:0;
+  padding:0;
+}
+span.autocomplete ul {
+  list-style-type:none;
+  margin:0;
+  padding:0;
+}
+span.autocomplete ul li.selected { background-color: #bbf;}
+span.autocomplete ul li {
+  font-size: 8pt;
+  list-style-type:none;
+  display:block;
+  margin:0;
+  padding:2px;
+  height:16px;
+  cursor:pointer;
+}

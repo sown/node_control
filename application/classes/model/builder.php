@@ -57,4 +57,58 @@ class Model_Builder
 		}
 		return FALSE;
 	}
+
+	public static function create_deployment($nodeId, $name, $longitude, $latitude, $cap, $userId)
+	{
+		$deployment = Model_Deployment::build($name, $latitude, $longitude, $cap);
+		$deployment->save();
+		$nodeDeployment = Model_NodeDeployment::build($nodeId, $deployment->id);
+		$nodeDeployment->save();
+		$deploymentAdmin = Model_DeploymentAdmin::build($deployment->id, $userId);
+		$deploymentAdmin->save();
+		return Doctrine::em()->getRepository('Model_Deployment')->find($deployment->id);
+	}
+
+	public static function destroy_deployment($id)
+	{
+		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($id);
+		if (!empty($deployment))
+		{
+			$deployment->delete();
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	public static function end_deployment($id)
+        {
+		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($id);
+		if (empty($deployment))
+		{
+			return FALSE;
+		}
+		foreach ($deployment->admins as $admin)
+		{
+			if ($admin->endDate->getTimestamp() > time())
+			{
+				$admin->endDate = new \DateTime();
+				$admin->save();
+			}
+		}
+		foreach ($deployment->node_deployments as $nodeDeployment)
+		{
+			if ($nodeDeployment->endDate->getTimestamp() > time())
+                        {
+                                $nodeDeployment->endDate = new \DateTime();;
+				$nodeDeployment->save();
+                        }
+		}
+		if ($deployment->endDate->getTimestamp() > time())
+		{
+			$deployment->endDate = new \DateTime();
+			$deployment->save();
+			return TRUE;
+		}
+		return FALSE;
+	}
 }

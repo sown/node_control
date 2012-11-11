@@ -74,7 +74,7 @@ class Model_Deployment extends Model_Entity
 	/**
 	 * @var integer $range
 	 *
-	 * @Column(name="range", type="integer", nullable=false)
+	 * @Column(name="radius", type="integer", nullable=false)
 	 */
 	protected $range;
 
@@ -126,7 +126,7 @@ class Model_Deployment extends Model_Entity
 	protected $admins;
 
 	 /**
-         * @OneToMany(targetEntity="Model_NodeDeployment", mappedBy="deployment")
+         * @OneToMany(targetEntity="Model_NodeDeployment", mappedBy="deployment", cascade={"persist", "remove"})
          */
         protected $node_deployments;
 
@@ -236,6 +236,23 @@ class Model_Deployment extends Model_Entity
 		return $devices;
 	}
 
+	public static function build($name, $latitude, $longitude, $cap = 5120)
+	{
+		$deployment = new Model_Deployment();
+		$deployment->name = $name;
+		$deployment->isDevelopment = 0;
+		$deployment->isPrivate = 0;
+		$deployment->firewall = 0;
+		$deployment->advancedFirewall = 0;
+		$deployment->longitude = $longitude;
+		$deployment->latitude = $latitude;
+		$deployment->range = 20;
+		$deployment->cap = $cap;
+		$deployment->type = 'home';
+		$deployment->startDate = new \DateTime();
+		$deployment->endDate = new \DateTime('2037-12-31 23:59:59');
+		return $deployment;
+	}
 	public function __toString()
 	{
 		$this->logUse();

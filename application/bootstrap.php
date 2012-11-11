@@ -304,6 +304,12 @@ Route::set('delete_deployment', 'admin/deployments/<id>/delete')
                 'action'     => 'delete',
         ));
 
+Route::set('end_deployment', 'admin/deployments/<id>/end')
+        ->defaults(array(
+                'controller' => 'deployments_main',
+                'action'     => 'end',
+        ));
+
 Route::set('edit_deployment', 'admin/deployments/<id>/edit')
         ->defaults(array(
                 'controller' => 'deployments_main',
