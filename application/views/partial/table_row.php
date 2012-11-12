@@ -17,8 +17,14 @@ foreach ($fields as $f => $field)
 	// Need to figure out how to do this generically
 	elseif ($f == "certificateWritten")
 	{
-			echo "          <td>" . ( (strlen($row->certificate->privateKey) > 0) ? 'Yes' : 'No')  . "</td>\n";
+		echo "          <td>" . ( (strlen($row->certificate->privateKey) > 0) ? 'Yes' : 'No')  . "</td>\n";
 	}
+	elseif ($f == "deploymentBoxNumber")
+        {
+		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.endDate = '2037-12-31 23:59:59' AND nd.deployment = " . $row->id)->getResult();
+			
+                echo "          <td>" . $nodes[0]['boxNumber'] . "</td>\n";
+        }
 	else
 	{
 		if (gettype($row->$f) == "object" && get_class($row->$f) == "DateTime")

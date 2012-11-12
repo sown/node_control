@@ -19,6 +19,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$fields = array(
                         'id' => 'ID',
 			'name' => 'Name',
+			'deploymentBoxNumber' => 'Box Number',
 			'startDate' => 'Start Date',
 			'endDate' => 'End Date',
                         'view' => '',
@@ -285,9 +286,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 {
                         throw new HTTP_Exception_404();
                 }
+		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.endDate = '2037-12-31 23:59:59' AND nd.deployment = " . $deployment->id)->getResult();
 		$formValues = array(
                         'id' => $deployment->id,
                         'name' => $deployment->name,
+			'boxNumber' => $nodes[0]['boxNumber'],
 			'url' => $deployment->url,
 			'startDate' => $deployment->startDate->format('Y-m-d H:i:s'),
 			'endDate' => $deployment->endDate->format('Y-m-d H:i:s'),
@@ -346,6 +349,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$formTemplate = array(
 			'id' => array('type' => 'hidden'),
                         'name' => array('title' => 'Name', 'type' => 'input'),
+			'boxNumber' => array('title' => 'Box number', 'type' => 'statichidden'),
 			'url' => array('title' => 'URL', 'type' => 'input', 'size' => 70),
 			'startDate' => array('title' => 'Started', 'type' => 'statichidden'),
 			'endDate' => array('title' => 'Ended', 'type' => 'statichidden'),
@@ -417,20 +421,23 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$deployment->latitude = $formValues['location']['latitude'];
 		$deployment->range = $formValues['location']['range'];
 		$deployment->address = $formValues['location']['address'];
-		foreach ($formValues['admins']['currentAdmins'] as $admin)
+		if (isset($formValues['admins']['currentAdmins']))
 		{
-			if (isset($admin['endOrRestart']))
+			foreach ($formValues['admins']['currentAdmins'] as $admin)
 			{
-				$deploymentAdmin = Doctrine::em()->getRepository('Model_DeploymentAdmin')->find($admin['id']);
-				if ($admin['endDate'] == '2037-12-31 23:59:59')
+				if (isset($admin['endOrRestart']))
 				{
-					$deploymentAdmin->endDate = new \DateTime();
+					$deploymentAdmin = Doctrine::em()->getRepository('Model_DeploymentAdmin')->find($admin['id']);
+					if ($admin['endDate'] == '2037-12-31 23:59:59')
+					{
+						$deploymentAdmin->endDate = new \DateTime();
+					}
+					else
+					{
+						$deploymentAdmin->endDate = new \DateTime('2037-12-31 23:59:59');
+					}
+					$deploymentAdmin->save();
 				}
-				else
-				{
-					$deploymentAdmin->endDate = new \DateTime('2037-12-31 23:59:59');
-				}
-				$deploymentAdmin->save();
 			}
 		}
 		if (!empty($formValues['admins']['newAdmin']))
