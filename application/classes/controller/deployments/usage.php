@@ -130,6 +130,10 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		if (!empty($id))
 		{
 			$deployment = Doctrine::em()->getRepository('Model_Deployment')->findOneById($this->request->param('id'));
+                	if (!is_object($deployment))
+                	{
+                        	throw new HTTP_Exception_404();
+                	}
 			if (is_object($user) && ($user->isSystemAdmin || $deployment->isCurrentDeploymentAdmin(Auth::instance()->get_user())))
 			{
 				$title = "Usage for ".$deployment->name;

@@ -154,10 +154,14 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 	public function action_delete()
         {
                 $this->check_login("systemadmin");
+		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($this->request->param('id'));
+                if (!is_object($deployment))
+                {
+                        throw new HTTP_Exception_404();
+                }
                 $success = "";
 		$title = "Delete Deployment";
 		View::bind_global('title', $title);
-		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($this->request->param('id'));
                 $deploymentName = $deployment->name;
 		if ($this->request->method() == 'POST')
                 {
@@ -198,10 +202,14 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 	public function action_end()
         {
                 $this->check_login("systemadmin");
+		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($this->request->param('id'));
+                if (!is_object($deployment))
+                {
+                        throw new HTTP_Exception_404();
+                }
                 $success = "";
                 $title = "End Deployment";
                 View::bind_global('title', $title);
-		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($this->request->param('id'));
                 $deploymentName = $deployment->name;
 
                 if ($this->request->method() == 'POST')
@@ -273,6 +281,10 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 	private function _load_from_database($id, $action = 'edit')
 	{
 		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($id);
+                if (!is_object($deployment))
+                {
+                        throw new HTTP_Exception_404();
+                }
 		$formValues = array(
                         'id' => $deployment->id,
                         'name' => $deployment->name,

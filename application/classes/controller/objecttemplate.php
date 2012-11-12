@@ -109,6 +109,11 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 	public function action_delete()
         {
                 $this->check_login("systemadmin");
+		$object = Doctrine::em()->getRepository('Model_[OBJECT]')->findOneById($this->request->param('id'));
+                if (!is_object($object))
+                {
+                        throw new HTTP_Exception_404();
+                }
                 $success = "";
 		$title = "Delete [OBJECT]";
 		View::bind_global('title', $title);
@@ -164,6 +169,10 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 	private function _load_from_database($id, $action = 'edit')
 	{
 		$object = Doctrine::em()->getRepository('Model_[OBJECT]')->findOneById($id);
+                if (!is_object($object))
+                {
+                        throw new HTTP_Exception_404();
+                }
                 $formValues = array();
 		return $formValues;
 	}

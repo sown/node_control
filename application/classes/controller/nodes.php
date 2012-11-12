@@ -137,6 +137,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	public function action_delete()
         {
                 $this->check_login("systemadmin");
+		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
+                if (!is_object($node)) 
+                {
+                        throw new HTTP_Exception_404();
+                }
                 $success = "";
 		$title = "Delete Node";
 		View::bind_global('title', $title);
@@ -255,7 +260,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	private function _load_from_database($boxNumber, $action = 'edit')
 	{
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
-		
+                if (!is_object($node)) 
+		{
+			throw new HTTP_Exception_404();
+		}
                 $formValues = array(
 		       	'id' => $node->id,
                        	'boxNumber' => $node->boxNumber,

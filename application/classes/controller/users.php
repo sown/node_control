@@ -1,5 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+use Doctrine\ORM\EntityNotFoundException;
+
 class Controller_Users extends Controller_AbstractAdmin
 {
 	public function before()
@@ -354,13 +356,17 @@ class Controller_Users extends Controller_AbstractAdmin
 	public function action_delete()
         {
                 $this->check_login("systemadmin");
+		$user = Doctrine::em()->getRepository('Model_User')->find($this->request->param('id'));
+		if (!is_object($user))
+                {
+                        throw new HTTP_Exception_404();
+                }
                 $success = "";
 		$title = "Delete User";
 		View::bind_global('title', $title);
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();
-			$user = Doctrine::em()->getRepository('Model_User')->find($formValues['id']);
                         $username = $user->username;
 		
                         if (!empty($formValues['yes']))
@@ -428,8 +434,12 @@ class Controller_Users extends Controller_AbstractAdmin
 	}
 
 	private function _load_from_database($id, $action = 'edit')
-	{
+	{  
 		$user = Doctrine::em()->getRepository('Model_User')->findOneById($id);
+                if (!is_object($user))
+		{
+			throw new HTTP_Exception_404();
+		}
                 $formValues = array(
 			'id' => $user->id,
 			'username' => $user->username,
