@@ -18,6 +18,7 @@
 	 </div>
       </div>
    </div>
+<?php include('../partial/devsplash.php'); ?>
    <div class="break" />
    <div>
 
