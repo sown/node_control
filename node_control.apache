@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-	ServerName sown-auth2.ecs.sotn.ac.uk
+	ServerName sown-auth2.ecs.soton.ac.uk
 	ServerAlias sown-auth2
 	ServerAdmin support@sown.org.uk
 	Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
@@ -15,7 +15,6 @@
 # Go ahead and accept connections for these vhosts
 # from non-SNI clients
 SSLStrictSNIVHostCheck off
-
 
 # Default VirtualHost-  sown-auth2.ecs.soton.ac.uk
 <VirtualHost *:443>
