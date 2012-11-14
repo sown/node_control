@@ -18,7 +18,7 @@
 	 </div>
       </div>
    </div>
-<?php include('../partial/devsplash.php'); ?>
+<?= View::factory('partial/devsplash') ?>   
    <div class="break" />
    <div>
 

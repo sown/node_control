@@ -40,7 +40,7 @@ if (isset($jsFiles))
     <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/contact/">Contact&nbsp;Us</a></div></div>
     <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/wiki/">Wiki</a></div></div>
   </div>
-<?php include('partial/devsplash.php'); ?>
+<?= View::factory('partial/devsplash') ?>
   <div class="break" />
   <div>
     <?php if (!empty($sidebar)) { ?>
