@@ -64,7 +64,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			if ($validation->check())
         		{
 				$deployment = Model_Builder::create_deployment($formValues['nodeId'], $formValues['name'], $formValues['longitude'], $formValues['latitude'], $formValues['cap'], $formValues['admin']);
-				$url = Route::url("view_deployment", array('id', array($deployment->id)));
+				$url = Route::url("view_deployment", array('id' => $deployment->id));
                         	$success = "Successfully created Deployment with name: <a href=\"$url\">" . $deployment->name . "</a>.";
         		}
 			else 
