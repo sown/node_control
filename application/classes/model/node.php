@@ -342,6 +342,7 @@ class Model_Node extends Model_Entity
 
 	public static function getUndeployedNodes()
 	{
+		$undeployedNodes = array();
  		$query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber FROM Model_Node n WHERE n NOT IN (SELECT n2 FROM Model_NodeDeployment nd JOIN nd.node n2 WHERE nd.endDate = '2037-12-31 23:59:59')"); 
 		$results = $query->getResult();
 		foreach ($results as $result)

@@ -53,6 +53,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 {
 			$formValues = $this->request->post();
 			$validation = Validation::factory($formValues)
+				->rule('nodeId', 'not_empty')
 				->rule('name', 'not_empty')
 				->rule('longitude', 'not_empty')
 				->rule('longitude',  'numeric')
