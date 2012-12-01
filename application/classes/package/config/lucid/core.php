@@ -165,4 +165,3 @@ node267 IN      AAAA    2001:630:d0:f7d4::1
 		return $data;
 	}
 }
-}
