@@ -87,7 +87,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		{
 			if($interface->networkAdapter->wirelessChannel != 0)
 			{
-				$radio_details[] = array('ssid' => $interface->ssid, 'protocol' => $interface->networkAdapter->type, 'enc' => $interface->encryption);
+				$radio_details[] = array('ssid' => $interface->ssid, 'protocol' => Kohana::$config->load('system.default.adapter_types.'.$interface->networkAdapter->type), 'enc' => $interface->encryption);
 			}
 		}
 		$radio_details = json_encode($radio_details);
