@@ -4,7 +4,7 @@ class Controller_Test_Config_Generic extends Controller_AbstractAdmin
 {
 	public function action_default()
 	{
-		$this->template = 'blank';
+		$this->auto_render = FALSE;
 		$this->check_login('systemadmin');
 		$os           = $this->request->param('os');
 		$type         = $this->request->param('type');
