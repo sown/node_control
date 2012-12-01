@@ -287,7 +287,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			if($interface->is1x)
 			{
 				$mod[] = Kohana::$config->load('system.default.filename');
-				$config['wifi-iface'][$fake_iface_name]['encryption'] = 'wpa2+aes';
+				$config['wifi-iface'][$fake_iface_name]['encryption'] = $interface->encryption;
 				$config['wifi-iface'][$fake_iface_name]['auth_server'] = Kohana::$config->load('system.default.radius.host');
 				$config['wifi-iface'][$fake_iface_name]['acct_server'] = Kohana::$config->load('system.default.radius.host');
 				$config['wifi-iface'][$fake_iface_name]['auth_port'] = Kohana::$config->load('system.default.radius.auth_port');
