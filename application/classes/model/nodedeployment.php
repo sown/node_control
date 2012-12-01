@@ -128,7 +128,7 @@ class Model_NodeDeployment extends Model_Entity
 		$nodeDeployment->node = Doctrine::em()->getRepository('Model_Node')->find($nodeId);
 		$nodeDeployment->deployment = Doctrine::em()->getRepository('Model_Deployment')->find($deploymentId);
 		$nodeDeployment->startDate = new \DateTime();
-		$nodeDeployment->endDate = new \DateTime('2037-12-31 23:59:59');
+		$nodeDeployment->endDate = new \DateTime(Kohana::$config->load('system.default.admin_system.latest_end_datetime'));
 		return $nodeDeployment;
 	}
 

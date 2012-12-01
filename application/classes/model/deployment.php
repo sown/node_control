@@ -250,7 +250,7 @@ class Model_Deployment extends Model_Entity
 		$deployment->cap = $cap;
 		$deployment->type = 'home';
 		$deployment->startDate = new \DateTime();
-		$deployment->endDate = new \DateTime('2037-12-31 23:59:59');
+		$deployment->endDate = new \DateTime(Kohana::$config->load('system.default.admin_system.latest_end_datetime'));
 		return $deployment;
 	}
 	public function __toString()

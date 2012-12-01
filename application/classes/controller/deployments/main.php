@@ -287,7 +287,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 {
                         throw new HTTP_Exception_404();
                 }
-		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.endDate = '2037-12-31 23:59:59' AND nd.deployment = " . $deployment->id)->getResult();
+		$latest_end_datetime =  Kohana::$config->load('system.default.admin_system.latest_end_datetime');
+		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.endDate = '$latest_end_datetime' AND nd.deployment = " . $deployment->id)->getResult();
 		$formValues = array(
                         'id' => $deployment->id,
                         'name' => $deployment->name,
@@ -408,6 +409,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 
 	private function _update($id, $formValues)
 	{
+		$latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
 		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($id);
 		$deployment->name = $formValues['name'];
 		$deployment->url = $formValues['url'];
@@ -429,13 +431,13 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 				if (isset($admin['endOrRestart']))
 				{
 					$deploymentAdmin = Doctrine::em()->getRepository('Model_DeploymentAdmin')->find($admin['id']);
-					if ($admin['endDate'] == '2037-12-31 23:59:59')
+					if ($admin['endDate'] == $latest_end_datetime)
 					{
 						$deploymentAdmin->endDate = new \DateTime();
 					}
 					else
 					{
-						$deploymentAdmin->endDate = new \DateTime('2037-12-31 23:59:59');
+						$deploymentAdmin->endDate = new \DateTime($latest_end_datetime);
 					}
 					$deploymentAdmin->save();
 				}

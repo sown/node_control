@@ -17,6 +17,7 @@ return array
 			'sender_email' => 'NO-REPLY@sown.org.uk',
 			'sender_name' => 'Southampton Open Wireless Network team',
 			'email_subject_prefix' => '[sown-accounts]',
+                        'latest_end_datetime' => '2037-12-31 23:59:59',
 		),
 		'dns'		=> array
 		(
