@@ -112,6 +112,8 @@ class Model_Interface extends Model_Entity
 				if($this->IPv6Addr == "")
 					return "";
 				return IP_Network_Address::factory($this->IPv6Addr."/".$this->IPv6AddrCidr);
+			case "encryption":
+				return $this->getEncryption();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -155,6 +157,8 @@ class Model_Interface extends Model_Entity
 					$this->IPv6AddrCidr = $value->get_cidr();
 				}
 				break;
+			case "encryption":
+				parent::__throwReadOnlyException($name);
 			default:
 				if (property_exists($this, $name))
 				{
@@ -182,6 +186,18 @@ class Model_Interface extends Model_Entity
 	protected function setMode($value)
 	{
 		$this->offerDhcp = ($value == 'dhcp');
+	}
+
+	protected function getEncryption()
+	{
+		if($this->is1x)
+		{
+			return 'wpa2+aes';
+		}
+		else
+		{
+			return '';
+		}
 	}
 
 	public function __toString()
