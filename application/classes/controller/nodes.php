@@ -353,7 +353,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                         'is1x' => array('title' => 'Is 1x', 'type' => 'checkbox'),
                                         'networkAdapterMac' => array('title' => 'Mac', 'type' => 'input', 'size' => 15),
                                         'networkAdapterWirelessChannel' => array('title' => 'Channel', 'type' => 'input', 'size' => 3),
-                                        'networkAdapterType' => array('title' => 'Adapter Type', 'type' => 'select', 'options' => array('g' => '802.11g', '100M' => '100Mb/s')),
+                                        'networkAdapterType' => array('title' => 'Adapter Type', 'type' => 'select', 'options' => Kohana::$config->load('system.default.adapter_types')),
                                 ),
                         ),
                 );

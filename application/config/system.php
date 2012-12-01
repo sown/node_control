@@ -18,6 +18,16 @@ return array
 			'sender_name' => 'Southampton Open Wireless Network team',
 			'email_subject_prefix' => '[sown-accounts]',
                         'latest_end_datetime' => '2037-12-31 23:59:59',
+			'valid_external_domains' => array('ecs.soton.ac.uk', 'soton.ac.uk'),
+		),
+		'adapter_types' => array
+		(
+			'a' => '802.11a',
+			'b' => '802.11b',
+			'g' => '802.11g',
+			'n' => '802.11n',
+			'100M' => '100Mb/s',
+			'1G' => '1Gb/s',
 		),
 		'dns'		=> array
 		(

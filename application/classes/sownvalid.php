@@ -43,6 +43,7 @@ class SownValid extends Valid {
 			case 'g':
 				return ($value <=13 && $value >=1);
 			case 'n':
+				return (($value <=13 && $value >=1) || in_array($value, array(36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140)));
 			case 'a':
 				return (in_array($value, array(36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140)));
 		}
