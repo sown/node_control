@@ -82,6 +82,15 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 			}
 			$address = implode(',', $ipv4_addrs);
 		}
+		$radio_details = array();
+		foreach($node->interfaces as $interface)
+		{
+			if($interface->networkAdapter->wirelessChannel != 0)
+			{
+				$radio_details[] = array('ssid' => $interface->ssid, 'protocol' => $interface->networkAdapter->type, 'enc' => $interface->encryption);
+			}
+		}
+		$radio_details = json_encode($radio_details);
 
 		$o['alias'] = $alias;
 		//$o['notes_url'] = $url;
@@ -122,6 +131,7 @@ define Host {
 	3d_coords	{$latitude},{$longitude},{$range}
 	_BOXNUMBER	{$box_number}
 	_NODEID		{$node_id}
+	_RADIODETAILS	{$radio_details}
 	contacts	+{$name}_admin
 }
 
