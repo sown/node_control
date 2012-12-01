@@ -29,11 +29,16 @@ abstract class Package_Config
 
 
 		# TODO: run send_nsca to tell nagios node  $_SERVER['SSL_CLIENT_S_DN_CN'] requested updates for $package
-		#echo -e "node904\tCONFIG-CRONTABS\t0\tUpdate requested\n" | send_nsca -H monitor.sown.org.uk
-		if($package == "crontabs")
+		/* Don't send nagios updates for requests from localhost,
+			we only want to do this for the _actual_node_  */
+		if($_SERVER['REMOTE_ADDR'] == "127.0.0.1")
 		{
-			SOWN::send_nsca($_SERVER['SSL_CLIENT_S_DN_CN'], 
-				"CONFIG-CRONTABS", 0, "Update Requested");
+			if($package == "crontabs")
+			{
+				SOWN::send_nsca($_SERVER['SSL_CLIENT_S_DN_CN'], 
+					"CONFIG-CRONTABS", 0, 
+					"Update Requested");
+			}
 		}
 	
 
