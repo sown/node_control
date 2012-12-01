@@ -350,6 +350,12 @@ Route::set('create_user', 'admin/users/create')
                 'action'     => 'create',
         ));
 
+Route::set('create_external_user', 'admin/users/create/external')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'create_external',
+        ));
+
 Route::set('delete_user', 'admin/users/<id>/delete')
         ->defaults(array(
                 'controller' => 'users',

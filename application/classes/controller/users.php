@@ -6,7 +6,7 @@ class Controller_Users extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array('Create User' => Route::url('create_user'), 'User List' => Route::url('users'));
+		$this->bannerItems = array('Create User' => Route::url('create_user'), 'Create External User' => Route::url('create_external_user'), 'User List' => Route::url('users'));
 		parent::before();
 	}
 
@@ -92,11 +92,11 @@ class Controller_Users extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues)
 				->rule('username', 'not_empty')
 				->rule('username', 'email')
-				->rule('username', 'Model_User::nonUniqueUsername', array(':value'))
+				->rule('username', 'Model_User::uniqueUsername', array(':value'))
 				->rule('username', 'RadAcctUtils::UserNotExists', array(':value'))
 				->rule('email', 'not_empty')
 				->rule('email', 'email')
-				->rule('email', 'Model_User::nonUniqueEmail', array(':value'));
+				->rule('email', 'Model_User::uniqueEmail', array(':value'));
 			if (!empty($formValues['password']) || !empty($formValues['confirmPassword'])) 
 			{
 				$validation->rule('password', 'not_empty')
@@ -155,6 +155,49 @@ class Controller_Users extends Controller_AbstractAdmin
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('createUser' => 'Create User'), $errors, $success);
 	}
+
+	public function action_create_external()
+	{
+		$this->check_login("systemadmin");
+                $title = "Create External User";
+                View::bind_global('title', $title);
+                $errors = array();
+                $success = "";
+                if ($this->request->method() == 'POST')
+                {
+                        $formValues = $this->request->post();
+                        $validation = Validation::factory($formValues)
+                                ->rule('username', 'not_empty')
+                                ->rule('username', 'email')
+				->rule('username', 'Model_User::validExternalDomain', array(':value'))
+                                ->rule('username', 'Model_User::uniqueUsername', array(':value'))
+				->rule('username', 'Model_User::uniqueEmail', array(':value'));				
+                        if ($validation->check())
+                        {
+                                $user = Model_User::build($formValues['username'], $formValues['username']);
+                                $user->save();
+                                $url = Route::url('view_user', array('id' => $user->id));
+                                $success = "Successfully created user with username '<a href=\"$url\">" . $user->username . "</a>'.";
+                        }
+                        else
+                        {
+                                $errors = $validation->errors();
+                        }
+                }
+                else
+                {
+                        $formValues = array(
+                                'username' => '',
+                        );
+                }
+                $formTemplate = array(
+                        'username' => array('title' => 'Username', 'type' => 'input', 'hint' => 'Valid domains: '.implode(", ", Kohana::$config->load('system.default.admin_system.valid_external_domains'))),
+                );
+
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+                $this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('createUser' => 'Create User'), $errors, $success);
+        }
 
 	public function action_reset_password()
         {
@@ -424,7 +467,7 @@ class Controller_Users extends Controller_AbstractAdmin
 		{
 			$validation->rule('email', 'email')
                                 ->rule('email', 'email')
-                                ->rule('email', 'Model_User::nonUniqueEmail', array(':value', $formValues['id']));
+                                ->rule('email', 'Model_User::uniqueEmail', array(':value', $formValues['id']));
 		}
                 if (!$validation->check())
                 {

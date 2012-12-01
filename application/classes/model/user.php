@@ -160,21 +160,26 @@ class Model_User extends Model_Entity
                 return $deployments;
         }
 
-	public static function nonUniqueUsername($username, $id = 0)
+	public static function uniqueUsername($username, $id = 0)
         {
-                if (empty($username))
+		return Model_User::uniqueUsernameWithDomain($username . '@' . Kohana::$config->load('system.default.domain'), $id);
+        }
+
+	public static function uniqueUsernameWithDomain($username, $id = 0)	
+	{
+		if (empty($username))
                 {
                         return FALSE;
                 }
-                $result = Doctrine::em()->getRepository('Model_User')->findByUsername($username. '@sown.org.uk');
+                $result = Doctrine::em()->getRepository('Model_User')->findByUsername($username);
                 if (!empty($result->id) && $result->id == $id)
-		{
-			return TRUE;
-		}
-		return empty($result->id);
-        }
-
-	public static function nonUniqueEmail($email, $id = 0)
+                {
+                        return TRUE;
+                }
+                return empty($result->id);
+	}
+		
+	public static function uniqueEmail($email, $id = 0)
         {
                 if (empty($email))
                 {
@@ -188,6 +193,15 @@ class Model_User extends Model_Entity
 		return empty($result->id);
         }
 
+	public static function validExternalDomain($username)
+	{
+		if (empty($username))
+		{
+			return FALSE;
+		}
+		$user_and_domain = explode("@", $username);
+		return in_array($user_and_domain[1], Kohana::$config->load('system.default.admin_system.valid_external_domains'));
+	}
 
 
 }
