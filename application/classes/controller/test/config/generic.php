@@ -216,7 +216,7 @@ class Controller_Test_Config_Generic extends Controller_AbstractAdmin
 		curl_setopt($ch, CURLOPT_POST, 1); 
 		curl_setopt($ch, CURLOPT_POSTFIELDS, array("mac", $mac));
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
+		curl_setopt($ch, CURLOPT_CAPATH, "/etc/apache2/ssl/"); 
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0); 
 		curl_setopt($ch, CURLOPT_SSLCERT, $keyfiles['public']);
 		curl_setopt($ch, CURLOPT_SSLCERTPASSWD, '');
