@@ -31,7 +31,7 @@ abstract class Package_Config
 		# TODO: run send_nsca to tell nagios node  $_SERVER['SSL_CLIENT_S_DN_CN'] requested updates for $package
 		/* Don't send nagios updates for requests from localhost,
 			we only want to do this for the _actual_node_  */
-		if($_SERVER['REMOTE_ADDR'] == "127.0.0.1")
+		if($_SERVER['REMOTE_ADDR'] != "127.0.0.1")
 		{
 			if($package == "crontabs")
 			{
@@ -39,6 +39,10 @@ abstract class Package_Config
 					"CONFIG-CRONTABS", 0, 
 					"Update Requested");
 			}
+		}
+		else
+		{
+                        SOWN::send_irc_message('!h debug: ignoring send_nsca request from '.$_SERVER['REMOTE_ADDR']);
 		}
 	
 
