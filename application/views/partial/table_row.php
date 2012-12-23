@@ -22,7 +22,7 @@ foreach ($fields as $f => $field)
 	}
 	elseif ($f == "deploymentBoxNumber")
         {
-		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.endDate = '$latest_end_datetime' AND nd.deployment = " . $row->id)->getResult();
+		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $row->id)->getResult();
 			
                 echo "          <td>" . $nodes[0]['boxNumber'] . "</td>\n";
         }
