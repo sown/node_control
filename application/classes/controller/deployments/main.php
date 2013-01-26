@@ -330,6 +330,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 {
                         $formValues['isDevelopment'] = ( $formValues['isDevelopment'] ? 'Yes' : 'No');
 			$formValues['isPrivate'] = ( $formValues['isPrivate'] ? 'Yes' : 'No');
+		        $formValues['endDate'] = ( $formValues['endDate'] == $latest_end_datetime ? '' : $formValues['endDate']);
+
 			$formValues['configuration']['firewall'] = ( $formValues['configuration']['firewall'] ? 'Yes' : 'No');
 			$formValues['configuration']['advancedFirewall'] = ( $formValues['configuration']['advancedFirewall'] ? 'Yes' : 'No') ;
 			if ($formValues['configuration']['cap'] == 0 ) 
