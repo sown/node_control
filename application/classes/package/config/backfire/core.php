@@ -238,9 +238,9 @@ class Package_Config_Backfire_Core extends Package_Config
 
 			// the 'dev_name' of the radio can be anything, as long
 			// as the wifi-iface->device uses the same name
-			$dev_name = 'radio'.$interface->id;
+			$dev_name = 'radio'.$interface->networkAdapter->id;
 			
-			$radio_id[$interface->id] = $dev_name;
+			$radio_id[$interface->networkAdapter->id] = $dev_name;
 			
 			// 'mac80211' is hard coded, as all our nodes use this
 			// for their wireless interfaces
@@ -270,7 +270,7 @@ class Package_Config_Backfire_Core extends Package_Config
 		{
 			if($interface->networkAdapter->wirelessChannel == null)
 				continue;
-			if (!isset($radio_id[$interface->id]))
+			if (!isset($radio_id[$interface->networkAdapter->id]))
 				continue;
 
 			// the wifi-iface name should not be $interface->name
@@ -278,7 +278,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			// prevents the interface from being started cleanly
 			$fake_iface_name = md5($interface->name);
 			$config['wifi-iface'][$fake_iface_name] = array(
-				'device' => $radio_id[$interface->id],
+				'device' => $radio_id[$interface->networkAdapter->id],
 				'mode' => 'ap',
 				'ssid' => $interface->ssid,
 				'network' => $interface->name,
