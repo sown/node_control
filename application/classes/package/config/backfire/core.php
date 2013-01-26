@@ -281,7 +281,7 @@ class Package_Config_Backfire_Core extends Package_Config
 				'device' => $radio_id[$interface->id],
 				'mode' => 'ap',
 				'ssid' => $interface->ssid,
-				'ifname' => $interface->name,
+				'network' => $interface->name,
 			);
 			
 			if($interface->is1x)
