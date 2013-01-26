@@ -12,7 +12,9 @@ class Model_Builder
 		$ipv6 = $vpnServer->getFreeIPv6Addr(126);
 		$vpnEndpoint = Model_VpnEndpoint::build($port, $protocol, $ipv4, $ipv6, $vpnServer);
 
-		$boxNumber = Model_Node::getNextBoxNumber();
+		if (empty($boxNumber)) {
+			$boxNumber = Model_Node::getNextBoxNumber();
+		}
 		$node = Model_Node::build($boxNumber, $firmwareImage, $notes, $certificate, $vpnEndpoint);
 
 		$wirelessChannel = 0;
