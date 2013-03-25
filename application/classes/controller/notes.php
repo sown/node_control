@@ -85,9 +85,10 @@ class Controller_Notes extends Controller_AbstractAdmin
 	}
 	
 	function add_note(annotated_type, annotated_id, note, notetaker_id) {
+		var urlencoded_note = encodeURIComponent(note)
 		$.ajax(
 			{
-				url: '/admin/notes/create?entityType='+annotated_type+'&entityId='+annotated_id+'&note='+note+'&notetakerId='+notetaker_id,
+				url: '/admin/notes/create?entityType='+annotated_type+'&entityId='+annotated_id+'&note='+urlencoded_note+'&notetakerId='+notetaker_id,
 				type: 'get',
 				dataType: 'text',
 				success: function( strData ){
@@ -117,7 +118,9 @@ class Controller_Notes extends Controller_AbstractAdmin
 	{
 		$this->auto_render = FALSE;
 		$this->check_login("systemadmin");
-		$note = Model_Note::build($this->request->query('entityType'), $this->request->query('entityId'), $this->request->query('note'), $this->request->query('notetakerId'));
+		$note_text = $this->request->query('note');
+		$decoded_note_text = urldecode($note_text);
+		$note = Model_Note::build($this->request->query('entityType'), $this->request->query('entityId'), $decoded_note_text, $this->request->query('notetakerId'));
 		$note->save();
 		if ($note->id)
                 {
