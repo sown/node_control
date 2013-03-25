@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.63, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.67, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.1.63-0ubuntu0.10.04.1
+-- Server version	5.1.67-0ubuntu0.10.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -71,9 +71,9 @@ CREATE TABLE `deployments` (
   `cap` bigint(20) NOT NULL DEFAULT '0' COMMENT 'bandwidth cap per month in MB',
   `start_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'start date of the deployment',
   `end_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'end date of the deployment',
-  `range` int(11) NOT NULL DEFAULT '20' COMMENT 'range of the circle to draw on google maps',
+  `radius` int(11) DEFAULT '20',
   `allowed_ports` varchar(255) DEFAULT NULL COMMENT 'DEPRECATED. DO NOT USE.',
-  `type` enum('campus','home') DEFAULT 'home' COMMENT 'type of deployment',
+  `type` enum('campus','home') DEFAULT 'home',
   `url` text COMMENT 'url associated with the deployment (eg http://example.com/my-pub-website)',
   `longitude` decimal(14,7) DEFAULT NULL COMMENT 'longitude of the deployment',
   `latitude` decimal(14,7) DEFAULT NULL COMMENT 'latitude of the deployment',
@@ -196,6 +196,34 @@ CREATE TABLE `nodes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `notes`
+--
+
+DROP TABLE IF EXISTS `notes`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `note` text NOT NULL,
+  `notetaker_id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `deployment_id` int(11) DEFAULT NULL,
+  `node_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `note_to_notetaker` (`notetaker_id`),
+  KEY `note_to_user` (`user_id`),
+  KEY `note_to_node` (`node_id`),
+  KEY `note_to_deployment` (`deployment_id`),
+  CONSTRAINT `note_to_deployment` FOREIGN KEY (`deployment_id`) REFERENCES `deployments` (`id`),
+  CONSTRAINT `note_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
+  CONSTRAINT `note_to_notetaker` FOREIGN KEY (`notetaker_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `note_to_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `servers`
 --
 
@@ -292,4 +320,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-09-11 19:20:21
+-- Dump completed on 2013-03-25 13:12:14
