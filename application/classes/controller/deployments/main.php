@@ -103,7 +103,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$this->check_login("systemadmin");
 		if ($this->request->method() == 'POST')
 		{
-			$this->request->redirect(Route::url('Deployment', array('id' => $this->request->param('id'))));
+			$this->request->redirect(Route::url('edit_deployment', array('id' => $this->request->param('id'))));
 		}
 		$title = "View Deployment";
 		View::bind_global('title', $title);
