@@ -24,9 +24,9 @@ class Model_VpnEndpoint extends Model_Entity
 	protected $port;
 
 	/**
-	 * @var string $protocol
+	 * @var tunnelprotocol $protocol
 	 *
-	 * @Column(name="protocol", type="string", nullable=true)
+	 * @Column(name="protocol", type="tunnelprotocol", nullable=true)
 	 */
 	protected $protocol;
 
