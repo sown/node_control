@@ -14,35 +14,18 @@ class Controller_Users extends Controller_AbstractAdmin
 	{
 		$this->auto_render = FALSE;
 		$this->check_login("systemadmin");
-		$userString = "";
-		foreach ($this->request->post() as $field => $value)
-		{
-      			if (preg_match("/Text$/", $field))
-			{
-            			$userString = $value;
-            			break;
-			}
-		}
-		if (strlen($userString) >= 2) 
-		{
-		        $qb = Doctrine::em()->getRepository('Model_User')->createQueryBuilder('u');
-			$qb->where('u.username LIKE :userString');
-			$where = trim($this->request->param('where'));
-			if (!empty($where))
-			{
-				$qb->andWhere('u.'.trim($this->request->param('where')));
-			}
-			$qb->orderBy('u.username', 'ASC');
-			$qb->setParameter(':userString', "$userString%");
-			$users = $qb->getQuery()->getResult();
-			echo "<ul>\n";
-			foreach ($users as $u => $user)
-			{
-      				echo "  <li id=\"" . $user->id . "\">" . $user->username . "</li>\n";
-			}
-			echo "</ul>\n";
-		}
-
+		$userString = $this->request->query('text');
+		$qb = Doctrine::em()->getRepository('Model_User')->createQueryBuilder('u');
+                $qb->where('u.username LIKE :userString');
+                $qb->orderBy('u.username', 'ASC');
+                $qb->setParameter(':userString', "$userString%");
+                $users = $qb->getQuery()->getResult();
+                $options = array();
+                foreach ($users as $u => $user)
+                {
+                	$options['items'][] = array("id" => $user->id, "label" => $user->username);
+                }
+		echo json_encode($options);
 	}
 
 	public function action_default()
@@ -153,7 +136,7 @@ class Controller_Users extends Controller_AbstractAdmin
 	
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
-		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('createUser' => 'Create User'), $errors, $success);
+		$this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('createUser' => 'Create User'), $errors, $success);
 	}
 
 	public function action_create_external()
@@ -196,7 +179,7 @@ class Controller_Users extends Controller_AbstractAdmin
 
                 $this->template->sidebar = View::factory('partial/sidebar');
                 $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
-                $this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('createUser' => 'Create User'), $errors, $success);
+                $this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('createUser' => 'Create User'), $errors, $success);
         }
 
 	public function action_reset_password()
@@ -362,7 +345,9 @@ class Controller_Users extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('editUser' => 'Edit User'));
+		$notesFormValues = Controller_Notes::load_from_database('User', $formValues['id'], 'view');
+                $notesFormTemplate = Controller_Notes::load_form_template('view');
+		$this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('editUser' => 'Edit User')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
 	}
 
 	public function action_edit()
@@ -370,6 +355,8 @@ class Controller_Users extends Controller_AbstractAdmin
                 $this->check_login("systemadmin");
 		$title = "Edit User";
 		View::bind_global('title', $title);
+		$jsFiles = array('jquery.js');
+                View::bind_global('jsFiles', $jsFiles);
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$errors = array();
                 $success = "";
@@ -393,7 +380,9 @@ class Controller_Users extends Controller_AbstractAdmin
 		{
 			$formTemplate['email']['type'] = 'statichidden';
 		}
-                $this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('updateUser' => 'Update User'), $errors, $success);
+		$notesFormValues = Controller_Notes::load_from_database('User', $formValues['id'], 'edit');
+                $notesFormTemplate = Controller_Notes::load_form_template('edit');
+                $this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('updateUser' => 'Update User'), $errors, $success) .  FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
         }
 
 	public function action_delete()
@@ -454,7 +443,7 @@ class Controller_Users extends Controller_AbstractAdmin
 				'id' => $this->request->param('id'),
 				'message' => "Are you sure you want to delete user with ID ".$this->request->param('id') . "?",
 			);
-			$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
+			$this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
 	}
@@ -488,10 +477,24 @@ class Controller_Users extends Controller_AbstractAdmin
 			'username' => $user->username,
 			'email' => $user->email,
 			'isSystemAdmin' => $user->isSystemAdmin,
+			'notes' => array(
+                                'currentNotes' => array(),
+                                'newNotes' => '',
+                        ),
 		);
+		foreach ($user->notes as $n => $note)
+                {
+                        $formValues['notes']['currentNotes'][$n] = array(
+                                'id' => $note->id,
+                                'note' => $note->note,
+                                'createdAt' => $note->createdAt->format('Y-m-d H:i:s'),
+                                'username' => $note->notetaker->username,
+                        );
+                }
 		if ($action == 'view') 
 		{
 			$formValues['isSystemAdmin'] = ($formValues['isSystemAdmin'] ? 'Yes' : 'No');
+			
 		}
 		return $formValues;
 	}
@@ -504,8 +507,10 @@ class Controller_Users extends Controller_AbstractAdmin
 			'email' => array('title' => 'Email', 'type' => 'input'),
 			'isSystemAdmin' => array('title' => 'System admin', 'type' => 'checkbox'),
 		);
-		if ($action == 'view' ) 
+		if ($action == 'view') 
 		{
+			unset($formTemplate['notes']['fields']['newNote']);
+                        unset($formTemplate['notes']['fields']['currentNotes']['fields']['delete']);
 			return FormUtils::makeStaticForm($formTemplate);
 		}	
 		return $formTemplate;

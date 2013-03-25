@@ -24,9 +24,9 @@ class FormUtils {
 		return $formValues;
 	}
 
-	public static function drawForm($fields, $values, $submits = array(), $errors = array(), $success = "")
+	public static function drawForm($name, $fields, $values, $submits = array(), $errors = array(), $success = "")
 	{
-		$formHtml = Form::open();
+		$formHtml = Form::open(NULL, array('name' => $name));
 		if (!empty($errors))
 		{
 			$formHtml .= "  <p class=\"error\">Some errors were encountered, please check the details you entered.</p>\n";
@@ -55,14 +55,17 @@ class FormUtils {
 		if (is_array($submits)) 
 		{
 			$formHtml .= "  <div class=\"buttons\">\n";
-			if (sizeof($submits) == 0) 
+			if (is_array($submits))
 			{
-				$formHtml .= "    ".Form::submit(NULL, 'Submit')."\n";
-			}
-			else
-			{		
-				foreach ($submits as $s => $submit) {
-					$formHtml .= "    ".Form::submit($s, $submit) . "&nbsp;\n";
+				if (sizeof($submits) == 0) 
+				{
+					$formHtml .= "    ".Form::submit(NULL, 'Submit')."\n";
+				}
+				else
+				{		
+					foreach ($submits as $s => $submit) {
+						$formHtml .= "    ".Form::submit($s, $submit) . "&nbsp;\n";
+					}
 				}
 			}
 			$formHtml .= "  </div>\n";
@@ -94,7 +97,7 @@ class FormUtils {
 
 	private static function drawFormTable($table, $name, $values)
 	{
-		$formHtml = "    <table class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n      <tr class=\"tabletitle\">\n";
+		$formHtml = "    <table id=\"$name\" class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n      <tr class=\"tabletitle\">\n";
 		foreach ($table['fields'] as $f => $field) 
 		{
 			if (empty($field['type']))
@@ -146,6 +149,10 @@ class FormUtils {
 	private static function drawFieldset($fieldset, $name, $values)
 	{
 		$formHtml = "    <fieldset>\n      <legend>" . $fieldset['title'] ."</legend>\n";
+		if ($name == "notes")
+                {
+                        $formHtml .= "<div id=\"NotesMessage\"></div>";
+                }
 		foreach ($fieldset['fields'] as $f => $field)
 		{
 			if (!isset($values[$f])) 
@@ -165,33 +172,33 @@ class FormUtils {
 	        {
                         $field['type'] = "static";
                 }
-                if ($field['type'] == "hidden")
-                {
-                        $formHtml .= "    " . Form::hidden($name, $value) . "\n";
-                }
-                elseif ($field['type'] == "message")
-                {
-                        $formHtml .= "    <p>" . $value . "</p>\n";
-                }
-		elseif ($field['type'] == "fieldset")
+		switch ($field['type'])
 		{
-			$formHtml .= FormUtils::drawFieldset($field, $name, $value);
-		}
-		elseif ($field['type'] == "table") 
-		{
-			$formHtml .= FormUtils::drawFormTable($field, $name, $value);
-		}
-                else
-                {
-             		$formHtml .= "    <div>\n";
-                        $formHtml .= "      <dt>" . Form::label($name, $field['title']) . ":</dt>\n";
-                        $formHtml .= "      <dd>" . FormUtils::drawFormElement($field, $name, $value, $textValue);
-                        if (!empty($field['hint']))
-                        {
-                                $formHtml .= "<span class=\"hint\">" . $field['hint'] . "</span>";
-                        }
-                        $formHtml .= "</dd>\n";
-                        $formHtml .= "    </div>\n";
+			case 'hidden':
+                        	$formHtml .= "    " . Form::hidden($name, $value) . "\n";
+				break;
+			case 'message':
+				$formHtml .= "    <p>" . $value . "</p>\n";
+				break;
+			case 'fieldset':
+				$formHtml .= FormUtils::drawFieldset($field, $name, $value);
+				break;
+			case 'table':
+				$formHtml .= FormUtils::drawFormTable($field, $name, $value);
+				break;
+			case 'button':
+				$formHtml .= FormUtils::drawFormElement($field, $name, $value, $textValue);
+				break;
+                	default:
+             			$formHtml .= "    <div>\n";
+                        	$formHtml .= "      <dt>" . Form::label($name, $field['title']) . ":</dt>\n";
+                        	$formHtml .= "      <dd>" . FormUtils::drawFormElement($field, $name, $value, $textValue);
+                        	if (!empty($field['hint']))
+                        	{
+                                	$formHtml .= "<span class=\"hint\">" . $field['hint'] . "</span>";
+                        	}
+                        	$formHtml .= "</dd>\n";
+                        	$formHtml .= "    </div>\n";
                 }
 		return $formHtml;
 	}
@@ -208,15 +215,17 @@ class FormUtils {
 				{
 					$field['size'] = 30;
 				}
-				return Form::input($name, $value, array('size' => $field['size']));
+				return Form::input($name, $value, array('id' => $name, 'size' => $field['size']));
 			case 'textarea':
-				return Form::textarea($name, $value);
+				return Form::textarea($name, $value, array('id' => $name));
 			case 'password':
 				return Form::password($name);
 			case 'select':
 				return Form::select($name, $field['options'], $value);
 			case 'checkbox':	
 				return Form::checkbox($name, 1, !empty($value));
+			case 'button':
+				return Form::input($name, $field['title'], array('type' => 'button', 'onClick' => $field['onClick']));
 			case 'autocomplete':
 				return FormUtils::autocomplete($name, $value, $textValue, $field['autocompleteUrl'], array('size' => $field['size']));
 			case 'hidden':
@@ -232,18 +241,38 @@ class FormUtils {
 
 	private static function autocomplete($name, $value, $textValue, $autocompleteUrl, $attributes = array())
 	{
-		global $autocompleteJs;
-		$autocomplete = Form::hidden($name, $value, array('id' => $name)) . "\n";
+		$autocomplete = "<div class=\"ui-widget\">\n";
+		$autocomplete .= Form::hidden($name, $value, array('id' => $name)) . "\n";
 		$attributes['id'] = $name . "Text";
 		$autocomplete .= Form::input($name . "Text", $textValue, $attributes) . "\n";
-            	$autocomplete .= "      <div class=\"autocomplete\" id=\"{$name}SuggestBox\">&nbsp;</div>
-      <script type=\"text/javascript\" language=\"javascript\">
-      var {$name}AutoCompleter = new Ajax.Autocompleter('{$name}Text', '{$name}SuggestBox', '{$autocompleteUrl}', { afterUpdateElement : get{$name}SelectionId });
-      function get{$name}SelectionId(text, li){
-            elem = document.getElementById(\"{$name}\");
-            elem.value = li.id;
-      }
-      </script>";
+		$autocomplete .= "</div>\n<script type=\"text/javascript\" language=\"javascript\">
+$(function() {
+  $('#{$name}Text').autocomplete({
+    source: function(request, response) {
+      $.ajax({
+        url: '{$autocompleteUrl}',
+        dataType: 'json',
+        data: {
+          text: $('#{$name}Text').val(),
+        },
+        success: function(data) {
+          response($.map( data.items, function( item ) {
+            return {
+              id: item.id,
+              label: item.label
+            }
+          }));
+        },
+      });
+    },
+    minLength: 2,
+    select: function( event, ui ) {
+      $('#{$name}').val(ui.item.id);
+      $('#{$name}Text').val(ui.item.label);
+    },
+  });
+});
+</script>";
 		return $autocomplete;
 	}
 	

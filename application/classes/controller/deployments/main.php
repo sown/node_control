@@ -43,9 +43,9 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$this->check_login("systemadmin");
 		$title = "Create Deployment";
 		View::bind_global('title', $title);
-		$cssFiles =  array('autocomplete.css');
+		$cssFiles =  array('jquery-ui.css');
                 View::bind_global('cssFiles', $cssFiles);
-                $jsFiles = array('prototype.js', 'scriptaculous.js');
+                $jsFiles = array('jquery.js', 'jquery-ui.js');
                 View::bind_global('jsFiles', $jsFiles);
 		$errors = array();
 		$success = "";
@@ -95,7 +95,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		);
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
-		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('createDeployment' => 'Create Deployment'), $errors, $success);
+		$this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, array('createDeployment' => 'Create Deployment'), $errors, $success);
 	}
 
 	public function action_view()
@@ -103,14 +103,16 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$this->check_login("systemadmin");
 		if ($this->request->method() == 'POST')
 		{
-			$this->request->redirect(Route::url('edit_deployment', array('id' => $this->request->param('id'))));
+			$this->request->redirect(Route::url('Deployment', array('id' => $this->request->param('id'))));
 		}
 		$title = "View Deployment";
 		View::bind_global('title', $title);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('editDeployment' => 'Edit Deployment'));
+		$notesFormValues = Controller_Notes::load_from_database('Deployment', $formValues['id'], 'view');
+		$notesFormTemplate = Controller_Notes::load_form_template('view');
+		$this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, array('editDeployment' => 'Edit Deployment')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
 	}
 
 	public function action_edit()
@@ -118,9 +120,9 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 $this->check_login("systemadmin");
 		$title = "Edit Deployment";
 		View::bind_global('title', $title);
-		$cssFiles =  array('autocomplete.css');
+		$cssFiles =  array('jquery-ui.css');
 		View::bind_global('cssFiles', $cssFiles);
-		$jsFiles = array('prototype.js', 'scriptaculous.js');
+		$jsFiles = array('jquery.js', 'jquery-ui.js');
 		View::bind_global('jsFiles', $jsFiles);
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$errors = array();
@@ -150,7 +152,9 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		{
 			$submits['endDeployment'] = "End Deployment";
 		}
-                $this->template->content = FormUtils::drawForm($formTemplate, $formValues, $submits, $errors, $success);
+		$notesFormValues = Controller_Notes::load_from_database('Deployment', $formValues['id'], 'edit');
+                $notesFormTemplate = Controller_Notes::load_form_template('edit');
+                $this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, $submits, $errors, $success) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
         }
 
 	public function action_delete()
@@ -196,7 +200,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 				'id' => $this->request->param('id'),
 				'message' => "Are you sure you want to delete deployment with name $deploymentName?",
 			);
-			$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
+			$this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
 	}
@@ -314,7 +318,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			'admins' => array(
 				'currentAdmins' => array(),
 				'newAdmin' => '',
-			)
+			),
 		);
 		foreach ($deployment->admins as $a => $admin) 
 		{
@@ -398,12 +402,12 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 					'newAdmin' => array('title' => 'New administrator', 'type' => 'autocomplete', 'autocompleteUrl' => Route::url('user_autocomplete'), 'size' => 50),
 						
 				),
-			)
+			),
 		);
 		if ($action == 'view' ) 
 		{
 			unset($formTemplate['admins']['fields']['newAdmin']);
-			unset($formTemplate['admins']['fields']['currentAdmins']['fields']['end']);
+			unset($formTemplate['admins']['fields']['currentAdmins']['fields']['endOrRestart']);
 			return FormUtils::makeStaticForm($formTemplate);
 		}	
 		return $formTemplate;

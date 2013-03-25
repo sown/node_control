@@ -130,6 +130,11 @@ class Model_Deployment extends Model_Entity
          */
         protected $node_deployments;
 
+	/**
+         * @OneToMany(targetEntity="Model_Note", mappedBy="deployment", cascade={"persist", "remove"})
+         */
+        protected $notes;
+
 	
 	public function __get($name)
 	{
@@ -267,6 +272,11 @@ class Model_Deployment extends Model_Entity
 			$str .= "<br/>";
 			$str .= "privilegedDevice={$device}";
 		}
+		foreach($this->notes as $note)
+                {
+                        $str .= "<br/>";
+                        $str .= "note={$note}";
+                }
 		return $str;
 	}
 
@@ -289,6 +299,10 @@ class Model_Deployment extends Model_Entity
 		{
 			$str .= $this->fieldHTML('privilegedDevice', $device->toHTML());
 		}
+		foreach($this->notes as $note)
+                {
+                        $str .= $this->fieldHTML('note', $note->toHTML());
+                }
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;

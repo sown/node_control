@@ -103,4 +103,13 @@ abstract class Model_Entity
 		Doctrine::em()->remove($this);
 		Doctrine::em()->flush();
 	}
+
+/*	public function notes()
+	{
+                $query = DB::select()->from('notes');
+		$field = strtolower(str_replace("Model_", "", get_class($this))) . "_id";
+                $query->where($field, $this->id);
+                $query->orderBy('created_at', 'ASC');
+                return $query->getResult();
+	}*/
 }

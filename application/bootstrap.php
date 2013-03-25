@@ -1,4 +1,4 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php // defined('SYSPATH') or die('No direct script access.');
 
 // -- Environment setup --------------------------------------------------------
 // Load the core Kohana class
@@ -333,6 +333,11 @@ Route::set('users', 'admin/users')
                 'controller' => 'users',
                 'action'     => 'default',
         ));
+Route::set('test2', 'admin/test2')
+        ->defaults(array(
+                'controller' => 'test',
+                'action'     => 'default',
+        ));
 Route::set('user_autocomplete', 'admin/users/autocomplete')
         ->defaults(array(
                 'controller' => 'users',
@@ -395,6 +400,24 @@ Route::set('reset_password', 'reset_password/<hash>', array(
                 'action'     => 'reset_password',
         ));
 
+Route::set('create_note', 'admin/notes/create')
+        ->defaults(array(
+                'controller' => 'notes',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_note', 'admin/notes/<id>/delete')
+        ->defaults(array(
+                'controller' => 'notes',
+                'action'     => 'delete',
+        ));
+
+Route::set('notes_table', 'admin/notes/table')
+        ->defaults(array(
+                'controller' => 'notes',
+                'action'     => 'table',
+        ));
+
 Route::set('error', 'error/<action>(/<message>)', array(
 		'action' => '[0-9]++',
 		'message' => '.+'))
@@ -431,3 +454,4 @@ Doctrine\DBAL\Types\Type::addType('ipv6address', 'Model_Type_IPv6Address');
 Doctrine\DBAL\Types\Type::addType('ipv4networkaddress', 'Model_Type_IPv4NetworkAddress');
 Doctrine\DBAL\Types\Type::addType('ipv6networkaddress', 'Model_Type_IPv6NetworkAddress');
 Doctrine\DBAL\Types\Type::addType('deploymenttype', 'Model_Type_DeploymentType');
+Doctrine\DBAL\Types\Type::addType('tunnelprotocol', 'Model_Type_TunnelProtocol');

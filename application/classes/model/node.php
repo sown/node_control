@@ -31,13 +31,6 @@ class Model_Node extends Model_Entity
 	protected $firmwareImage;
 
 	/**
-	 * @var text $notes
-	 *
-	 * @Column(name="notes", type="text", nullable=true)
-	 */
-	protected $notes;
-
-	/**
 	 * @var Model_Certificate
 	 *
 	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist", "remove"})
@@ -66,6 +59,12 @@ class Model_Node extends Model_Entity
 	 * @OneToMany(targetEntity="Model_Interface", mappedBy="node", cascade={"persist", "remove"})
 	 */
 	protected $interfaces;
+
+	/**
+         * @OneToMany(targetEntity="Model_Note", mappedBy="node", cascade={"persist", "remove"})
+         */
+        protected $notes;
+
 
 	public function __construct()
 	{
@@ -211,7 +210,7 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}, notes={$this->notes}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -231,6 +230,11 @@ class Model_Node extends Model_Entity
 			$str .= "<br/>";
 			$str .= "nodeDeployment={$nodeDeployment}";
 		}
+		foreach($this->notes as $node)
+                {
+                        $str .= "<br/>";
+                        $str .= "note={$note}";
+                }
 		return $str;
 	}
 
@@ -240,7 +244,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'firmwareImage', 'notes') as $field)
+		foreach(array('boxNumber', 'firmwareImage') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -260,6 +264,10 @@ class Model_Node extends Model_Entity
 		{
 			$str .= $this->fieldHTML('nodeDeployment', $nodeDeployment->toHTML());
 		}
+		foreach($this->notes as $note)
+                {
+                        $str .= $this->fieldHTML('note', $note->toHTML());
+                }
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;
@@ -286,12 +294,11 @@ class Model_Node extends Model_Entity
 		return empty($result->id);
 	}
 
-	public static function build($boxNumber, $firmwareImage, $notes, $certificate, $vpnEndpoint)
+	public static function build($boxNumber, $firmwareImage, $certificate, $vpnEndpoint)
 	{
 		$obj = new Model_Node();
 		$obj->boxNumber = $boxNumber;
 		$obj->firmwareImage = $firmwareImage;
-		$obj->notes = $notes;
 		$obj->certificate = $certificate;
 		$obj->vpnEndpoint = $vpnEndpoint;
 		return $obj;

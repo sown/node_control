@@ -1,7 +1,7 @@
 <?php
 class Model_Builder
 {
-	public static function create_node($boxNumber = '', $vpnServerName = 'sown-auth2.ecs.soton.ac.uk', $wiredMac = '', $wirelessMac = '', $firmwareImage = '', $notes = '')
+	public static function create_node($boxNumber = '', $vpnServerName = 'sown-auth2.ecs.soton.ac.uk', $wiredMac = '', $wirelessMac = '', $firmwareImage = '')
 	{
 		$certificate = Model_Certificate::build();
 		$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($vpnServerName);
@@ -15,7 +15,7 @@ class Model_Builder
 		if (empty($boxNumber)) {
 			$boxNumber = Model_Node::getNextBoxNumber();
 		}
-		$node = Model_Node::build($boxNumber, $firmwareImage, $notes, $certificate, $vpnEndpoint);
+		$node = Model_Node::build($boxNumber, $firmwareImage, $certificate, $vpnEndpoint);
 
 		$wirelessChannel = 0;
 		$type = '100M';

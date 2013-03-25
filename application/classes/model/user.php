@@ -60,6 +60,11 @@ class Model_User extends Model_Entity
 	 */
 	protected $devices;
 
+	 /**
+         * @OneToMany(targetEntity="Model_Note", mappedBy="user", cascade={"persist", "remove"})
+         */
+        protected $notes;
+
 	public function __get($name)
 	{
 		$this->logUse();
