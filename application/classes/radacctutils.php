@@ -47,7 +47,7 @@ class RadAcctUtils {
 
 		if(!is_array($data))
 		{
-			print_r(rrd_error());
+			return array();
 		}
 
 		foreach($data['data']['ds0'] as $time=>$value)
@@ -60,7 +60,7 @@ class RadAcctUtils {
 			else
 			{
 		                $one = ((int)$value) * $resolution;
-	       	         $two = ((int)$data['data']['ds1'][$time]) * $resolution;
+	       	         	$two = ((int)$data['data']['ds1'][$time]) * $resolution;
 			}
 
 			$year = (int)date("Y", $time);
