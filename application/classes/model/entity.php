@@ -104,12 +104,17 @@ abstract class Model_Entity
 		Doctrine::em()->flush();
 	}
 
-/*	public function notes()
+	public function latest_note() 
 	{
-                $query = DB::select()->from('notes');
-		$field = strtolower(str_replace("Model_", "", get_class($this))) . "_id";
-                $query->where($field, $this->id);
-                $query->orderBy('created_at', 'ASC');
-                return $query->getResult();
-	}*/
+		$note_unixtime = 0;
+		$latest_note = null;
+		foreach ($this->notes as $note) {
+			if ($note_unixtime < $note->createdAt->format('U')) {
+				$latest_note = $note;
+			}
+		}
+		return $latest_note;
+	}
+
+
 }

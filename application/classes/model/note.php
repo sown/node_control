@@ -16,11 +16,11 @@ use Doctrine\ORM\Mapping\JoinColumn;
 class Model_Note extends Model_Entity
 {
 	/**
-	 * @var blob $note
+	 * @var blob $noteText
 	 *
-	 * @Column(name="note", type="text", nullable=true)
+	 * @Column(name="note_text", type="text", nullable=true)
 	 */
-	protected $note;
+	protected $noteText;
 
 	 /**
          * @var Model_User $notetaker
@@ -106,8 +106,14 @@ class Model_Note extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Note: {$this->id}, note={$this->note}, notetaker={$this->notetaker->username}, createdAt={$this->createdAt->format('Y-m-d H:i:s')}";
+		$str  = "Note: {$this->id}, noteText={$this->noteText}, notetaker={$this->notetaker->username}, createdAt={$this->createdAt->format('Y-m-d H:i:s')}";
 		return $str;
+	}
+
+	public function text_only() 
+	{
+	 	$this->logUse();
+		return $this->noteText;
 	}
 
 	public function toHTML()
@@ -116,7 +122,7 @@ class Model_Note extends Model_Entity
 		$str  = "<div class='note' id='note_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Note</th><td>{$this->id}</td></tr>";
-		$str .= $this->fieldHTML('note', $this->note);
+		$str .= $this->fieldHTML('note', $this->noteText);
 		$str .= $this->fieldHTML('notetaker', $this->notetaker->username);
 		$str .= $this->fieldHTML('createdAt', $this->createdAt->format('Y-m-d H:i:s'));
 		$str .= "</table>";
@@ -124,7 +130,7 @@ class Model_Note extends Model_Entity
 		return $str;
 	}
 
-	public static function build($entityType, $entityId, $note, $notetakerId)
+	public static function build($entityType, $entityId, $noteText, $notetakerId)
         {
                 $obj = new Model_Note();
 		switch ($entityType) 
@@ -140,7 +146,7 @@ class Model_Note extends Model_Entity
                                 break;
 			default:
 		}
-                $obj->note = $note;
+                $obj->noteText = $noteText;
 		$obj->createdAt = new \DateTime();
                 $obj->notetaker = Doctrine::em()->getRepository('Model_User')->find($notetakerId);
                 return $obj;

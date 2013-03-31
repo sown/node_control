@@ -22,10 +22,32 @@ foreach ($fields as $f => $field)
 	}
 	elseif ($f == "deploymentBoxNumber")
         {
-		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $row->id)->getResult();
+		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $row->id . " ORDER BY nd.startDate DESC")->getResult();
 			
                 echo "          <td>" . $nodes[0]['boxNumber'] . "</td>\n";
         }
+	elseif ($f == "currentDeployment")
+	{
+		$deployments = Doctrine::em()->createQuery("SELECT d.name FROM Model_NodeDeployment nd JOIN nd.deployment d WHERE nd.node = " . $row->id . " AND nd.endDate = '$latest_end_datetime' ORDER BY nd.startDate DESC")->getResult();
+		if (sizeof($deployments) > 0) 
+		{
+			echo "          <td>" . $deployments[0]['name'] . "</td>\n";
+		}
+		else 
+		{
+			echo "          <td></td>\n";
+		}
+	}
+	elseif ($f == "latestNote")
+	{
+		$latest_note = $row->latest_note();
+		echo "<td>";
+		if (is_object($latest_note)) 
+		{
+			echo $latest_note->text_only();
+		}
+		echo "</td>\n";
+	}
 	else
 	{
 		if (gettype($row->$f) == "object" && get_class($row->$f) == "DateTime")

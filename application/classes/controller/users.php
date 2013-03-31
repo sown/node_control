@@ -41,6 +41,7 @@ class Controller_Users extends Controller_AbstractAdmin
 			'isSystemAdmin' => 'Admin',
 			'username' => 'Username',
 			'email' => 'Email',
+			'latestNote' => 'Latest Note',
                         'view' => '',
                         'edit' => '',
                         'delete' => '',
@@ -477,20 +478,7 @@ class Controller_Users extends Controller_AbstractAdmin
 			'username' => $user->username,
 			'email' => $user->email,
 			'isSystemAdmin' => $user->isSystemAdmin,
-			'notes' => array(
-                                'currentNotes' => array(),
-                                'newNotes' => '',
-                        ),
 		);
-		foreach ($user->notes as $n => $note)
-                {
-                        $formValues['notes']['currentNotes'][$n] = array(
-                                'id' => $note->id,
-                                'note' => $note->note,
-                                'createdAt' => $note->createdAt->format('Y-m-d H:i:s'),
-                                'username' => $note->notetaker->username,
-                        );
-                }
 		if ($action == 'view') 
 		{
 			$formValues['isSystemAdmin'] = ($formValues['isSystemAdmin'] ? 'Yes' : 'No');
@@ -509,8 +497,6 @@ class Controller_Users extends Controller_AbstractAdmin
 		);
 		if ($action == 'view') 
 		{
-			unset($formTemplate['notes']['fields']['newNote']);
-                        unset($formTemplate['notes']['fields']['currentNotes']['fields']['delete']);
 			return FormUtils::makeStaticForm($formTemplate);
 		}	
 		return $formTemplate;

@@ -18,9 +18,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
 
 		$fields = array(
                 	'id' => 'ID',
-               		'boxNumber' => 'Name',
+               		'boxNumber' => 'Box Number',
+			'currentDeployment' => 'Current Deployment',
                		'firmwareImage' => 'Firmware Image',
 			'certificateWritten' => 'Certificate Written',
+			'latestNote' => 'Latest Note',
                		'view' => '',
                		'edit' => '',
                		'delete' => '',

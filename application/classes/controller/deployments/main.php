@@ -19,9 +19,10 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$fields = array(
                         'id' => 'ID',
 			'name' => 'Name',
-			'deploymentBoxNumber' => 'Box Number',
+			'deploymentBoxNumber' => 'Latest Box Number',
 			'startDate' => 'Start Date',
 			'endDate' => 'End Date',
+			'latestNote' => 'Latest Note',
                         'view' => '',
 			'usage' => '',
                         'edit' => '',
@@ -244,10 +245,10 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                                 'message' => array('type' => 'message'),
                         );
                         $formValues = array(
-                                'id' => $deployment->id,
+                                'id' => $this->request->param('id'),
                                 'message' => "Are you sure you want to end deployment with name $deploymentName?",
                         );
-                        $this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
+                        $this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
                 }
 	        $this->template->sidebar = View::factory('partial/sidebar');
         }
@@ -292,7 +293,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
 		$latest_end_datetime =  Kohana::$config->load('system.default.admin_system.latest_end_datetime');
-		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.endDate = '$latest_end_datetime' AND nd.deployment = " . $deployment->id)->getResult();
+		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $deployment->id . "ORDER BY nd.startDate DESC")->getResult();
 		$formValues = array(
                         'id' => $deployment->id,
                         'name' => $deployment->name,
@@ -357,7 +358,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$formTemplate = array(
 			'id' => array('type' => 'hidden'),
                         'name' => array('title' => 'Name', 'type' => 'input'),
-			'boxNumber' => array('title' => 'Box number', 'type' => 'statichidden'),
+			'boxNumber' => array('title' => 'Latest Box number', 'type' => 'static'),
 			'url' => array('title' => 'URL', 'type' => 'input', 'size' => 70),
 			'startDate' => array('title' => 'Started', 'type' => 'statichidden'),
 			'endDate' => array('title' => 'Ended', 'type' => 'statichidden'),

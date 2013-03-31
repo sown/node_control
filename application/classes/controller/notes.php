@@ -5,7 +5,7 @@ class Controller_Notes extends Controller_AbstractAdmin
 	public static function validate($formValues) 
 	{
 		$validation = Validation::factory($formValues)
-	               ->rule('note','not_empty', array(':value'));
+	               ->rule('noteText','not_empty', array(':value'));
 		if (!$validation->check())
                 {
 			return $validation->errors();
@@ -21,7 +21,7 @@ class Controller_Notes extends Controller_AbstractAdmin
                 {
                         $notesFormValues['notes']['currentNotes'][$n] = array(
                                 'id' => $note->id,
-                                'note' => $note->note,
+                                'noteText' => $note->noteText,
                                 'createdAt' => $note->createdAt->format('Y-m-d H:i:s'),
                                 'username' => $note->notetaker->username,
                         );
@@ -40,7 +40,7 @@ class Controller_Notes extends Controller_AbstractAdmin
                                         'type' => 'table',
                                         'fields' => array(
                                                 'id' => array('type' => 'hidden'),
-                                                'note' => array('title' =>'Note', 'type' => 'statichidden'),
+                                                'noteText' => array('title' =>'Note', 'type' => 'statichidden'),
                                                 'createdAt' => array('title' => 'Created At', 'type' => 'statichidden'),
                                                 'username' => array('title' => 'Created By', 'type' => 'statichidden'),
                                         ),
@@ -84,11 +84,11 @@ class Controller_Notes extends Controller_AbstractAdmin
                 ); 
 	}
 	
-	function add_note(annotated_type, annotated_id, note, notetaker_id) {
-		var urlencoded_note = encodeURIComponent(note)
+	function add_note(annotated_type, annotated_id, note_text, notetaker_id) {
+		var urlencoded_note_text = encodeURIComponent(note_text)
 		$.ajax(
 			{
-				url: '/admin/notes/create?entityType='+annotated_type+'&entityId='+annotated_id+'&note='+urlencoded_note+'&notetakerId='+notetaker_id,
+				url: '/admin/notes/create?entityType='+annotated_type+'&entityId='+annotated_id+'&noteText='+urlencoded_note_text+'&notetakerId='+notetaker_id,
 				type: 'get',
 				dataType: 'text',
 				success: function( strData ){
@@ -118,9 +118,9 @@ class Controller_Notes extends Controller_AbstractAdmin
 	{
 		$this->auto_render = FALSE;
 		$this->check_login("systemadmin");
-		$note_text = $this->request->query('note');
-		$decoded_note_text = urldecode($note_text);
-		$note = Model_Note::build($this->request->query('entityType'), $this->request->query('entityId'), $decoded_note_text, $this->request->query('notetakerId'));
+		$noteText = $this->request->query('noteText');
+		$decodedNoteText = urldecode($noteText);
+		$note = Model_Note::build($this->request->query('entityType'), $this->request->query('entityId'), $decodedNoteText, $this->request->query('notetakerId'));
 		$note->save();
 		if ($note->id)
                 {
@@ -164,7 +164,7 @@ class Controller_Notes extends Controller_AbstractAdmin
 		$i = 0;
 		foreach ($entity->notes as $note)
 		{
-			$table .= "<tr class=\"sowntablerow\"><input type=\"hidden\" value=\"{$note->id}\" name=\"notes_currentNotes_{$i}_id\"/><td$shade>{$note->note} <input type=\"hidden\" value=\"{$note->note}\" name=\"notes_currentNotes_{$i}_note\" /></td><td$shade>".$note->createdAt->format('Y-m-s H:i:s')." <input type=\"hidden\" value=\"".$note->createdAt->format('Y-m-s H:i:s')."\" name=\"notes_currentNotes_{$i}_createdAt\" /></td><td$shade>{$note->notetaker->username} <input type=\"hidden\" value=\"{$note->notetaker->username}\" name=\"notes_currentNotes_{$i}_username\" /></td><td$shade><input type=\"button\" name=\"notes_currentNotes_{$i}_delete\" value=\"Delete\" onClick='delete_note(document.getElementsByName(this.name.replace(\"delete\",\"id\")).item(0).value, document.forms[0].attributes[\"name\"].value, document.forms[0].id.value);' /></td></tr>\n";
+			$table .= "<tr class=\"sowntablerow\"><input type=\"hidden\" value=\"{$note->id}\" name=\"notes_currentNotes_{$i}_id\"/><td$shade>{$note->noteText} <input type=\"hidden\" value=\"{$note->noteText}\" name=\"notes_currentNotes_{$i}_note\" /></td><td$shade>".$note->createdAt->format('Y-m-s H:i:s')." <input type=\"hidden\" value=\"".$note->createdAt->format('Y-m-s H:i:s')."\" name=\"notes_currentNotes_{$i}_createdAt\" /></td><td$shade>{$note->notetaker->username} <input type=\"hidden\" value=\"{$note->notetaker->username}\" name=\"notes_currentNotes_{$i}_username\" /></td><td$shade><input type=\"button\" name=\"notes_currentNotes_{$i}_delete\" value=\"Delete\" onClick='delete_note(document.getElementsByName(this.name.replace(\"delete\",\"id\")).item(0).value, document.forms[0].attributes[\"name\"].value, document.forms[0].id.value);' /></td></tr>\n";
 			$i++;
 			if (empty($shade)) 
 			{
