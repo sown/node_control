@@ -315,7 +315,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		{
 			foreach ($formValues['interfaces']['currentInterfaces'][$i] as $f => $field)
 			{
-				$formValues['interfaces'][$i+1][$f] = '';
+				$formValues['interfaces']['currentInterfaces'][$i+1][$f] = '';
 			}
 		}
 		return $formValues;
