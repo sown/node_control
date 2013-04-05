@@ -388,7 +388,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 $vpnEndpoint->IPv6AddrCidr = $formValues['vpnEndpoint']['IPv6AddrCidr'];
 		$vpnEndpoint->vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($formValues['vpnEndpoint']['vpnServer']);
 		$vpnEndpoint->save();
-                foreach ($formValues['interfaces'] as $i => $interfaceValues)
+                foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interfaceValues)
                 {	
 			if (empty($interfaceValues['name']))
 			{
@@ -411,12 +411,16 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				if (empty($interfaceValues['id'])) {
 					$ipv4 = IP_Network_Address::factory($interfaceValues['IPv4Addr'], $interfaceValues['IPv4AddrCidr']);
 					$ipv6 = IP_Network_Address::factory($interfaceValues['IPv6Addr'], $interfaceValues['IPv6AddrCidr']);
-					$networkAdapter = Model_NetworkAdapter::build(
-						$interfaceValues['networkAdapterMac'], 
-						$interfaceValues['networkAdapterWirelessChannel'], 
-						$interfaceValues['networkAdapterType'], 
-						$node
-					);
+					$networkAdapter = Doctrine::em()->getRepository('Model_NetworkAdapter')->findOneBy(array('mac' => $interfaceValues['networkAdapterMac'], 'type' => $interfaceValues['networkAdapterType']));
+					if (empty($networkAdapter))
+					{
+						$networkAdapter = Model_NetworkAdapter::build(
+							$interfaceValues['networkAdapterMac'], 
+							$interfaceValues['networkAdapterWirelessChannel'], 
+							$interfaceValues['networkAdapterType'], 
+							$node
+						);
+					}
 					$node->interfaces->add(Model_Interface::build(
 						$ipv4, 
 						$ipv6, 
