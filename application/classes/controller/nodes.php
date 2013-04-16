@@ -74,7 +74,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'vpnServer' => '',
 				'wiredMac' => '',
 				'wirelessMac' => '',
-				'firmwareImage' => 'backfire',
+				'firmwareImage' => 'Attitude Adjusment (Bleeding Edge, r31360)',
 			);
 			
 		}
@@ -83,7 +83,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'vpnServer' => array('title' => 'VPN Server', 'type' => 'select', 'options' => Model_VpnServer::getVpnServerNames()),
 			'wiredMac' => array('title' => 'Wired Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
                         'wirelessMac' => array('title' => 'Wireless Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
-                        'firmwareImage' => array('title' => 'Firmware Image', 'size' => 20, 'type' => 'input'),
+                        'firmwareImage' => array('title' => 'Firmware Image', 'size' => 50, 'type' => 'input'),
 		);
 	
                 $this->template->sidebar = View::factory('partial/sidebar');
@@ -326,7 +326,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
-                        'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 20),
+                        'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'certificateWritten' => array('title' => 'Certificate written', 'type' => 'statichidden'),
                         'vpnEndpoint' => array(
                                 'title' => 'VPN Endpoint',
