@@ -20,8 +20,8 @@ SSLStrictSNIVHostCheck off
 <VirtualHost *:443>
     ServerAdmin support@sown.org.uk
     ServerName sown-auth2.ecs.soton.ac.uk
-    SSLCertificateFile /etc/apache2/ssl/server.crt
-    SSLCertificateKeyFile /etc/apache2/ssl/server.key
+    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.pub
+    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.priv
 
     DocumentRoot "/srv/www/default"
 
