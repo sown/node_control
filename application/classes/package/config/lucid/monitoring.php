@@ -141,6 +141,14 @@ define Service {
 	service_description	VPNSERVER-{$name}
 	check_command	check_via_node_control!backfire!{$name}!OpenvpnRunning
 }
+
+define Service {
+	host_name	{$parents}
+	use		nodecert
+	service_description	NODECERT-{$name}
+	check_command	check_via_node_control!backfire!{$name}!CertExpiry
+}
+
 ";
 //	notes_url	{$url}
 	}
