@@ -21,7 +21,6 @@ class Check_CertExpiry extends Check
 		else {
 			$this->code = Check::OK;
                 }
-		error_log($this->code." - ".$this->message); 
-		$this->message = "Certificate will expiry on $valid_to.";
+		$this->message = "Certificate expires on $valid_to.";
 	}
 }
