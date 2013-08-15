@@ -328,6 +328,24 @@ Route::set('usage_deployment', 'admin/deployments/<id>/usage')
                 'action'     => 'default',
         ));
 
+Route::set('view_radacct', 'admin/radaccts/<radacctid>')
+        ->defaults(array(
+                'controller' => 'radaccts',
+                'action'     => 'view',
+        ));
+
+Route::set('radaccts', 'admin/radaccts')
+        ->defaults(array(
+                'controller' => 'radaccts',
+                'action'     => 'default',
+        ));
+
+Route::set('radaccts_page', 'admin/radaccts/page/<page>')
+        ->defaults(array(
+                'controller' => 'radaccts',
+                'action'     => 'default',
+        ));
+
 Route::set('users', 'admin/users')
         ->defaults(array(
                 'controller' => 'users',

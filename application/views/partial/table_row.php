@@ -48,6 +48,25 @@ foreach ($fields as $f => $field)
 		}
 		echo "</td>\n";
 	}
+	elseif (preg_match("/octet/", $f)) 
+	{
+		$row->$f = round($row->$f/1024/1024, 3);
+		echo "          <td>" . $row->$f . "</td>\n";
+	}
+	elseif ($f == "calledstationid")
+	{
+		$csbits=explode(':', $row->$f);
+		$nodename = str_replace('-', ':', $csbits[0]);
+		$query = Doctrine::em()->createQuery("SELECT n FROM Model_Node n JOIN n.interfaces i JOIN i.networkAdapter na WHERE na.mac like '{$nodename}'");
+		$query->setMaxResults(1);
+		$nodes = $query->getResult();
+		if (!empty($nodes[0])) 
+		{
+			$nodename = "node" . $nodes[0]->boxNumber;
+		}
+		echo "          <td>{$nodename} ({$csbits[1]})</td>\n";
+
+	}
 	else
 	{
 		if (gettype($row->$f) == "object" && get_class($row->$f) == "DateTime")

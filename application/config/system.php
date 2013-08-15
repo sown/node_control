@@ -57,6 +57,7 @@ return array
 			'radutmp'		=>	'/var/log/freeradius/sradutmp',
 		),
 		'rrd_deployment_path'	=> '/srv/radacct-tg/nas-rrds/',
+		'rrd_client_path' 	=> '/srv/radacct-tg/sta-rrds/',
 		'routes'	=> '
 push "route 10.12.0.0 255.254.0.0"
 push "route 152.78.189.82 255.255.255.255"
