@@ -24,7 +24,7 @@ class FormUtils {
 		return $formValues;
 	}
 
-	public static function drawForm($name, $fields, $values, $submits = array(), $errors = array(), $success = "")
+	public static function drawForm($name, $fields, $values, $submits = array(), $errors = array(), $success = "", $attributes = array())
 	{
 		$formHtml = Form::open(NULL, array('name' => $name));
 		if (!empty($errors))
@@ -41,7 +41,13 @@ class FormUtils {
 		{
 			$formHtml .= "  <p class=\"success\">$success</p>\n";
 		}
-		$formHtml .= "  <dl>\n";
+		$inlineclass='';
+                if (!empty($attributes['inline']))
+                {
+                                $inlineclass=' class="inline"';
+                        }
+
+		$formHtml .= "  <dl$inlineclass>\n";
 		foreach ($fields as $f => $field) 
 		{
 			if(!isset($values[$f]))
@@ -54,7 +60,12 @@ class FormUtils {
 		
 		if (is_array($submits)) 
 		{
-			$formHtml .= "  <div class=\"buttons\">\n";
+			$inlinestyle='';
+			if (!empty($attributes['inline']))
+			{
+				$inlinestyle=' style="display: inline;"';
+			}
+			$formHtml .= "  <div class=\"buttons\"$inlinestyle>\n";
 			if (is_array($submits))
 			{
 				if (sizeof($submits) == 0) 
@@ -228,6 +239,10 @@ class FormUtils {
 				return Form::input($name, $field['title'], array('type' => 'button', 'onClick' => $field['onClick']));
 			case 'autocomplete':
 				return FormUtils::autocomplete($name, $value, $textValue, $field['autocompleteUrl'], array('size' => $field['size']));
+			case 'date':
+				return FormUtils::datepicker($name, $value);
+			case 'datetime':
+                                return FormUtils::datetimepicker($name, $value);
 			case 'hidden':
 				return Form::hidden($name, $value);
 			case 'static':
@@ -275,7 +290,29 @@ $(function() {
 </script>";
 		return $autocomplete;
 	}
-	
+
+	private static function datepicker($name, $value)
+	{
+		$datepicker = "<input type=\"text\" name=\"$name\" id=\"$name\" value=\"$value\" size=\"10\" />\n";
+		$datepicker .= "<script language=\"javascript\"><!--
+  $(function() {
+    $( \"#$name\" ).datepicker();
+  });
+--></script>\n";
+		return $datepicker;
+	}
+
+	private static function datetimepicker($name, $value)
+        {
+                $datetimepicker = "<input type=\"text\" id=\"$name\" />\n";
+                $datetimepicker .= "<script language=\"javascript\"><!--
+  $(function() {
+    $( \"#$name\" ).datetimepicker();
+  });
+--></script>\n";
+                return $datetimepicker;
+        }
+
 	private static function getTextValue($fieldName, $values)
 	{
 		if (isset($values[$fieldName . "Text"]))

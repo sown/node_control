@@ -404,6 +404,33 @@ dl div dd {
   display: table-cell;
   padding: 0 0 0.5em 0.5em;
 }
+
+dl.inline {
+  display: inline;
+}
+dl.inline div {
+  display: inline;
+}
+dl.inline div dt {
+  display: inline;
+  padding: 0;
+}
+dl.inline div dd {
+  display: inline;
+  padding: 0;
+  margin: 0;
+}
+dl.inline div dd:before {
+	content: ' ';
+}
+dl.inline div dt:before {
+        content: "\A";
+	white-space: pre;
+}
+dl.inline div dt:first-child:before { /* disable line break before the first <dt> */
+    content: none;
+}
+
 legend {
 	font-weight: bold;
 }
