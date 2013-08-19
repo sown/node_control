@@ -117,8 +117,6 @@ class Controller_Scripts extends Controller_Template
 		# Get the list of users
 		$query = Doctrine::em()->createQuery("SELECT DISTINCT ra.callingstationid FROM Model_Radacct ra");
                 $results = $query->getResult();
-//              	\Doctrine\Common\Util\Debug::dump($results);
-  //            	exit();
 
 		# Check each user has an rrd file - create for new users
 		foreach ($results as $row)   
@@ -145,16 +143,29 @@ class Controller_Scripts extends Controller_Template
 		}
 
 		# Get the current bandwidth counters from the database
-		$query = $query = Doctrine::em()->createQuery("SELECT ra.callingstationid, SUM(ra.acctinputoctets) as acctinputoctets_total, SUM(ra.acctoutputoctets) as acctoutputoctets_total FROM Model_Radacct ra GROUP BY ra.callingstationid");
+		$whererecent = "";
+		$all_stas = $this->request->param('all');
+		if (empty($all_stas))
+		{
+			$hourago_dt = new \DateTime('-1 hour');
+                	$hourago = $hourago_dt->format("Y-m-d H:i:s");
+			$whererecent = "WHERE ra.callingstationid IN (SELECT ra2.callingstationid FROM Model_Radacct ra2 WHERE ra2.acctstoptime IS NULL OR ra2.acctstoptime > '$hourago')";
+		}
+		$query_str = "SELECT ra.callingstationid, SUM(ra.acctinputoctets) as acctinputoctets_total, SUM(ra.acctoutputoctets) as acctoutputoctets_total FROM Model_Radacct ra $whererecent GROUP BY ra.callingstationid";
+		$query = Doctrine::em()->createQuery($query_str);
 		$results = $query->getResult();
+		
 		# Update each RRD
 		foreach ($results as $row)
                 {
-        		$callingstation = str_replace(":", "_", $row['callingstationid']);
-		        $start_date = time();
-		        $cmd="/usr/bin/rrdtool update {$STA_RRDS}/{$callingstation}.rrd".
-  	                      " {$start_date}:{$row['acctinputoctets_total']}:{$row['acctoutputoctets_total']}";
-        		system($cmd);
+			if (!empty($row['callingstationid'])) 
+			{
+        			$callingstation = str_replace(":", "_", $row['callingstationid']);
+		        	$start_date = time();
+		        	$cmd="/usr/bin/rrdtool update {$STA_RRDS}/{$callingstation}.rrd".
+  	                      		" {$start_date}:{$row['acctinputoctets_total']}:{$row['acctoutputoctets_total']}";
+        			system($cmd);
+			}
 		}
 		exit();
 	}

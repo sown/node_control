@@ -484,6 +484,12 @@ Route::set('update_stas', 'scripts/update_stas')
                 'action'     => 'update_stas',
         ));
 
+Route::set('update_stas_all', 'scripts/update_stas/<all>')
+        ->defaults(array(
+                'controller' => 'scripts',
+                'action'     => 'update_stas',
+        ));
+
 
 
 require_once(APPPATH.'/classes/mysql-dbo.php');
