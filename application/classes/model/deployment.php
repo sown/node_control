@@ -184,7 +184,7 @@ class Model_Deployment extends Model_Entity
 
 	public function getConsumption() 
 	{
-		$path = Kohana::$config->load('system.default.rrd_deployment_path'); 
+		$path = Kohana::$config->load('system.default.rrd.deployment_path'); 
 		if (substr($path,-1) != "/") 
 		{
 			$path .= "/";

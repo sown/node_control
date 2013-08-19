@@ -250,7 +250,7 @@ class Model_Radacct
 		$this->logUse();
 		$str  = "<div class='radacct' id='radacct_{$this->radacctid}'>";
 		$str .= "<table>";
-		$str .= "<tr class='ID'><th>Radacct</th><td>{$this->radacct}</td></tr>";
+		$str .= "<tr class='ID'><th>Radacct</th><td>{$this->radacctid}</td></tr>";
 		$fields = array('acctsessionid', 'acctuniqueid', 'username', 'groupname', 'realm', 'nasipaddress', 'nasportid', 'nasporttype', 'acctstarttime', 'acctstoptime', 'acctstoptime', 'acctsessiontime', 'acctauthentic', 'connectinfo_start', 'connectinfo_stop', 'acctinputoctets', 'acctoutputoctets', 'calledstationid',' callingstationid', 'acctterminatecause', 'acctterminatecause', 'servicetype', 'framedprotocol', 'framedipaddress', 'acctstartdelay', 'acctstopdelay', 'xascendsessionsvrkey');	
 		foreach($fields as $field)
 		{

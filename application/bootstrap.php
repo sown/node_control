@@ -346,6 +346,12 @@ Route::set('radaccts_page', 'admin/radaccts/page/<page>')
                 'action'     => 'default',
         ));
 
+Route::set('view_radpostauth', 'admin/radpostauths/<id>')
+        ->defaults(array(
+                'controller' => 'radpostauths',
+                'action'     => 'view',
+        ));
+
 Route::set('users', 'admin/users')
         ->defaults(array(
                 'controller' => 'users',
@@ -465,6 +471,20 @@ Route::set('deployments_usage_daily_graph', 'admin/deployments/usage/graphs/dail
                 'controller' => 'deployments_usage',
                 'action'     => 'daily_graph',
         ));
+
+Route::set('update_nass', 'scripts/update_nass')
+	->defaults(array(
+                'controller' => 'scripts',
+                'action'     => 'update_nass',
+        ));
+
+Route::set('update_stas', 'scripts/update_stas')
+        ->defaults(array(
+                'controller' => 'scripts',
+                'action'     => 'update_stas',
+        ));
+
+
 
 require_once(APPPATH.'/classes/mysql-dbo.php');
 Doctrine\DBAL\Types\Type::addType('ipv4address', 'Model_Type_IPv4Address');

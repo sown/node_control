@@ -1,6 +1,6 @@
 <?php
-        // The cookie referenced here is set in Javascript on the 'close' link below
-        if(! preg_match("/auth2\./", $_SERVER["SERVER_NAME"]) && ! isset($_COOKIE['hideDevSplash'])) {
+// The cookie referenced here is set in Javascript on the 'close' link below
+if (isset($_SERVER["SERVER_NAME"]) && ! preg_match("/auth2\./", $_SERVER["SERVER_NAME"]) && ! isset($_COOKIE['hideDevSplash'])) {
 
         if ($_SERVER['REQUEST_URI'] != '/')
                 $extra_link_text = "<a style='color:#9999FF' href='https://sown-auth2.ecs.soton.ac.uk{$_SERVER['REQUEST_URI']}'>this page on our main web site</a>, or visit";

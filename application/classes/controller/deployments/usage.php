@@ -60,7 +60,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
                         $months[] = $month . " ". date('y');
 
 		$node_deployment_usage = array();
-		$path = Kohana::$config->load('system.default.rrd_deployment_path');
+		$path = Kohana::$config->load('system.default.rrd.deployment_path');
 		foreach($deployment->node_deployments as $node_deployment)
                 {
                         $rrd_file = $path .  "node_deployment" . $node_deployment->id . ".rrd";
@@ -95,7 +95,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		$days = array_reverse($days);
 		
 		$node_deployment_usage = array();
-                $path = Kohana::$config->load('system.default.rrd_deployment_path');
+                $path = Kohana::$config->load('system.default.rrd.deployment_path');
                 foreach($deployment->node_deployments as $node_deployment)
                 {
                         $rrd_file = $path .  "node_deployment" . $node_deployment->id . ".rrd";
