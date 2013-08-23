@@ -15,6 +15,31 @@ foreach ($fields as $f => $field)
 		$url = Route::url($f . "_" . $objectType, array($idField => $row->$idField));
 		echo "          <td class=\"icon\"><a class=\"$f\" title=\"" . ucfirst($f) . "\" href=\"$url\">&nbsp;</a></td>\n";
 	}
+	elseif (in_array($f, array("photo", "wikiLink")))
+	{
+		echo "          <td class=\"icon\">";
+		if ($f == 'photo') 
+		{
+			$url = Route::url("view_photo_" . $objectType,  array($idField => $row->$idField));
+			$content = ($row->photo !== NULL);
+			$title = 'View Photo';
+		}
+		else 
+		{
+			$url = $row->$f;
+			$content = $url;
+	                $title = $url;
+		}
+		if (!empty($content)) 
+		{
+			echo "<a class=\"$f\" title=\"" . $title . "\" href=\"" . $url . "\">&nbsp;</a>";
+		}
+		else
+		{
+			echo "&nbsp;";
+		}
+		echo "</td>\n";
+	}		
 	// Need to figure out how to do this generically
 	elseif ($f == "certificateWritten")
 	{

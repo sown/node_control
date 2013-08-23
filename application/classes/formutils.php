@@ -26,7 +26,14 @@ class FormUtils {
 
 	public static function drawForm($name, $fields, $values, $submits = array(), $errors = array(), $success = "", $attributes = array())
 	{
-		$formHtml = Form::open(NULL, array('name' => $name));
+		if (!empty($attributes['multipart']))
+		{
+			$formHtml = Form::open(NULL, array('name' => $name, 'enctype' => 'multipart/form-data'));
+		}
+		else
+		{
+			$formHtml = Form::open(NULL, array('name' => $name));
+		}
 		if (!empty($errors))
 		{
 			$formHtml .= "  <p class=\"error\">Some errors were encountered, please check the details you entered.</p>\n";
@@ -243,6 +250,10 @@ class FormUtils {
 				return FormUtils::datepicker($name, $value);
 			case 'datetime':
                                 return FormUtils::datetimepicker($name, $value);
+			case 'image': 
+				return "<img src=\"data:image/jpg;base64,{$value}\" title=\"$name\" alt=\"$name\" width=\"600px\" />";
+                        case 'imageupload':
+				return FormUtils::imageupload($name, $value);
 			case 'hidden':
 				return Form::hidden($name, $value);
 			case 'static':
@@ -312,6 +323,16 @@ $(function() {
 --></script>\n";
                 return $datetimepicker;
         }
+
+	private static function imageupload($name, $value)
+	{
+		$imageupload = Form::file($name);
+		if (!empty($value)) 
+		{
+			$imageupload .= "<br/>\n<img src=\"data:image/jpg;base64,{$value}\" title=\"$name\" alt=\"$name\" width=\"600px\" />";
+		}
+		return $imageupload;
+	}
 
 	private static function getTextValue($fieldName, $values)
 	{

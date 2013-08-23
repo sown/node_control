@@ -49,11 +49,18 @@ if(!isset($user))
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('deployments_usage_all') ?>">All Deployments Usage</a><br/>
 <?php } ?>
+      </div>
+    </div>
+     <div class="gadget">
+      <div class="banner">Miscellaneous</div>
+      <div class="content">
+<?php if($user->is('systemadmin')) { ?>
+        <a href="<?= Route::url('inventory') ?>">Inventory</a><br/>
+<?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('radaccts') ?>">Radius Accounting</a><br/>
 <?php } ?>
 
       </div>
-    </div>
   </div>
 </div>

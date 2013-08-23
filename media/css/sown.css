@@ -489,8 +489,19 @@ a.view, a.view:hover {
 	  background-repeat: no-repeat;
 	  text-decoration: none;
 }
+a.photo, a.photo:hover {
+        background-image:  url(../images/viewphoto.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+}
 a.users, a.users:hover {
         background-image:  url(../images/users.png);
         background-repeat: no-repeat;
         text-decoration: none;
 }
+a.wikiLink, a.wikiLink:hover {
+        background-image:  url(../images/wikiLink.png);
+        background-repeat: no-repeat;
+        text-decoration: none;
+}
+

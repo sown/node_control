@@ -7,7 +7,7 @@ if (empty($content)) $content = "NO CONTENT SET";
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title><?= $title ?> | SOWN Admin System</title>
+  <title><?= $title ?> | <?= Kohana::$config->load('system.default.admin_system.site_name') ?></title>
   <?= HTML::style('media/css/sown.css', array("media" => "all")) ?> 
   <?= HTML::style('media/css/screen.css', array("media" => "screen")) ?> 
   <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?>

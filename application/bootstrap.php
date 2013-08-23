@@ -286,6 +286,7 @@ Route::set('view_node', 'admin/nodes/<boxNumber>')
                 'controller' => 'nodes',
                 'action'     => 'view',
         ));
+
 Route::set('deployments', 'admin/deployments')
         ->defaults(array(
                 'controller' => 'deployments_main',
@@ -326,6 +327,47 @@ Route::set('usage_deployment', 'admin/deployments/<id>/usage')
         ->defaults(array(
                 'controller' => 'deployments_usage',
                 'action'     => 'default',
+        ));
+
+Route::set('inventory', 'admin/inventory')
+        ->defaults(array(
+                'controller' => 'inventory',
+                'action'     => 'default',
+        ));
+
+Route::set('create_inventory_item', 'admin/inventory/item/create')
+        ->defaults(array(
+                'controller' => 'inventory',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_inventory_item', 'admin/inventory/item/<id>/delete')
+        ->defaults(array(
+                'controller' => 'inventory',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_inventory_item', 'admin/inventory/item/<id>/edit')
+        ->defaults(array(
+                'controller' => 'inventory',
+                'action'     => 'edit',
+        ));
+
+Route::set('view_inventory_item', 'admin/inventory/item/<id>')
+        ->defaults(array(
+                'controller' => 'inventory',
+                'action'     => 'view',
+	));
+
+Route::set('view_photo_inventory_item', 'admin/inventory/item/<id>/photo')
+        ->defaults(array(
+                'controller' => 'inventory',
+                'action'     => 'view_photo',
+        ));
+Route::set('view_photo_size_inventory_item', 'admin/inventory/item/<id>/photo/<size>')
+        ->defaults(array(
+                'controller' => 'inventory',
+                'action'     => 'view_photo',
         ));
 
 Route::set('view_radacct', 'admin/radaccts/<radacctid>')

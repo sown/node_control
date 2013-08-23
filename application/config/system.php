@@ -12,6 +12,7 @@ return array
 		),
 		'admin_system'	=> array
 		(
+			'site_name' => 'SOWN Admin System',
                         'url'   => 'https://sown-auth2.ecs.soton.ac.uk',
 			'contact_email' => 'support@sown.org.uk',
 			'sender_email' => 'NO-REPLY@sown.org.uk',
