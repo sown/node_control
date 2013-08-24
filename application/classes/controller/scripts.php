@@ -103,7 +103,6 @@ class Controller_Scripts extends Controller_Template
                         	}
 		                $start_date = time();
                 	        $cmd = "/usr/bin/rrdtool update $path {$start_date}:{$results[0]['acctinputoctets_total']}:{$results[0]['acctoutputoctets_total']}";
-				echo "$cmd\n";
 		                system($cmd);
 		        }
 		}
