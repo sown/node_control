@@ -65,7 +65,7 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 	
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
-		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('createObject' => 'Create [OBJECT]'), $errors, $success);
+		$this->template->content = FormUtils::drawForm('create_[OBJECT]', $formTemplate, $formValues, array('createObject' => 'Create [OBJECT]'), $errors, $success);
 	}
 
 	public function action_view()
@@ -76,7 +76,7 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm($formTemplate, $formValues, NULL);
+		$this->template->content = FormUtils::drawForm('view_[OBJECT]', $formTemplate, $formValues, NULL);
 	}
 
 	public function action_edit()
@@ -103,7 +103,7 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 			$formValues = $this->_load_from_database($this->request->param('id'), 'edit');
                 }
 		$formTemplate = $this->_load_form_template('edit');
-                $this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('updateObject' => 'Update [OBJECT]'), $errors, $success);
+                $this->template->content = FormUtils::drawForm('update_[OBJECT]', $formTemplate, $formValues, array('updateObject' => 'Update [OBJECT]'), $errors, $success);
         }
 
 	public function action_delete()
@@ -148,7 +148,7 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 				'id' => $this->request->param('id'),
 				'message' => "Are you sure you want to delete [OBJECT] with ID ".$this->request->param('id') . "?",
 			);
-			$this->template->content = FormUtils::drawForm($formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
+			$this->template->content = FormUtils::drawForm('delete_[OBJECT]', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
 	}
