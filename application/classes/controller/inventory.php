@@ -101,12 +101,16 @@ class Controller_Inventory extends Controller_AbstractAdmin
 	public function action_view()
 	{
 		$this->check_login("systemadmin");
+		if ($this->request->method() == 'POST')
+                {
+                        $this->request->redirect(Route::url('edit_inventory_item', array('id' => $this->request->param('id'))));
+                }
 		$title = "View Inventory Item";
 		View::bind_global('title', $title);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm('view_inventory_item', $formTemplate, $formValues, NULL);
+		$this->template->content = FormUtils::drawForm('view_inventory_item', $formTemplate, $formValues, array('editInventoryItem' => 'Edit Inventory Item'));
 	}
 
  	public function action_view_photo() 
