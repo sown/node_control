@@ -46,8 +46,9 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues);
 			if ($validation->check())
         		{
-				$object = Model_Builder::create_object();
-				$url = Route::url('view_[OBJECT]', array($object->id));
+				$object = Model_Object::build();
+				$object->save();
+				$url = Route::url('view_[OBJECT]', array('id' => $object->id));
                         	$success = "Successfully created object with ID: <a href=\"$url\">" . $object->id . "</a>.";
  
         		}
@@ -71,12 +72,16 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 	public function action_view()
 	{
 		$this->check_login("systemadmin");
+		if ($this->request->method() == 'POST')
+                {
+                        $this->request->redirect(Route::url('edit_[OBJECT]', array('id' => $this->request->param('id'))));
+                }
 		$title = "View [OBJECT]";
 		View::bind_global('title', $title);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm('view_[OBJECT]', $formTemplate, $formValues, NULL);
+		$this->template->content = FormUtils::drawForm('view_[OBJECT]', $formTemplate, $formValues, array('editObject' => 'Edit [OBJECT]'));
 	}
 
 	public function action_edit()
