@@ -55,6 +55,9 @@ if(!isset($user))
       <div class="banner">Miscellaneous</div>
       <div class="content">
 <?php if($user->is('systemadmin')) { ?>
+        <a href="<?= Route::url('cron_jobs_enabled') ?>">Cron Jobs</a><br/>
+<?php } ?>
+<?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('inventory') ?>">Inventory</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>

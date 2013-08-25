@@ -257,6 +257,42 @@ Route::set('deployments_usage_all', 'admin/deployments/usage/all')
                 'action'     => 'all',
         ));
 
+Route::set('cron_jobs', 'admin/cronjobs')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'default',
+        ));
+
+Route::set('cron_jobs_enabled', 'admin/cronjobs/enabled')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'enabled',
+        ));
+
+Route::set('create_cron_job', 'admin/cronjobs/create')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_cron_job', 'admin/cronjobs/<id>/delete')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_cron_job', 'admin/cronjobs/<id>/edit')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'edit',
+        ));
+
+Route::set('view_cron_job', 'admin/cronjobs/<id>')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'view',
+        ));
+
 Route::set('nodes', 'admin/nodes')
         ->defaults(array(
                 'controller' => 'nodes',
