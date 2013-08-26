@@ -113,4 +113,17 @@ class Model_Builder
 		}
 		return FALSE;
 	}
+
+
+	public static function destroy_simple_object($id, $type)
+	{
+		$fulltype = 'Model_' . $type;
+		$object = Doctrine::em()->getRepository($fulltype)->find($id);
+		if (!empty($object))
+                {
+                        $object->delete();
+                        return TRUE;
+                }
+                return FALSE;
+	}
 }
