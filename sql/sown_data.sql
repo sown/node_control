@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.67, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.70, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.1.67-0ubuntu0.10.04.1
+-- Server version	5.1.70-0ubuntu0.10.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -30,6 +30,30 @@ CREATE TABLE `certificates` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='certificates';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cron_jobs`
+--
+
+DROP TABLE IF EXISTS `cron_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cron_jobs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `server` varchar(255) NOT NULL,
+  `creator` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `command` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `misc` varchar(8191) DEFAULT NULL,
+  `disabled` tinyint(4) NOT NULL DEFAULT '0',
+  `required` int(1) DEFAULT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -102,6 +126,23 @@ CREATE TABLE `devices` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `enquiry_types`
+--
+
+DROP TABLE IF EXISTS `enquiry_types`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `enquiry_types` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `email` varchar(255) NOT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `interfaces`
 --
 
@@ -128,6 +169,33 @@ CREATE TABLE `interfaces` (
   CONSTRAINT `interface_to_adapter` FOREIGN KEY (`network_adapter_id`) REFERENCES `network_adapters` (`id`),
   CONSTRAINT `interface_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='interfaces installed on node';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `inventory`
+--
+
+DROP TABLE IF EXISTS `inventory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `inventory` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` varchar(255) DEFAULT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  `model` varchar(255) DEFAULT NULL,
+  `written_off` datetime NOT NULL,
+  `hardware_desc` text NOT NULL,
+  `price` varchar(24) DEFAULT NULL,
+  `location` varchar(255) NOT NULL DEFAULT 'PENDING',
+  `photo` mediumblob,
+  `link_to_wiki` varchar(235) NOT NULL,
+  `added_by` varchar(235) NOT NULL,
+  `purchased_on` datetime NOT NULL,
+  `state` varchar(255) DEFAULT NULL,
+  `architecture` varchar(255) DEFAULT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table stores a list of items held by SOWN';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +253,6 @@ CREATE TABLE `nodes` (
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
   `box_number` int(11) DEFAULT NULL COMMENT 'DEPRECATED. DO NOT USE.',
   `firmware_image` text NOT NULL COMMENT 'version of firmware installed on the node (e.g. Backfire 10.03)',
-  `notes` longtext COMMENT 'notes about the node',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `node_to_endpoint` (`vpn_endpoint_id`),
@@ -204,7 +271,7 @@ DROP TABLE IF EXISTS `notes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `note` text NOT NULL,
+  `note_text` text,
   `notetaker_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `deployment_id` int(11) DEFAULT NULL,
@@ -320,4 +387,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-03-25 13:12:14
+-- Dump completed on 2013-08-27  0:03:16
