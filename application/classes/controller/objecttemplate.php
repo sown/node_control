@@ -128,7 +128,8 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 			
                         if (!empty($formValues['yes']))
                         {
-	                        if (Model_Builder::destroy_object($formValues['id']))
+				$type = '[OBJECT]';
+	                        if (Model_Builder::destroy_simple_object($formValues['id'], $type))
 				{
                                 	$this->template->content = "      <p class=\"success\">Successfully deleted [OBJECT] with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">[OBJECT] list</a>.</p></p>";
 				}
