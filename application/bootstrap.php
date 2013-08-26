@@ -365,6 +365,30 @@ Route::set('usage_deployment', 'admin/deployments/<id>/usage')
                 'action'     => 'default',
         ));
 
+Route::set('enquiry_types', 'admin/enquiries/types')
+        ->defaults(array(
+                'controller' => 'enquirytypes',
+                'action'     => 'default',
+        ));
+
+Route::set('create_enquiry_type', 'admin/enquiries/types/create')
+        ->defaults(array(
+                'controller' => 'enquirytypes',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_enquiry_type', 'admin/enquiries/types/<id>/delete')
+        ->defaults(array(
+                'controller' => 'enquirytypes',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_enquiry_type', 'admin/enquiries/types/<id>/edit')
+        ->defaults(array(
+                'controller' => 'enquirytypes',
+                'action'     => 'edit',
+        ));
+
 Route::set('inventory', 'admin/inventory')
         ->defaults(array(
                 'controller' => 'inventory',

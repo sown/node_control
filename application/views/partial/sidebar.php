@@ -58,6 +58,9 @@ if(!isset($user))
         <a href="<?= Route::url('cron_jobs_enabled') ?>">Cron Jobs</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
+        <a href="<?= Route::url('enquiry_types') ?>">Enquiry Types</a><br/>
+<?php } ?>
+<?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('inventory') ?>">Inventory</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
