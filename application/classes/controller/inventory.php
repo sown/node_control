@@ -178,7 +178,8 @@ class Controller_Inventory extends Controller_AbstractAdmin
 			
                         if (!empty($formValues['yes']))
                         {
-	                        if (Model_Builder::destroy_object($formValues['id']))
+				$type = 'InventoryItem';
+	                        if (Model_Builder::destroy_simple_object($formValues['id'], $type))
 				{
                                 	$this->template->content = "      <p class=\"success\">Successfully deleted inventory item with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">Inventory</a>.</p></p>";
 				}

@@ -187,7 +187,8 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 			
                         if (!empty($formValues['yes']))
                         {
-	                        if (Model_Builder::destroy_object($formValues['id']))
+				$type = 'CronJob';
+		                if (Model_Builder::destroy_simple_object($formValues['id']), $type))
 				{
                                 	$this->template->content = "      <p class=\"success\">Successfully deleted Cron Job with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">Cron Jobs list</a>.</p></p>";
 				}
