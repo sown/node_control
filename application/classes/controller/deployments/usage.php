@@ -136,8 +136,11 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
                 	}
 			if (is_object($user) && ($user->isSystemAdmin || $deployment->isCurrentDeploymentAdmin(Auth::instance()->get_user())))
 			{
-				$title = "Usage for ".$deployment->name;
-				$content = $this->_render_deployment_usage($deployment);
+				$title = "Deployments";
+				$subtitle =  "Deployment Usage (" . $deployment->name . ")";
+				$bannerItems = array("Create Deployment" => Route::url('create_deployment'), "Current Deployments" => Route::url('current_deployments'), "All Deployments" => Route::url('deployments'));
+				$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $bannerItems);
+				$content = $this->_render_deployment_usage($deployment, $subtitle);
 			}	
 			else
 			{
@@ -171,15 +174,19 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		$this->_render_page("All Deployments Usage", $content);
 	}
 
-	private function _render_deployment_usage($deployment)
+	private function _render_deployment_usage($deployment, $title = null)
 	{
 		// This should be moved to view/partial
-		$content = "<h2>" . $deployment->name . "</h2>\n";
+		if (empty($title))
+		{
+			$title = $deployment->name;
+		}
+		$content = "<h2 style=\"text-align: center;\">${title}</h2>\n";
                 if ($deployment->cap == 0) 
 			$cap = "(unlimited)";
                 else 
 			$cap = "/ " . $deployment->cap . " MB";
-                $content .= "<p>Usage: ". round($deployment->consumption, 2). " MB " . $cap . "</p>\n";
+                $content .= "<p style=\"text-align: center;\">Usage: ". round($deployment->consumption, 2). " MB " . $cap . "</p>\n<div style=\"text-align: center; width: 100%;\">\n";
 
 		if ($deployment->cap > 0) 
 		{
@@ -191,6 +198,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 
 		$content .="<img src=\"/admin/deployments/usage/graphs/daily/{$deployment->id}\" alt=\"Last 30 days usage graph for {$deployment->name} deployment\" />\n<br/><br/>";
 		$content .="<img src=\"/admin/deployments/usage/graphs/monthly/{$deployment->id}\" alt=\"Historical monthly usage graph for {$deployment->name} deployment\" />\n";
+		$content .= "</div>\n";
 		return $content;
 	}
 

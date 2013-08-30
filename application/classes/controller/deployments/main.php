@@ -4,15 +4,17 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array("Create Deployment" => Route::url('create_deployment'), "Deployment List" => Route::url('deployments'));
+		$this->bannerItems = array("Create Deployment" => Route::url('create_deployment'), "Current Deployments" => Route::url('current_deployments'), "All Deployments" => Route::url('deployments'));
+		$title = "Deployments";
+                View::bind_global('title', $title);
 		parent::before();
 	}
 
 	public function action_default()
 	{
 		$this->check_login("systemadmin");
-		$title = "Deployment List";
-		View::bind_global('title', $title);
+		$subtitle = "All Deployments";
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
@@ -39,11 +41,43 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$this->template->content = $content;	
 	}
 
+	public function action_current()
+        {
+                $this->check_login("systemadmin");
+                $subtitle = "Current Deployments";
+                View::bind_global('subtitle', $subtitle);
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+
+                $fields = array(
+                        'id' => 'ID',
+                        'name' => 'Name',
+                        'deploymentBoxNumber' => 'Latest Box Number',
+                        'startDate' => 'Start Date',
+                        'endDate' => 'End Date',
+                        'latestNote' => 'Latest Note',
+                        'view' => '',
+                        'usage' => '',
+                        'edit' => '',
+                        'delete' => '',
+                );
+		$latest_end_datetime = new \DateTime(Kohana::$config->load('system.default.admin_system.latest_end_datetime'));
+		$rows =  Doctrine::em()->getRepository('Model_Deployment')->findByEndDate($latest_end_datetime);
+                $objectType = "deployment";
+                $idField = "id";
+                $content = View::factory('partial/table')
+                        ->bind('fields', $fields)
+                        ->bind('rows', $rows)
+                        ->bind('objectType', $objectType)
+                        ->bind('idField', $idField);
+                $this->template->content = $content;    
+        }
+
 	public function action_create()
 	{
 		$this->check_login("systemadmin");
-		$title = "Create Deployment";
-		View::bind_global('title', $title);
+		$subtitle = "Create Deployment";
+		View::bind_global('subtitle', $subtitle);
 		$cssFiles =  array('jquery-ui.css');
                 View::bind_global('cssFiles', $cssFiles);
                 $jsFiles = array('jquery.js', 'jquery-ui.js');
@@ -106,10 +140,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		{
 			$this->request->redirect(Route::url('edit_deployment', array('id' => $this->request->param('id'))));
 		}
-		$title = "View Deployment";
-		View::bind_global('title', $title);
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
+		$subtitle = "View Deployment " . $this->request->param('id') . " (" . $formValues['name'] . ")";
+                View::bind_global('subtitle', $subtitle);
 		$formTemplate = $this->_load_form_template('view');
 		$notesFormValues = Controller_Notes::load_from_database('Deployment', $formValues['id'], 'view');
 		$notesFormTemplate = Controller_Notes::load_form_template('view');
@@ -119,13 +154,12 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 	public function action_edit()
         {
                 $this->check_login("systemadmin");
-		$title = "Edit Deployment";
-		View::bind_global('title', $title);
 		$cssFiles =  array('jquery-ui.css');
 		View::bind_global('cssFiles', $cssFiles);
 		$jsFiles = array('jquery.js', 'jquery-ui.js');
 		View::bind_global('jsFiles', $jsFiles);
                 $this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$errors = array();
                 $success = "";
 		if ($this->request->method() == 'POST')
@@ -147,6 +181,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		{
 			$formValues = $this->_load_from_database($this->request->param('id'), 'edit');
                 }
+		$subtitle = "Edit Deployment" . $this->request->param('id') . " (" . $formValues['name'] . ")";
+		View::bind_global('subtitle', $subtitle);
 		$formTemplate = $this->_load_form_template('edit');
 		$submits = array('updateDeployment' => 'Update Deployment');
 		if (strtotime($formValues['endDate']) > time())
@@ -167,9 +203,9 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
                 $success = "";
-		$title = "Delete Deployment";
-		View::bind_global('title', $title);
-                $deploymentName = $deployment->name;
+		$deploymentName = $deployment->name;
+		$subtitle = "Delete Deployment " . $this->request->param('id') . " ($deploymentName)";
+		View::bind_global('subtitle', $subtitle);
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();
@@ -178,16 +214,16 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         {
 	                        if (Model_Builder::destroy_deployment($formValues['id']))
 				{
-                                	$this->template->content = "      <p class=\"success\">Successfully deleted deployment with name $deploymentName.  Go back to <a href=\"".Route::url('deployments')."\">deployments list</a>.</p></p>";
+                                	$this->template->content = "      <p class=\"success\">Successfully deleted deployment with name $deploymentName.</p>";
 				}
 				else
 				{
-					$this->template->content = "      <p class=\"error\">Could not delete deployment with name $deploymentName.  Go back to <a href=\"".Route::url('deployments')."\">deployments list</a>.</p>";
+					$this->template->content = "      <p class=\"error\">Could not delete deployment with name $deploymentName.</p>";
 				}
                         }
                         elseif (!empty($formValues['no']))
                         {
-                              	$this->template->content = "      <p class=\"success\">Deployment with name $deploymentName was not deleted.  Go back to <a href=\"".Route::url('deployments')."\">deployments list</a>.</p>";
+                              	$this->template->content = "      <p class=\"success\">Deployment with name $deploymentName was not deleted.</p>";
                         }
 			
 		}
@@ -204,6 +240,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			$this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 	}
 
 	public function action_end()
@@ -215,10 +252,9 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
                 $success = "";
-                $title = "End Deployment";
-                View::bind_global('title', $title);
                 $deploymentName = $deployment->name;
-
+                $subtitle = "End Deployment " . $this->request->param('id') . " ($deploymentName)";
+                View::bind_global('subtitle', $subtitle);
                 if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();
@@ -226,16 +262,16 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         {
                                 if (Model_Builder::end_deployment($formValues['id']))
                                 {
-                                        $this->template->content = "      <p class=\"success\">Successfully ended deployment with name " . $deploymentName .".  Go back to <a href=\"".Route::url('deployments')."\">deployments list</a>.</p></p>";
+                                        $this->template->content = "      <p class=\"success\">Successfully ended deployment with name " . $deploymentName .".</p>";
                                 }
                                 else
                                 {
-                                        $this->template->content = "      <p class=\"error\">Could not end deployment with name " . $deploymentName .".  Go back to <a href=\"".Route::url('deployments')."\">deployments list</a>.</p>";
+                                        $this->template->content = "      <p class=\"error\">Could not end deployment with name " . $deploymentName .".</p>";
                                 }
                         }
                         elseif (!empty($formValues['no']))
                         {
-                                $this->template->content = "      <p class=\"success\">Deployment with name " . $deploymentName . " was not deleted.  Go back to <a href=\"".Route::url('deployments')."\">deployments list</a>.</p>";
+                                $this->template->content = "      <p class=\"success\">Deployment with name " . $deploymentName . " was not deleted.";
                         }
                 }
                 else
@@ -251,6 +287,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         $this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
                 }
 	        $this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
         }
 	
 	private function _validate($formValues) 

@@ -14,7 +14,7 @@ elseif ($percent >= 60)
 	$color="yellow";
 else $color="green";
 ?>
-<table width="400px" height="10px">
+<table style="margin-left: auto; margin-right: auto;" width="400px" height="10px">
   <tr>
 <?php
 for ($i=1; $i <= 100; $i++){
