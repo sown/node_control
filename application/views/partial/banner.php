@@ -1,15 +1,19 @@
 <table class="banner">
 <tr>
 <?php
+if (!isset($subtitle))
+{
+	$subtitle = "";
+}
 foreach ($bannerItems as $name => $url)
 {
 	echo '<td class="bannerItem">'; 
-	if ($name == $title)
+	if ($name == $subtitle)
 	{
 		echo "<big>";
 	}
 	echo "<a href=\"$url\">$name</a>";
-	if ($name == $title)
+	if ($name == $subtitle)
         {
                 echo "</big>";
         }
