@@ -4,15 +4,17 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array();
+		$this->bannerItems = array("Create OBJECT" => Route::url('create_OBJECT'), "All OBJECTS" => Route::url('OBJECTS'));
+                $title = 'OBJECTS';
+                View::bind_global('title', $title);
 		parent::before();
 	}
 
 	public function action_default()
 	{
 		$this->check_login("systemadmin");
-		$title = "[OBJECT] List";
-		View::bind_global('title', $title);
+		$subtitle = "All OBJECTS";
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
@@ -22,8 +24,8 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
                         'edit' => '',
                         'delete' => '',
                 );
-		$rows = Doctrine::em()->getRepository('Model_[OBJECT]')->findAll();
-		$objectType = '[OBJECT]';
+		$rows = Doctrine::em()->getRepository('Model_OBJECT')->findAll();
+		$objectType = 'OBJECT';
                 $idField = 'id';
 		$content = View::factory('partial/table')
 			->bind('fields', $fields)
@@ -36,8 +38,8 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 	public function action_create()
 	{
 		$this->check_login("systemadmin");
-		$title = "Create [OBJECT]";
-		View::bind_global('title', $title);
+		$subtitle = "Create OBJECT";
+		View::bind_global('subtitle', $subtitle);
 		$errors = array();
 		$success = "";
 		if ($this->request->method() == 'POST')
@@ -46,10 +48,10 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues);
 			if ($validation->check())
         		{
-				$object = Model_Object::build();
-				$object->save();
-				$url = Route::url('view_[OBJECT]', array('id' => $object->id));
-                        	$success = "Successfully created object with ID: <a href=\"$url\">" . $object->id . "</a>.";
+				$OBJECT = Model_OBJECT::build();
+				$OBJECT->save();
+				$url = Route::url('view_OBJECT', array('id' => $OBJECT->id));
+                        	$success = "Successfully created OBJECT with ID: <a href=\"$url\">" . $OBJECT->id . "</a>.";
  
         		}
 			else 
@@ -66,7 +68,7 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 	
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
-		$this->template->content = FormUtils::drawForm('create_[OBJECT]', $formTemplate, $formValues, array('createObject' => 'Create [OBJECT]'), $errors, $success);
+		$this->template->content = FormUtils::drawForm('create_OBJECT', $formTemplate, $formValues, array('createOBJECT' => 'Create OBJECT'), $errors, $success);
 	}
 
 	public function action_view()
@@ -74,22 +76,24 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 		$this->check_login("systemadmin");
 		if ($this->request->method() == 'POST')
                 {
-                        $this->request->redirect(Route::url('edit_[OBJECT]', array('id' => $this->request->param('id'))));
+                        $this->request->redirect(Route::url('edit_OBJECT', array('id' => $this->request->param('id'))));
                 }
-		$title = "View [OBJECT]";
-		View::bind_global('title', $title);
+		$subtitle = "View OBJECT";
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm('view_[OBJECT]', $formTemplate, $formValues, array('editObject' => 'Edit [OBJECT]'));
+		$this->template->content = FormUtils::drawForm('view_OBJECT', $formTemplate, $formValues, array('editOBJECT' => 'Edit OBJECT'));
 	}
 
 	public function action_edit()
         {
                 $this->check_login("systemadmin");
-		$title = "Edit [OBJECT]";
-		View::bind_global('title', $title);
+		$subtitle = "Edit OBJECT";
+		View::bind_global('subtitle', $subtitle);
                 $this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$errors = array();
                 $success = "";
 		if ($this->request->method() == 'POST')
@@ -99,7 +103,7 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 			if (sizeof($errors) == 0)
 			{
 				$this->_update($this->request->param('id'), $formValues);
-				$success = "Successfully updated [OBJECT]";
+				$success = "Successfully updated OBJECT";
 				$formValues = $this->_load_from_database($this->request->param('id'), 'edit');
 			}
 		}
@@ -108,39 +112,39 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 			$formValues = $this->_load_from_database($this->request->param('id'), 'edit');
                 }
 		$formTemplate = $this->_load_form_template('edit');
-                $this->template->content = FormUtils::drawForm('update_[OBJECT]', $formTemplate, $formValues, array('updateObject' => 'Update [OBJECT]'), $errors, $success);
+                $this->template->content = FormUtils::drawForm('update_OBJECT', $formTemplate, $formValues, array('updateOBJECT' => 'Update OBJECT'), $errors, $success);
         }
 
 	public function action_delete()
         {
                 $this->check_login("systemadmin");
-		$object = Doctrine::em()->getRepository('Model_[OBJECT]')->findOneById($this->request->param('id'));
-                if (!is_object($object))
+		$OBJECT = Doctrine::em()->getRepository('Model_OBJECT')->findOneById($this->request->param('id'));
+                if (!is_object($OBJECT))
                 {
                         throw new HTTP_Exception_404();
                 }
                 $success = "";
-		$title = "Delete [OBJECT]";
-		View::bind_global('title', $title);
+		$subtitle = "Delete OBJECT";
+		View::bind_global('subtitle', $subtitle);
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();
 			
                         if (!empty($formValues['yes']))
                         {
-				$type = '[OBJECT]';
+				$type = 'OBJECT';
 	                        if (Model_Builder::destroy_simple_object($formValues['id'], $type))
 				{
-                                	$this->template->content = "      <p class=\"success\">Successfully deleted [OBJECT] with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">[OBJECT] list</a>.</p></p>";
+                                	$this->template->content = "      <p class=\"success\">Successfully deleted OBJECT with ID " . $formValues['id'] .".</p>";
 				}
 				else
 				{
-					$this->template->content = "      <p class=\"error\">Could not delete [OBJECT] with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">[OBJECT] list</a>.</p>";
+					$this->template->content = "      <p class=\"error\">Could not delete OBJECT with ID " . $formValues['id'] .".</p>";
 				}
                         }
                         elseif (!empty($formValues['no']))
                         {
-                              	$this->template->content = "      <p class=\"success\">[OBJECT] with ID " . $formValues['id'] . " was not deleted.  Go back to <a href=\"".Route::url('objects')."\">[OBJECT] list</a>.</p>";
+                              	$this->template->content = "      <p class=\"success\">OBJECT with ID " . $formValues['id'] . " was not deleted.</p>";
                         }
 			
 		}
@@ -152,10 +156,11 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 			);
 			$formValues = array(
 				'id' => $this->request->param('id'),
-				'message' => "Are you sure you want to delete [OBJECT] with ID ".$this->request->param('id') . "?",
+				'message' => "Are you sure you want to delete OBJECT with ID ".$this->request->param('id') . "?",
 			);
-			$this->template->content = FormUtils::drawForm('delete_[OBJECT]', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
+			$this->template->content = FormUtils::drawForm('delete_OBJECT', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$this->template->sidebar = View::factory('partial/sidebar');
 	}
 
@@ -174,8 +179,8 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 
 	private function _load_from_database($id, $action = 'edit')
 	{
-		$object = Doctrine::em()->getRepository('Model_[OBJECT]')->findOneById($id);
-                if (!is_object($object))
+		$OBJECT = Doctrine::em()->getRepository('Model_OBJECT')->findOneById($id);
+                if (!is_object($OBJECT))
                 {
                         throw new HTTP_Exception_404();
                 }
@@ -195,8 +200,8 @@ class Controller_ObjectTemplate extends Controller_AbstractAdmin
 
 	private function _update($id, $formValues)
 	{
-		$object = Doctrine::em()->getRepository('Model_[OBJECT]')->findOneById($id);
-		$object->save();
+		$OBJECT = Doctrine::em()->getRepository('Model_OBJECT')->findOneById($id);
+		$OBJECT->save();
 	}
 }
 	
