@@ -4,15 +4,17 @@ class Controller_Inventory extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array("Create Inventory Item" => Route::url('create_inventory_item'), "Inventory" => Route::url('inventory'));
+		$this->bannerItems = array("Create Inventory Item" => Route::url('create_inventory_item'), "All Inventory Items" => Route::url('inventory'));
+		$title = "Inventory";
+		View::bind_global('title', $title);
 		parent::before();
 	}
 
 	public function action_default()
 	{
 		$this->check_login("systemadmin");
-		$title = "Inventory";
-		View::bind_global('title', $title);
+		$subtitle = "All Inventory Items";
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
@@ -43,8 +45,8 @@ class Controller_Inventory extends Controller_AbstractAdmin
 	public function action_create()
 	{
 		$this->check_login("systemadmin");
-		$title = "Create Inventory Item";
-		View::bind_global('title', $title);
+		$subtitle = "Create Inventory Item";
+		View::bind_global('subtitle', $subtitle);
 		$errors = array();
 		$success = "";
 		if ($this->request->method() == 'POST')
@@ -105,9 +107,10 @@ class Controller_Inventory extends Controller_AbstractAdmin
                 {
                         $this->request->redirect(Route::url('edit_inventory_item', array('id' => $this->request->param('id'))));
                 }
-		$title = "View Inventory Item";
-		View::bind_global('title', $title);
+		$subtitle = "View Inventory Item " . $this->request->param('id');
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
 		$this->template->content = FormUtils::drawForm('view_inventory_item', $formTemplate, $formValues, array('editInventoryItem' => 'Edit Inventory Item'));
@@ -137,9 +140,10 @@ class Controller_Inventory extends Controller_AbstractAdmin
 	public function action_edit()
         {
                 $this->check_login("systemadmin");
-		$title = "Edit Inventory Item";
-		View::bind_global('title', $title);
+		$subtitle = "Edit Inventory Item " . $this->request->param('id');
+		View::bind_global('subtitle', $subtitle);
                 $this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$errors = array();
                 $success = "";
 		if ($this->request->method() == 'POST')
@@ -170,8 +174,8 @@ class Controller_Inventory extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
                 $success = "";
-		$title = "Delete Inventory Item";
-		View::bind_global('title', $title);
+		$subtitle = "Delete Inventory Item " . $this->request->param('id');
+		View::bind_global('subtitle', $subtitle);
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();
@@ -207,6 +211,7 @@ class Controller_Inventory extends Controller_AbstractAdmin
 			$this->template->content = FormUtils::drawForm('delete_inventory_item', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 	}
 
 	

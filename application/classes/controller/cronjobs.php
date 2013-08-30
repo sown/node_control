@@ -5,14 +5,16 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	public function before()
         {
 		$this->bannerItems = array("Create Cron Job" => Route::url('create_cron_job'), "Enabled Cron Jobs" => Route::url('cron_jobs_enabled'), "All Cron Jobs" => Route::url('cron_jobs'),);
+		$title = 'Cron Jobs';
+		View::bind_global('title', $title);
 		parent::before();
 	}
 
 	public function action_default()
 	{
 		$this->check_login("systemadmin");
-		$title = "All Cron Jobs";
-		View::bind_global('title', $title);
+		$subtitle = "All Cron Jobs";
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
@@ -41,8 +43,8 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	public function action_enabled()
 	{
 		$this->check_login("systemadmin");
-                $title = "Enabled Cron Jobs";
-                View::bind_global('title', $title);
+                $subtitle = "Enabled Cron Jobs";
+                View::bind_global('subtitle', $subtitle);
                 $this->template->sidebar = View::factory('partial/sidebar');
                 $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
@@ -70,8 +72,10 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	public function action_create()
 	{
 		$this->check_login("systemadmin");
-		$title = "Create Cron Job";
-		View::bind_global('title', $title);
+		$subtitle = "Create Cron Job";
+		View::bind_global('subtitle', $subtitle);
+		$this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$errors = array();
 		$success = "";
 		if ($this->request->method() == 'POST')
@@ -135,9 +139,11 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                 {
                         $this->request->redirect(Route::url('edit_cron_job', array('id' => $this->request->param('id'))));
                 }
-		$title = "View Cron Job";
-		View::bind_global('title', $title);
+		$subtitle = "View Cron Job " . $this->request->param('id') ;
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
 		$this->template->content = FormUtils::drawForm('view_cron_job', $formTemplate, $formValues, array('editCronJob' => 'Edit Cron Job'));
@@ -146,9 +152,10 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	public function action_edit()
         {
                 $this->check_login("systemadmin");
-		$title = "Edit Cron Job";
-		View::bind_global('title', $title);
-                $this->template->sidebar = View::factory('partial/sidebar');
+		$subtitle = "Edit Cron Job " . $this->request->param('id');
+		View::bind_global('subtitle', $subtitle);
+		$this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$errors = array();
                 $success = "";
 		if ($this->request->method() == 'POST')
@@ -179,8 +186,8 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
                 $success = "";
-		$title = "Delete Cron Job";
-		View::bind_global('title', $title);
+		$subtitle = "Delete Cron Job " . $this->request->param('id');
+		View::bind_global('subtitle', $subtitle);
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();
@@ -188,18 +195,18 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                         if (!empty($formValues['yes']))
                         {
 				$type = 'CronJob';
-		                if (Model_Builder::destroy_simple_object($formValues['id']), $type))
+		                if (Model_Builder::destroy_simple_object($formValues['id'], $type))
 				{
-                                	$this->template->content = "      <p class=\"success\">Successfully deleted Cron Job with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">Cron Jobs list</a>.</p></p>";
+                                	$this->template->content = "      <p class=\"success\">Successfully deleted Cron Job with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('cron_jobs')."\">All Cron Jobs</a>.</p></p>";
 				}
 				else
 				{
-					$this->template->content = "      <p class=\"error\">Could not delete Cron Job with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">Cron Jobs list</a>.</p>";
+					$this->template->content = "      <p class=\"error\">Could not delete Cron Job with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('cron_jobs')."\">All Cron Jobs</a>.</p>";
 				}
                         }
                         elseif (!empty($formValues['no']))
                         {
-                              	$this->template->content = "      <p class=\"success\">Cron Job with ID " . $formValues['id'] . " was not deleted.  Go back to <a href=\"".Route::url('objects')."\">Cron Jobs list</a>.</p>";
+                              	$this->template->content = "      <p class=\"success\">Cron Job with ID " . $formValues['id'] . " was not deleted.  Go back to <a href=\"".Route::url('cron_jobs')."\">All Cron Jobs</a>.</p>";
                         }
 			
 		}
@@ -216,6 +223,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 			$this->template->content = FormUtils::drawForm('delete_cron_job', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 	}
 
 	

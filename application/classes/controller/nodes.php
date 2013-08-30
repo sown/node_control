@@ -4,15 +4,17 @@ class Controller_Nodes extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array("Create Node" => Route::url('create_node'), "Node List" => Route::url('nodes'));
+		$this->bannerItems = array("Create Node" => Route::url('create_node'), "All Nodes" => Route::url('nodes'));
+		$title = 'Nodes';
+                View::bind_global('title', $title);
 		parent::before();
 	}
 
 	public function action_default()
 	{
 		$this->check_login("systemadmin");
-		$title = "Node List";
-		View::bind_global('title', $title);
+		$subtitle = "All Nodes";
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
@@ -41,8 +43,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	public function action_create()
 	{
 		$this->check_login("systemadmin");
-		$title = "Create Node";
-		View::bind_global('title', $title);
+		$subtitle = "Create Node";
+		View::bind_global('subtitle', $subtitle);
 		$errors = array();
 		$success = "";
 		if ($this->request->method() == 'POST')
@@ -98,9 +100,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 {
                         $this->request->redirect(Route::url('edit_node', array('boxNumber' => $this->request->param('boxNumber'))));
                 }
-		$title = "View Node";
-		View::bind_global('title', $title);
+		$subtitle = "View Node " . $this->request->param('boxNumber');
+		View::bind_global('subtitle', $subtitle);
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'view');
 		$formTemplate = $this->_load_form_template('view');
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'view');
@@ -111,11 +114,12 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	public function action_edit()
         {
                 $this->check_login("systemadmin");
-		$title = "Edit Node";
-		View::bind_global('title', $title);
+		$subtitle = "Edit Node " . $this->request->param('boxNumber');
+		View::bind_global('subtitle', $subtitle);
 		$jsFiles = array('jquery.js');
                 View::bind_global('jsFiles', $jsFiles);
                 $this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$errors = array();
                 $success = "";
 		if ($this->request->method() == 'POST')
@@ -148,8 +152,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
                 $success = "";
-		$title = "Delete Node";
-		View::bind_global('title', $title);
+		$subtitle = "Delete Node " . $this->request->param('boxNumber') ;
+		View::bind_global('subtitle', $subtitle);
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = $this->request->post();
@@ -158,16 +162,16 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         {
 	                        if (Model_Builder::destroy_node($formValues['boxNumber']))
 				{
-                                	$this->template->content = "      <p class=\"success\">Successfully deleted node with box number " . $formValues['boxNumber'] .".  Go back to <a href=\"/admin/nodes\">node list</a>.</p></p>";
+                                	$this->template->content = "      <p class=\"success\">Successfully deleted node with box number " . $formValues['boxNumber'] .".</p>";
 				}
 				else
 				{
-					$this->template->content = "      <p class=\"error\">Could not delete node with box number " . $formValues['boxNumber'] .".  Go back to <a href=\"/admin/nodes\">node list</a>.</p>";
+					$this->template->content = "      <p class=\"error\">Could not delete node with box number " . $formValues['boxNumber'] .".</p>";
 				}
                         }
                         elseif (!empty($formValues['no']))
                         {
-                              	$this->template->content = "      <p class=\"success\">Node with box number " . $formValues['boxNumber'] . " was not deleted.  Go back to <a href=\"/admin/nodes\">node list</a>.</p>";
+                              	$this->template->content = "      <p class=\"success\">Node with box number " . $formValues['boxNumber'] . " was not deleted.</p>";
                         }
 			
 		}
@@ -184,6 +188,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			$this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('yes' => 'Yes', 'no' => 'No'));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 	}
 
 	
