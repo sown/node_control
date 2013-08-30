@@ -505,3 +505,21 @@ a.wikiLink, a.wikiLink:hover {
         text-decoration: none;
 }
 
+p.success {
+	border: 2px solid #336699;
+	padding: 15px;
+	font-weight: bold;
+	text-align: center;
+	background-color: #99FFFF;
+}
+
+p.error {
+	border: 2px solid #336699;
+        padding: 15px;
+        font-weight: bold;
+        text-align: center;
+	color: red;
+        background-color: #99FFFF;
+}
+
+
