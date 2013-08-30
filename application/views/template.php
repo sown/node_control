@@ -54,6 +54,9 @@ if (isset($jsFiles))
         <?php if (!empty($banner)) { ?>
     	<?= $banner ?>
         <?php } ?>
+	<?php if (!empty($subtitle)) { ?>
+        <h2 style="text-align: center;"><?= $subtitle ?></h2>
+        <?php } ?>
         <?= $content ?>
       </div>
     </div>
