@@ -51,4 +51,15 @@ class SOWN
 	        }
 	}
 
-}
+	public static function pluralise($string) 
+	{
+		if (substr($string, -1) == 'y') 
+		{
+			return substr($string, 0, -1) . "ies";
+		}
+		else 
+		{
+			return $string . "s";
+		}
+	}
+}	
