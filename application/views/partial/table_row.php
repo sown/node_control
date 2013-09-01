@@ -10,7 +10,7 @@
 $latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
 foreach ($fields as $f => $field) 
 {
-	if (in_array($f, array("configure", "delete", "edit", "usage", "view")))
+	if (in_array($f, array("configure", "delete", "edit", "reply", "usage", "view")))
 	{
 		$url = Route::url($f . "_" . $objectType, array($idField => $row->$idField));
 		echo "          <td class=\"icon\"><a class=\"$f\" title=\"" . ucfirst($f) . "\" href=\"$url\">&nbsp;</a></td>\n";
@@ -39,7 +39,11 @@ foreach ($fields as $f => $field)
 			echo "&nbsp;";
 		}
 		echo "</td>\n";
-	}		
+	}
+	elseif ($f == "type")
+	{
+		echo "          <td>" . $row->$f->title . "</td>\n";
+	}
 	elseif ($f == "disabled")
 	{
 		if ($row->$f)
@@ -102,6 +106,12 @@ foreach ($fields as $f => $field)
 		}
 		echo "          <td>{$nodename} ({$csbits[1]})</td>\n";
 
+	}
+	elseif ($f == "enquiry_type_title")
+	{
+		$type = Doctrine::em()->getRepository('Model_EnquiryType')->find($row->id);
+		$num_unresponded = sizeof(Model_Enquiry::getUnresponded($type));
+		echo "<td><a href=\"" . Route::url('unresponded_type_enquiries', array('type' => $row->id)). "\">" . $row->title . " (${num_unresponded})</a></td>\n";
 	}
 	else
 	{

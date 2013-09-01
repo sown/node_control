@@ -504,6 +504,12 @@ a.wikiLink, a.wikiLink:hover {
         background-repeat: no-repeat;
         text-decoration: none;
 }
+a.reply, a.reply:hover {
+	background-image:  url(../images/reply.png);
+        background-repeat: no-repeat;
+        text-decoration: none;	
+}
+
 
 p.success {
 	border: 2px solid #336699;

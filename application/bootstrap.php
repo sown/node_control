@@ -371,29 +371,66 @@ Route::set('usage_deployment', 'admin/deployments/<id>/usage')
                 'action'     => 'default',
         ));
 
+Route::set('enquiries', 'admin/enquiries')
+        ->defaults(array(
+                'controller' => 'enquiries',
+                'action'     => 'default',
+        ));
+
+Route::set('unresponded_enquiries', 'admin/enquiries/unresponded')
+        ->defaults(array(
+                'controller' => 'enquiries',
+                'action'     => 'unresponded',
+        ));
+
+Route::set('unresponded_type_enquiries', 'admin/enquiries/unresponded/types/<type>')
+        ->defaults(array(
+                'controller' => 'enquiries',
+                'action'     => 'unresponded',
+        ));
+
+Route::set('type_enquiries', 'admin/enquiries/types/<type>/list')
+        ->defaults(array(
+                'controller' => 'enquiries',
+                'action'     => 'default',
+        ));
+
 Route::set('enquiry_types', 'admin/enquiries/types')
         ->defaults(array(
-                'controller' => 'enquirytypes',
-                'action'     => 'default',
+                'controller' => 'enquiries',
+                'action'     => 'types',
         ));
 
 Route::set('create_enquiry_type', 'admin/enquiries/types/create')
         ->defaults(array(
-                'controller' => 'enquirytypes',
-                'action'     => 'create',
+                'controller' => 'enquiries',
+                'action'     => 'create_type',
         ));
 
 Route::set('delete_enquiry_type', 'admin/enquiries/types/<id>/delete')
         ->defaults(array(
-                'controller' => 'enquirytypes',
-                'action'     => 'delete',
+                'controller' => 'enquiries',
+                'action'     => 'delete_type',
         ));
 
 Route::set('edit_enquiry_type', 'admin/enquiries/types/<id>/edit')
         ->defaults(array(
-                'controller' => 'enquirytypes',
-                'action'     => 'edit',
+                'controller' => 'enquiries',
+                'action'     => 'edit_type',
         ));
+
+Route::set('reply_enquiry', 'admin/enquiries/<id>/reply')
+        ->defaults(array(
+                'controller' => 'enquiries',
+                'action'     => 'reply',
+        ));
+
+Route::set('view_enquiry', 'admin/enquiries/<id>')
+        ->defaults(array(
+                'controller' => 'enquiries',
+                'action'     => 'view',
+        ));
+
 
 Route::set('inventory', 'admin/inventory')
         ->defaults(array(

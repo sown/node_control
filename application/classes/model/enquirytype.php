@@ -3,6 +3,7 @@
 use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * Model_EnquiryType
@@ -32,6 +33,11 @@ class Model_EnquiryType extends Model_Entity
          * @Column(name="email", type="string", length=255, nullable=false)
 	 */
 	protected $email;
+
+	 /**
+         * @OneToMany(targetEntity="Model_Enquiry", mappedBy="enquiryType")
+         */
+        protected $enquiries;
 
 	public function __get($name)
 	{

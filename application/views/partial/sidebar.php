@@ -57,8 +57,13 @@ if(!isset($user))
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('cron_jobs_enabled') ?>">Cron Jobs</a><br/>
 <?php } ?>
-<?php if($user->is('systemadmin')) { ?>
-        <a href="<?= Route::url('enquiry_types') ?>">Enquiry Types</a><br/>
+<?php if($user->is('systemadmin')) { 
+	$unresponded = sizeof(Model_Enquiry::getUnresponded());
+	$enquiry_type_account = Doctrine::em()->getRepository('Model_EnquiryType')->find(3);
+	$unresponded_accounts = sizeof(Model_Enquiry::getUnresponded(array('type' => $enquiry_type_account)));
+?>	
+        <a href="<?= Route::url('unresponded_enquiries') ?>">Enquiries (<?= $unresponded ?>)</a><br/>
+	<a href="<?= Route::url('unresponded_type_enquiries', array('type' => 3)) ?>">Community Account Requests (<?= $unresponded_accounts ?>)</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('inventory') ?>">Inventory</a><br/>
