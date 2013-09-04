@@ -209,13 +209,19 @@ class FormUtils {
 				break;
                 	default:
              			$formHtml .= "    <div>\n";
-                        	$formHtml .= "      <dt>" . Form::label($name, $field['title']) . ":</dt>\n";
-                        	$formHtml .= "      <dd>" . FormUtils::drawFormElement($field, $name, $value, $textValue);
-                        	if (!empty($field['hint']))
+				if (!empty($field['title']))
+				{
+	                        	$formHtml .= "      <dt>" . Form::label($name, $field['title']) . ":</dt>\n";
+				}
+				else {
+					$formHtml .= "      <dt></dt>\n";
+				}
+        	                $formHtml .= "      <dd>" . FormUtils::drawFormElement($field, $name, $value, $textValue);
+                	        if (!empty($field['hint']))
                         	{
                                 	$formHtml .= "<span class=\"hint\">" . $field['hint'] . "</span>";
-                        	}
-                        	$formHtml .= "</dd>\n";
+	                        }
+        	                $formHtml .= "</dd>\n";
                         	$formHtml .= "    </div>\n";
                 }
 		return $formHtml;
@@ -235,7 +241,15 @@ class FormUtils {
 				}
 				return Form::input($name, $value, array('id' => $name, 'size' => $field['size']));
 			case 'textarea':
-				return Form::textarea($name, $value, array('id' => $name));
+				if (empty($field['rows']))
+				{
+					$field['rows'] = 5;
+				}
+				if (empty($field['cols']))
+				{
+					$field['cols'] = 50;
+				}
+				return Form::textarea($name, $value, array('id' => $name, 'rows' => $field['rows'], "cols" => $field['cols']));
 			case 'password':
 				return Form::password($name);
 			case 'select':
