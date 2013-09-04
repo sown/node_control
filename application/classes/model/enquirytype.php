@@ -35,7 +35,7 @@ class Model_EnquiryType extends Model_Entity
 	protected $email;
 
 	 /**
-         * @OneToMany(targetEntity="Model_Enquiry", mappedBy="enquiryType")
+         * @OneToMany(targetEntity="Model_Enquiry", mappedBy="type")
          */
         protected $enquiries;
 
