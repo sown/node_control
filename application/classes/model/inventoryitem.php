@@ -106,6 +106,11 @@ class Model_InventoryItem extends Model_Entity
          */
         protected $architecture;
 
+        /**
+         * @OneToMany(targetEntity="Model_Note", mappedBy="inventoryItem", cascade={"persist", "remove"})
+         */
+        protected $notes;
+
 
 	public function __get($name)
 	{
@@ -162,6 +167,11 @@ class Model_InventoryItem extends Model_Entity
 	{
 		$this->logUse();
 		$str  = "InventoryItem: {$this->id}, uniqueIdentifier={$this->uniqueIdentifier}, type={$this->type}, model=$this->model, {$this->writtenOffDate->format('Y-m-d H:i:s')}, description={$this->description}, price={$this->price}, location={$this->location}, wikiLink={$this->wikiLink}, addedBy={$this->addedBy} acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, state={$this->state}, architecture={$this->architecture}";
+		foreach($this->notes as $note)
+                {
+                        $str .= "<br/>";
+                        $str .= "note={$note}";
+                }
 		return $str;
 	}
 
@@ -182,6 +192,10 @@ class Model_InventoryItem extends Model_Entity
 		$str .= $this->fieldHTML('acquiredDate', $this->$acquiredDate->format('Y-m-d H:i:s'));
 		$str .= $this->fieldHTML('state', $this->$state->toHTML());
 		$str .= $this->fieldHTML('architecture', $this->$architecture->toHTML());
+		foreach($this->notes as $note)
+                {
+                        $str .= $this->fieldHTML('note', $note->toHTML());
+                }
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;

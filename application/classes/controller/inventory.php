@@ -18,6 +18,18 @@ class Controller_Inventory extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 
+		$searchOn = "";
+		if ($this->request->method() == 'POST')
+                {
+                        $searchFormValues = $this->request->post();
+			if (!empty($searchFormValues['reset'])) {
+				$searchFormValues['searchOn'] = "";
+			}
+			else {
+				$searchOn = $searchFormValues['searchOn'];
+			}
+		}
+		$content = View::factory('partial/search')->bind('searchOn', $searchOn);
 		$fields = array(
                         'id' => 'ID',
 			'uniqueIdentifier' => 'Unique Identifier',
@@ -25,16 +37,32 @@ class Controller_Inventory extends Controller_AbstractAdmin
 			'model' => 'Model',
 			'price' => 'Price',
 			'location' => 'Location',
+			'latestNote' => 'Latest Note',
                         'view' => '',
 			'photo' => '',
 			'wikiLink' => '',
                         'edit' => '',
                         'delete' => '',
                 );
-		$rows = Doctrine::em()->getRepository('Model_InventoryItem')->findAll();
+		if (empty($searchOn)) 
+		{
+			$rows = Doctrine::em()->getRepository('Model_InventoryItem')->findAll();
+		}
+		else {
+			$qb = Doctrine::em()->getRepository('Model_InventoryItem')->createQueryBuilder('i');
+	                $qb->where('i.uniqueIdentifier LIKE :searchString');
+			$qb->orWhere('i.model LIKE :searchString');
+			$qb->orWhere('i.type LIKE :searchString');
+			$qb->orWhere('i.state LIKE :searchString');
+			$qb->orWhere('i.description LIKE :searchString');
+			$qb->orWhere('i.location LIKE :searchString');
+        	        $qb->orderBy('i.id', 'ASC');
+                	$qb->setParameter(':searchString', "%$searchOn%");
+                	$rows = $qb->getQuery()->getResult();
+		}
 		$objectType = 'inventory_item';
                 $idField = 'id';
-		$content = View::factory('partial/table')
+		$content .= View::factory('partial/table')
 			->bind('fields', $fields)
                         ->bind('rows', $rows)	
 			->bind('objectType', $objectType)
@@ -113,7 +141,9 @@ class Controller_Inventory extends Controller_AbstractAdmin
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm('view_inventory_item', $formTemplate, $formValues, array('editInventoryItem' => 'Edit Inventory Item'));
+		$notesFormValues = Controller_Notes::load_from_database('InventoryItem', $formValues['id'], 'view');
+                $notesFormTemplate = Controller_Notes::load_form_template('view');
+		$this->template->content = FormUtils::drawForm('view_inventory_item', $formTemplate, $formValues, array('editInventoryItem' => 'Edit Inventory Item')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
 	}
 
  	public function action_view_photo() 
@@ -142,6 +172,8 @@ class Controller_Inventory extends Controller_AbstractAdmin
                 $this->check_login("systemadmin");
 		$subtitle = "Edit Inventory Item " . $this->request->param('id');
 		View::bind_global('subtitle', $subtitle);
+		$jsFiles = array('jquery.js');
+                View::bind_global('jsFiles', $jsFiles);
                 $this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$errors = array();
@@ -162,7 +194,9 @@ class Controller_Inventory extends Controller_AbstractAdmin
 			$formValues = $this->_load_from_database($this->request->param('id'), 'edit');
                 }
 		$formTemplate = $this->_load_form_template('edit');
-                $this->template->content = FormUtils::drawForm('update_inventory_item', $formTemplate, $formValues, array('updateObject' => 'Update Inventory Item'), $errors, $success, array('multipart' => true));
+		$notesFormValues = Controller_Notes::load_from_database('InventoryItem', $formValues['id'], 'edit');
+                $notesFormTemplate = Controller_Notes::load_form_template('edit');
+                $this->template->content = FormUtils::drawForm('InventoryItem', $formTemplate, $formValues, array('updateObject' => 'Update Inventory Item'), $errors, $success, array('multipart' => true)) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
         }
 
 	public function action_delete()

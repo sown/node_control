@@ -49,6 +49,16 @@ class Model_Note extends Model_Entity
          */
         protected $deployment;
 
+	/**
+         * @var Model_InventoryItem $inventoryItem
+         *
+         * @ManyToOne(targetEntity="Model_InventoryItem")
+         * @JoinColumns({
+         *   @JoinColumn(name="inventory_id", referencedColumnName="id", nullable=true)
+         * })
+         */
+        protected $inventoryItem;
+
 	 /**
          * @var Model_Node $node
          *
@@ -133,11 +143,15 @@ class Model_Note extends Model_Entity
 	public static function build($entityType, $entityId, $noteText, $notetakerId)
         {
                 $obj = new Model_Note();
+		
 		switch ($entityType) 
 		{
 			case 'Deployment':
 				$obj->deployment = Doctrine::em()->getRepository('Model_Deployment')->find($entityId);
 				break;
+			case 'InventoryItem':
+                                $obj->inventoryItem = Doctrine::em()->getRepository('Model_InventoryItem')->find($entityId);
+                                break;
 			case 'Node':
 				$obj->node = Doctrine::em()->getRepository('Model_Node')->find($entityId);
                                 break;
