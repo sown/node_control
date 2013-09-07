@@ -299,6 +299,7 @@ CREATE TABLE `notes` (
   `notetaker_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `deployment_id` int(11) DEFAULT NULL,
+  `inventory_id` int(11) DEFAULT NULL,
   `node_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -411,4 +412,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-02  4:23:01
+-- Dump completed on 2013-09-07 15:41:35
