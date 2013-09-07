@@ -40,7 +40,7 @@ foreach ($fields as $f => $field)
 		}
 		echo "</td>\n";
 	}
-	elseif ($f == "type")
+	elseif ($f == "type" && is_object($row->$f))
 	{
 		echo "          <td>" . $row->$f->title . "</td>\n";
 	}
