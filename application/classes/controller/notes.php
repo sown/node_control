@@ -124,11 +124,11 @@ class Controller_Notes extends Controller_AbstractAdmin
 		$note->save();
 		if ($note->id)
                 {
-                        echo "Note successfully added";
+                        echo "<p class=\"success\">Note successfully added</p>";
                 }
                 else
 		{
-                        echo "Error: Note could not be added";
+                        echo "<p class=\"error\">Error: Note could not be added</p>";
                 }
 	}
 
@@ -139,18 +139,18 @@ class Controller_Notes extends Controller_AbstractAdmin
 		$note = Doctrine::em()->getRepository('Model_Note')->find($this->request->param('id'));
                 if (!is_object($note))
                 {
-                        echo "Error: Note not found";
+                        echo "<p class=\"error\">Error: Note not found</p>";
 			return;
                 }
 		$note->delete();
 		$note2 = Doctrine::em()->getRepository('Model_Note')->find($this->request->param('id'));
 		if (!is_object($note2))
 		{
-			echo "Note successfully deleted";
+			echo "<p class=\"success\">Note successfully deleted</p>";
 		}
 		else
 		{
-			echo "Error: Note could not be deleted";
+			echo "<p class=\"error\">Error: Note could not be deleted</p>";
 		} 
 	}	
 	
