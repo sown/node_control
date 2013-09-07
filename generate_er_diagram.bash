@@ -12,10 +12,10 @@ if [ -n "$mysql_pass" ]; then
         mysqlparams="$mysqlparams -p$mysql_pass"
 fi
 mysqldump -d -u $mysql_user $mysqlparams sown_data | sed -e 's/ AUTO_INCREMENT=[0-9]\+//' > $sqlfile
-if [ `diff $sqlfile sql/sown_data.sql | egrep -v "^[0-9]+c[0-9]+" | egrep -v "^[<>]? *\-\-" | wc -l` -gt 4 ]; then
+if [ `diff $sqlfile sql/sown_data.sql | egrep -v "^[0-9]+c[0-9]+" | egrep -v "^[<>]? *\-\-" | wc -l` -gt 1 ]; then
 	mv $sqlfile sql/sown_data.sql
 	sqlt-diagram -d=MySQL -t="sown_data - `date`" -o=diagrams/sown_data.png sql/sown_data.sql >/dev/null
 else
-	rm $sqlfile
+	#rm $sqlfile
 	touch diagrams/sown_data.png
 fi
