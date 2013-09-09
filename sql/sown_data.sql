@@ -167,6 +167,24 @@ CREATE TABLE `enquiry_types` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `host_cron_jobs`
+--
+
+DROP TABLE IF EXISTS `host_cron_jobs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `host_cron_jobs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `cron_job_id` int(11) NOT NULL,
+  `server_id` int(11) DEFAULT NULL,
+  `node_id` int(11) DEFAULT NULL,
+  `aggregate` varchar(255) DEFAULT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `interfaces`
 --
 
@@ -326,6 +344,9 @@ CREATE TABLE `servers` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `type` varchar(10) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL COMMENT 'short name (eg. auth)',
+  `internal_name` varchar(255) DEFAULT NULL,
+  `internal_cname` varchar(255) DEFAULT NULL,
+  `icinga_name` varchar(255) DEFAULT NULL,
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
   `external_ipv4` varchar(15) DEFAULT NULL COMMENT 'external (ECS)  IPv4 address',
   `internal_ipv4` varchar(15) DEFAULT NULL COMMENT 'internal (SOWN) IPv4 address',
@@ -412,4 +433,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-07 15:41:35
+-- Dump completed on 2013-09-09  1:51:34
