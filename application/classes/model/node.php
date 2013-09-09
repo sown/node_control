@@ -5,8 +5,10 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\Common\Collections\ArrayCollection;
 /**
  * Model_Node
@@ -65,6 +67,14 @@ class Model_Node extends Model_Entity
          */
         protected $notes;
 
+	/*
+	 * @ManyToMany(targetEntity="Model_CronJob")
+         * @JoinTable(name="host_cron_jobs",
+         *      joinColumns={@JoinColumn(name="node_id", referencedColumnName="id")},
+         *      inverseJoinColumns={@JoinColumn(name="cron_job_id", referencedColumnName="id")}
+         *      )
+         */
+        protected $cronJobs;
 
 	public function __construct()
 	{
@@ -179,6 +189,28 @@ class Model_Node extends Model_Entity
 			}
 		}
 		return null;
+	}
+
+	public function getAllCronJobs()
+	{
+		$allCronJobs = $this->cronJobs;
+		if (empty($allCronJobs)) 
+		{
+			$allCronJobs = array();
+		}
+
+		$qb = Doctrine::em()->createQueryBuilder();
+		$qb->select(array('h','c'))->from('Model_HostCronJob', 'h')->innerJoin('h.cronJob', 'c');
+		$qb->where("h.aggregate = 'all nodes'");
+		$qb->orWhere("h.aggregate = 'bandwidth nodes'");
+		$qb->orWhere("h.aggregate = 'openwrt nodes'");
+		$qb->orWhere("h.aggregate = 'tunneled nodes'");
+		$hostCronJobs = $qb->getQuery()->getResult();
+		foreach ($hostCronJobs as $hostCronJob)
+		{
+			$allCronJobs[] = $hostCronJob->cronJob;
+		}
+		return $allCronJobs;
 	}
 
 	/**

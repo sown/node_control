@@ -62,4 +62,101 @@ class SOWN
 			return $string . "s";
 		}
 	}
+
+	public static function find_host($hostString)
+	{
+		$ipAddress = filter_var($hostString, FILTER_VALIDATE_IP);
+		if (!empty($ipAddress))
+		{
+			return Sown::find_host_by_ip($hostString);
+		}
+		return Sown::find_host_by_name($hostString);
+	}
+
+	public static function find_host_by_ip($ipString) 
+	{
+		$qb = Doctrine::em()->getRepository('Model_Server')->createQueryBuilder('s');
+		$qb->where('s.internalIPv4 LIKE :ip');
+		$qb->orWhere('s.externalIPv4 LIKE :ip');
+		$qb->orWhere('s.internalIPv6 LIKE :ip');
+		$qb->orWhere('s.externalIPv6 LIKE :ip');
+		$qb->setParameter('ip', $ipString);
+		$query = $qb->getQuery();
+		$hosts = $query->getResult();
+                if (!empty($hosts[0]))
+		{
+			return $hosts[0];
+		}
+		$nodes = Doctrine::em()->getRepository('Model_Node')->findAll();
+		try 
+		{
+			$ip = IPv4_Address::factory($ipString);
+			$ipv4 = true;
+		}
+		catch(InvalidArgumentException $e)
+		{
+			try 
+			{
+				$ip = IPv6_Address::factory($ipString);
+				$ipv4 = false;
+			}
+			catch(InvalidArgumentException $e2)
+			{
+				return NULL;
+			}
+		}
+		foreach ($nodes as $node) 
+		{
+			if ($ipv4)
+			{
+				$vpnEndpointNetAddr = IPv4_Network_Address::factory($node->vpnEndpoint->IPv4Addr, $node->vpnEndpoint->IPv4AddrCidr);
+			}
+			else
+			{
+				$vpnEndpointNetAddr = IPv6_Network_Address::factory($node->vpnEndpoint->IPv6Addr, $node->vpnEndpoint->IPv6AddrCidr);
+			}
+			if ($vpnEndpointNetAddr->encloses_address($ip))
+			{
+				return $node;
+			}
+		}
+		return NULL;	
+	}
+
+	public static function find_host_by_name($nameString) 
+	{
+		$qb = Doctrine::em()->getRepository('Model_Server')->createQueryBuilder('s');
+                $qb->where('s.name LIKE :name');
+                $qb->orWhere('s.internalName LIKE :name');
+                $qb->orWhere('s.internalCname LIKE :name');
+                $qb->orWhere('s.icingaName LIKE :name');
+                $qb->setParameter('name', $nameString);
+                $query = $qb->getQuery();
+                $hosts = $query->getResult();
+                if (!empty($hosts[0]))
+                {
+                        return $hosts[0];
+                }
+		elseif (substr($nameString,0,4) == "node" || substr($nameString,0,4) == "Node") 
+		{
+			$boxNumber = str_replace("node", "", strtolower($nameString));
+			$node = Doctrine::em()->getRepository('Model_Node')->findByBoxNumber($boxNumber);
+			if (is_object($node)) 
+			{
+				return $node;
+			}
+		}
+		return NULL;
+	}
+	public static function get_icinga_name_for_host($host)
+        {
+		if (in_array(get_class($host), array("Model_Server", "Model_VpnServer")))
+		{
+			return $host->icingaName;
+		}
+		elseif (get_class($host) == "Model_Node")
+		{
+			return "node" . $host->boxNumber;
+		}
+ 	}
 }	

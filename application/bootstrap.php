@@ -74,8 +74,10 @@ elseif (isset($_SERVER['REMOTE_ADDR']))
 		include APPPATH.'config/dev_ips'.EXT;
 	}
 
-	if (in_array($_SERVER['REMOTE_ADDR'], $developmentAddrs))
+	if (in_array($_SERVER['REMOTE_ADDR'], $developmentAddrs)) 
+	{
 		Kohana::$environment = Kohana::DEVELOPMENT;
+	}
 	else
 	{
 		Kohana::$environment = Kohana::PRODUCTION;
@@ -261,6 +263,12 @@ Route::set('cron_jobs', 'admin/cronjobs')
         ->defaults(array(
                 'controller' => 'cronjobs',
                 'action'     => 'default',
+        ));
+
+Route::set('cron_jobs_incoming', 'admin/cronjobs/incoming')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'incoming',
         ));
 
 Route::set('cron_jobs_enabled', 'admin/cronjobs/enabled')

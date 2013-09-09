@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
 
 /**
- * Model_VpnEndpoint
+ * Model_CronJob
  *
  * @Table(name="cron_jobs")
  * @Entity
@@ -85,6 +85,11 @@ class Model_CronJob extends Model_Entity
          * @Column(name="updated_at", type="datetime", nullable=false)
          */
         protected $updatedAt;
+
+	/**
+         * @OneToMany(targetEntity="Model_HostCronJob", mappedBy="cronJob", cascade={"persist", "remove"})
+         */
+        protected $onHosts;
 
 
 	public function __get($name)

@@ -44,6 +44,15 @@ foreach ($fields as $f => $field)
 	{
 		echo "          <td>" . $row->$f->title . "</td>\n";
 	}
+	elseif ($f == "onHosts") 
+	{
+		$hosts = array();
+		foreach ($row->$f as $hostCronJob) 
+		{
+			$hosts[] = $hostCronJob->get_host_name();
+		}
+		echo "<td>" . implode(", ", $hosts) . "</td>\n";
+	}
 	elseif ($f == "disabled")
 	{
 		if ($row->$f)

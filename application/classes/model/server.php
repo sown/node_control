@@ -4,8 +4,10 @@ use Doctrine\ORM\Mapping\Table;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
+use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\InheritanceType;
 use Doctrine\ORM\Mapping\DiscriminatorColumn;
 use Doctrine\ORM\Mapping\DiscriminatorMap;
@@ -26,6 +28,27 @@ class Model_Server extends Model_Entity
 	 * @Column(name="name", type="string", length=255, nullable=true)
 	 */
 	protected $name;
+
+	/**
+         * @var string $internalName
+         *
+         * @Column(name="internal_name", type="string", length=255, nullable=true)
+         */
+        protected $internalName;
+
+	/**
+         * @var string $internalCname
+         *
+         * @Column(name="internal_cname", type="string", length=255, nullable=true)
+         */
+        protected $internalCname;
+
+	/**
+         * @var string $icinganame
+         *
+         * @Column(name="icinga_name", type="string", length=255, nullable=true)
+         */
+        protected $icingaName;
 
 	/**
 	 * @var Model_Certificate
@@ -65,6 +88,16 @@ class Model_Server extends Model_Entity
 	 */
 	protected $internalIPv6;
 
+       	/**
+	* @ManyToMany(targetEntity="Model_CronJob")
+	* @JoinTable(name="host_cron_jobs",
+	*      joinColumns={@JoinColumn(name="server_id", referencedColumnName="id")},
+	*      inverseJoinColumns={@JoinColumn(name="cron_job_id", referencedColumnName="id")}
+	*      )
+	*/ 
+	protected $cronJobs;
+	
+
 	public function __get($name)
 	{
 		$this->logUse();
@@ -81,6 +114,14 @@ class Model_Server extends Model_Entity
 				}
 		}
 	}
+
+	public function getAllCronJobs()
+        {
+                $allCronJobs = $this->cronJobs;
+
+                return $allCronJobs;
+        }
+
 
 	public static function getByName($name)
 	{
