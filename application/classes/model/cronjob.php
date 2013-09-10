@@ -17,13 +17,6 @@ use Doctrine\ORM\Mapping\JoinColumn;
 class Model_CronJob extends Model_Entity
 {
 	/**
-	 * @var string $server
-	 *
-	 * @Column(name="server", type="string", length=255, nullable=false)
-	 */
-	protected $server;
-
-	/**
          * @var string $creator
          *
          * @Column(name="creator", type="string", length=255, nullable=false)
@@ -128,7 +121,7 @@ class Model_CronJob extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "CronJob: {$this->id}, server={$this->server}, creator={$this->creator}, username={$this->username}, command={$this->command}, description={$this->description}, misc={$this->misc}, disabled={$this->disabled}, required={$this->required}, createdAt={$this->createdAt}, updatedAt={$this->updatedAt}";
+		$str  = "CronJob: {$this->id}, onHosts='{$this->onHostsList()}', creator={$this->creator}, username={$this->username}, command={$this->command}, description={$this->description}, misc={$this->misc}, disabled={$this->disabled}, required={$this->required}, createdAt={$this->createdAt}, updatedAt={$this->updatedAt}";
 		return $str;
 	}
 
@@ -138,7 +131,8 @@ class Model_CronJob extends Model_Entity
 		$str  = "<div class='CronJob' id='CronJob_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Cron Job</th><td>{$this->id}</td></tr>";
-		foreach(array('server', 'creator', 'username', 'command', 'description', 'misc', 'disabled', 'required', 'createdAt', 'updatedAt') as $field)
+		$str .= $this->fieldHTML("onHosts", $this->onHostsList());
+		foreach(array('creator', 'username', 'command', 'description', 'misc', 'disabled', 'required', 'createdAt', 'updatedAt') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -147,10 +141,18 @@ class Model_CronJob extends Model_Entity
 		return $str;
 	}
 
-	public static function build($description, $username, $server, $creator, $command, $disabled, $required, $misc)
+	protected function onHostsList()
+	{
+		foreach ($this->onHosts as $hostCronJob)
+                {
+                        $hosts[] = $hostCronJob->get_host_name();
+                }
+		return implode(", ", $hosts);
+	}
+
+	public static function build($description, $username, $onHosts, $creator, $command, $disabled, $required, $misc)
 	{
 		$obj = new Model_CronJob();
-		$obj->server = $server;
 		$obj->creator = $creator;
 		$obj->username = $username;
 		$obj->command = $command;
@@ -160,7 +162,13 @@ class Model_CronJob extends Model_Entity
 		$obj->misc = $misc;
 		$obj->createdAt = new \DateTime();
 		$obj->updatedAt = new \DateTime();
-		return $obj;
+		$obj->save();
+		foreach ($onHosts as $onHost)
+		{
+			$obj2 = Model_HostCronJob::build($obj, $onHost);
+			$obj2->save();
+		}
+		return Doctrine::em()->getRepository('Model_CronJob')->find($obj->id);
 	}
 	
 }

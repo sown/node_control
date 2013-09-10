@@ -148,6 +148,7 @@ class SOWN
 		}
 		return NULL;
 	}
+
 	public static function get_icinga_name_for_host($host)
         {
 		if (in_array(get_class($host), array("Model_Server", "Model_VpnServer")))
@@ -159,4 +160,24 @@ class SOWN
 			return "node" . $host->boxNumber;
 		}
  	}
+
+	public static function get_all_cron_job_hosts()
+	{
+		$hosts = array();
+		$servers = Doctrine::em()->getRepository('Model_Server')->findBy(array(), array('icingaName' => 'ASC'));
+		foreach ($servers as $server)
+		{
+			$hosts['server:'.$server->id] = $server->icingaName;
+		}
+		$hosts['aggregate:all nodes'] = 'all nodes';
+                $hosts['aggregate:bandwidth nodes'] = 'bandwidth nodes';
+                $hosts['aggregate:openwrt nodes'] = 'openwrt nodes';
+                $hosts['aggregate:tunneled nodes'] = 'tunneled nodes';
+		$nodes = Doctrine::em()->getRepository('Model_Node')->findBy(array(), array('boxNumber' => 'ASC'));
+                foreach ($nodes as $node)
+                {
+                        $hosts['node:'.$node->id] = "node" . $node->boxNumber;
+                }
+		return $hosts;
+	}
 }	

@@ -109,13 +109,25 @@ class Model_HostCronJob extends Model_Entity
 		return $str;
 	}
 
-	public static function build($cronJob, $server, $node, $aggregate)
+	public static function build($cronJob, $onHost)
 	{
 		$obj = new Model_HostCronJob();
-		$obj->cronJob = $cronJob;
-		$obj->server = $server;
-		$obj->node = $node;
-		$obj->aggregate = $aggregate;
+                $hostbits = explode(':', $onHost);
+                switch($hostbits[0])
+                {
+                	case 'server':
+                	        $obj->server = Doctrine::em()->getRepository('Model_Server')->find($hostbits[1]);
+				break;
+                        case 'aggregate':
+                                $obj->aggregate = $hostbits[1];
+				break;
+                        case 'node':
+                                $obj->node = Doctrine::em()->getRepository('Model_Node')->find($hostbits[1]);
+				break;
+                        default:
+                                return NULL;
+                }
+                $obj->cronJob = $cronJob;
 		return $obj;
 	}
 	
@@ -134,5 +146,21 @@ class Model_HostCronJob extends Model_Entity
 			return $this->aggregate;
 		}
 	}
-	
+
+	public function get_host_id()
+	{
+		if (!empty($this->server))
+                {
+                        return "server:" . $this->server->id;
+                }
+                if (!empty($this->node))
+                {
+			//$this->node->id returns NULL so need to lookup using boxNumber to get the ID out.
+                        return "node:" . Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->node->boxNumber)->id;
+                }
+                if (!empty($this->aggregate))
+                {
+                        return "aggregate:" . $this->aggregate;
+                }
+	}
 }

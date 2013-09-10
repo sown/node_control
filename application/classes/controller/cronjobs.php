@@ -195,8 +195,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues);
 			if ($validation->check())
         		{
-				$cronJob = Model_CronJob::build($formValues['description'], $formValues['username'], $formValues['server'], $formValues['creator'], $formValues['command'], $formValues['disabled'], $formValues['required'], $formValues['misc']);
-				$cronJob->save();
+				$cronJob = Model_CronJob::build($formValues['description'], $formValues['username'], $formValues['onHosts'], $formValues['creator'], $formValues['command'], $formValues['disabled'], $formValues['required'], $formValues['misc']);
 				$url = Route::url('view_cron_job', array('id' => $cronJob->id));
                         	$success = "Successfully created Cron Job with ID: <a href=\"$url\">" . $cronJob->id . "</a>.";
  
@@ -211,7 +210,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 			$formValues = array(
 				'description' => '',
 	                        'username' => '',
-        	                'server' => '',
+				'onHosts' => array(),
                 	        'creator' => '',
                         	'command' => '',
 	                        'disabled' => 0,
@@ -219,10 +218,11 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                 	        'misc' => '',
 			);
 		}
+		$hosts = Sown::get_all_cron_job_hosts();
 		$formTemplate = array(
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
                         'username' => array('title' => 'Username', 'type' => 'input', 'size' => 20),
-                        'server' => array('title' => 'Server', 'type' => 'input'),
+			'onHosts' => array('title' => 'On Hosts', 'type' => 'multiselect', 'options' => $hosts),
                         'creator' => array('title' => 'Creator', 'type' => 'input', 'size' => 20),
                         'command' => array('title' => 'Command', 'type' => 'input', 'size' => 100),
                         'disabled' => array('title' => 'Disabled', 'type' => 'checkbox'),
@@ -353,7 +353,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 			'id' => $cronJob->id,
                         'description' => $cronJob->description,
                         'username' => $cronJob->username,
-                        'server' => $cronJob->server,
+			'onHosts' => array(),
                         'creator' => $cronJob->creator,
                         'command' => $cronJob->command,
                         'disabled' => $cronJob->disabled,
@@ -367,17 +367,34 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                 {
 			$formValues['disabled'] = ( $formValues['disabled'] ? 'Yes' : 'No');
                         $formValues['required'] = ( $formValues['required'] ? 'Yes' : 'No');
+			$onHosts = array();
+			foreach ($cronJob->onHosts as $onHost) 
+			{
+				$onHosts[] = $onHost->get_host_name();
+			}
+			$formValues['onHosts'] = implode(", ", $onHosts);
+
+		}
+		elseif ($action == 'edit')
+		{
+			// Cannot use $cronJob->onHosts because these are not updated quick enough to be displayed on page reload.	
+			$hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByCronJob($cronJob);
+			foreach ($hostCronJobs as $onHost) 
+			{
+                        	$formValues['onHosts'][] = $onHost->get_host_id();
+                	}
 		}
 		return $formValues;
 	}
 
 	private function _load_form_template($action = 'edit')
 	{
+		$hosts = Sown::get_all_cron_job_hosts();
 		$formTemplate = array(
                         'id' =>  array('type' => 'hidden'),
                         'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
                         'username' => array('title' => 'Username', 'type' => 'input', 'size' => 20),
-                        'server' => array('title' => 'Server', 'type' => 'input'),
+			'onHosts' => array('title' => 'On Hosts', 'type' => 'multiselect', 'options' => $hosts),
                         'creator' => array('title' => 'Creator', 'type' => 'input', 'size' => 20),
                         'command' => array('title' => 'Command', 'type' => 'input', 'size' => 100),
                         'disabled' => array('title' => 'Disabled', 'type' => 'checkbox'),
@@ -397,7 +414,44 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	private function _update($id, $formValues)
 	{
 		$object = Doctrine::em()->getRepository('Model_CronJob')->findOneById($id);
-		$object->save();
+                $object->creator = $formValues['creator'];
+                $object->username = $formValues['username'];
+                $object->command = $formValues['command'];
+                $object->description = $formValues['description'];
+		if (isset($formValues['disabled']))
+		{
+                	$object->disabled = $formValues['disabled'];
+		}
+		if (isset($formValues['required']))
+		{
+                	$object->required = $formValues['required'];
+		}
+                $object->misc = $formValues['misc'];
+		$object->updatedAt = new \DateTime();
+		$dbOnHosts = array();
+		foreach ($object->onHosts as $onHost) 
+		{
+			$onHostId = $onHost->get_host_id();
+			if (!in_array($onHost->get_host_id(), $formValues['onHosts']))
+			{
+				Model_Builder::destroy_simple_object($onHost->id, 'HostCronJob');
+			}
+			else 
+			{
+				$dbOnHosts[] = $onHostId;
+			}
+		}
+		foreach ($formValues['onHosts'] as $onHost)
+		{
+			if (!in_array($onHost, $dbOnHosts))
+			{
+				$object2 = Model_HostCronJob::build($object, $onHost);
+				if (is_object($object2)) 
+				{
+					$object2->save();
+				}
+			}
+		}
+                $object->save();		
 	}
 }
-	
