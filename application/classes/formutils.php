@@ -254,6 +254,8 @@ class FormUtils {
 				return Form::password($name);
 			case 'select':
 				return Form::select($name, $field['options'], $value);
+			case 'multiselect':
+				return Form::select($name."[]", $field['options'], $value, array('multiple' => 'multiple', 'size' => 6));
 			case 'checkbox':	
 				return Form::checkbox($name, 1, !empty($value));
 			case 'button':
