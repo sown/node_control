@@ -41,7 +41,6 @@ DROP TABLE IF EXISTS `cron_jobs`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cron_jobs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `server` varchar(255) NOT NULL,
   `creator` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `command` varchar(255) NOT NULL,
@@ -433,4 +432,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-09  1:51:34
+-- Dump completed on 2013-09-10 23:20:58
