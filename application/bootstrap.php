@@ -643,6 +643,17 @@ Route::set('update_stas_all', 'scripts/update_stas/<all>')
                 'action'     => 'update_stas',
         ));
 
+Route::set('data_list', 'data')
+	->defaults(array(
+                'controller' => 'data',
+                'action'     => 'default',
+        ));
+
+Route::set('data_current_radius_users', 'data/current_radius_users')
+	->defaults(array(
+                'controller' => 'data',
+                'action'     => 'current_radius_users',
+        ));
 
 
 require_once(APPPATH.'/classes/mysql-dbo.php');
