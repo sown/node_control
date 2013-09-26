@@ -56,6 +56,7 @@ return array
 			'authorized_keys'	=>	'/srv/www/static_files/authorized_keys',
 			'passwd'		=>	'/srv/www/static_files/passwd',
 			'radutmp'		=>	'/var/log/freeradius/sradutmp',
+			'lastradusers'		=>	'/tmp/lastradiususers.csv',
 		),
 		'rrd' 		=> array
 		(
