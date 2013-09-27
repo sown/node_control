@@ -1,0 +1,9 @@
+INSTALLATION
+------------
+
+Once you have git-cloned this into the correct location you need to apply doctrine_20130927.patch to the doctrine directory:
+
+cd /srv/www/KODoctrine/modules/doctrine2/classes/vendor/doctrine/
+patch -p1 < /path/to/doctrine_20130927.patch
+
+This patch file provide UNIX_TIMESTAMP and DATE_FORMAT functions for Doctrine Query Language (DQL) queries.

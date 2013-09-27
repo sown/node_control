@@ -11,38 +11,16 @@ class Controller_Data extends Controller
 
 	public function action_current_radius_users()
 	{
-		$lru_filename = Kohana::$config->load('system.default.static_files.lastradusers');
 		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra');
 		$qb->where("ra.acctstoptime IS NULL");
 		$qb->andWhere("ra.acctinputoctets > 0 OR ra.acctoutputoctets > 0");
+		// 600 seconds because records only get updated every 300 seconds so session time may have been increased since 
+		// record was updated. 600 seconds gives enough leeway without including users who have likely disconnected.
+		$qb->andWhere("UNIX_TIMESTAMP(ra.acctstarttime) + ra.acctsessiontime + 600 > UNIX_TIMESTAMP(CURRENT_TIMESTAMP())");
 		$query = $qb->getQuery();
+		echo $query->getSql();
                 $curusers = $query->getResult();
-		$lastusers = array();
-		if (file_exists($lru_filename))
-		{
-			$csvdata = file_get_contents($lru_filename);
-			$userarray = CSV::string_to_array($csvdata, true);
-			foreach($userarray as $user) {
-				$lastusers[$user['radacctid']] = $user;
-			}
-		}
-		$activeusers = 0;
-		foreach ($curusers as $curuser) 
-		{
-			$acctstarttime = $curuser->acctstarttime->format('U');
-			if ($acctstarttime > time() - 3600 || empty($lastusers[$curuser->radacctid]) || ($curuser->acctinputoctets > $lastusers[$curuser->radacctid]['acctinputoctets'] || $curuser->acctoutputoctets > $lastusers[$curuser->radacctid]['acctoutputoctets']))
-				$activeusers++;
-		}
-		if (!file_exists($lru_filename) || filemtime($lru_filename) < date('s') - 3600)
-		{
-			$fh = fopen($lru_filename, 'w');
-			fwrite($fh, "radacctid,acctinputoctets,acctoutputoctets\n");
-			foreach ($curusers as $curuser) 
-			{
-				fwrite($fh, "{$curuser->radacctid},{$curuser->acctinputoctets},{$curuser->acctoutputoctets}\n");
-			}
-			fclose($fh);
-		}
+		$activeusers = sizeof($curusers);
                 if ($activeusers < 1) 
 			echo '0';
 		else 

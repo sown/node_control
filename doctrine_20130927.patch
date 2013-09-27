@@ -1,0 +1,165 @@
+diff -Naur a/Doctrine/ORM/Query/AST/Functions/DateFormatFunction.php b/Doctrine/ORM/Query/AST/Functions/DateFormatFunction.php
+--- a/Doctrine/ORM/Query/AST/Functions/DateFormatFunction.php	1970-01-01 01:00:00.000000000 +0100
++++ b/Doctrine/ORM/Query/AST/Functions/DateFormatFunction.php	2013-09-27 18:36:41.218072958 +0100
+@@ -0,0 +1,77 @@
++<?php
++
++namespace Doctrine\ORM\Query\AST\Functions;
++
++use Doctrine\ORM\Query\Lexer;
++use Doctrine\ORM\Query\SqlWalker;
++use Doctrine\ORM\Query\Parser;
++
++/**
++ * DateFormatFunction
++ * 
++ * Allows Doctrine 2.0 Query Language to execute a MySQL DATE_FORMAT function
++ * You must boostrap this function in your ORM as a DQLFunction.
++ * 
++ * 
++ * DATE_FORMAT(TIMESTAMP,'%format') : @link http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_date-format
++ * 
++ * 
++ * PLEASE REMEMBER TO CHECK YOUR NAMESPACE
++ * 
++ * @link labs.ultravioletdesign.co.uk
++ * @author Rob Squires <rob@ultravioletdesign.co.uk>
++ * 
++ * 
++ */
++class DateFormatFunction extends FunctionNode {
++
++    /*
++     * holds the timestamp of the DATE_FORMAT DQL statement
++     * @var mixed
++     */
++    protected $dateExpression;
++    
++    /**
++     * holds the '%format' parameter of the DATE_FORMAT DQL statement
++     * @var string
++     */
++    protected $formatChar;
++
++    /**
++     * getSql - allows ORM  to inject a DATE_FORMAT() statement into an SQL string being constructed
++     * @param \Doctrine\ORM\Query\SqlWalker $sqlWalker
++     * @return void 
++     */
++    public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker)
++    {
++        return 'DATE_FORMAT(' .
++                $sqlWalker->walkArithmeticExpression($this->dateExpression) .
++                ','.
++                $sqlWalker->walkStringPrimary($this->formatChar) .
++                ')';
++
++    }
++
++    /**
++     * parse - allows DQL to breakdown the DQL string into a processable structure
++     * @param \Doctrine\ORM\Query\Parser $parser 
++     */
++    public function parse(\Doctrine\ORM\Query\Parser $parser)
++    {
++
++        $parser->match(Lexer::T_IDENTIFIER);
++        $parser->match(Lexer::T_OPEN_PARENTHESIS);
++        
++        $this->dateExpression = $parser->ArithmeticExpression();
++        $parser->match(Lexer::T_COMMA);
++
++ 
++        $this->formatChar = $parser->StringPrimary();
++        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
++
++
++    }
++
++}
++
++
+diff -Naur a/Doctrine/ORM/Query/AST/Functions/UnixTimestampFunction.php b/Doctrine/ORM/Query/AST/Functions/UnixTimestampFunction.php
+--- a/Doctrine/ORM/Query/AST/Functions/UnixTimestampFunction.php	1970-01-01 01:00:00.000000000 +0100
++++ b/Doctrine/ORM/Query/AST/Functions/UnixTimestampFunction.php	2013-09-27 18:36:41.218072958 +0100
+@@ -0,0 +1,68 @@
++<?php
++
++namespace Doctrine\ORM\Query\AST\Functions;
++
++use Doctrine\ORM\Query\Lexer;
++use Doctrine\ORM\Query\SqlWalker;
++use Doctrine\ORM\Query\Parser;
++
++/**
++ * UnixTimestampFunction
++ * 
++ * Allows Doctrine 2.0 Query Language to execute a MySQL UNIX_FORMAT function
++ * You must boostrap this function in your ORM as a DQLFunction.
++ * 
++ * 
++ * UNIX_TIMESTAMP(TIMESTAMP) : @link http://dev.mysql.com/doc/refman/5.5/en/date-and-time-functions.html#function_unix-timestamp
++ * 
++ * 
++ * PLEASE REMEMBER TO CHECK YOUR NAMESPACE
++ * 
++ * @link labs.ultravioletdesign.co.uk
++ * @author Rob Squires <rob@ultravioletdesign.co.uk>
++ * 
++ * 
++ */
++class UnixTimestampFunction extends FunctionNode {
++
++    /*
++     * holds the timestamp of the UNIX_TIMESTAMP DQL statement
++     * @var mixed
++     */
++    protected $dateExpression;
++    
++
++
++    /**
++     * getSql - allows ORM  to inject a UNIX_TIMESTAMP() statement into an SQL string being constructed
++     * @param \Doctrine\ORM\Query\SqlWalker $sqlWalker
++     * @return void 
++     */
++    public function getSql(\Doctrine\ORM\Query\SqlWalker $sqlWalker)
++    {
++        return 'UNIX_TIMESTAMP(' .
++                $sqlWalker->walkArithmeticExpression($this->dateExpression) .
++                ')';
++
++    }
++
++    /**
++     * parse - allows DQL to breakdown the DQL string into a processable structure
++     * @param \Doctrine\ORM\Query\Parser $parser 
++     */
++    public function parse(\Doctrine\ORM\Query\Parser $parser)
++    {
++
++        $parser->match(Lexer::T_IDENTIFIER);
++        $parser->match(Lexer::T_OPEN_PARENTHESIS);
++        
++        $this->dateExpression = $parser->ArithmeticExpression();
++
++        $parser->match(Lexer::T_CLOSE_PARENTHESIS);
++
++
++    }
++
++}
++
++
+diff -Naur a/Doctrine/ORM/Query/Parser.php b/Doctrine/ORM/Query/Parser.php
+--- a/Doctrine/ORM/Query/Parser.php	2012-04-13 09:24:59.000000000 +0100
++++ b/Doctrine/ORM/Query/Parser.php	2013-09-27 18:41:06.928069020 +0100
+@@ -64,6 +64,8 @@
+         'current_timestamp' => 'Doctrine\ORM\Query\AST\Functions\CurrentTimestampFunction',
+         'date_add'          => 'Doctrine\ORM\Query\AST\Functions\DateAddFunction',
+         'date_sub'          => 'Doctrine\ORM\Query\AST\Functions\DateSubFunction',
++	'date_format'       => 'Doctrine\ORM\Query\AST\Functions\DateFormatFunction',
++	'unix_timestamp'       => 'Doctrine\ORM\Query\AST\Functions\UnixTimestampFunction',
+     );
+ 
+     /**
