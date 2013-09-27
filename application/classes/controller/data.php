@@ -18,7 +18,6 @@ class Controller_Data extends Controller
 		// record was updated. 600 seconds gives enough leeway without including users who have likely disconnected.
 		$qb->andWhere("UNIX_TIMESTAMP(ra.acctstarttime) + ra.acctsessiontime + 600 > UNIX_TIMESTAMP(CURRENT_TIMESTAMP())");
 		$query = $qb->getQuery();
-		echo $query->getSql();
                 $curusers = $query->getResult();
 		$activeusers = sizeof($curusers);
                 if ($activeusers < 1) 
