@@ -60,8 +60,8 @@ return array
 		),
 		'rrd' 		=> array
 		(
-			'deployment_path'	=> 	'/srv/radacct-tg/nas-rrds/',
-			'client_path' 		=> 	'/srv/radacct-tg/sta-rrds/',
+			'deployment_path'	=> 	'/srv/radacct-tg-new/nas-rrds/',
+			'client_path' 		=> 	'/srv/radacct-tg-new/sta-rrds/',
 		),
 		'routes'	=> '
 push "route 10.12.0.0 255.254.0.0"
