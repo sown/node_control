@@ -654,6 +654,59 @@ Route::set('data_current_radius_users', 'data/current_radius_users')
                 'controller' => 'data',
                 'action'     => 'current_radius_users',
         ));
+Route::set('data_radius_users_day', 'data/radius_users_day/<year>/<month>/<day>')
+	 ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_day',
+        ));
+Route::set('data_radius_users_days_month', 'data/radius_users_day/<year>/<month>')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_days_month',
+        ));
+Route::set('data_radius_users_days_year', 'data/radius_users_day/<year>')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_days_year',
+        ));
+Route::set('data_radius_users_month', 'data/radius_users_month/<year>/<month>')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_month',
+        ));
+Route::set('data_radius_users_months_year', 'data/radius_users_month/<year>')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_months_year',
+        ));
+Route::set('data_radius_users_year', 'data/radius_users_year/<year>')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_year',
+        ));
+Route::set('data_radius_users_years', 'data/radius_users_years')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_years',
+        ));
+Route::set('data_radius_users_hours_week', 'data/radius_users_hours_week')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_hours_week',
+        ));
+Route::set('data_radius_users_hours_month', 'data/radius_users_hours_month')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_hours_month',
+        ));
+Route::set('data_radius_users_hours_year', 'data/radius_users_hours_year')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'radius_users_hours_year',
+        ));
+
+
+
 
 
 require_once(APPPATH.'/classes/mysql-dbo.php');
