@@ -19,29 +19,9 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
                         }
                 }
 
-                require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
-                require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
 		return $deployment;
 	}
 	
-	private function _draw_bar_graph($title, $xlabel, $ylabel, $xdata, $ydata)
-	{
-		$graph = new Graph(600, 200);
-                $graph->SetScale('textlin');
-                $graph->img->SetMargin(70,10,30,60);
-                $graph->title->Set($title);
-                $graph->xaxis->title->Set($xlabel);
-                $graph->yaxis->title->Set($ylabel);
-		$graph->xaxis->SetTitleMargin(30); 
-		$graph->yaxis->SetTitleMargin(50); 
-		$graph->xaxis->SetLabelAngle(50);	
-                $graph->xaxis->SetTickLabels($xdata);
-                $barplot= new BarPlot($ydata);
-                $barplot->SetFillColor('blue@0.5');
-                $graph->Add($barplot);
-                $graph->Stroke();
-	}
-
 	public function action_monthly_graph()
 	{
 		$deployment = $this->_initialize_graph();
@@ -76,7 +56,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 				$ydata[$m++] = 0;
 		}
 		
-		$this->_draw_bar_graph('Last 12 months usage', 'Month', 'Usage (GB)', $months, $ydata);	
+		SOWN::draw_bar_graph('Last 12 months usage', 'Month', 'Usage (GB)', $months, $ydata);	
 	}
 
 	public function action_daily_graph()
@@ -116,7 +96,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
                         else
                                 $ydata[$d++] = 0;
                 }
-		$this->_draw_bar_graph('Last 30 days usage', 'Day', 'Usage (MB)', $days, $ydata);
+		SOWN::draw_bar_graph('Last 30 days usage', 'Day', 'Usage (MB)', $days, $ydata);
 	
 	}
 

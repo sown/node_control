@@ -180,4 +180,65 @@ class SOWN
                 }
 		return $hosts;
 	}
+
+	public static function draw_bar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 200, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
+	{
+		require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
+                require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
+                $graph = new Graph($width, $height);
+                $graph->SetScale("textlin");
+		if ($orientate == "horizontal")
+		{
+                        $graph->Set90AndMargin($margins[3], $margins[1], $margins[0], $margins[2]);
+			$angle = 90 - $angle;
+                }
+		else
+                        $graph-->SetMargin($margins[0], $margins[1], $margins[2], $margins[3]);
+                $graph->title->Set($title);
+                $graph->xaxis->title->Set($xlabel);
+                $graph->yaxis->title->Set($ylabel);
+                $graph->xaxis->SetTitleMargin(30);
+                $graph->yaxis->SetTitleMargin(50);
+                $graph->xaxis->SetLabelAngle($angle);
+                $graph->xaxis->SetTickLabels($xdata);
+                $barplot= new BarPlot($ydata);
+                $graph->Add($barplot);
+		$barplot->SetColor('blue');
+		$barplot->SetFillColor('blue');
+                $graph->Stroke();
+	}
+
+	public static function draw_accbar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 200, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
+	{
+                require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
+                require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
+                $graph = new Graph($width, $height);
+                $graph->SetScale("textlin");
+		if ($orientate == "horizontal") 
+		{
+			$graph->Set90AndMargin($margins[3], $margins[1], $margins[0], $margins[2]);
+			$angle = 90 - $angle;
+		}
+		else
+			$graph->SetMargin($margins[0], $margins[1], $margins[2], $margins[3]);
+                $graph->title->Set($title);
+                $graph->xaxis->title->Set($xlabel);
+                $graph->yaxis->title->Set($ylabel);
+                $graph->xaxis->SetTitleMargin(30);
+                $graph->yaxis->SetTitleMargin(50);
+                $graph->xaxis->SetLabelAngle($angle);
+                $graph->xaxis->SetTickLabels($xdata);
+                $barplot1 = new BarPlot($ydata[0]);
+		$barplot2 = new BarPlot($ydata[1]);
+		$barplot3 = new BarPlot($ydata[2]);
+		$accbarplot = new AccBarPlot(array($barplot1, $barplot2, $barplot3));
+                $graph->Add($accbarplot);
+		$barplot1->SetColor('purple');
+                $barplot2->SetColor('blue');
+                $barplot3->SetColor('cyan');
+		$barplot1->SetFillColor('purple');
+		$barplot2->SetFillColor('blue');
+		$barplot3->SetFillColor('cyan');
+                $graph->Stroke();
+        }
 }	
