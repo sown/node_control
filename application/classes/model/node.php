@@ -223,7 +223,10 @@ class Model_Node extends Model_Entity
 
 	public static function getByMac($mac)
 	{
-		return Doctrine::em()->getRepository('Model_NetworkAdapter')->findOneByMac(strtolower($mac))->node;
+		$networkAdapter = Doctrine::em()->getRepository('Model_NetworkAdapter')->findOneByMac(strtolower($mac));
+		if (!empty($networkAdapter))
+			return $networkAdapter->node;
+		return NULL;
 	}
 
 	public static function getByHostname($hostname)
