@@ -705,9 +705,29 @@ Route::set('data_radius_users_hours_year', 'data/radius_users_hours_year')
                 'action'     => 'radius_users_hours_year',
         ));
 
+Route::set('data_graph_uc_day', 'data/graph/<type>/day')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'day_graph',
+        ));
 
+Route::set('data_graph_uc_month', 'data/graph/<type>/month')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'month_graph',
+        ));
 
+Route::set('data_graph_uc_hour', 'data/graph/<type>/hour')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'hour_graph',
+        ));
 
+Route::set('data_graph_uc_node', 'data/graph/<type>/node')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'node_graph',
+        ));
 
 require_once(APPPATH.'/classes/mysql-dbo.php');
 Doctrine\DBAL\Types\Type::addType('ipv4address', 'Model_Type_IPv4Address');
