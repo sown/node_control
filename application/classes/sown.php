@@ -193,7 +193,7 @@ class SOWN
 			$angle = 90 - $angle;
                 }
 		else
-                        $graph-->SetMargin($margins[0], $margins[1], $margins[2], $margins[3]);
+                        $graph->SetMargin($margins[0], $margins[1], $margins[2], $margins[3]);
                 $graph->title->Set($title);
                 $graph->xaxis->title->Set($xlabel);
                 $graph->yaxis->title->Set($ylabel);
