@@ -75,7 +75,7 @@ class Controller_Data extends Controller
 			$ydata[] = $record['no_'.$type.'s'];
 		}
 			
-		SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Day', '', '', $xdata, $ydata, 600, 400, array(45,10,30,90), 60);		
+		SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Day', '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 60);		
 	}
 
 	public function action_month_graph()
@@ -104,7 +104,7 @@ class Controller_Data extends Controller
                         $xdata[] = $record['thedate'];
                         $ydata[] = $record['no_'.$type.'s'];
                 }
-                SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Month', '', '', $xdata, $ydata, 600, 400, array(45,10,30,90), 60);
+                SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Month', '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 60);
         }
 
 	public function action_hour_graph()
@@ -133,7 +133,7 @@ class Controller_Data extends Controller
                         $ydata[2][] = $yearcount - $monthcount - $weekcount;
 		}
 		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
-		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,10,30,60), 0);
+		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,60), 0);
 	}
 
 	public function action_node_graph()
@@ -160,7 +160,7 @@ class Controller_Data extends Controller
                         $ydata[2][] = $node['no_'.$type.'s'] - $monthcount - $weekcount;
                 }
 		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
-                SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, $legend, 600, 400, array(60,10,40,130), 90, "horizontal");
+                SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, $legend, 600, 400, array(60,25,40,130), 90, "horizontal");
         }
 
 	private function _get_radius_user_hour_results($days)
