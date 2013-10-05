@@ -75,7 +75,7 @@ class Controller_Data extends Controller
 			$ydata[] = $record['no_'.$type.'s'];
 		}
 			
-		SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Day', '', '', $xdata, $ydata, 600, 400, array(45,10,30,90), 90);		
+		SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Day', '', '', $xdata, $ydata, 600, 400, array(45,10,30,90), 60);		
 	}
 
 	public function action_month_graph()
@@ -90,14 +90,13 @@ class Controller_Data extends Controller
                 $firstdate = new \DateTime("-12 months");
                 $firstdateformat = $firstdate->format('Y-m');
                 $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("DATE_FORMAT(ra.acctstarttime, '%Y-%m') AS thedate, SUM(1) AS connections, ra.username")
+                        ->select("DATE_FORMAT(ra.acctstarttime, '%Y-%m') AS orderdate, DATE_FORMAT(ra.acctstarttime, '%b %Y') AS thedate, SUM(1) AS connections, ra.username")
                         ->where("DATE_FORMAT(ra.acctstarttime, '%Y-%m') = '$firstdateformat' OR ra.acctstarttime > :firstdate")
 			->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0")
                         ->andWhere("ra.acctsessiontime > 0")
                         ->groupBy("thedate, ra.username")
-                        ->orderBy("thedate")
+                        ->orderBy("orderdate")
                         ->setParameter("firstdate", $firstdate);
-//		echo $qb->getQuery()->getSql();
                 $results = $qb->getQuery()->getResult();
                 $array = $this->_format_radius_users($results);
                 foreach ($array as $record)
@@ -105,8 +104,7 @@ class Controller_Data extends Controller
                         $xdata[] = $record['thedate'];
                         $ydata[] = $record['no_'.$type.'s'];
                 }
-
-                SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Month', '', '', $xdata, $ydata, 600, 400, array(45,10,30,90), 90);
+                SOWN::draw_bar_graph('No. of SOWN '.ucfirst($type).'s - By Month', '', '', $xdata, $ydata, 600, 400, array(45,10,30,90), 60);
         }
 
 	public function action_hour_graph()
@@ -134,7 +132,8 @@ class Controller_Data extends Controller
                         $ydata[1][] = $monthcount - $weekcount;
                         $ydata[2][] = $yearcount - $monthcount - $weekcount;
 		}
-		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', ucfirst($type).'s', $xdata, $ydata, 600, 400, array(45,10,30,40), 90);
+		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
+		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,10,30,60), 0);
 	}
 
 	public function action_node_graph()
@@ -160,7 +159,8 @@ class Controller_Data extends Controller
                         $ydata[1][] = $monthcount - $weekcount;
                         $ydata[2][] = $node['no_'.$type.'s'] - $monthcount - $weekcount;
                 }
-                SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, 600, 400, array(45,10,10,130), 90, "horizontal");
+		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
+                SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, $legend, 600, 400, array(60,10,40,130), 90, "horizontal");
         }
 
 	private function _get_radius_user_hour_results($days)

@@ -181,64 +181,129 @@ class SOWN
 		return $hosts;
 	}
 
-	public static function draw_bar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 200, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
+	public static function draw_bar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
 	{
 		require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
-                $graph = new Graph($width, $height);
-                $graph->SetScale("textlin");
-		if ($orientate == "horizontal")
-		{
-                        $graph->Set90AndMargin($margins[3], $margins[1], $margins[0], $margins[2]);
-			$angle = 90 - $angle;
-                }
-		else
-                        $graph->SetMargin($margins[0], $margins[1], $margins[2], $margins[3]);
-                $graph->title->Set($title);
-                $graph->xaxis->title->Set($xlabel);
-                $graph->yaxis->title->Set($ylabel);
-                $graph->xaxis->SetTitleMargin(30);
-                $graph->yaxis->SetTitleMargin(50);
-                $graph->xaxis->SetLabelAngle($angle);
-                $graph->xaxis->SetTickLabels($xdata);
-                $barplot= new BarPlot($ydata);
-                $graph->Add($barplot);
-		$barplot->SetColor('blue');
-		$barplot->SetFillColor('blue');
+		$graph = SOWN::setup_graph("Graph", array("width" => $width, "height" => $height, "scale" => "textint"));
+		$anagle = SOWN::setup_graph_orientation($graph, $orientate, $margins);
+		SOWN::setup_graph_title($graph->title, $title);
+		SOWN::setup_graph_axis($graph->xaxis, $xlabel, $xdata, $angle);
+		SOWN::setup_graph_axis($graph->yaxis, $ylabel);
+		SOWN::add_graph_barplot($graph, $ydata);
                 $graph->Stroke();
+
 	}
 
-	public static function draw_accbar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 200, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
+	public static function draw_accbar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $legend, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
 	{
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
-                $graph = new Graph($width, $height);
-                $graph->SetScale("textlin");
-		if ($orientate == "horizontal") 
-		{
-			$graph->Set90AndMargin($margins[3], $margins[1], $margins[0], $margins[2]);
-			$angle = 90 - $angle;
-		}
-		else
-			$graph->SetMargin($margins[0], $margins[1], $margins[2], $margins[3]);
-                $graph->title->Set($title);
-                $graph->xaxis->title->Set($xlabel);
-                $graph->yaxis->title->Set($ylabel);
-                $graph->xaxis->SetTitleMargin(30);
-                $graph->yaxis->SetTitleMargin(50);
-                $graph->xaxis->SetLabelAngle($angle);
-                $graph->xaxis->SetTickLabels($xdata);
-                $barplot1 = new BarPlot($ydata[0]);
-		$barplot2 = new BarPlot($ydata[1]);
-		$barplot3 = new BarPlot($ydata[2]);
-		$accbarplot = new AccBarPlot(array($barplot1, $barplot2, $barplot3));
-                $graph->Add($accbarplot);
-		$barplot1->SetColor('purple');
-                $barplot2->SetColor('blue');
-                $barplot3->SetColor('cyan');
-		$barplot1->SetFillColor('purple');
-		$barplot2->SetFillColor('blue');
-		$barplot3->SetFillColor('cyan');
+		$graph = SOWN::setup_graph("Graph", array("height" => $height, "width" => $width, "scale" => "textint"));
+
+		$angle = SOWN::setup_graph_orientation($graph, $orientate, $margins, $angle);
+		SOWN::setup_graph_title($graph->title, $title);
+		SOWN::setup_graph_axis($graph->xaxis, $xlabel, $xdata, $angle);
+		SOWN::setup_graph_axis($graph->yaxis, $ylabel);
+		SOWN::add_graph_barplot($graph, $ydata, $legend, 0.8, array("#000033", "#003399", "#0066FF"), array("#000033", "#003399", "#0066FF"));
+		$graph->graph_theme = null;
                 $graph->Stroke();
+
         }
+
+	public static function setup_graph($class = null, $attributes = array())
+	{
+		if (is_null($class))
+            		$class = "Graph";
+      		$width = 600;
+      		$height = 400;
+		if (isset($attributes['width']))
+                        $width = $attributes['width'];
+	      	if (isset($attributes['height']))
+			$height = $attributes['height'];
+		$graph = new $class($width, $height, "auto");
+		if (isset($attributes['scale']))
+			$graph->setScale($attributes['scale']);
+		else
+			$graph->setScale("textint");
+		$graph->SetMarginColor('lightblue'); 
+		$graph->SetFrame(true,'black',1);
+		$graph->SetBox(true,'black',1);
+      		$graph->SetShadow("lightblue");
+		$graph->legend->Pos(0.5, 0.97, "center", "bottom");
+		$graph->legend->SetFillColor('lightblue');
+		$graph->legend->SetLayout(LEGEND_HOR);
+      		return $graph;
+	}
+		
+	public static function setup_graph_orientation($graph, $orientate, $margins, $angle = 0)
+	{
+		if ($orientate == "horizontal")
+                {
+                        $graph->Set90AndMargin($margins[3], $margins[1], $margins[0], $margins[2]);
+                        $angle = 90 - $angle;
+                }
+                else
+		{
+                        $graph->SetMargin($margins[0], $margins[1], $margins[2], $margins[3]);
+		}
+		return $angle;
+	}
+
+	public static function setup_graph_title($graphtitle, $title)
+	{
+		$graphtitle->Set($title);
+      		$graphtitle->SetFont(FF_GEORGIA,FS_NORMAL,14);
+		$graphtitle->SetColor('black');
+	}
+
+	public static function setup_graph_axis($axis, $title, $data = null, $angle = null)
+	{
+                $axis->SetFont(FF_GEORGIA,FS_NORMAL,10);
+		$axis->SetColor('black');
+                $axis->SetTitle($title);
+                $axis->SetTitleMargin(30);
+		if (!empty($angle))
+                	$axis->SetLabelAngle($angle);
+		if (!empty($data))
+                	$axis->SetTickLabels($data);
+	}
+
+	public static function add_graph_barplot($graph, $data, $legend = array(), $barwidth = 0.8, $colors = array('#000033'), $fillcolors = array('#000033'))
+	{
+		$single = false;
+		if (!is_array($data[0]))
+		{
+			$temp = $data;
+			$data = array($temp);
+			$single = true;
+		}
+		$b = 0;
+		$barplots = array();
+		foreach ($data as $series) 
+		{
+			$barplot = new BarPlot($series);
+			$barplot->SetWidth($barwidth);
+			if (!$single && isset($legend[$b]))
+				$barplot->SetLegend($legend[$b]);
+			$barplots[$b++] = $barplot;
+		}
+		if ($single)
+		{
+			$graph->Add($barplots[0]);
+		}
+		else 
+		{
+			$accbarplot = new AccBarPlot($barplots);
+			$accbarplot->SetWidth($barwidth);
+                	$graph->Add($accbarplot);
+		}
+		foreach ($barplots as $b => $barplot)
+		{
+		 	$barplot->SetColor($colors[$b]);
+			$barplot->SetFillGradient($fillcolors[$b], "#DDDDFF", GRAD_LEFT_REFLECTION);
+                        $barplot->SetFillColor($fillcolors[$b]);
+		}
+	}
 }	
+
