@@ -130,7 +130,7 @@ class Controller_Data extends Controller
 			if (isset($year[$h])) $yearcount = $year[$h]['no_'.$type.'s'];
                         $ydata[0][] = $weekcount;
                         $ydata[1][] = $monthcount - $weekcount;
-                        $ydata[2][] = $yearcount - $monthcount - $weekcount;
+                        $ydata[2][] = $yearcount - $monthcount;
 		}
 		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
 		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,60), 0);
@@ -144,7 +144,7 @@ class Controller_Data extends Controller
                         throw new HTTP_Exception_404();
                 }
                 $response = $this->request->response();
-	        $response->headers('Content-Type', 'image/png');
+		$response->headers('Content-Type', 'image/png');
                 $week = $this->_format_radius_users_nodes($this->_get_radius_user_node_results(7));
                 $month = $this->_format_radius_users_nodes($this->_get_radius_user_node_results(30));
                 $year = $this->_format_radius_users_nodes($this->_get_radius_user_node_results(365));
@@ -157,7 +157,7 @@ class Controller_Data extends Controller
 			if (isset($month[$n])) $monthcount = $month[$n]['no_'.$type.'s'];
 			$ydata[0][] = $weekcount;
                         $ydata[1][] = $monthcount - $weekcount;
-                        $ydata[2][] = $node['no_'.$type.'s'] - $monthcount - $weekcount;
+                        $ydata[2][] = $node['no_'.$type.'s'] - $monthcount;
                 }
 		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
                 SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, $legend, 600, 400, array(60,25,40,130), 90, "horizontal");
