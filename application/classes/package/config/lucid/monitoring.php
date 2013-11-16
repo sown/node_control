@@ -56,7 +56,12 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		{
 			return "";
 		}
-		$email = "support@example.org";
+		$emails = array();
+		foreach($node->currentDeployment->admins as $admin)
+		{
+			$emails[] = $admin->user->email;
+		}
+		$email = implode(',', $emails);
 		$name = $node->hostname;
 		$alias = $node->name . " (#" . $node->boxNumber .")";
 		$url = "";
