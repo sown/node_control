@@ -149,7 +149,10 @@ class Model_Server extends Model_Entity
 		}
 		foreach(array('certificate') as $field)
 		{
-			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+			if($this->$field)
+			{
+				$str .= $this->fieldHTML($field, $this->$field->toHTML());
+			}
 		}
 		$str .= "</table>";
 		$str .= "</div>";
