@@ -39,6 +39,12 @@ abstract class Package_Config
 					"CONFIG-CRONTABS", 0, 
 					"Update Requested");
 			}
+			if($package == "wireless")
+			{
+				SOWN::send_nsca($_SERVER['SSL_CLIENT_S_DN_CN'], 
+					"CONFIG-WIRELESS", 0, 
+					"Update Requested");
+			}
 		}
 		else
 		{
