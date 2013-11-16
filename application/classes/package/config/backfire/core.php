@@ -258,6 +258,7 @@ class Package_Config_Backfire_Core extends Package_Config
 				if($node->currentDeployment->exceedsCap)
 				{
 					$config['wifi-device'][$dev_name]['disabled'] = 1;
+					 SOWN::send_irc_message('!h debug: Disabled interface '.$dev_name.' on node \''.$node->node_name.'\'');
 				}
 			}
 			// Also optional 'hwmode' which can be set to '11g',
