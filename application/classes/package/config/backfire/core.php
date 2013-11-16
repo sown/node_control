@@ -252,15 +252,6 @@ class Package_Config_Backfire_Core extends Package_Config
 					),
 				);
 
-			/* Node might not have a deployment ... */
-			if($node->currentDeployment !== NULL)
-			{
-				if($node->currentDeployment->exceedsCap)
-				{
-					$config['wifi-device'][$dev_name]['disabled'] = 1;
-					 SOWN::send_irc_message('!h debug: Disabled interface '.$dev_name.' on node \''.$node->node_name.'\'');
-				}
-			}
 			// Also optional 'hwmode' which can be set to '11g',
 			// we can use the database 'type' field here
 
@@ -285,6 +276,16 @@ class Package_Config_Backfire_Core extends Package_Config
 				'network' => $interface->name,
 			);
 			
+			/* Node might not have a deployment ... */
+			if($node->currentDeployment !== NULL)
+			{
+				if($node->currentDeployment->exceedsCap)
+				{
+					$config['wifi-device'][$fake_iface_name]['disabled'] = 1;
+					 SOWN::send_irc_message('!h debug: Disabled interface '.$interface->ssid.' on node \''.$node->name.'\'');
+				}
+			}
+
 			if($interface->is1x)
 			{
 				$mod[] = Kohana::$config->load('system.default.filename');
