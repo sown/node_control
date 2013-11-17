@@ -282,7 +282,6 @@ class Package_Config_Backfire_Core extends Package_Config
 				if($node->currentDeployment->exceedsCap)
 				{
 					$config['wifi-device'][$fake_iface_name]['disabled'] = 1;
-					 SOWN::send_irc_message('!h debug: Disabled interface '.$interface->ssid.' on node \''.$node->name.'\'');
 				}
 			}
 
