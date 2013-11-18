@@ -116,12 +116,12 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 return "
 define Contact {
 	contact_name			{$name}_admin
-	host_notification_period	none
-	service_notification_period	none
+	host_notification_period	24x7
+	service_notification_period	24x7
 	host_notification_options	d,r
-	service_notification_options	n
+	service_notification_options	w,c,r
 	host_notification_commands	nodeadmin-notify-by-email
-	service_notification_commands	notify-by-email
+	service_notification_commands	nodeadmin-service-notify-by-email
 	email				{$email}
 }
 
