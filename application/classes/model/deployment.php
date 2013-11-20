@@ -149,6 +149,8 @@ class Model_Deployment extends Model_Entity
 				return $this->getPrivilegedDevices();
 			case "privilegedUsers":
 				return $this->getPrivilegedUsers();
+			case "currentAdmins":
+				return $this->getCurrentAdmins();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -212,6 +214,19 @@ class Model_Deployment extends Model_Entity
 			$users[] = $admin->user;
 		}
 		return $users;
+	}
+
+	public function getCurrentAdmins()
+	{
+		$currentAdmins = array();
+		foreach($this->admins as $admin)
+                {
+                        if ($admin->endDate->getTimestamp() > time())
+			{
+                        	$currentAdmins[] = $admin;       
+                        }
+                }
+		return $currentAdmins;
 	}
 
 	public function isCurrentDeploymentAdmin($user_id)

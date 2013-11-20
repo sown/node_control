@@ -57,7 +57,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 			return "";
 		}
 		$emails = array();
-		foreach($node->currentDeployment->admins as $admin)
+		foreach($node->currentDeployment->currentAdmins as $admin)
 		{
 			$emails[] = $admin->user->email;
 		}
