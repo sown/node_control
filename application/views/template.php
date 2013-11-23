@@ -25,8 +25,8 @@ if (isset($jsFiles))
         }       
 }
 ?> 
-  <link <?= HTML::attributes(array("rel" => "icon", "href" => "media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
-  <link <?= HTML::attributes(array("rel" => "shortcut icon", "href" => "media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
+  <link <?= HTML::attributes(array("rel" => "icon", "href" => "/media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
+  <link <?= HTML::attributes(array("rel" => "shortcut icon", "href" => "/media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
 </head>
 <body>
   <div id="top_menu">

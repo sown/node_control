@@ -205,6 +205,7 @@ class FormUtils {
 				$formHtml .= FormUtils::drawFormTable($field, $name, $value);
 				break;
 			case 'button':
+			case 'submit':
 				$formHtml .= FormUtils::drawFormElement($field, $name, $value, $textValue);
 				break;
                 	default:
@@ -260,6 +261,8 @@ class FormUtils {
 				return Form::checkbox($name, 1, !empty($value));
 			case 'button':
 				return Form::input($name, $field['title'], array('type' => 'button', 'onClick' => $field['onClick']));
+			case 'submit':	
+				return Form::submit($name, $field['title']);
 			case 'autocomplete':
 				return FormUtils::autocomplete($name, $value, $textValue, $field['autocompleteUrl'], array('size' => $field['size']));
 			case 'date':
@@ -270,6 +273,8 @@ class FormUtils {
 				return "<img src=\"data:image/jpg;base64,{$value}\" title=\"$name\" alt=\"$name\" width=\"600px\" />";
                         case 'imageupload':
 				return FormUtils::imageupload($name, $value);
+			case 'upload':
+				return Form::file($name);
 			case 'hidden':
 				return Form::hidden($name, $value);
 			case 'static':
