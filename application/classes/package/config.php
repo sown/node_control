@@ -93,7 +93,10 @@ abstract class Package_Config
 			}
 		}
 
-		$dirname = sys_get_temp_dir() .'/sown_tgz_'. time();
+		# morse 2013/12/15 added extra rand, just using isn't enough
+		# as nodes have ntp-sync'd clocks, and all call for updates
+		# in the same second or two.
+		$dirname = sys_get_temp_dir() .'/sown_tgz_'. time().rand();
 		if(! mkdir($dirname))
 			throw new Exception("Failed to create dir '$dirname'");
 
