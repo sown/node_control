@@ -287,12 +287,8 @@ class Controller_Data extends Controller
 		# so that if there are 0 users (which happens at midnight)
 		# then we don't get undefined variable warnings from this code.
 		# also - who called a variable 'array'?
-		$array[] = array();
+                $array[] = array('thedate' => $lastdate, 'no_users' => $users, 'no_connections' => $connections);
 
-                if ($users > 0) 
-		{
-                         $array[] = array('thedate' => $lastdate, 'no_users' => $users, 'no_connections' => $connections);
-                }
 		return $array;
 	}
 
