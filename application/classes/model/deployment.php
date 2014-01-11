@@ -58,6 +58,13 @@ class Model_Deployment extends Model_Entity
 	protected $cap;
 
 	/**
+         * @var boolean $capExceeded
+         *
+         * @Column(name="cap_exceeded", type="boolean", nullable=false)
+         */
+        protected $capExceeded; // This is the current database value for whether the node deployment is over its cap.  This gets updated by the nodeexceedscap check and causes the node_deployment records last_modified to change so the node will pull down the new node config.
+
+	/**
 	 * @var datetime $startDate
 	 *
 	 * @Column(name="start_date", type="datetime", nullable=false)

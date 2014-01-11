@@ -64,6 +64,7 @@ class Model_NodeDeployment extends Model_Entity
 			case 'firewall':
 			case 'advancedFirewall':
 			case 'cap':
+			case 'capExceeded': 
 			case 'range':
 			case 'allowedPorts':
 			case 'type':
@@ -99,6 +100,7 @@ class Model_NodeDeployment extends Model_Entity
 			case 'firewall':
 			case 'advancedFirewall':
 			case 'cap':
+			case 'capExceeded':
 			case 'range':
 			case 'allowedPorts':
 			case 'type':
