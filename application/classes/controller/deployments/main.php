@@ -73,6 +73,54 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 $this->template->content = $content;    
         }
 
+	public function action_mine()
+	{
+		$this->check_login();
+                $latest_end_datetime = new \DateTime(Kohana::$config->load('system.default.admin_system.latest_end_datetime'));
+                $rows = Doctrine::em()->getRepository('Model_Deployment')->findByEndDate($latest_end_datetime);
+		$deployments = array();
+		$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
+		foreach ($rows as $deployment)
+		{
+			if ($deployment->hasCurrentDeploymentAdmin($user->id))
+			{
+				$deployments[] = $deployment;
+			}
+		}
+		if (sizeof($deployments) == 1) 
+		{
+			$this->request->redirect(Route::url('view_deployment', array('id' => $deployment->id)));
+		}
+		$subtitle = "My Deployments";
+                View::bind_global('subtitle', $subtitle);
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+		if (sizeof($deployments) == 0)
+		{
+			$content="<p><b>You have no current deployments!</b></p>";
+		}
+		else 
+		{
+			$fields = array(
+                	        'id' => 'ID',
+                        	'name' => 'Name',
+ 	                        'deploymentBoxNumber' => 'Latest Box Number',
+        	                'startDate' => 'Start Date',
+                	        'endDate' => 'End Date',
+                        	'latestNote' => 'Latest Note',
+	                        'view' => '',
+        	                'usage' => '',
+                	        'edit' => '',
+	                );
+			$content = View::factory('partial/table')
+                	        ->bind('fields', $fields)
+                        	->bind('rows', $rows)
+	                        ->bind('objectType', $objectType)
+        	                ->bind('idField', $idField);
+		}
+                $this->template->content = $content;
+	}
+
 	public function action_create()
 	{
 		$this->check_login("systemadmin");
