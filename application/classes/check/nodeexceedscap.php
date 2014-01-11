@@ -8,6 +8,12 @@ class Check_NodeExceedsCap extends Check
 		if($host->currentDeployment->exceedsCap)
 		{
 			$this->code = Check::CRITICAL;
+			if ($host->currentDeployment->capExceeded == false)
+			{
+				$deployment = $host->currentDeployment;
+				$deployment->exceedsCap = true;
+				$deployment->save();
+			}
 		}
 		else if(false && $host->currentDeployment->approachesCap)
 		{
@@ -16,6 +22,12 @@ class Check_NodeExceedsCap extends Check
 		else
 		{
 			$this->code = Check::OK;
+			if ($host->currentDeployment->capExceeded == true)
+                        {
+                                $deployment = $host->currentDeployment;
+                                $deployment->exceedsCap = false;
+                                $deployment->save();
+                        }
 		}
 		if($cap == 0)
 		{
