@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.70, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.72, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.1.70-0ubuntu0.10.04.1
+-- Server version	5.1.72-0ubuntu0.10.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -92,6 +92,7 @@ CREATE TABLE `deployments` (
   `firewall` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'is the firewall enabled',
   `advanced_firewall` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'is the advanced firewall enabled',
   `cap` bigint(20) NOT NULL DEFAULT '0' COMMENT 'bandwidth cap per month in MB',
+  `cap_exceeded` tinyint(1) NOT NULL,
   `start_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'start date of the deployment',
   `end_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'end date of the deployment',
   `radius` int(11) DEFAULT '20',
@@ -432,4 +433,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-09-10 23:20:58
+-- Dump completed on 2014-01-11  4:23:01
