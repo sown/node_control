@@ -236,7 +236,7 @@ class Model_Deployment extends Model_Entity
 		return $currentAdmins;
 	}
 
-	public function isCurrentDeploymentAdmin($user_id)
+	public function hasCurrentDeploymentAdmin($user_id)
 	{	
 		foreach($this->admins as $admin)
                 {

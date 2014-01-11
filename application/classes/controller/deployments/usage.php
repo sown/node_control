@@ -13,7 +13,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
                 if (!Auth::instance()->logged_in('systemadmin'))
                 {
                         $user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
-                        if (!$deployment->isCurrentDeploymentAdmin($user->id))
+                        if (!$deployment->hasCurrentDeploymentAdmin($user->id))
                         {
                                 return;
                         }
@@ -114,7 +114,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
                 	{
                         	throw new HTTP_Exception_404();
                 	}
-			if (is_object($user) && ($user->isSystemAdmin || $deployment->isCurrentDeploymentAdmin(Auth::instance()->get_user())))
+			if (is_object($user) && ($user->isSystemAdmin || $deployment->hasCurrentDeploymentAdmin(Auth::instance()->get_user())))
 			{
 				$title = "Deployments";
 				$subtitle =  "Deployment Usage (" . $deployment->name . ")";
