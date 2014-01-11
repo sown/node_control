@@ -11,7 +11,7 @@ class Check_NodeExceedsCap extends Check
 			if ($host->currentDeployment->capExceeded == false)
 			{
 				$deployment = $host->currentDeployment;
-				$deployment->exceedsCap = true;
+				$deployment->capExceeded = true;
 				$deployment->save();
 			}
 		}
@@ -25,7 +25,7 @@ class Check_NodeExceedsCap extends Check
 			if ($host->currentDeployment->capExceeded == true)
                         {
                                 $deployment = $host->currentDeployment;
-                                $deployment->exceedsCap = false;
+                                $deployment->capExceeded = false;
                                 $deployment->save();
                         }
 		}
