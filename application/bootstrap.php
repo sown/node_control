@@ -342,7 +342,11 @@ Route::set('current_deployments', 'admin/deployments/current')
                 'controller' => 'deployments_main',
                 'action'     => 'current',
         ));
-
+Route::set('my_deployments', 'admin/deployments/mine')
+        ->defaults(array(
+                'controller' => 'deployments_main',
+                'action'     => 'mine',
+        ));
 Route::set('create_deployment', 'admin/deployments/create')
         ->defaults(array(
                 'controller' => 'deployments_main',
