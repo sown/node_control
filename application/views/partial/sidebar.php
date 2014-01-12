@@ -45,6 +45,7 @@ if(!isset($user))
 <?php } ?>
 <?php if($user->is('deploymentadmin')) { ?>
         <a href="<?= Route::url('my_deployments') ?>">My Deployment(s)</a><br/>
+        <a href="<?= Route::url('deployments_usage') ?>">My Deployment(s) Usage</a><br/>
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('deployments_usage_all') ?>">All Deployments Usage</a><br/>
