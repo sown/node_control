@@ -89,7 +89,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		}
 		if (sizeof($deployments) == 1) 
 		{
-			$this->request->redirect(Route::url('view_deployment', array('id' => $deployment->id)));
+			$this->request->redirect(Route::url('view_deployment', array('id' => $deployments[0]->id)));
 		}
 		$subtitle = "My Deployments";
                 View::bind_global('subtitle', $subtitle);
@@ -183,7 +183,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 
 	public function action_view()
 	{
-		$this->check_login("systemadmin");
+		$this->check_login("systemadmin", "Deployment", $this->request->param('id'));
 		if ($this->request->method() == 'POST')
 		{
 			$this->request->redirect(Route::url('edit_deployment', array('id' => $this->request->param('id'))));
@@ -201,7 +201,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 
 	public function action_edit()
         {
-                $this->check_login("systemadmin");
+                $this->check_login("systemadmin", "Deployment", $this->request->param('id'));
 		$cssFiles =  array('jquery-ui.css');
 		View::bind_global('cssFiles', $cssFiles);
 		$jsFiles = array('jquery.js', 'jquery-ui.js');
@@ -232,13 +232,24 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$subtitle = "Edit Deployment" . $this->request->param('id') . " (" . $formValues['name'] . ")";
 		View::bind_global('subtitle', $subtitle);
 		$formTemplate = $this->_load_form_template('edit');
+		if ($this->userRole == "deploymentadmin")
+		{
+			$formTemplate['type']['type'] = 'static';
+			$formTemplate['isDevelopment']['type'] = 'static';
+			$formValues['isDevelopment'] == true ? $formValues['isDevelopment'] = 'yes' : $formValues['isDevelopment'] = 'no';
+			$formTemplate['isPrivate']['type'] = 'static';
+			$formValues['isPrivate'] == true ? $formValues['isPrivate'] = 'yes' : $formValues['isPrivate'] = 'no';
+		}
 		$submits = array('updateDeployment' => 'Update Deployment');
-		if (strtotime($formValues['endDate']) > time())
+		if (strtotime($formValues['endDate']) > time() && $this->userRole == "systemadmin")
 		{
 			$submits['endDeployment'] = "End Deployment";
 		}
 		$notesFormValues = Controller_Notes::load_from_database('Deployment', $formValues['id'], 'edit');
-                $notesFormTemplate = Controller_Notes::load_form_template('edit');
+		$issystemadmin = false;		
+		if ($this->userRole == "systemadmin")
+			$issystemadmin = true;
+                $notesFormTemplate = Controller_Notes::load_form_template('edit', $issystemadmin);
                 $this->template->content = FormUtils::drawForm('Deployment', $formTemplate, $formValues, $submits, $errors, $success) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
         }
 
@@ -506,8 +517,12 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$deployment->name = $formValues['name'];
 		$deployment->url = $formValues['url'];
 		$deployment->type = $formValues['type'];
-		$deployment->isDevelopment = ( isset($formValues['isDevelopment']) ? 1 : 0 );
-		$deployment->isPrivate = ( isset($formValues['isPrivate']) ? 1 : 0 );
+		if ($this->userRole == 'systemadmin')
+		{
+			$deployment->type = $formValues['type'];
+			$deployment->isDevelopment = ( isset($formValues['isDevelopment']) ? 1 : 0 );
+			$deployment->isPrivate = ( isset($formValues['isPrivate']) ? 1 : 0 );
+		}
 		$deployment->firewall = ( isset($formValues['configuration']['firewall']) ? 1 : 0 );
 		$deployment->allowedPorts = $formValues['configuration']['allowedPorts'];
 		$deployment->advancedFirewall = ( isset($formValues['configuration']['advancedFirewall']) ? 1 : 0 );

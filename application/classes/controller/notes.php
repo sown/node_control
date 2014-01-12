@@ -29,7 +29,7 @@ class Controller_Notes extends Controller_AbstractAdmin
                 return $notesFormValues;
 	}
 
-	public static function load_form_template($action = 'edit')
+	public static function load_form_template($action = 'edit', $delete = true)
 	{
 		$formTemplate['notes'] = array(
                         'title' => 'Notes',
@@ -50,7 +50,8 @@ class Controller_Notes extends Controller_AbstractAdmin
                 if ($action == 'edit')
                 {
 			$userId = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user())->id;
-                        $formTemplate['notes']['fields']['currentNotes']['fields']['delete'] = array('title' => 'Delete', 'type' => 'button', 'onClick' => 'delete_note(document.getElementsByName(this.name.replace("delete","id")).item(0).value, document.forms[0].attributes["name"].value, document.forms[0].id.value);');
+			if ($delete)
+	                       $formTemplate['notes']['fields']['currentNotes']['fields']['delete'] = array('title' => 'Delete', 'type' => 'button', 'onClick' => 'delete_note(document.getElementsByName(this.name.replace("delete","id")).item(0).value, document.forms[0].attributes["name"].value, document.forms[0].id.value);');
                         $formTemplate['notes']['fields']['newNote'] = array('title' => 'New note', 'type' => 'textarea', 'size' => 50);
 			$formTemplate['notes']['fields']['addNewNote'] = array('title' => 'Add', 'type' => 'button', 'onClick' => 'add_note(document.forms[0].attributes["name"].value, document.forms[0].id.value, document.forms["Notes"].notes_newNote.value, "'.$userId.'");');
                 }

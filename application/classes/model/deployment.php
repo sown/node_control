@@ -239,7 +239,7 @@ class Model_Deployment extends Model_Entity
 	public function hasCurrentDeploymentAdmin($user_id)
 	{	
 		foreach($this->admins as $admin)
-                {
+		{
 			if ($admin->user->id == $user_id)
 			{
 				if ($admin->endDate->getTimestamp() > time())
