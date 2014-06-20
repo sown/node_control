@@ -275,6 +275,7 @@ class Model_Deployment extends Model_Entity
 		$deployment->latitude = $latitude;
 		$deployment->range = 20;
 		$deployment->cap = $cap;
+		$deployment->capExceeded = False;
 		$deployment->type = 'home';
 		$deployment->startDate = new \DateTime();
 		$deployment->endDate = new \DateTime(Kohana::$config->load('system.default.admin_system.latest_end_datetime'));
