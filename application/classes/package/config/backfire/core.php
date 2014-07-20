@@ -354,6 +354,10 @@ class Package_Config_Backfire_Core extends Package_Config
                                         'enabled' => 'true',
                                         'command' => '5 * * * * /usr/sbin/cron_check',
                                 ),
+				'syslog' => array(
+                                        'enabled' => 'true',
+                                        'command' => '*/5 * * * * /usr/sbin/maintain_syslog > /dev/null',
+                                ),
 				'tunnel' => array(
 					'enabled' => 'true',
 					'command' => '*/5 * * * * /usr/sbin/maintain_sown_tunnel > /dev/null',
