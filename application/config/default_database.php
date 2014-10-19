@@ -31,6 +31,12 @@ return array
 		'charset'      => 'utf8',
 		'caching'      => FALSE,
 		'profiling'    => Kohana::$environment !== Kohana::PRODUCTION,
+		'ssh'   => array
+                (
+                         'keypairs' => 'keypairs',
+                         'password_hash' => 'password_hash',
+                );
+
 	),
 	'radius' => array
 	(
