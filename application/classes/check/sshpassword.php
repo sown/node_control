@@ -34,6 +34,15 @@ class Check_SshPassword extends Check
 			$host->save();
 		}
 		if($responseparts[1] == $host->passwordHash) {
+			$pwsession = new SSHSession($ip);
+			try {
+				$defpassword =  Kohana::$config->load('database.node_config.ssh_default_password');
+                        	$pwsession->connect('root', $defpassword);
+				$this->code = Check::CRITICAL;
+                		$this->message = "Still using default setup password.";
+				return;
+                	}
+                	catch(Exception $e) {}
 			$this->code = Check::OK;
                 	$this->message = "Password hash is as expected.";
 			return;
