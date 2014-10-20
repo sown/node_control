@@ -33,6 +33,13 @@ class Model_Node extends Model_Entity
 	protected $firmwareImage;
 
 	/**
+         * @var string $passwordHash
+         *
+         * @Column(name="password_hash", type="string", nullable=false)
+         */
+        protected $passwordHash;
+
+	/**
 	 * @var Model_Certificate
 	 *
 	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist", "remove"})

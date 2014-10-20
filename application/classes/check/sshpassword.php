@@ -5,10 +5,9 @@ class Check_SshPassword extends Check
 	public function Check_SshPassword($host)
 	{
 		$ip = $host->vpnEndpoint->IPv4->get_address_in_network(2);
-		
-		$session = new SSHSession($host);
+		$session = new SSHSession($ip);
 		try {
-      			@$session->connect();
+      			$session->connect();
 		}
 		catch(Exception $e) {
       			$this->code = Check::CRITICAL;
@@ -16,25 +15,30 @@ class Check_SshPassword extends Check
 			return;
 		}
 		try {
-      			$response = @$session->execute('cat /etc/passwd | /bin/grep root');
+      			$response = $session->execute('/bin/cat /etc/shadow | /bin/grep root');
 		}
 		catch(Exception $e) {
       			$this->code = Check::CRITICAL;
                         $this->message = "Could not run command to examine SSH password on node.";
                         return;
 		}
-		if($response == '') {
+		if(empty($response)) {
 			$this->code = Check::CRITICAL;
                         $this->message = "No entry for root user password.";
                         return;
 		}
-		$responseparts = split(':', $response,3);
-		if($responseparts[1] == Kohana::$config->load('database.node_config.ssh.password_hash')) {	
+		$responseparts = explode(':', $response, 3);
+		$pwhash = $host->passwordHash;
+		if (empty($pwhash) && !empty($responseparts[1])) {
+			$host->passwordHash = $responseparts[1];
+			$host->save();
+		}
+		if($responseparts[1] == $host->passwordHash) {
 			$this->code = Check::OK;
-                	$this->message = "Password value is as expected.";
+                	$this->message = "Password hash is as expected.";
 			return;
 		}
 		$this->code = Check::CRITICAL;
-                $this->message = "Password value is incorrect.";
+                $this->message = "Password hash has changed.";
 	}
 }
