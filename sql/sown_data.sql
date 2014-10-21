@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.72, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.1.73, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.1.72-0ubuntu0.10.04.1
+-- Server version	5.1.73-0ubuntu0.10.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -295,6 +295,7 @@ CREATE TABLE `nodes` (
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
   `box_number` int(11) DEFAULT NULL COMMENT 'DEPRECATED. DO NOT USE.',
   `firmware_image` text NOT NULL COMMENT 'version of firmware installed on the node (e.g. Backfire 10.03)',
+  `password_hash` varchar(255) NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `node_to_endpoint` (`vpn_endpoint_id`),
@@ -433,4 +434,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-01-11  4:23:01
+-- Dump completed on 2014-10-21  4:23:02
