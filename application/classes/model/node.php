@@ -343,6 +343,7 @@ class Model_Node extends Model_Entity
 		$obj->firmwareImage = $firmwareImage;
 		$obj->certificate = $certificate;
 		$obj->vpnEndpoint = $vpnEndpoint;
+		$obj->passwordHash = "";
 		return $obj;
 	}
 
