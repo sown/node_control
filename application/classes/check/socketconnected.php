@@ -17,18 +17,28 @@ class Check_SocketConnected extends Check
 		}
 
 		$handle = fopen($this->file, "r");
+		$line_count = 0;
 		while(!feof($handle)) {
 			$line = fgets($handle);
 			if (strpos($line,">" . $ip . ":") !== false) {
-				$this->code = Check::OK;
-				$this->message = "Node has established connection to " . $this->name;
-				fclose($handle);
-				return;
+				$line_count += 1;
 			}
 		}
+
+		if($line_count == 1) {
+			$this->code = Check::OK;
+			$this->message = "Node has established connection to " . $this->name;
+		}
+		else if($line_count == 0) {
+			$this->code = Check::CRITICAL;
+			$this->message = "Node not connected to " . $this->name;
+		}
+		else {
+			$this->code = Check::WARNING;
+			$this->message = "Node connected multiple times to " . $this->name;
+		}
+
 		fclose($handle);
-		
-		$this->code = Check::CRITICAL;
-		$this->message = "Node not connected to " . $this->name;
+		return;
 	}
 }
