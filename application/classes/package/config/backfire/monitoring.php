@@ -209,7 +209,7 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 						// 'hoplimit' => '',
 						'tracking_level' => 'full',
 						'track_ipv6' => 1,
-						'enabled' => 1,
+						'enabled' => 0,
 					)
 				),
 			);
