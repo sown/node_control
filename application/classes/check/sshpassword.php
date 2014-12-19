@@ -12,8 +12,10 @@ class Check_SshPassword extends Check
 		catch(Exception $e) {
       			$this->code = Check::CRITICAL;
                 	$this->message = "Could not SSH into node.";
+			SOWN::notify_icinga($host->hostname, "SSH", 2, "SSH CRITICAL: Node cannot be logged into");	
 			return;
 		}
+		SOWN::notify_icinga($host->hostname, "SSH", 0, "SSH OK: Node can be logged into");
 		try {
       			$response = $session->execute('/bin/cat /etc/shadow | /bin/grep root');
 		}
