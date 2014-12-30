@@ -36,17 +36,17 @@ class FormUtils {
 		}
 		if (!empty($errors))
 		{
-			$formHtml .= "  <p class=\"error\">Some errors were encountered, please check the details you entered.</p>\n";
+			$formHtml .= "  <div class=\"error\">Some errors were encountered, please check the details you entered.\n";
 	        	$formHtml .= "  <ul class=\"errors\">\n";
 			foreach ($errors as $e => $error) 
 			{
 				$formHtml .= "    <li>$e should be $error[0]</li>\n";
 			}
-			$formHtml .= "  </ul>";
+			$formHtml .= "  </ul></div>";
 		}
 		if (!empty($success)) 
 		{
-			$formHtml .= "  <p class=\"success\">$success</p>\n";
+			$formHtml .= "  <div class=\"success\">$success</div>\n";
 		}
 		$inlineclass='';
                 if (!empty($attributes['inline']))

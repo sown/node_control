@@ -173,7 +173,7 @@ class Model_VpnEndpoint extends Model_Entity
 		return $obj;
 	}
 	
-	public static function unusedPort($port, $vpnEndpointId = 0)
+	public static function freePort($port, $vpnEndpointId = 0)
 	{
 		$vpnEndpoint = Doctrine::em()->getRepository('Model_VpnEndpoint')->findOneByPort($port);
                 if (!empty($vpnEndpoint->id) && !empty($vpnEndpointId) && $vpnEndpointId != $vpnEndpoint->id)
@@ -183,7 +183,7 @@ class Model_VpnEndpoint extends Model_Entity
                 return TRUE;
 	}
 
-	public static function unusedIPSubnet($address, $cidr, $version = 4, $vpnEndpointId = 0)
+	public static function freeIPSubnet($address, $cidr, $version = 4, $vpnEndpointId = 0)
 	{
 		$vpnEndpoints = Doctrine::em()->getRepository('Model_VpnEndpoint')->findAll();
 		$IPSubnet = IP_Network_Address::factory($address, $cidr);
@@ -199,6 +199,6 @@ class Model_VpnEndpoint extends Model_Entity
 				return FALSE;
 			}
 		}
-		return TRUE;	
+		return Model_Subnet_Reserved::freeIPSubnet($address, $cidr, $version);
 	}
 }

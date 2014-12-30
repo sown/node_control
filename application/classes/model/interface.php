@@ -243,7 +243,7 @@ class Model_Interface extends Model_Entity
 		return $obj;
 	}
 
-	public static function unusedIPSubnet($address, $cidr, $version = 4, $interfaceId = 0)
+	public static function freeIPSubnet($address, $cidr, $version = 4, $interfaceId = 0)
 	{
 		$interfaces = Doctrine::em()->getRepository('Model_Interface')->findAll();
                 $IPSubnet = IP_Network_Address::factory($address, $cidr);
@@ -260,6 +260,6 @@ class Model_Interface extends Model_Entity
                                 return FALSE;
                         }
                 }
-                return TRUE;
+		return Model_Subnet_Reserved::freeIPSubnet($address, $cidr, $version);
 	}
 }

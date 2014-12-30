@@ -198,19 +198,19 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$validation = Validation::factory($formValues['vpnEndpoint'])
 	               ->rule('port','not_empty', array(':value'))
                        ->rule('port', 'Model_VpnServer::validPort', array(':value', $formValues['vpnEndpoint']['vpnServer']))
-                       ->rule('port', 'Model_VpnEndpoint::unusedPort', array(':value', $formValues['vpnEndpoint']['id']))
+                       ->rule('port', 'Model_VpnEndpoint::freePort', array(':value', $formValues['vpnEndpoint']['id']))
                        ->rule('IPv4Addr', 'not_empty', array(':value'))
                        ->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
                        ->rule('IPv4AddrCidr', 'not_empty', array(':value'))
                        ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
                        ->rule('IPv4Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['vpnServer']))
-                       ->rule('IPv4Addr', 'Model_VpnEndpoint::unusedIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
+                       ->rule('IPv4Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
                        ->rule('IPv6Addr', 'not_empty', array(':value'))
                        ->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
                        ->rule('IPv6AddrCidr', 'not_empty', array(':value'))
                        ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
                        ->rule('IPv6Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['vpnServer']))
-                       ->rule('IPv6Addr', 'Model_VpnEndpoint::unusedIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));
+                       ->rule('IPv6Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));
 
                 if (!$validation->check())
                 {
@@ -219,7 +219,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 $errors["VPN Endpoint $e"] = $error;
                         }
                 }
-                foreach ($formValues['interfaces'] as $i => $interface)
+                foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interface)
                 {
                 	if(!empty($interface['name'])) 
 			{
@@ -234,11 +234,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 	$validation->rule('IPv4Addr', 'not_empty', array(':value'))
                                         	->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
                                                 ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
-                                                ->rule('IPv4Addr', 'Model_Interface::unusedIPSubnet', array(':value', $interface['IPv4AddrCidr'], 4, $interface['id']))
+                                                ->rule('IPv4Addr', 'Model_Interface::freeIPSubnet', array(':value', $interface['IPv4AddrCidr'], 4, $interface['id']))
                                                 ->rule('IPv6Addr', 'not_empty', array(':value'))
                                                 ->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
                                                 ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
-                                                ->rule('IPv6Addr', 'Model_Interface::unusedIPSubnet', array(':value', $interface['IPv6AddrCidr'], 6, $interface['id']));
+                                                ->rule('IPv6Addr', 'Model_Interface::freeIPSubnet', array(':value', $interface['IPv6AddrCidr'], 6, $interface['id']));
                                 }
                                 else
                                 {

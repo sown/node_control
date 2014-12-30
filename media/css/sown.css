@@ -374,13 +374,13 @@ div.error
 	border: solid 3px #F00;
 }
 
-div.notice
+div.notice, div.success
 {
 	background-color: #9F9;
 	border: solid 3px #0F0;
 }
 
-div.error, div.notice
+div.error, div.notice, div.success
 {
 	width: 98%;
 	padding: 1%;

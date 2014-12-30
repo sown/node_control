@@ -301,6 +301,30 @@ Route::set('view_cron_job', 'admin/cronjobs/<id>')
                 'action'     => 'view',
         ));
 
+Route::set('reserved_subnets', 'admin/subnets/reserved')
+        ->defaults(array(
+                'controller' => 'subnets_reserved',
+                'action'     => 'default',
+        ));
+
+Route::set('create_reserved_subnet', 'admin/subnets/reserved/create')
+        ->defaults(array(
+                'controller' => 'subnets_reserved',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_reserved_subnet', 'admin/subnets/reserved/<id>/delete')
+        ->defaults(array(
+                'controller' => 'subnets_reserved',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_reserved_subnet', 'admin/subnets/reserved/<id>/edit')
+        ->defaults(array(
+                'controller' => 'subnets_reserved',
+                'action'     => 'edit',
+        ));
+
 Route::set('nodes', 'admin/nodes')
         ->defaults(array(
                 'controller' => 'nodes',
