@@ -204,6 +204,7 @@ CREATE TABLE `interfaces` (
   `type` enum('dhcp','bridge','static') NOT NULL COMMENT 'type of config DHCP,BRIDGE,STATIC',
   `offer_dhcp` tinyint(1) NOT NULL COMMENT 'does the interface offer DHCP',
   `is_1x` tinyint(1) NOT NULL COMMENT 'is the interface 802.1x encrypted',
+  `disabled` tinyint(1) NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `interface_to_node` (`node_id`),
@@ -434,4 +435,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-10-21  4:23:02
+-- Dump completed on 2014-12-25  4:23:02
