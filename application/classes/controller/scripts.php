@@ -174,7 +174,6 @@ class Controller_Scripts extends Controller_Template
 		$tmpdir = $this->request->param('tmpdir');
       		if (empty($tmpdir)) $tmpdir = '/tmp';
 		$tmpdir = str_replace("+", "/", $tmpdir);
-		echo "\n\n$tmpdir\n\n";
 
       		$query = Doctrine::em()->createQuery("SELECT n.boxNumber, ve.IPv4Addr, ve.IPv6Addr, d.latitude, d.longitude, na.mac, d.type, n.firmwareImage FROM Model_Node n JOIN n.vpnEndpoint ve JOIN n.interfaces i JOIN i.networkAdapter na LEFT JOIN n.nodeDeployments nd LEFT JOIN nd.deployment d WHERE (nd.endDate > CURRENT_TIMESTAMP() OR nd.endDate IS NULL) AND i.name = 'eth0' ORDER BY n.boxNumber ASC");
 		$results = $query->getResult();
