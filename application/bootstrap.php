@@ -653,6 +653,12 @@ Route::set('deployments_usage_daily_graph', 'admin/deployments/usage/graphs/dail
                 'action'     => 'daily_graph',
         ));
 
+Route::set('update_dnz_zones', 'scripts/update_dns_zones/<tmpdir>')
+        ->defaults(array(
+                'controller' => 'scripts',
+                'action'     => 'update_dns_zones',
+        ));
+
 Route::set('update_nass', 'scripts/update_nass')
 	->defaults(array(
                 'controller' => 'scripts',
