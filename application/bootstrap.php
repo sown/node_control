@@ -407,6 +407,36 @@ Route::set('usage_deployment', 'admin/deployments/<id>/usage')
                 'action'     => 'default',
         ));
 
+Route::set('node_requests', 'admin/noderequests')
+	->defaults(array(
+                'controller' => 'noderequests',
+                'action'     => 'default',
+        ));
+
+Route::set('pending_node_requests', 'admin/noderequests/pending')
+        ->defaults(array(
+                'controller' => 'noderequests',
+                'action'     => 'pending',
+        ));
+
+Route::set('delete_node_request', 'admin/noderequests/<id>/delete')
+        ->defaults(array(
+                'controller' => 'noderequests',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_node_request', 'admin/noderequests/<id>/edit')
+        ->defaults(array(
+                'controller' => 'noderequests',
+                'action'     => 'edit',
+        ));
+
+Route::set('view_node_request', 'admin/noderequests/<id>')
+        ->defaults(array(
+                'controller' => 'noderequests',
+                'action'     => 'view',
+        ));
+
 Route::set('enquiries', 'admin/enquiries')
         ->defaults(array(
                 'controller' => 'enquiries',
