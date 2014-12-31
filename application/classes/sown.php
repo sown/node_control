@@ -75,6 +75,11 @@ class SOWN
 
 	public static function find_host_by_ip($ipString) 
 	{
+		if (in_array($ipString, array("127.0.0.1", "127.0.1.1", "::1")))
+		{
+			$hostname = trim(`hostname`);
+			$ipString = trim(`host -t A $hostname | awk 'BEGIN{FS=" "}{print \$NF}'`);
+		}
 		$qb = Doctrine::em()->getRepository('Model_Server')->createQueryBuilder('s');
 		$qb->where('s.internalIPv4 LIKE :ip');
 		$qb->orWhere('s.externalIPv4 LIKE :ip');

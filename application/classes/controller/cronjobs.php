@@ -76,14 +76,13 @@ class Controller_CronJobs extends Controller_AbstractAdmin
       		$log="";
 		if ($this->request->method() != 'POST') 
 		{
-			error_log("no post");
 			die("Lists of cron jobs can only be posted to this URL");
 		}
 		$post = $this->request->post();	
       		$hostCronJobsString = $post['jobs']; // $in_string
 	        $hostAddress = $_SERVER["REMOTE_ADDR"];
       		$host = Sown::find_host_by_ip($hostAddress);
-                $icingaName = Sown::get_icinga_name_for_host($host);
+		$icingaName = Sown::get_icinga_name_for_host($host);
       		$log .= "Icinga Name: $icingaName\n";
 		$dbCronJobs = $host->getAllCronJobs();
 		$fromDb = array();
