@@ -310,5 +310,36 @@ class SOWN
                         $barplot->SetFillColor($fillcolors[$b]);
 		}
 	}
+
+	public static function decimal_to_minute_second_degrees($decdeg, $type, $nodecimal = FALSE)
+        {
+                $direction = '';
+                if ($type == 'longitude')
+                {
+                        if ($decdeg >= 0) $direction = "E";
+                        else $direction = "W";
+                }
+                else
+                {
+                        if ($decdeg >= 0) $direction = "N";
+                        else $direction = "S";
+                }
+                $sec = abs($decdeg * 3600);
+                $deg = floor($sec / 3600);
+                $sec = $sec % 3600;
+                $min = floor($sec / 60);
+                $sec = $sec % 60;
+		if ($nodecimal)
+		{
+			return array($deg, $min, $sec, $direction);
+		}
+                return array($deg, $min, $sec.".000", $direction);
+        }
+
+	public static function formatted_decimal_to_minute_second_degrees($decdeg, $type, $nodecimal = FALSE)
+	{
+		$dmsd = SOWN::decimal_to_minute_second_degrees($decdeg, $type, $nodecimal);
+		return $dmsd[0]."&deg;".$dmsd[1]."'".$dmsd[2]."&quot;".$dmsd[3];
+	}
 }	
 

@@ -21,8 +21,8 @@ class DNSUtils {
             		$loc = "";
             		if (!empty($lat) && floatval($lat) != 0) 
 			{
-                  		$lat = DNSUtils::decimalToMinSecDegrees($lat, 'latitude');
-                  		$long = DNSUtils::decimalToMinSecDegrees($result['longitude'], 'longitude');
+                  		$lat = SOWN::decimal_to_minute_second_degrees($lat, 'latitude');
+                  		$long = SOWN::decimal_to_minute_second_degrees($result['longitude'], 'longitude');
                   		$loc = "${lat[0]} ${lat[1]} ${lat[2]} ${lat[3]} ${long[0]} ${long[1]} ${long[2]} ${long[3]} 10m 100m 60m 60m";
             		}
             		$type = $result['type'];
@@ -137,27 +137,6 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-hosts"
 $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
 ');
       		fclose($handle);
-	}
-
-	private static function decimalToMinSecDegrees($decdeg, $type) 
-	{
-      		$direction = '';
-      		if ($type == 'longitude') 
-		{
-            		if ($decdeg >= 0) $direction = "E";
-            		else $direction = "W";
-      		}
-      		else
-		{
-            		if ($decdeg >= 0) $direction = "N";
-            		else $direction = "S";
-      		}
-      		$sec = abs($decdeg * 3600);
-      		$deg = floor($sec / 3600);
-      		$sec = $sec % 3600;
-      		$min = floor($sec / 60);
-      		$sec = $sec % 60;
-      		return array($deg, $min, $sec.".000", $direction);
 	}
 
 	private static function reversePTR($ip)
