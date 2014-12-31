@@ -49,8 +49,8 @@ if(!isset($user))
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('deployments_usage_all') ?>">All Deployments Usage</a><br/>
+	<a href="<?= Route::url('reserved_subnets') ?>">Reserved Subnets</a><br/>
 <?php } ?>
-        <a href="<?= Route::url('reserved_subnets') ?>">Reserved Subnets</a><br/>
       </div>
     </div>
      <div class="gadget">
