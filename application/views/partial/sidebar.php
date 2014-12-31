@@ -49,6 +49,7 @@ if(!isset($user))
 <?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('deployments_usage_all') ?>">All Deployments Usage</a><br/>
+	<a href="<?= Route::url('pending_node_requests') ?>">Pending Node Requests</a><br/>
 	<a href="<?= Route::url('reserved_subnets') ?>">Reserved Subnets</a><br/>
 <?php } ?>
       </div>
