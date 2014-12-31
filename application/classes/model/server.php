@@ -122,6 +122,19 @@ class Model_Server extends Model_Entity
                 return $allCronJobs;
         }
 
+	public function getEnabledCronJobs()
+	{
+		$enabledCronJobs = array();
+		$allCronJobs = $this->getAllCronJobs();
+		foreach ($allCronJobs as $c => $cronJob) 
+		{
+			if ($cronJob->disabled == 0)
+			{
+				$enabledCronJobs[] = $cronJob;
+			}
+		}
+		return $enabledCronJobs;
+	}
 
 	public static function getByName($name)
 	{

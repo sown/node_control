@@ -84,7 +84,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
       		$host = Sown::find_host_by_ip($hostAddress);
 		$icingaName = Sown::get_icinga_name_for_host($host);
       		$log .= "Icinga Name: $icingaName\n";
-		$dbCronJobs = $host->getAllCronJobs();
+		$dbCronJobs = $host->getEnabledCronJobs();
 		$fromDb = array();
 		foreach ($dbCronJobs as $dbCronJob)
 		{
@@ -157,11 +157,11 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	      	# Send to icinga
 		if (!isset($errors) || $errors == "") 
 		{
-            		Sown::send_nsca($icingaName, "CRONJOBS", "OK", "User Cronjobs are all ok");
+            		Sown::notify_icinga($icingaName, "CRONJOBS", 0, "CRONJOBS OK: Cronjobs as expected");
       		} 
 		else 
 		{
-            		Sown::send_nsca($icingaName, "CRONJOBS", "WARNING", $errors);
+            		Sown::notify_icinga($icingaName, "CRONJOBS", 1, "CRONJOBS WARNING: $errors");
       		}
       		if (!empty($logging))
 		{
