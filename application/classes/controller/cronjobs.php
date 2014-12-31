@@ -417,14 +417,8 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                 $object->username = $formValues['username'];
                 $object->command = $formValues['command'];
                 $object->description = $formValues['description'];
-		if (isset($formValues['disabled']))
-		{
-                	$object->disabled = $formValues['disabled'];
-		}
-		if (isset($formValues['required']))
-		{
-                	$object->required = $formValues['required'];
-		}
+                $object->disabled = FormUtils::getCheckboxValue($formValues, 'disabled');
+                $object->required = FormUtils::getCheckboxValue($formValues, 'required');
                 $object->misc = $formValues['misc'];
 		$object->updatedAt = new \DateTime();
 		$dbOnHosts = array();

@@ -113,6 +113,15 @@ class FormUtils {
 		return $formTemplate;
 	}
 
+	public static function getCheckboxValue($formValues, $field, $unsetValue = 0) 
+	{
+		if (isset($formValues[$field]))
+                {
+                        return $formValues[$field];
+                }
+		return $unsetValue;
+	}
+
 	private static function drawFormTable($table, $name, $values)
 	{
 		$formHtml = "    <table id=\"$name\" class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n      <tr class=\"tabletitle\">\n";
