@@ -365,6 +365,25 @@ CREATE TABLE `notes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `reserved_subnets`
+--
+
+DROP TABLE IF EXISTS `reserved_subnets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reserved_subnets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the used subnet',
+  `name` text NOT NULL COMMENT 'name of the used subnet',
+  `ipv4_addr` varchar(15) NOT NULL,
+  `ipv4_addr_cidr` int(2) NOT NULL,
+  `ipv6_addr` varchar(39) NOT NULL,
+  `ipv6_addr_cidr` int(3) NOT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='used subnets that should not be allocated to nodes';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `servers`
 --
 
@@ -464,4 +483,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-01-01  4:23:01
+-- Dump completed on 2015-01-03 10:43:20
