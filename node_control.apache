@@ -20,8 +20,12 @@ SSLStrictSNIVHostCheck off
 <VirtualHost *:443>
     ServerAdmin support@sown.org.uk
     ServerName sown-auth2.ecs.soton.ac.uk
-    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.pub
-    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.priv
+#    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.pub # Moved to /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/2014_selfsigned/sown-auth2.ecs.soton.ac.uk.crt
+#    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.priv # oved to /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/2014_selfsigned/sown-auth2.ecs.soton.ac.uk.key
+    
+    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.key  
+    SSLCertificateChainFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.cachain    
 
     DocumentRoot "/srv/www/default"
 
@@ -63,8 +67,10 @@ SSLStrictSNIVHostCheck off
 <VirtualHost 10.13.0.239:443>
     ServerAdmin support@sown.org.uk
     ServerName auth2.sown.org.uk
-    SSLCertificateFile /etc/apache2/ssl/auth2.sown.org.uk.pub
-    SSLCertificateKeyFile /etc/apache2/ssl/auth2.sown.org.uk.priv
+    # Below use to be /etc/apache2/ssl/auth2.sown.org.uk.pub
+    SSLCertificateFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.crt
+    # Below use to be /etc/apache2/ssl/auth2.sown.org.uk.priv
+    SSLCertificateKeyFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.key
 
     DocumentRoot "/srv/www/default"
 
