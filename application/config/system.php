@@ -14,12 +14,14 @@ return array
 		(
 			'site_name' => 'SOWN Admin System',
                         'url'   => 'https://sown-auth2.ecs.soton.ac.uk',
+			'domain' => 'sown.org.uk',
 			'contact_email' => 'support@sown.org.uk',
 			'sender_email' => 'NO-REPLY@sown.org.uk',
 			'sender_name' => 'Southampton Open Wireless Network team',
 			'email_subject_prefix' => '[sown-accounts]',
                         'latest_end_datetime' => '2037-12-31 23:59:59',
 			'valid_external_domains' => array('ecs.soton.ac.uk', 'soton.ac.uk'),
+			'valid_query_ips' => array('152.78.189.252'), //skoll.ecs.soton.ac.uk
 		),
 		'adapter_types' => array
 		(

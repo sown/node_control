@@ -23,6 +23,20 @@ class Model_User extends Model_Entity
 	protected $username;
 
 	/**
+         * @var text $password
+         *
+         * @Column(name="password", type="text", nullable=false)
+         */
+	protected $password;
+
+	/**
+         * @var text $name
+         *
+         * @Column(name="name", type="text", nullable=false)
+         */
+        protected $name;
+
+	/**
 	 * @var text $email
 	 *
 	 * @Column(name="email", type="text", nullable=false)
@@ -35,6 +49,13 @@ class Model_User extends Model_Entity
 	 * @Column(name="is_system_admin", type="boolean", nullable=false)
 	 */
 	protected $isSystemAdmin;
+
+	/**
+         * @var text $wikiUsername
+         *
+         * @Column(name="wiki_username", type="text", nullable=false)
+         */
+        protected $wikiUsername;
 
 	/**
 	 * @var text $resetPasswordHash
@@ -74,6 +95,10 @@ class Model_User extends Model_Entity
 //				return $this->getBandwidth();
 			case "deploymentsAsCurrentAdmin":
 				return $this->getDeploymentsAsCurrentAdmin();
+			case "password":
+				return $this->hiddenPassword();
+			case "passwordHash":
+				return $this->password;
 			default:
 				if (property_exists($this, $name))
 				{
@@ -92,6 +117,8 @@ class Model_User extends Model_Entity
 		{
 //			case "bandwidth":
 //				parent::__throwReadOnlyException($name);
+			case "password":
+				$this->password = crypt($value);
 			default:
 				if (property_exists($this, $name))
 				{
@@ -117,7 +144,7 @@ class Model_User extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "User: {$this->id}, username={$this->username}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordHash={$this->resetPasswordTime->getTimestamp()}";
+		$str  = "User: {$this->id}, username={$this->username}, password={$this->hiddenPassword()}, name={$this->name}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, wikiUsername={$this->wikiUsername}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordTime={$this->resetPasswordTimestamp()}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
@@ -137,11 +164,13 @@ class Model_User extends Model_Entity
 		$str  = "<div class='user' id='user_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>User</th><td>{$this->id}</td></tr>";
-		//TODO Add resetPasswordTime when we figure out hiw to get fieldHTML to convert Datetime into a string
-		foreach(array('username', 'email', 'isSystemAdmin', 'resetPasswordHash') as $field)
+		$str .= $this->fieldHTML('username');
+		$str .= $this->fieldHTML('password', $this->hiddenPassword());	
+		foreach(array('name', 'email', 'isSystemAdmin', 'wikiUsername', 'resetPasswordHash') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
+		$str .= $this->fieldHTML('resetPasswordTime', $this->resetPasswordTimestamp());
 		foreach($this->admins as $admin)
 		{
 			$str .= $this->fieldHTML('admin', $admin->toHTML());
@@ -206,6 +235,24 @@ class Model_User extends Model_Entity
 		}
 		$user_and_domain = explode("@", $username);
 		return in_array($user_and_domain[1], Kohana::$config->load('system.default.admin_system.valid_external_domains'));
+	}
+
+	private function hiddenPassword()
+	{
+		if (strlen($this->password)) 
+		{
+			return "[HIDDEN]";
+		}
+		return "";
+	}
+
+	private function resetPasswordTimestamp()
+	{
+		if (is_object($this->resetPasswordTime))
+		{
+			return $this->resetPasswordTime->getTimestamp();
+		}
+		return "";
 	}
 
 

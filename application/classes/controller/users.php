@@ -309,7 +309,7 @@ class Controller_Users extends Controller_AbstractAdmin
                         {
                                 $users = Doctrine::em()->getRepository('Model_User')->findByEmail($username_email);
                                 foreach ($users as $tempuser){
-                                        if (strpos($tempuser->username, "@sown.org.uk") > 0)
+                                        if (strpos($tempuser->username, "@" . Kohana::$config->load('system.default.admin_system.domain')) > 0)
                                         {
                                                 $user = $tempuser;
                                                 break;
@@ -350,6 +350,26 @@ class Controller_Users extends Controller_AbstractAdmin
                 $notesFormTemplate = Controller_Notes::load_form_template('view');
 		$this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('editUser' => 'Edit User')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
 	}
+
+	public function action_view_details_json()
+	{
+		$this->check_ip($_SERVER['REMOTE_ADDR']);
+		$user =  $user = Doctrine::em()->getRepository('Model_User')->findOneByUsername($this->request->param('username') . "@" . Kohana::$config->load('system.default.admin_system.domain'));
+		if (!is_object($user))
+		{
+			throw new HTTP_Exception_404();
+                }	
+		$details = array(
+			'username' => $user->username,
+			'name' => $user->name,
+			'email' => $user->email,
+			'wikiUsername' => $user->wikiUsername,
+			'isSystemAdmin' => $user->isSystemAdmin,
+		);
+		echo json_encode($details);
+		exit(0);
+	}
+	
 
 	public function action_edit()
         {
