@@ -366,7 +366,7 @@ class Controller_Users extends Controller_AbstractAdmin
 			'username' => $user->username,
 			'name' => $user->name,
 			'email' => $user->email,
-			'canAcccesWiki' => $user->canAccessWiki,
+			'canAccessWiki' => $user->canAccessWiki,
 			'wikiUsername' => $user->wikiUsername,
 			'isSystemAdmin' => $user->isSystemAdmin,
 		);
