@@ -341,5 +341,10 @@ class SOWN
 		$dmsd = SOWN::decimal_to_minute_second_degrees($decdeg, $type, $nodecimal);
 		return $dmsd[0]."&deg;".$dmsd[1]."'".$dmsd[2]."&quot;".$dmsd[3];
 	}
+
+	public static function sql_password($plaintext) {
+    		$pass = strtoupper(sha1(sha1($plaintext, true)));
+    		return '*' . $pass;
+	}
 }	
 

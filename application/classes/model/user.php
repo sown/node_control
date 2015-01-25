@@ -118,7 +118,7 @@ class Model_User extends Model_Entity
 //			case "bandwidth":
 //				parent::__throwReadOnlyException($name);
 			case "password":
-				$this->password = crypt($value);
+				$this->password = SOWN::mysql_password($value);
 			default:
 				if (property_exists($this, $name))
 				{
