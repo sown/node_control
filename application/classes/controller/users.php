@@ -39,6 +39,7 @@ class Controller_Users extends Controller_AbstractAdmin
 		$fields = array(
                         'id' => 'ID',
 			'isSystemAdmin' => 'Admin',
+			'canAccessWiki' => 'Wiki Editor',
 			'username' => 'Username',
 			'email' => 'Email',
 			'latestNote' => 'Latest Note',
@@ -50,7 +51,9 @@ class Controller_Users extends Controller_AbstractAdmin
 		foreach ($rows as $r => $row)
 		{
 			$rows[$r]->isSystemAdmin = ( $row->isSystemAdmin ? 'Yes' : 'No') ;
+			$rows[$r]->canAccessWiki = ( $row->canAccessWiki ? 'Yes' : 'No') ;
 		}
+		
 		$objectType = 'user';
                 $idField = 'id';
 		$content = View::factory('partial/table')
@@ -363,6 +366,7 @@ class Controller_Users extends Controller_AbstractAdmin
 			'username' => $user->username,
 			'name' => $user->name,
 			'email' => $user->email,
+			'canAcccesWiki' => $user->canAccessWiki,
 			'wikiUsername' => $user->wikiUsername,
 			'isSystemAdmin' => $user->isSystemAdmin,
 		);
@@ -497,10 +501,14 @@ class Controller_Users extends Controller_AbstractAdmin
 			'id' => $user->id,
 			'username' => $user->username,
 			'email' => $user->email,
+			'canAccessWiki' => $user->canAccessWiki,
+			'wikiUsername' => $user->wikiUsername,
 			'isSystemAdmin' => $user->isSystemAdmin,
+			
 		);
 		if ($action == 'view') 
 		{
+			$formValues['canAccessWiki'] = ($formValues['icanAccessWiki'] ? 'Yes' : 'No');
 			$formValues['isSystemAdmin'] = ($formValues['isSystemAdmin'] ? 'Yes' : 'No');
 			
 		}
@@ -513,6 +521,8 @@ class Controller_Users extends Controller_AbstractAdmin
 			'id' => array('type' => 'hidden'),
 			'username' => array('title' => 'Username', 'type' => 'statichidden'),
 			'email' => array('title' => 'Email', 'type' => 'input'),
+			'canAccessWiki' => array('title' => 'Wiki editor', 'type' => 'checkbox'),
+			'wikiUsername' => array('title' => 'Wiki username', 'type' => 'input'),
 			'isSystemAdmin' => array('title' => 'System admin', 'type' => 'checkbox'),
 		);
 		if ($action == 'view') 
@@ -529,6 +539,12 @@ class Controller_Users extends Controller_AbstractAdmin
 		{
 			$user->email = $formValues['email'];
 		}
+		if (!isset($formValues['canAccessWiki']))
+                {
+                        $formValues['canAccessWiki'] = 0;
+                }
+		$user->canAccessWiki = $formValues['canAccessWiki'];
+                $user->wikiUsername = $formValues['wikiUsername'];
 		if (!isset($formValues['isSystemAdmin']))
                 {
         		$formValues['isSystemAdmin'] = 0;

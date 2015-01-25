@@ -51,6 +51,13 @@ class Model_User extends Model_Entity
 	protected $isSystemAdmin;
 
 	/**
+         * @var boolean $canAccessWiki
+         *
+         * @Column(name="can_access_wiki", type="boolean", nullable=false)
+         */
+        protected $canAccessWiki;
+
+	/**
          * @var text $wikiUsername
          *
          * @Column(name="wiki_username", type="text", nullable=false)
