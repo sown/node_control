@@ -23,13 +23,6 @@ class Model_User extends Model_Entity
 	protected $username;
 
 	/**
-         * @var text $password
-         *
-         * @Column(name="password", type="text", nullable=false)
-         */
-	protected $password;
-
-	/**
          * @var text $name
          *
          * @Column(name="name", type="text", nullable=false)
@@ -102,10 +95,6 @@ class Model_User extends Model_Entity
 //				return $this->getBandwidth();
 			case "deploymentsAsCurrentAdmin":
 				return $this->getDeploymentsAsCurrentAdmin();
-			case "password":
-				return $this->hiddenPassword();
-			case "passwordHash":
-				return $this->password;
 			default:
 				if (property_exists($this, $name))
 				{
@@ -124,8 +113,6 @@ class Model_User extends Model_Entity
 		{
 //			case "bandwidth":
 //				parent::__throwReadOnlyException($name);
-			case "password":
-				$this->password = SOWN::mysql_password($value);
 			default:
 				if (property_exists($this, $name))
 				{
@@ -151,7 +138,7 @@ class Model_User extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "User: {$this->id}, username={$this->username}, password={$this->hiddenPassword()}, name={$this->name}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, wikiUsername={$this->wikiUsername}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordTime={$this->resetPasswordTimestamp()}";
+		$str  = "User: {$this->id}, username={$this->username}, name={$this->name}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, wikiUsername={$this->wikiUsername}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordTime={$this->resetPasswordTimestamp()}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
@@ -171,9 +158,7 @@ class Model_User extends Model_Entity
 		$str  = "<div class='user' id='user_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>User</th><td>{$this->id}</td></tr>";
-		$str .= $this->fieldHTML('username');
-		$str .= $this->fieldHTML('password', $this->hiddenPassword());	
-		foreach(array('name', 'email', 'isSystemAdmin', 'wikiUsername', 'resetPasswordHash') as $field)
+		foreach(array('username', 'name', 'email', 'isSystemAdmin', 'wikiUsername', 'resetPasswordHash') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -242,15 +227,6 @@ class Model_User extends Model_Entity
 		}
 		$user_and_domain = explode("@", $username);
 		return in_array($user_and_domain[1], Kohana::$config->load('system.default.admin_system.valid_external_domains'));
-	}
-
-	private function hiddenPassword()
-	{
-		if (strlen($this->password)) 
-		{
-			return "[HIDDEN]";
-		}
-		return "";
 	}
 
 	private function resetPasswordTimestamp()
