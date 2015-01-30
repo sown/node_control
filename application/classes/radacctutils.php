@@ -306,7 +306,7 @@ class RadAcctUtils {
 
 	public static function UserNotExists($username)
 	{
-		$query = DB::select('username')->from('radcheck')->where('username', '=', ':username')->where('attribute', '=', 'NT-Password')->and_where('Op', '=', ':=');
+		$query = DB::select('username')->from('radcheck')->where('username', '=', ':username');
 		$query->param(':username', RadAcctUtils::GetUserPart($username));
                 $users = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
 		return (sizeof($users) == 0);
