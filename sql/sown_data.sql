@@ -419,7 +419,6 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'user id',
   `username` varchar(255) NOT NULL,
-  `password` varchar(41) NOT NULL,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL COMMENT 'email address',
   `is_system_admin` tinyint(1) NOT NULL COMMENT 'is the user a system level admin',
@@ -487,4 +486,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-01-26  4:23:01
+-- Dump completed on 2015-02-01  4:23:01
