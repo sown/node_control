@@ -38,10 +38,11 @@ class Controller_Users extends Controller_AbstractAdmin
 
 		$fields = array(
                         'id' => 'ID',
-			'isSystemAdmin' => 'Admin',
-			'canAccessWiki' => 'Wiki Editor',
 			'username' => 'Username',
+			'name' => 'Name',
 			'email' => 'Email',
+			'isSystemAdmin' => 'Admin',
+                        'canAccessWiki' => 'Wiki<br/>Editor',
 			'latestNote' => 'Latest Note',
                         'view' => '',
                         'edit' => '',
