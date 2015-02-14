@@ -59,6 +59,7 @@
 		</form>
 	</div>
 	<!-- Accepted Users List -->
+	<!--
 	<div id='valid_institutions'>
 		<h4>Currently accepted users:</h4>
 	
@@ -83,7 +84,8 @@
 				<dd>&raquo; for any questions or proposals.</dd>
 		</dl>
 	</div>
-	</div>
+	-->
+      </div>
     </div>
   </div>
 
