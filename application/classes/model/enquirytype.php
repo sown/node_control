@@ -28,11 +28,32 @@ class Model_EnquiryType extends Model_Entity
 	protected $description;
 
 	/**
-	 * @var boolean $email
+	 * @var text $email
 	 *
          * @Column(name="email", type="string", length=255, nullable=false)
 	 */
 	protected $email;
+
+	/**
+         * @var text $enabledMessage
+         *
+         * @Column(name="enabled_message", type="text", nullable=true)
+         */
+        protected $enabledMessage;
+
+	/**
+         * @var boolean $disabled
+         *
+         * @Column(name="disabled", type="integer", nullable=false)
+         */
+        protected $disabled;
+
+	/**
+         * @var text $disabledMessage
+         *
+         * @Column(name="disabled_message", type="text", nullable=true)
+         */
+        protected $disabledMessage;
 
 	 /**
          * @OneToMany(targetEntity="Model_Enquiry", mappedBy="type")
@@ -75,7 +96,7 @@ class Model_EnquiryType extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "EnquiryType: {$this->id}, title={$this->title}, description={$this->description}, email={$this->email}";
+		$str  = "EnquiryType: {$this->id}, title={$this->title}, description={$this->description}, email={$this->email}, enabledMessage={$this->enabledMessage}, disabled={$this->disabled}, disabledMessage={$this->disabledMessage}";
 		return $str;
 	}
 
@@ -85,7 +106,7 @@ class Model_EnquiryType extends Model_Entity
 		$str  = "<div class='enquiry_type' id='enquiry_type_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Enquiry Type</th><td>{$this->id}</td></tr>";
-		foreach(array('title', 'description', 'email') as $field)
+		foreach(array('title', 'description', 'email', 'enabledMessage', 'disabled', 'disabledMessage') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -94,12 +115,15 @@ class Model_EnquiryType extends Model_Entity
 		return $str;
 	}
 
-	public static function build($title, $description, $email)
+	public static function build($title, $description, $email, $enabledMessage, $disabled, $disabledMessage)
 	{
 		$obj = new Model_EnquiryType();
 		$obj->title = $title;
 		$obj->description = $description;
 		$obj->email = $email;
+		$obj->enabledMessage = $enabledMessage;
+		$obj->disabled = $disabled;
+		$obj->disabledMessage = $disabledMessage;
 		return $obj;
 	}
 }

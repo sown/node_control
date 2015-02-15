@@ -201,6 +201,7 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 			'enquiry_type_title' => 'Title',
 			'description' => 'Description',
 			'email' => 'Email',
+			'disabled' => '',
                         'edit' => '',
                         'delete' => '',
                 );
@@ -228,7 +229,11 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues);
 			if ($validation->check())
         		{
-				$enquiryType = Model_EnquiryType::build($formValues['title'], $formValues['description'], $formValues['email']);
+				if (!isset($formValues['disabled'])) 
+				{
+					$formValues['disabled'] = 0;
+				}
+				$enquiryType = Model_EnquiryType::build($formValues['title'], $formValues['description'], $formValues['enabledMessage'], $formValues['email'], $formValues['disabled'], $formValues['disabledMessage']);
 				$enquiryType->save();
 				$url = Route::url('enquiry_types');
                         	$success = "Successfully created enquiry type \"{$formValues['title']}\"."; 
@@ -244,13 +249,19 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 				'title' => '',
                                 'description' => '',
                                 'email' => 'committee@sown.org.uk',
+				'enabledMessage' => '',
+				'disabled' => 0,
+				'disabledMessage' => 'Enquiries of this type are not currently available.',
                         );
 	
 		}
 		$formTemplate = array(
-                        'title' => array('title' => 'Title', 'type' => 'input'),
+                        'title' => array('title' => 'Title', 'type' => 'input', 'size' => 50),
                         'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
-                        'email' => array('title' => 'Email', 'type' => 'input'),
+                        'email' => array('title' => 'Email', 'type' => 'input', 'size' => 50),
+			'enabledMessage' => array('title' => 'Enabled Message', 'type' => 'textarea', 'rows' => 6, 'cols' => 100),
+			'disabled' => array('title' => 'Disabled', 'type' => 'checkbox'),
+			'disabledMessage' => array('title' => 'Disabled Message', 'type' => 'textarea', 'rows' => 3, 'cols' => 100),
                 );
 	
                 $this->template->sidebar = View::factory('partial/sidebar');
@@ -524,6 +535,9 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 			'title' => $enquiryType->title,
 			'description' => $enquiryType->description,
 			'email' => $enquiryType->email,
+			'enabledMessage' => $enquiryType->enabledMessage,
+			'disabled' => $enquiryType->disabled,
+			'disabledMessage' => $enquiryType->disabledMessage,
 		);
 		return $formValues;
 	}
@@ -532,9 +546,12 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 	{
 		$formTemplate = array(
 			'id' => array('type' => 'hidden'),
-			'title' => array('title' => 'Title', 'type' => 'input'),
+			'title' => array('title' => 'Title', 'type' => 'input', 'size' => 50),
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
-			'email' => array('title' => 'Email', 'type' => 'input'),
+			'email' => array('title' => 'Email', 'type' => 'input', 'size' => 50),
+			'enabledMessage' => array('title' => 'Enabled Message', 'type' => 'textarea', 'rows' => 6, 'cols' => 100),
+			'disabled' => array('title' => 'Disabled', 'type' => 'checkbox'),
+			'disabledMessage' => array('title' => 'Disabled Message', 'type' => 'textarea', 'rows' => 3, 'cols' => 100),
 		);
 		if ($action == 'view') 
 		{
@@ -549,6 +566,16 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 		$enquiryType->title = $formValues['title'];
 		$enquiryType->description = $formValues['description'];
 		$enquiryType->email = $formValues['email'];
+		$enquiryType->enabledMessage = $formValues['enabledMessage'];
+		if (!isset($formValues['disabled'])) 
+		{
+                	$enquiryType->disabled = 0;
+		}
+		else
+		{
+			$enquiryType->disabled = 1;
+		}
+		$enquiryType->disabledMessage = $formValues['disabledMessage'];
 		$enquiryType->save();
 	}
 }
