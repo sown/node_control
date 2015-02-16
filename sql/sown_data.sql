@@ -126,6 +126,26 @@ CREATE TABLE `devices` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Temporary table structure for view `enabled_enquiry_types`
+--
+
+DROP TABLE IF EXISTS `enabled_enquiry_types`;
+/*!50001 DROP VIEW IF EXISTS `enabled_enquiry_types`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `enabled_enquiry_types` (
+ `id` tinyint NOT NULL,
+  `title` tinyint NOT NULL,
+  `description` tinyint NOT NULL,
+  `email` tinyint NOT NULL,
+  `enabled_message` tinyint NOT NULL,
+  `disabled` tinyint NOT NULL,
+  `disabled_message` tinyint NOT NULL,
+  `last_modified` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `enquiries`
 --
 
@@ -161,6 +181,9 @@ CREATE TABLE `enquiry_types` (
   `title` varchar(255) NOT NULL,
   `description` text,
   `email` varchar(255) NOT NULL,
+  `enabled_message` text NOT NULL,
+  `disabled` tinyint(1) NOT NULL DEFAULT '0',
+  `disabled_message` text NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -476,6 +499,25 @@ CREATE TABLE `vpn_servers` (
   CONSTRAINT `vpn_server_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Final view structure for view `enabled_enquiry_types`
+--
+
+/*!50001 DROP TABLE IF EXISTS `enabled_enquiry_types`*/;
+/*!50001 DROP VIEW IF EXISTS `enabled_enquiry_types`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = latin1 */;
+/*!50001 SET character_set_results     = latin1 */;
+/*!50001 SET collation_connection      = latin1_swedish_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `enabled_enquiry_types` AS select `enquiry_types`.`id` AS `id`,`enquiry_types`.`title` AS `title`,`enquiry_types`.`description` AS `description`,`enquiry_types`.`email` AS `email`,`enquiry_types`.`enabled_message` AS `enabled_message`,`enquiry_types`.`disabled` AS `disabled`,`enquiry_types`.`disabled_message` AS `disabled_message`,`enquiry_types`.`last_modified` AS `last_modified` from `enquiry_types` where (`enquiry_types`.`disabled` <> 1) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -486,4 +528,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-02-01  4:23:01
+-- Dump completed on 2015-02-16  4:23:01
