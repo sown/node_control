@@ -60,9 +60,9 @@ proto {$ep->protocol}
 dev tap{$ep->id}
 
 # Locations of SSL files
-ca /etc/openvpn/package_managment/ca.crt
-cert /etc/openvpn/package_managment/vpnserver.crt
-key /etc/openvpn/package_managment/vpnserver.key
+ca /etc/openvpn/package_managment/{$node->certificate->ca}
+cert /etc/openvpn/package_managment/server-{$node->certificate->ca}
+key /etc/openvpn/package_managment/server-{$node->certificate->ca}.key
 
 # Diffie Hellman Parameters
 dh /etc/openvpn/dh1024.pem
