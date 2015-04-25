@@ -33,6 +33,14 @@ class Model_Certificate extends Model_Entity
 	 */
 	protected $current;
 
+	/**
+	 * @var text $certificateAuthority
+	 * 
+         * @Column(name="certificate_authority", type="text", nullable=false)
+         */
+	protected $certificateAuthority;
+	
+
 	public function __get($name)
 	{
 		$this->logUse();
@@ -44,6 +52,8 @@ class Model_Certificate extends Model_Entity
 				return static::getFingerprint($this->privateKey);
 			case "cn":
 				return $this->getCN();
+			case "ca":
+				return $this->certificateAuthority;
 			default:
 				if (property_exists($this, $name))
 				{
@@ -63,6 +73,8 @@ class Model_Certificate extends Model_Entity
 			case "publicKeyFingerprint":
 			case "privateKeyFingerprint":
 			case "cn":
+			case "ca":
+			case "certificateAuthority":
 				parent::__throwReadOnlyException($name);
 			default:
 				if (property_exists($this, $name))
@@ -96,7 +108,7 @@ class Model_Certificate extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Certificate: {$this->id}, cn={$this->cn}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
+		$str  = "Certificate: {$this->id}, cn={$this->cn}, ca={$this->ca}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
 		return $str;
 	}
 
@@ -106,7 +118,7 @@ class Model_Certificate extends Model_Entity
 		$str  = "<div class='certificate' id='certificate_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Certificate</th><td>{$this->id}</td></tr>";
-		foreach(array('cn', 'publicKeyFingerprint', 'privateKeyFingerprint') as $field)
+		foreach(array('cn', 'ca', 'publicKeyFingerprint', 'privateKeyFingerprint') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
