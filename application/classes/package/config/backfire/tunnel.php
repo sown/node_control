@@ -66,6 +66,12 @@ class Package_Config_Backfire_Tunnel extends Package_Config
 			)
 		);
 
+		// 2015/5/2 morse: this is temporary
+		if ($node->certificate->ca == "node_control_2015.crt") {
+			$config['openvpn']['sown_tunnel']['ca']="/etc/sown/".$node->certificate->ca;
+		}
+
+
 		static::send_uci_config('openvpn', $config, $mod);
 	}
 }
