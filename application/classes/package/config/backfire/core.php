@@ -131,6 +131,7 @@ class Package_Config_Backfire_Core extends Package_Config
 			'node' => array(
 				array(
 					'config_URL' => Kohana::$config->load('system.default.node_config.url').'/package/config/backfire/',
+					'config_ca' => '/etc/sown/node_control_2012.crt',
 					'hostname'   => $node->hostname,
 					'node_name'  => $node->name,
 					'id'         => $node->id,
