@@ -16,6 +16,26 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `certificate_sets`
+--
+
+DROP TABLE IF EXISTS `certificate_sets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `certificate_sets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `setid` int(11) NOT NULL COMMENT 'identifier for a certificate set',
+  `certificate_id` int(11) NOT NULL COMMENT 'id of the certificate',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `certificate_in_set` (`certificate_id`,`setid`),
+  KEY `certificate_id` (`certificate_id`),
+  KEY `setid` (`setid`),
+  CONSTRAINT `certificate_set_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='set of certificates';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `certificates`
 --
 
@@ -488,6 +508,7 @@ DROP TABLE IF EXISTS `vpn_servers`;
 CREATE TABLE `vpn_servers` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `server_id` int(11) DEFAULT NULL COMMENT 'id of the server',
+  `certificate_set_setid` int(11) DEFAULT NULL,
   `ipv4_addr` varchar(15) NOT NULL COMMENT 'IPv4 address',
   `ipv4_addr_cidr` int(2) NOT NULL COMMENT 'IPv6 address cidr prefix size (eg 24)',
   `ipv6_addr` varchar(39) NOT NULL COMMENT 'IPv6 address',
@@ -497,6 +518,8 @@ CREATE TABLE `vpn_servers` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `server_id` (`server_id`),
+  KEY `vpn_server_certificate_set` (`certificate_set_setid`),
+  CONSTRAINT `vpn_server_certificate_set` FOREIGN KEY (`certificate_set_setid`) REFERENCES `certificate_sets` (`setid`),
   CONSTRAINT `vpn_server_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -529,4 +552,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-04-17  4:23:01
+-- Dump completed on 2015-05-04  4:23:01
