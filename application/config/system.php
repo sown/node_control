@@ -21,7 +21,7 @@ return array
 			'email_subject_prefix' => '[sown-accounts]',
                         'latest_end_datetime' => '2037-12-31 23:59:59',
 			'valid_external_domains' => array('ecs.soton.ac.uk', 'soton.ac.uk'),
-			'valid_query_ips' => array('152.78.189.252'), //skoll.ecs.soton.ac.uk
+			'valid_query_ips' => array('152.78.189.252', '152.78.189.39', '10.13.0.250'), // skoll.ecs.soton.ac.uk, sown-dev.ecs.soton.ac.uk, dev.sown.org.uk
 		),
 		'adapter_types' => array
 		(
