@@ -125,12 +125,15 @@ class Model_User extends Model_Entity
 		}
 	}
 
-	public static function build($username, $email, $isSystemAdmin = FALSE)
+	public static function build($username, $name, $email, $isSystemAdmin = FALSE, $canAccessWiki = FALSE, $wikiUsername = "")
         {
                 $obj = new Model_User();
                 $obj->username = $username;
+		$obj->name = $name;
                 $obj->email = $email;
                 $obj->isSystemAdmin = $isSystemAdmin;
+		$obj->canAccessWiki = $canAccessWiki;
+		$obj->wikiUsername = $wikiUsername;
 		$obj->resetPasswordHash = "";
                 return $obj;
         }

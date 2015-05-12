@@ -20,7 +20,7 @@ class Controller_Login extends Controller_AbstractAdmin
 			{
 				$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername($post['username']);
 				if (!is_object($user)){
-					$user = Model_User::build($post['username'], $post['username']);
+					$user = Model_User::build($post['username'], "", $post['username']);
 					$user->save();
 				}
 				if ($this->request->query('url'))	

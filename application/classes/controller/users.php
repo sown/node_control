@@ -82,6 +82,7 @@ class Controller_Users extends Controller_AbstractAdmin
 				->rule('username', 'email')
 				->rule('username', 'Model_User::uniqueUsername', array(':value'))
 				->rule('username', 'RadAcctUtils::UserNotExists', array(':value'))
+				->rule('name', 'not_empty')
 				->rule('email', 'not_empty')
 				->rule('email', 'email')
 				->rule('email', 'Model_User::uniqueEmail', array(':value'));
@@ -99,7 +100,7 @@ class Controller_Users extends Controller_AbstractAdmin
 				}
 				if (RadAcctUtils::AddUser($formValues['username'], $formValues['password']))
 				{
-					$user = Model_User::build($formValues['username'], $formValues['email']);
+					$user = Model_User::build($formValues['username'], $formValues['name'], $formValues['email']);
 					$user->save();
 					if (!empty($user->id))
 					{
@@ -127,6 +128,7 @@ class Controller_Users extends Controller_AbstractAdmin
 		{
 			$formValues = array(
 				'username' => '',
+				'name' => '',
 				'email' => '',
 				'password' => '',
 				'confirmPassword' => '',
@@ -134,6 +136,7 @@ class Controller_Users extends Controller_AbstractAdmin
 		}
 		$formTemplate = array(
 			'username' => array('title' => 'Username', 'type' => 'input', 'hint' => '@sown.org.uk'),
+			'name' => array('title' => 'Full Name', 'type' => 'input'),
 			'email' => array('title' => 'Email', 'type' => 'input'),
 			'password' => array('title' => 'Password', 'type' => 'password'),
 			'confirmPassword' => array('title' => 'Confirm password', 'type' => 'password'),
@@ -159,10 +162,11 @@ class Controller_Users extends Controller_AbstractAdmin
                                 ->rule('username', 'email')
 				->rule('username', 'Model_User::validExternalDomain', array(':value'))
                                 ->rule('username', 'Model_User::uniqueUsername', array(':value'))
-				->rule('username', 'Model_User::uniqueEmail', array(':value'));				
+				->rule('username', 'Model_User::uniqueEmail', array(':value'))
+				->rule('name', 'not_empty');
                         if ($validation->check())
                         {
-                                $user = Model_User::build($formValues['username'], $formValues['username']);
+                                $user = Model_User::build($formValues['username'], $formValues['name'], $formValues['username']);
                                 $user->save();
                                 $url = Route::url('view_user', array('id' => $user->id));
                                 $success = "Successfully created user with username '<a href=\"$url\">" . $user->username . "</a>'.";
@@ -176,10 +180,12 @@ class Controller_Users extends Controller_AbstractAdmin
                 {
                         $formValues = array(
                                 'username' => '',
+				'name' => '',
                         );
                 }
                 $formTemplate = array(
                         'username' => array('title' => 'Username', 'type' => 'input', 'hint' => 'Valid domains: '.implode(", ", Kohana::$config->load('system.default.admin_system.valid_external_domains'))),
+			'name' => array('title' => 'Full Name', 'type' => 'input'),
                 );
 
                 $this->template->sidebar = View::factory('partial/sidebar');
@@ -501,6 +507,7 @@ class Controller_Users extends Controller_AbstractAdmin
                 $formValues = array(
 			'id' => $user->id,
 			'username' => $user->username,
+			'name' => $user->name,
 			'email' => $user->email,
 			'canAccessWiki' => $user->canAccessWiki,
 			'wikiUsername' => $user->wikiUsername,
@@ -521,6 +528,7 @@ class Controller_Users extends Controller_AbstractAdmin
 		$formTemplate = array(
 			'id' => array('type' => 'hidden'),
 			'username' => array('title' => 'Username', 'type' => 'statichidden'),
+			'name' => array('title' => 'Full Name', 'type' => 'input'),
 			'email' => array('title' => 'Email', 'type' => 'input'),
 			'canAccessWiki' => array('title' => 'Wiki editor', 'type' => 'checkbox'),
 			'wikiUsername' => array('title' => 'Wiki username', 'type' => 'input'),
@@ -536,6 +544,10 @@ class Controller_Users extends Controller_AbstractAdmin
 	private function _update($id, $formValues)
 	{
 		$user = Doctrine::em()->getRepository('Model_User')->findOneById($id);
+		if (!empty($formValues['name']))
+                {
+                        $user->name = $formValues['name'];
+                }
 		if (!empty($formValues['email']))
 		{
 			$user->email = $formValues['email'];
