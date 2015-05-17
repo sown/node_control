@@ -15,6 +15,16 @@ use Doctrine\ORM\Mapping\JoinColumn;
 class Model_VpnServer extends Model_Server
 {
 	/**
+         * @var Model_CertificateSet
+         *
+         * @ManyToOne(targetEntity="Model_CertificateSet")
+         * @JoinColumns({
+         *   @JoinColumn(name="certificate_set_setid", referencedColumnName="setid")
+         * })
+         */
+        protected $vpnCertificateSet;
+
+	/**
 	 * @var string $IPv4Addr
 	 *
 	 * @Column(name="ipv4_addr", type="ipv4address", nullable=false)
@@ -97,7 +107,7 @@ class Model_VpnServer extends Model_Server
 			$str .= $this->fieldHTML($field);
 		}
 		$str .= $this->fieldHTML('port', $this->portStart.' - '.$this->portEnd);
-		foreach(array('certificate') as $field)
+		foreach(array('certificate', 'vpnCertificateSet') as $field)
 		{
 			$str .= $this->fieldHTML($field, $this->$field->toHTML());
 		}

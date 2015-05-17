@@ -346,5 +346,19 @@ class SOWN
     		$pass = strtoupper(sha1(sha1($plaintext, true)));
     		return '*' . $pass;
 	}
+
+	public static function get_certificates_for_set($setid)
+        {
+		$query = Doctrine::em()->createQueryBuilder();
+		$query->select('c.id')->from('Model_CertificateSet', 'cs')->join('cs.certificate', 'c')->where("cs.setid = $setid");
+		$results = $query->getQuery()->getArrayResult();
+                $certs = array();
+                foreach ($results as $result)
+                {
+                        $certs[] =  Doctrine::em()->getRepository('Model_Certificate')->find($result['id']);
+                }
+                return $certs;
+        }
+
 }	
 
