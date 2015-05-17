@@ -135,7 +135,7 @@ class Model_Deployment extends Model_Entity
 	 /**
          * @OneToMany(targetEntity="Model_NodeDeployment", mappedBy="deployment", cascade={"persist", "remove"})
          */
-        protected $node_deployments;
+        protected $nodeDeployments;
 
 	/**
          * @OneToMany(targetEntity="Model_Note", mappedBy="deployment", cascade={"persist", "remove"})
@@ -200,9 +200,9 @@ class Model_Deployment extends Model_Entity
 		}
 
 		$usage = 0;
-		foreach($this->node_deployments as $node_deployment)
+		foreach($this->nodeDeployments as $nodeDeployment)
 		{
-			$rrd_file = $path .  "node_deployment" . $node_deployment->id . ".rrd";
+			$rrd_file = $path .  "node_deployment" . $nodeDeployment->id . ".rrd";
 			$usage += RadAcctUtils::getBandwidthUsage($rrd_file,30)/1024/1024;
 		}
 		return $usage;
@@ -261,6 +261,17 @@ class Model_Deployment extends Model_Entity
 			}
 		}
 		return $devices;
+	}
+
+	public function getCurrentNodeDeployment()
+	{
+		foreach ($this->nodeDeployments as $nodeDeployment) 
+		{
+			if ($nodeDeployment->endDate->getTimestamp() > time())
+			{
+				return $nodeDeployment;
+			}
+		}
 	}
 
 	public static function build($name, $latitude, $longitude, $cap = 5120)

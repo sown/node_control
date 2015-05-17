@@ -21,7 +21,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$fields = array(
                         'id' => 'ID',
 			'name' => 'Name',
-			'deploymentBoxNumber' => 'Latest Box Number',
+			'deploymentBoxNumber' => 'Current Box Number',
 			'startDate' => 'Start Date',
 			'endDate' => 'End Date',
 			'latestNote' => 'Latest Note',
@@ -52,7 +52,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 $fields = array(
                         'id' => 'ID',
                         'name' => 'Name',
-                        'deploymentBoxNumber' => 'Latest Box Number',
+                        'deploymentBoxNumber' => 'Current Box Number',
                         'startDate' => 'Start Date',
                         'endDate' => 'End Date',
                         'latestNote' => 'Latest Note',
@@ -104,7 +104,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			$fields = array(
                 	        'id' => 'ID',
                         	'name' => 'Name',
- 	                        'deploymentBoxNumber' => 'Latest Box Number',
+ 	                        'deploymentBoxNumber' => 'Current Box Number',
         	                'startDate' => 'Start Date',
                 	        'endDate' => 'End Date',
                         	'latestNote' => 'Latest Note',
@@ -191,6 +191,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
+		$deployedNode = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeId']);
+		$formValues['nodeId'] = $deployedNode->boxNumber;
 		$subtitle = "View Deployment " . $this->request->param('id') . " (" . $formValues['name'] . ")";
                 View::bind_global('subtitle', $subtitle);
 		$formTemplate = $this->_load_form_template('view');
@@ -232,14 +234,20 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$subtitle = "Edit Deployment" . $this->request->param('id') . " (" . $formValues['name'] . ")";
 		View::bind_global('subtitle', $subtitle);
 		$formTemplate = $this->_load_form_template('edit');
+		$deployedNode = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeId']);
 		if ($this->userRole == "deploymentadmin")
 		{
 			$formTemplate['type']['type'] = 'static';
+			$formTemplate['nodeId']['type'] = 'static';
+			$formValues['nodeId'] = $deployedNode->boxNumber;
 			$formTemplate['isDevelopment']['type'] = 'static';
 			$formValues['isDevelopment'] == true ? $formValues['isDevelopment'] = 'yes' : $formValues['isDevelopment'] = 'no';
 			$formTemplate['isPrivate']['type'] = 'static';
 			$formValues['isPrivate'] == true ? $formValues['isPrivate'] = 'yes' : $formValues['isPrivate'] = 'no';
 		}
+		else {
+			 $formTemplate['nodeId']['options'][$formValues['nodeId']] = $deployedNode->boxNumber;
+		} 
 		$submits = array('updateDeployment' => 'Update Deployment');
 		if (strtotime($formValues['endDate']) > time() && $this->userRole == "systemadmin")
 		{
@@ -389,11 +397,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
 		$latest_end_datetime =  Kohana::$config->load('system.default.admin_system.latest_end_datetime');
-		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $deployment->id . "ORDER BY nd.startDate DESC")->getResult();
+		$nodes = Doctrine::em()->createQuery("SELECT n.id FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $deployment->id . "ORDER BY nd.startDate DESC")->getResult();
 		$formValues = array(
                         'id' => $deployment->id,
                         'name' => $deployment->name,
-			'boxNumber' => $nodes[0]['boxNumber'],
+			'nodeId' => $nodes[0]['id'],
 			'url' => $deployment->url,
 			'startDate' => $deployment->startDate->format('Y-m-d H:i:s'),
 			'endDate' => $deployment->endDate->format('Y-m-d H:i:s'),
@@ -431,8 +439,6 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                 {
                         $formValues['isDevelopment'] = ( $formValues['isDevelopment'] ? 'Yes' : 'No');
 			$formValues['isPrivate'] = ( $formValues['isPrivate'] ? 'Yes' : 'No');
-		        $formValues['endDate'] = ( $formValues['endDate'] == $latest_end_datetime ? '' : $formValues['endDate']);
-
 			$formValues['configuration']['firewall'] = ( $formValues['configuration']['firewall'] ? 'Yes' : 'No');
 			$formValues['configuration']['advancedFirewall'] = ( $formValues['configuration']['advancedFirewall'] ? 'Yes' : 'No') ;
 			if ($formValues['configuration']['cap'] == 0 ) 
@@ -445,7 +451,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			}
 			$formValues['location']['range'] = $formValues['location']['range'] . " metres";
                 }
-
+		$formValues['endDate'] = ( $formValues['endDate'] == $latest_end_datetime ? '' : $formValues['endDate']);
 		return $formValues;
 	}
 
@@ -454,10 +460,10 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$formTemplate = array(
 			'id' => array('type' => 'hidden'),
                         'name' => array('title' => 'Name', 'type' => 'input'),
-			'boxNumber' => array('title' => 'Latest Box number', 'type' => 'static'),
+			'nodeId' => array('title' => 'Current Box Number', 'type' => 'select', 'options' => Model_Node::getUndeployedNodes()),
 			'url' => array('title' => 'URL', 'type' => 'input', 'size' => 70),
-			'startDate' => array('title' => 'Started', 'type' => 'statichidden'),
-			'endDate' => array('title' => 'Ended', 'type' => 'statichidden'),
+			'startDate' => array('title' => 'Started', 'type' => 'static'),
+			'endDate' => array('title' => 'Ended', 'type' => 'static'),
 			'type' => array('title' => 'Type', 'type' => 'select', 'options' => array('home' => 'home', 'campus' => 'campus')),
 			'isDevelopment' => array('title' => 'Development', 'type' => 'checkbox'),
 			'isPrivate' => array('title' => 'Private', 'type' => 'checkbox'),
@@ -522,6 +528,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			$deployment->type = $formValues['type'];
 			$deployment->isDevelopment = ( isset($formValues['isDevelopment']) ? 1 : 0 );
 			$deployment->isPrivate = ( isset($formValues['isPrivate']) ? 1 : 0 );
+			$nodeDeployment = $deployment->getCurrentNodeDeployment();	
+			if (!empty($formValues['nodeId']) && $formValues['nodeId'] != $nodeDeployment->node->id) 
+			{
+				$this->_switch_node_for_deployment($deployment, $formValues['nodeId']);
+			}
 		}
 		$deployment->firewall = ( isset($formValues['configuration']['firewall']) ? 1 : 0 );
 		$deployment->allowedPorts = $formValues['configuration']['allowedPorts'];
@@ -556,6 +567,15 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			$deploymentAdmin->save();
 		}
 		$deployment->save();
+	}
+
+	private function _switch_node_for_deployment($deployment, $newNodeId) 
+	{
+		$oldNodeDeployment = $deployment->getCurrentNodeDeployment();
+		$oldNodeDeployment->endDate = new \DateTime();
+		$oldNodeDeployment->save();
+		$newNodeDeployment = Model_NodeDeployment::build($newNodeId, $deployment->id);	
+		$newNodeDeployment->save();	
 	}
 }
 	

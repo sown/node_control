@@ -97,7 +97,7 @@ class Model_Builder
 				$admin->save();
 			}
 		}
-		foreach ($deployment->node_deployments as $nodeDeployment)
+		foreach ($deployment->nodeDeployments as $nodeDeployment)
 		{
 			if ($nodeDeployment->endDate->getTimestamp() > time())
                         {

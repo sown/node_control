@@ -83,13 +83,13 @@ class RadAcctUtils {
 		return $rv;
 	}
 
-	public static function combineNodeDeploymentsData($node_deployments)
+	public static function combineNodeDeploymentsData($nodeDeployments)
 	{
-		if (sizeof($node_deployments) == 1)
-			return array_shift($node_deployments);
+		if (sizeof($nodeDeployments) == 1)
+			return array_shift($nodeDeployments);
 		
 		$deployment_data = array();
-		foreach ($node_deployments as $node_deployment)
+		foreach ($nodeDeployments as $nodeDeployment)
 		{
 			foreach($years as $year)
 	                {
@@ -98,9 +98,9 @@ class RadAcctUtils {
 	                                foreach($days as $day)
 	                                {
 						if (!isset($deployment_data[$year][$month][$day]))
-							$deployment_data[$year][$month][$day] = $node_deployment[$year][$month][$day];
+							$deployment_data[$year][$month][$day] = $nodeDeployment[$year][$month][$day];
 						else
-							$deployment_data[$year][$month][$day] += $node_deployment[$year][$month][$day];
+							$deployment_data[$year][$month][$day] += $nodeDeployment[$year][$month][$day];
 					}
 				}	
 			}

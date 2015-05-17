@@ -39,14 +39,14 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		foreach (array_slice($allmonths, 0, date("n")) as $month)
                         $months[] = $month . " ". date('y');
 
-		$node_deployment_usage = array();
+		$nodeDeploymentsUsage = array();
 		$path = Kohana::$config->load('system.default.rrd.deployment_path');
-		foreach($deployment->node_deployments as $node_deployment)
+		foreach($deployment->nodeDeployments as $nodeDeployment)
                 {
-                        $rrd_file = $path .  "node_deployment" . $node_deployment->id . ".rrd";
-                        $node_deployments_usage[] = RadAcctUtils::getData($rrd_file);
+                        $rrd_file = $path .  "node_deployment" . $nodeDeployment->id . ".rrd";
+                        $nodeDeploymentsUsage[] = RadAcctUtils::getData($rrd_file);
                 }
-		$month_totals = RadAcctUtils::getMonthlyTotals(RadAcctUtils::combineNodeDeploymentsData($node_deployments_usage));
+		$month_totals = RadAcctUtils::getMonthlyTotals(RadAcctUtils::combineNodeDeploymentsData($nodeDeploymentsUsage));
 
 		$m = 0;
 		foreach($months as $month){
@@ -74,14 +74,14 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		}
 		$days = array_reverse($days);
 		
-		$node_deployment_usage = array();
+		$nodeDeploymentUsage = array();
                 $path = Kohana::$config->load('system.default.rrd.deployment_path');
-                foreach($deployment->node_deployments as $node_deployment)
+                foreach($deployment->nodeDeployments as $nodeDeployment)
                 {
-                        $rrd_file = $path .  "node_deployment" . $node_deployment->id . ".rrd";
-                        $node_deployments_usage[] = RadAcctUtils::getData($rrd_file);
+                        $rrd_file = $path .  "node_deployment" . $nodeDeployment->id . ".rrd";
+                        $nodeDeploymentsUsage[] = RadAcctUtils::getData($rrd_file);
                 }
-		$day_totals = RadAcctUtils::combineNodeDeploymentsData($node_deployments_usage);
+		$day_totals = RadAcctUtils::combineNodeDeploymentsData($nodeDeploymentsUsage);
 		
 		$d = 0;
 		$curyear = date('Y', $now);
