@@ -602,7 +602,7 @@ Route::set('delete_user', 'admin/users/<id>/delete')
                 'action'     => 'delete',
         ));
 
-Route::set('details_user', 'admin/users/<username>/details')
+Route::set('details_user', 'admin/users/<username>/details', array('username' => '[a-zA-Z0-9_\-\.]+'))
         ->defaults(array(
                 'controller' => 'users',
                 'action'     => 'view_details_json',
