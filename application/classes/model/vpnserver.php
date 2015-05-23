@@ -109,7 +109,10 @@ class Model_VpnServer extends Model_Server
 		$str .= $this->fieldHTML('port', $this->portStart.' - '.$this->portEnd);
 		foreach(array('certificate', 'vpnCertificateSet') as $field)
 		{
-			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+			if (is_object($this->$field))
+			{
+				$str .= $this->fieldHTML($field, $this->$field->toHTML());
+			}
 		}
 		$str .= "</table>";
 		$str .= "</div>";
