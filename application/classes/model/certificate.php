@@ -50,6 +50,10 @@ class Model_Certificate extends Model_Entity
 				return static::getFingerprint($this->publicKey);
 			case "privateKeyFingerprint":
 				return static::getFingerprint($this->privateKey);
+			case "publicKeyMD5":
+				return md5($this->publicKey);
+			case "privateKeyMD5":
+				return md5($this->privateKey);
 			case "cn":
 				return $this->getCN();
 			case "ca":
@@ -72,6 +76,8 @@ class Model_Certificate extends Model_Entity
 		{
 			case "publicKeyFingerprint":
 			case "privateKeyFingerprint":
+			case "publicKeyMD5":
+			case "privateKeyMD5":
 			case "cn":
 			case "ca":
 			case "certificateAuthority":
@@ -118,7 +124,7 @@ class Model_Certificate extends Model_Entity
 		$str  = "<div class='certificate' id='certificate_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Certificate</th><td>{$this->id}</td></tr>";
-		foreach(array('cn', 'ca', 'publicKeyFingerprint', 'privateKeyFingerprint') as $field)
+		foreach(array('cn', 'ca', 'publicKeyFingerprint', 'privateKeyFingerprint', 'publicKeyMD5', 'privateKeyMD5') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
