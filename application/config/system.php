@@ -34,7 +34,11 @@ return array
 		),
 		'dns'		=> array
 		(
-			'host'	=> '10.13.0.254',
+			'host'	=> '10.13.0.239',
+		),
+		'openvpn'	=> array
+		(
+			'host'  => '10.13.0.239',
 		),
 		'radius'	=> array
 		(

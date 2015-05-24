@@ -50,6 +50,10 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 $conf = <<< EOB
 # Comments are preceded with '#' or ';'
 
+# Bind to the server address that the nodes know about.
+# This breaks on udp as the server may reply with a different src_ip.
+local {$ep->vpnServer->externalIPv4}
+
 # Accept Connections on this port.
 port {$ep->port}
 

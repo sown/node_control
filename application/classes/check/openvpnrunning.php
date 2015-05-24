@@ -16,12 +16,13 @@ class Check_OpenvpnRunning extends Check
                         return;
                 }
 
+		$ip = $host->vpnEndpoint->vpnServer->externalIPv4;
 		$port = $host->vpnEndpoint->port;
 
                 $handle = fopen($this->file, "r");
                 while(!feof($handle)) {
                         $line = fgets($handle);
-                        if (strpos($line,"*:" . $port) !== false) {
+                        if (strpos($line, $ip . ":" . $port) !== false) {
                                 $this->code = Check::OK;
                                 $this->message = "Openvpn Server Running on port ".$port;
                                 fclose($handle);
