@@ -454,6 +454,26 @@ CREATE TABLE `servers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `stats_login`
+--
+
+DROP TABLE IF EXISTS `stats_login`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `stats_login` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `remote_ip` varchar(15) NOT NULL COMMENT 'the IP address of the user',
+  `domain` varchar(255) NOT NULL COMMENT 'the domain of the user account',
+  `result` varchar(7) NOT NULL COMMENT 'whether the user login was successful',
+  `time_logged` datetime NOT NULL COMMENT 'the time the user attempted to login',
+  `user_agent` text COMMENT 'the user agent string of the application',
+  `details` text COMMENT 'any other details about the login',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `users`
 --
 
@@ -552,4 +572,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-04  4:23:01
+-- Dump completed on 2015-05-25  4:23:01
