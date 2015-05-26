@@ -24,6 +24,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'currentDeployment' => 'Current Deployment',
                		'firmwareImage' => 'Firmware Image',
 			'certificateWritten' => 'Certificate Written',
+			'nodeCA' => 'CA',
 			'latestNote' => 'Latest Note',
                		'view' => '',
                		'edit' => '',

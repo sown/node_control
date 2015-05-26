@@ -69,6 +69,10 @@ foreach ($fields as $f => $field)
 	{
 		echo "          <td>" . ( (strlen($row->certificate->privateKey) > 0) ? 'Yes' : 'No')  . "</td>\n";
 	}
+	elseif ($f == "nodeCA")
+        {
+                echo "          <td>" . $row->certificate->ca . "</td>\n";
+        }
 	elseif ($f == "deploymentBoxNumber")
         {
 		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $row->id . " ORDER BY nd.startDate DESC")->getResult();
