@@ -186,6 +186,120 @@ class SOWN
 		return $hosts;
 	}
 
+	public static function process_cron_jobs2()
+        {
+		if (empty($_POST)) {
+			die("Lists of cron jobs can only be posted to this URL");
+		}
+		if (empty($_POST['jobs'])) {
+			var_dump($_POST);
+			die("No list of cronjobs sent.");
+		}
+	}
+			
+	public static function process_cron_jobs()
+	{
+		$logging = true;
+                $log="";
+                if (empty($_POST))
+                {
+                        die("Lists of cron jobs can only be posted to this URL");
+                }
+		if (empty($_POST['jobs'])) 
+		{
+                        die("No list of cronjobs sent");
+                }
+                $hostCronJobsString = $_POST['jobs']; // $in_string
+                $hostAddress = $_SERVER["REMOTE_ADDR"];
+                $host = Sown::find_host_by_ip($hostAddress);
+                $icingaName = Sown::get_icinga_name_for_host($host);
+                $log .= "Icinga Name: $icingaName\n";
+                $dbCronJobs = $host->getEnabledCronJobs();
+                $fromDb = array();
+                foreach ($dbCronJobs as $dbCronJob)
+                {
+                        if (!isset($fromDb[$dbCronJob->username][$dbCronJob->command]))
+                        {
+                                $fromDb[$dbCronJob->username][$dbCronJob->command] = 1;
+                        }
+                        else
+                        {
+                                $fromDb[$dbCronJob->username][$dbCronJob->command]++;
+                        }
+                }
+                $log.="=== fromDb ===\n".var_export($fromDb,true)."\n\n";
+                $hostCronJobs = explode("<FS>", $hostCronJobsString);
+                for ($i=0; $i<count($hostCronJobs); $i++)
+                {
+                        $user = substr($hostCronJobs[$i],0,strpos($hostCronJobs[$i],":"));
+                        $user = trim($user);
+                        $hostCronJob = substr($hostCronJobs[$i],strpos($hostCronJobs[$i],":")+1,strlen($hostCronJobs[$i]));
+                        $hostCronJob = trim($hostCronJob);
+                        if ($user != "" && $hostCronJob != "" && trim($user) !="cron.update" )
+                        {
+                                if(! isset($from_node[$user][$hostCronJob]))
+                                        $fromHost[$user][$hostCronJob] = 1;
+                                else
+                                        $fromHost[$user][$hostCronJob]++;
+                        }
+		}
+                $log.="=== fromHost ===\n".var_export($fromHost,true)."\n\n";
+                $compare = array();
+                foreach ($fromHost as $user => $jobs)
+                {
+                        if (!isset($compare[$user]))
+                                $compare[$user] = array();
+                        foreach ($jobs as $job => $value)
+                        {
+                                if (!isset($compare[$user][$job]))
+                                $compare[$user][$job] = 0;
+                                $compare[$user][$job] -= $value;
+                        }
+                }
+                foreach ($fromDb as $user => $jobs)
+                {
+                        if (!isset($compare[$user]))
+                                $compare[$user] = array();
+                        foreach ($jobs as $job => $value)
+                        {
+                                if (!isset($compare[$user][$job]))
+                                        $compare[$user][$job] = 0;
+                                $compare[$user][$job] += $value;
+                        }
+                }
+                $log.="=== compared ===\n".var_export($compare, true)."\n\n";
+                $errors = '';
+                foreach ($compare as $user => $jobs)
+                {
+                        foreach ($jobs as $job => $value)
+                        {
+                                if ($value < 0)
+                                {
+                                        $errors .= " Node has unregistered job: ($user : $job) ";
+                                }
+                                elseif ($value > 0)
+                                {
+                                        $errors .= " Node is missing job: ($user : $job) ";
+                                }
+                        }
+                }
+		# Send to icinga
+                if (!isset($errors) || $errors == "")
+                {
+                        Sown::notify_icinga($icingaName, "CRONJOBS", 0, "CRONJOBS OK: Cronjobs as expected");
+                }
+                else
+                {
+                        Sown::notify_icinga($icingaName, "CRONJOBS", 1, "CRONJOBS WARNING: $errors");
+                }
+                if (!empty($logging))
+                {
+                        $handle = fopen("/tmp/crons_incoming_${hostAddress}.log","w");
+                        fwrite($handle,$log);
+                        fclose($handle);
+                }
+	}
+
 	public static function draw_bar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
 	{
 		require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');

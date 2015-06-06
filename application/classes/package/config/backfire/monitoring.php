@@ -41,7 +41,7 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 	public static function cronjobs_v0_1_78(Model_Node $node)
 	{
 		//require $_SERVER['DOCUMENT_ROOT'] . '/admin/incoming_cronjobs.php';
-		
+		//Sown::process_cron_jobs();		
 		static::send_shell_script("return 0");
 	}
 

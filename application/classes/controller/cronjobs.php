@@ -72,6 +72,8 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 
 	public function action_incoming()
 	{
+		Sown::process_cron_jobs($this->request);
+	/*
 		$logging = true;
       		$log="";
 		if ($this->request->method() != 'POST') 
@@ -168,7 +170,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
             		$handle = fopen("/tmp/crons_incoming_${hostAddress}.log","w");
             		fwrite($handle,$log);
             		fclose($handle);
-      		}
+      		}*/
 	}
 
 	public function action_create()
