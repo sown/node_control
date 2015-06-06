@@ -60,6 +60,9 @@ if(!isset($user))
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('cron_jobs_enabled') ?>">Cron Jobs</a><br/>
 <?php } ?>
+<?php if($user->is('systemadmin')) { ?>
+        <a href="<?= Route::url('certificates') ?>">Certificates</a><br/>
+<?php } ?>
 <?php if($user->is('systemadmin')) { 
 	$unresponded = sizeof(Model_Enquiry::getUnresponded());
 	$enquiry_type_account = Doctrine::em()->getRepository('Model_EnquiryType')->find(3);

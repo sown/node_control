@@ -64,6 +64,17 @@ foreach ($fields as $f => $field)
 			echo "<td style=\"background-color: green;\">&nbsp;</td>";
 		}
 	}
+	elseif ($f == "current")
+        {
+                if ($row->$f)
+                {
+                        echo "<td style=\"background-color: green;\">&nbsp;</td>";
+                }
+                else
+                {
+                        echo "<td style=\"background-color: red;\">&nbsp;</td>";
+                }
+        }
 	// Need to figure out how to do this generically
 	elseif ($f == "certificateWritten")
 	{

@@ -301,6 +301,24 @@ Route::set('view_cron_job', 'admin/cronjobs/<id>')
                 'action'     => 'view',
         ));
 
+Route::set('certificates', 'admin/certificates')
+        ->defaults(array(
+                'controller' => 'certificates',
+                'action'     => 'default',
+        ));
+
+Route::set('current_certificates', 'admin/certificates/current')
+        ->defaults(array(
+                'controller' => 'certificates',
+                'action'     => 'current',
+        ));
+
+Route::set('view_certificate', 'admin/certificates/<id>')
+        ->defaults(array(
+                'controller' => 'certificates',
+                'action'     => 'view',
+        ));
+
 Route::set('reserved_subnets', 'admin/subnets/reserved')
         ->defaults(array(
                 'controller' => 'subnets_reserved',
