@@ -516,7 +516,7 @@ class Controller_Users extends Controller_AbstractAdmin
 		);
 		if ($action == 'view') 
 		{
-			$formValues['canAccessWiki'] = ($formValues['icanAccessWiki'] ? 'Yes' : 'No');
+			$formValues['canAccessWiki'] = ($formValues['canAccessWiki'] ? 'Yes' : 'No');
 			$formValues['isSystemAdmin'] = ($formValues['isSystemAdmin'] ? 'Yes' : 'No');
 			
 		}
