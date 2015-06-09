@@ -328,21 +328,6 @@ td.icon a, td.icon a:hover {
         display: block;
         text-decoration: none;
 }
-a.edit, a.edit:hover {
-	background-image:  url(../img/edit.png);
-}
-a.delete, a.delete:hover {
-        background-image:  url(../img/delete.png);
-}
-a.ban, a.ban:hover {
-        background-image:  url(../img/ban.png);
-}
-a.configure, a.configure:hover {	
-        background-image:  url(../img/config.png);
-}
-a.stats, a.stats:hover {
-        background-image:  url(../img/usage.png);
-}
 
 #branding
 {
@@ -509,6 +494,12 @@ a.reply, a.reply:hover {
         background-repeat: no-repeat;
         text-decoration: none;	
 }
+a.submit_hash, a.submit_hash:hover {
+        background-image:  url(../images/submit_hash.png);
+	background-repeat: no-repeat;
+        text-decoration: none;
+}
+
 
 
 p.success {

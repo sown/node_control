@@ -10,7 +10,7 @@
 $latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
 foreach ($fields as $f => $field) 
 {
-	if (in_array($f, array("configure", "delete", "edit", "reply", "usage", "view")))
+	if (in_array($f, array("configure", "delete", "edit", "reply", "usage", "view", "submit_hash")))
 	{
 		$url = Route::url($f . "_" . $objectType, array($idField => $row->$idField));
 		echo "          <td class=\"icon\"><a class=\"$f\" title=\"" . ucfirst($f) . "\" href=\"$url\">&nbsp;</a></td>\n";
@@ -53,7 +53,7 @@ foreach ($fields as $f => $field)
 		}
 		echo "<td>" . implode(", ", $hosts) . "</td>\n";
 	}
-	elseif ($f == "disabled")
+	elseif ($f == "disabled" || $f == "undeployable")
 	{
 		if ($row->$f)
 		{

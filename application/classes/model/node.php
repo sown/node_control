@@ -40,6 +40,13 @@ class Model_Node extends Model_Entity
         protected $passwordHash;
 
 	/**
+	 * @var boolean $undeployable
+	 * 
+	 * @Column(name="undeployable", type="integer", nullable=false)
+         */
+	protected $undeployable;
+
+	/**
 	 * @var Model_Certificate
 	 *
 	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist", "remove"})
@@ -266,7 +273,7 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -300,7 +307,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'firmwareImage') as $field)
+		foreach(array('boxNumber', 'firmwareImage', 'undeployable') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -358,6 +365,7 @@ class Model_Node extends Model_Entity
 		$obj->certificate = $certificate;
 		$obj->vpnEndpoint = $vpnEndpoint;
 		$obj->passwordHash = "";
+		$obj->undeployable = 0;
 		return $obj;
 	}
 
@@ -408,7 +416,7 @@ class Model_Node extends Model_Entity
 	{
 		$undeployedNodes = array();
 		$latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
- 		$query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber FROM Model_Node n WHERE n NOT IN (SELECT n2 FROM Model_NodeDeployment nd JOIN nd.node n2 WHERE nd.endDate = '$latest_end_datetime')"); 
+ 		$query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber FROM Model_Node n WHERE n NOT IN (SELECT n2 FROM Model_NodeDeployment nd JOIN nd.node n2 WHERE nd.endDate = '$latest_end_datetime') AND n.undeployable != 1"); 
 		$results = $query->getResult();
 		foreach ($results as $result)
 		{

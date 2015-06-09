@@ -349,6 +349,12 @@ Route::set('nodes', 'admin/nodes')
                 'action'     => 'default',
         ));
 
+Route::set('deployable_nodes', 'admin/nodes/deployable')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'deployable',
+        ));
+
 Route::set('create_node', 'admin/nodes/create')
         ->defaults(array(
                 'controller' => 'nodes',
@@ -365,6 +371,12 @@ Route::set('edit_node', 'admin/nodes/<boxNumber>/edit')
         ->defaults(array(
                 'controller' => 'nodes',
                 'action'     => 'edit',
+        ));
+
+Route::set('submit_hash_node', 'admin/nodes/<boxNumber>/submit_hash')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'submit_hash',
         ));
 
 Route::set('view_node', 'admin/nodes/<boxNumber>')

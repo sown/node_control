@@ -4,7 +4,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array("Create Node" => Route::url('create_node'), "All Nodes" => Route::url('nodes'));
+		$this->bannerItems = array("Create Node" => Route::url('create_node'), "Deployable Nodes" => Route::url('deployable_nodes'), "All Nodes" => Route::url('nodes'));
 		$title = 'Nodes';
                 View::bind_global('title', $title);
 		parent::before();
@@ -23,11 +23,13 @@ class Controller_Nodes extends Controller_AbstractAdmin
                		'boxNumber' => 'Box Number',
 			'currentDeployment' => 'Current Deployment',
                		'firmwareImage' => 'Firmware Image',
+			'undeployable' => 'Deployable?',
 			'certificateWritten' => 'Certificate Written',
 			'nodeCA' => 'CA',
 			'latestNote' => 'Latest Note',
                		'view' => '',
                		'edit' => '',
+			'submit_hash' => '',
                		'delete' => '',
        		);
 		$rows = Doctrine::em()->getRepository('Model_Node')->findAll();
@@ -40,6 +42,38 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			->bind('idField', $idField);
 		$this->template->content = $content;	
 	}
+
+	public function action_deployable()
+        {
+                $this->check_login("systemadmin");
+                $subtitle = "All Nodes";
+                View::bind_global('subtitle', $subtitle);
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+
+                $fields = array(
+                        'id' => 'ID',
+                        'boxNumber' => 'Box Number',
+                        'currentDeployment' => 'Current Deployment',
+                        'firmwareImage' => 'Firmware Image',
+                        'certificateWritten' => 'Certificate Written',
+                        'nodeCA' => 'CA',
+                        'latestNote' => 'Latest Note',
+                        'view' => '',
+                        'edit' => '',
+                        'submit_hash' => '',
+                        'delete' => '',
+                );
+                $rows = Doctrine::em()->getRepository('Model_Node')->findByUndeployable(0);
+                $objectType = 'node';
+                $idField = 'boxNumber';
+                $content = View::factory('partial/table')
+                        ->bind('fields', $fields)
+                        ->bind('rows', $rows)
+                        ->bind('objectType', $objectType)
+                        ->bind('idField', $idField);
+                $this->template->content = $content;
+        }
 
 	public function action_create()
 	{
@@ -143,6 +177,37 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 $notesFormTemplate = Controller_Notes::load_form_template('edit');
                 $this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('updateNode' => 'Update Node'), $errors, $success) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
         }
+
+	public function action_submit_hash()
+        {
+                $this->check_login("systemadmin");
+                $subtitle = "Submit New Password Hash for Node " . $this->request->param('boxNumber');
+		View::bind_global('subtitle', $subtitle);
+		$this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+		$success = "";
+		$errors = array();
+		if ($this->request->method() == 'POST')
+                {
+			$formValues = FormUtils::parseForm($this->request->post());
+			if (!empty($formValues['passwordHash'])) 
+			{
+				$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
+				$node->passwordHash = $formValues['passwordHash'];
+				$node->save();
+				$success = "Successfully updated password hash";
+			}
+			else 
+			{
+				$errors = array("Node Password Hash" => "No password hash submitted.");
+			}
+		}
+		else {
+			$formValues = array("passwordHash" => "");
+		}
+		$formTemplate = array("passwordHash" => array('title' => 'Password Hash', 'type' => 'input', 'size' => 50));
+		$this->template->content = FormUtils::drawForm('NodePasswordHash', $formTemplate, $formValues, array('submitPasswordHash' => 'Submit Password Hash'), $errors, $success);
+	}
 
 	public function action_delete()
         {
@@ -279,6 +344,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		       	'id' => $node->id,
                        	'boxNumber' => $node->boxNumber,
                        	'firmwareImage' => $node->firmwareImage,
+			'undeployable' => $node->undeployable,
 			'certificateWritten' => ( (strlen($node->certificate->privateKey) > 0) ? 'Yes' : 'No' ),
 			'vpnEndpoint' => array(	
 	               		'id' => $node->vpnEndpoint->id,
@@ -294,6 +360,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'currentInterfaces' => array(),
 			),
                 );
+		error_log("undeployable: ".var_export($formValues['undeployable'], 1));
                 foreach ($node->interfaces as $i => $interface)
                 {
                        	$formValues['interfaces']['currentInterfaces'][$i] = array (
@@ -333,6 +400,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
+			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
 			'certificateWritten' => array('title' => 'Certificate written', 'type' => 'statichidden'),
                         'vpnEndpoint' => array(
                                 'title' => 'VPN Endpoint',
@@ -385,6 +453,14 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	{
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
 		$node->firmwareImage = $formValues['firmwareImage'];
+		if (empty($formValues['undeployable']))
+                {
+                        $node->undeployable = 0;
+                }
+		else 
+		{
+			$node->undeployable = $formValues['undeployable'];
+		}
 		$vpnEndpoint = $node->vpnEndpoint;
                 $vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
 		$vpnEndpoint->protocol = $formValues['vpnEndpoint']['protocol'];
