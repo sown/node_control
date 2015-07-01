@@ -91,18 +91,25 @@ class RadAcctUtils {
 		$deployment_data = array();
 		foreach ($nodeDeployments as $nodeDeployment)
 		{
-			foreach($years as $year)
+			foreach(array_keys($nodeDeployment) as $year)
 	                {
-				foreach($months as $month)
+				foreach(array_keys($nodeDeployment[$year]) as $month)
 	                        {
-	                                foreach($days as $day)
-	                                {
+	                        	foreach(array_keys($nodeDeployment[$year][$month]) as $day)
+	                               	{
 						if (!isset($deployment_data[$year][$month][$day]))
-							$deployment_data[$year][$month][$day] = $nodeDeployment[$year][$month][$day];
+						{
+							$deployment_data[$year][$month][$day]['down'] = $nodeDeployment[$year][$month][$day]['down'];
+							$deployment_data[$year][$month][$day]['up'] = $nodeDeployment[$year][$month][$day]['up'];
+						}
 						else
-							$deployment_data[$year][$month][$day] += $nodeDeployment[$year][$month][$day];
+						{
+							$deployment_data[$year][$month][$day]['down'] += $nodeDeployment[$year][$month][$day]['down'];
+							$deployment_data[$year][$month][$day]['up'] += $nodeDeployment[$year][$month][$day]['up'];
+						}
 					}
-				}	
+				}
+					
 			}
 		}
 		return $deployment_data;
