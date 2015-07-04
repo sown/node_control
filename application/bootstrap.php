@@ -265,6 +265,12 @@ Route::set('cron_jobs', 'admin/cronjobs')
                 'action'     => 'default',
         ));
 
+Route::set('cron_jobs_by_host', 'admin/cronjobs/host/<host>')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'default',
+        ));
+
 Route::set('cron_jobs_incoming', 'admin/cronjobs/incoming')
         ->defaults(array(
                 'controller' => 'cronjobs',
@@ -272,6 +278,12 @@ Route::set('cron_jobs_incoming', 'admin/cronjobs/incoming')
         ));
 
 Route::set('cron_jobs_enabled', 'admin/cronjobs/enabled')
+        ->defaults(array(
+                'controller' => 'cronjobs',
+                'action'     => 'enabled',
+        ));
+
+Route::set('cron_jobs_enabled_by_host', 'admin/cronjobs/host/<host>/enabled')
         ->defaults(array(
                 'controller' => 'cronjobs',
                 'action'     => 'enabled',

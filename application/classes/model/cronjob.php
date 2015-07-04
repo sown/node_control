@@ -84,6 +84,9 @@ class Model_CronJob extends Model_Entity
          */
         protected $onHosts;
 
+	// Hack to support different links for OnHosts in Cron Jobs table
+	protected $onHostsEnabled;
+
 
 	public function __get($name)
 	{

@@ -14,22 +14,46 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	{
 		$this->check_login("systemadmin");
 		$subtitle = "All Cron Jobs";
-		View::bind_global('subtitle', $subtitle);
-		$this->template->sidebar = View::factory('partial/sidebar');
-		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
-
+		$host = $this->request->param('host');
+		
 		$fields = array(
                         'id' => 'ID',
-			'creator' => 'Creator',
-			'username' => 'Username',
-			'onHosts' => 'Hosts',
-			'description' => 'description',
-			'disabled' => '',
+                        'creator' => 'Creator',
+                        'username' => 'Username',
+                        'onHosts' => 'Hosts',
+                        'description' => 'description',
+                        'disabled' => '',
                         'view' => '',
                         'edit' => '',
                         'delete' => '',
                 );
-		$rows = Doctrine::em()->getRepository('Model_CronJob')->findAll();
+		if (!empty($host))
+                {
+			$hostObj = Doctrine::em()->getRepository('Model_Server')->findOneByIcingaName($host);
+			if (empty($hostObj))
+                        {
+                                $hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByAggregate($host);
+                        }
+                        else
+                        {
+                                $hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByServer($hostObj);
+                        }
+			$subtitle .= " on ".$host;
+			$hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByServer($hostObj);
+			foreach ($hostCronJobs as $hcj)
+			{
+				$rows[] = $hcj->cronJob;
+			}
+			unset($fields['onHosts']);
+		}
+		else 
+		{
+			$rows = Doctrine::em()->getRepository('Model_CronJob')->findAll();
+		}
+		View::bind_global('subtitle', $subtitle);
+		$this->template->sidebar = View::factory('partial/sidebar');
+		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+
 		$objectType = 'cron_job';
                 $idField = 'id';
 		$content = View::factory('partial/table')
@@ -52,13 +76,43 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                         'id' => 'ID',
                         'creator' => 'Creator',
                         'username' => 'Username',
-			'onHosts' => 'Hosts',
+			'onHostsEnabled' => 'Hosts',
                         'description' => 'description',
                         'view' => '',
                         'edit' => '',
                         'delete' => '',
                 );
-                $rows = Doctrine::em()->getRepository('Model_CronJob')->findByDisabled(0);
+		$host = $this->request->param('host');
+		
+		if (!empty($host))
+                {
+                        $hostObj = Doctrine::em()->getRepository('Model_Server')->findOneByIcingaName($host);
+                        $subtitle .= " on ".$host;
+			if (empty($hostObj))
+			{
+				$hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByAggregate($host);
+			}
+			else 
+			{
+                        	$hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByServer($hostObj);
+			}
+                        foreach ($hostCronJobs as $hcj)
+                        {
+				if (empty($hcj->cronJob->disabled))
+				{
+                                	$rows[] = $hcj->cronJob;
+				}
+                        }
+                        unset($fields['onHostsEnabled']);
+                }
+                else
+                {
+			$rows = Doctrine::em()->getRepository('Model_CronJob')->findByDisabled(0);
+			foreach ($rows as $r => $row)
+			{
+				$rows[$r]->onHostsEnabled = $row->onHosts;
+			}
+                }
                 $objectType = 'cron_job';
                 $idField = 'id';
                 $content = View::factory('partial/table')

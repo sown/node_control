@@ -44,15 +44,25 @@ foreach ($fields as $f => $field)
 	{
 		echo "          <td>" . $row->$f->title . "</td>\n";
 	}
-	elseif ($f == "onHosts") 
+	elseif ($f == "onHosts" || $f == "onHostsEnabled") 
 	{
+	
 		$hosts = array();
 		foreach ($row->$f as $hostCronJob) 
 		{
-			$hosts[] = $hostCronJob->get_host_name();
+			$hostname = $hostCronJob->get_host_name();
+			if ($f == "onHosts")
+			{
+				$hosts[] = "<a href=\"".Route::url('cron_jobs_by_host', array("host" => $hostname))."\">$hostname</a>";
+			}
+			elseif ($f == "onHostsEnabled")
+			{
+				$hosts[] = "<a href=\"".Route::url('cron_jobs_enabled_by_host', array("host" => $hostname))."\">$hostname</a>";
+			}
 		}
 		echo "<td>" . implode(", ", $hosts) . "</td>\n";
 	}
+	
 	elseif ($f == "disabled" || $f == "undeployable")
 	{
 		if ($row->$f)
