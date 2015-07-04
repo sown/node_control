@@ -35,10 +35,10 @@ if (isset($jsFiles))
         <a href="/"><img class="logo" src="/media/images/sown_adminsys.png" alt="SOWN Admin System logo"/></a>
       </div>
     </div>
-    <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/connect/">Connect to SOWN</a></div></div>
-    <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/">About Us</a></div></div>
-    <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/contact/">Contact&nbsp;Us</a></div></div>
     <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/wiki/">Wiki</a></div></div>
+    <div class="menucontainer"><div class="item"><a href="https://www.suws.org.uk/wp/">SUWS</a></div></div>
+    <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/connect/">Connect</a></div></div>
+    <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/contact/">Contact&nbsp;Us</a></div></div>
   </div>
 <?= View::factory('partial/devsplash') ?>
   <div class="break" />
