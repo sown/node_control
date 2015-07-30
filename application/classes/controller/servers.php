@@ -312,7 +312,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		{
 			$formValues['location'] = $server->location->id;
 		}
-		if ($server->acquiredDate->format('U') < 86400)
+		if ($server->acquiredDate->format('U') > 86400)
                 {
 			$formValues['acquiredDate'] = $server->acquiredDate->format('Y-m-d');
 		}
@@ -333,14 +333,14 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'acquiredDate' => array('title' => 'Acquired Date', 'type' => 'date'),
 			'retired' => array('title' => 'Retired?', 'type' => 'checkbox'),
 			'location' => array('title' => 'Location', 'type' => 'select', 'options' => $locations),
-			'serverCase' => array('title' => 'Case', 'type' => 'input', 'size' => 40, 'hint' => 'E.g. 2U Dell R730'),
-			'processor' => array('title' => 'Processor', 'type' => 'input', 'size' => 40),
-			'hardDrive' => array('title' => 'Hard Drive', 'type' => 'input', 'size' => 40),
+			'serverCase' => array('title' => 'Case', 'type' => 'input', 'size' => 50, 'hint' => 'E.g. 2U Dell R730'),
+			'processor' => array('title' => 'Processor', 'type' => 'input', 'size' => 50),
 			'memory' => array('title' => 'Memory', 'type' => 'input', 'size' => 6, 'hint' => 'E.g. 4GiB'),
-			'networkPorts' => array('title' => 'Network Ports', 'type' => 'input', 'size' => 40, 'hint' => 'E.g. 2 x BCM2715 Gigabit'),
-			'wakeOnLan' => array('title' => 'Wake-On-Lan', 'type' => 'input', 'size' => 40),
-                        'kernel' => array('title' => 'Kernel', 'type' => 'input', 'size' => 40),
-                        'os' => array('title' => 'Operating System', 'type' => 'input', 'size' => 40),
+			'hardDrive' => array('title' => 'Hard Drive', 'type' => 'input', 'size' => 100),
+			'networkPorts' => array('title' => 'Network Ports', 'type' => 'input', 'size' => 100, 'hint' => 'E.g. 2 x BCM2715 Gigabit'),
+			'wakeOnLan' => array('title' => 'Wake-On-Lan', 'type' => 'input', 'size' => 100),
+                        'kernel' => array('title' => 'Kernel', 'type' => 'input', 'size' => 50),
+                        'os' => array('title' => 'Operating System', 'type' => 'input', 'size' => 50),
                         'internal' => array(
 				'title' => 'SOWN Interface',
 				'type' => 'fieldset',
