@@ -286,6 +286,24 @@ CREATE TABLE `inventory` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `locations`
+--
+
+DROP TABLE IF EXISTS `locations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `locations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(255) NOT NULL COMMENT 'name for lthe ocation',
+  `long_name` varchar(255) DEFAULT NULL,
+  `longitude` decimal(14,7) DEFAULT NULL COMMENT 'longitude of the location',
+  `latitude` decimal(14,7) DEFAULT NULL COMMENT 'latitude of the location',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='locations of things';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `network_adapters`
 --
 
@@ -442,11 +460,31 @@ CREATE TABLE `servers` (
   `internal_name` varchar(255) DEFAULT NULL,
   `internal_cname` varchar(255) DEFAULT NULL,
   `icinga_name` varchar(255) DEFAULT NULL,
+  `description` text,
+  `location_id` int(11) DEFAULT NULL,
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
+  `external_interface` varchar(20) DEFAULT NULL,
+  `internal_interface` varchar(20) DEFAULT NULL,
+  `external_mac` varchar(17) DEFAULT NULL,
+  `internal_mac` varchar(17) DEFAULT NULL,
+  `external_switchport` varchar(255) DEFAULT NULL,
+  `internal_switchport` varchar(255) DEFAULT NULL,
+  `external_cable` varchar(50) DEFAULT NULL,
+  `internal_cable` varchar(50) DEFAULT NULL,
   `external_ipv4` varchar(15) DEFAULT NULL COMMENT 'external (ECS)  IPv4 address',
   `internal_ipv4` varchar(15) DEFAULT NULL COMMENT 'internal (SOWN) IPv4 address',
   `external_ipv6` varchar(39) DEFAULT NULL COMMENT 'external (ECS)  IPv6 address',
   `internal_ipv6` varchar(39) DEFAULT NULL COMMENT 'internal (SOWN) IPv6 address',
+  `acquired_date` datetime DEFAULT '0000-00-00 00:00:00',
+  `retired` int(1) DEFAULT '0',
+  `server_case` varchar(255) DEFAULT NULL,
+  `processor` varchar(255) DEFAULT NULL,
+  `memory` varchar(255) DEFAULT NULL,
+  `hard_drive` varchar(255) DEFAULT NULL,
+  `network_ports` varchar(255) DEFAULT NULL,
+  `wake_on_lan` varchar(255) DEFAULT NULL,
+  `kernel` varchar(255) DEFAULT NULL,
+  `os` varchar(255) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `server_to_certificate` (`certificate_id`),
@@ -573,4 +611,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-06-09  4:23:02
+-- Dump completed on 2015-07-30  4:23:02
