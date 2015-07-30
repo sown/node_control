@@ -355,6 +355,48 @@ Route::set('edit_reserved_subnet', 'admin/subnets/reserved/<id>/edit')
                 'action'     => 'edit',
         ));
 
+Route::set('servers', 'admin/servers')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'default',
+        ));
+
+Route::set('current_servers', 'admin/servers/current')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'current',
+        ));
+
+Route::set('create_server', 'admin/servers/create')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_server', 'admin/servers/<id>/delete')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_server', 'admin/servers/<id>/edit')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'edit',
+        ));
+
+Route::set('generate_server_wiki_page', 'admin/servers/<id>/wiki_page')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'generate_wiki_page',
+        ));
+
+Route::set('view_server', 'admin/servers/<id>')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'view',
+        ));
+
 Route::set('nodes', 'admin/nodes')
         ->defaults(array(
                 'controller' => 'nodes',

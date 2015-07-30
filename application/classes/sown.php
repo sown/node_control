@@ -166,6 +166,19 @@ class SOWN
 		}
  	}
 
+	public static function get_all_locations()
+	{
+		$locations = array(
+			0 => 'UNSPECIFIED',
+		);
+                $results = Doctrine::em()->getRepository('Model_Location')->findBy(array(), array('name' => 'ASC'));
+                foreach ($results as $result)
+                {
+                        $locations[$result->id] = "{$result->longName} ({$result->name})";
+                }
+		return $locations;
+	}
+
 	public static function get_all_cron_job_hosts()
 	{
 		$hosts = array();

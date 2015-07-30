@@ -63,7 +63,7 @@ foreach ($fields as $f => $field)
 		echo "<td>" . implode(", ", $hosts) . "</td>\n";
 	}
 	
-	elseif ($f == "disabled" || $f == "undeployable")
+	elseif ($f == "disabled" || $f == "undeployable" || $f == "retired")
 	{
 		if ($row->$f)
 		{
@@ -122,6 +122,10 @@ foreach ($fields as $f => $field)
 		}
 		echo "</td>\n";
 	}
+	elseif ($f == "location" && is_object($row->$f))
+        {
+		echo "          <td>" . $row->location->name . "</td>\n";
+        }
 	elseif (preg_match("/octet/", $f)) 
 	{
 		$row->$f = round($row->$f/1024/1024, 3);
@@ -147,11 +151,30 @@ foreach ($fields as $f => $field)
 		$num_unresponded = sizeof(Model_Enquiry::getUnresponded($type));
 		echo "<td><a href=\"" . Route::url('unresponded_type_enquiries', array('type' => $row->id)). "\">" . $row->title . " (${num_unresponded})</a></td>\n";
 	}
+	elseif ($f == "externalIPs")
+	{
+		echo "<td>$row->externalIPv4<br/>$row->externalIPv6</td>\n";
+	}
+	elseif ($f == "internalIPs")
+        {
+                echo "<td>$row->internalIPv4<br/>$row->internalIPv6</td>\n";
+        }
 	else
 	{
 		if (gettype($row->$f) == "object" && get_class($row->$f) == "DateTime")
 		{
-			$row->$f = $row->$f->format('Y-m-d H:i:s');
+			if ($row->$f->format('U') < 86400)
+			{
+				$row->$f = "";
+			}
+			elseif ($row->$f->format('H:i:s') == "00:00:00") 
+			{
+				$row->$f = $row->$f->format('Y-m-d');
+			}
+			else 
+			{
+				$row->$f = $row->$f->format('Y-m-d H:i:s');
+			}
 			if ($row->$f == $latest_end_datetime)
 			{
 				$row->$f = "";

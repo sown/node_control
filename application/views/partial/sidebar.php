@@ -57,24 +57,18 @@ if(!isset($user))
      <div class="gadget">
       <div class="banner">Miscellaneous</div>
       <div class="content">
-<?php if($user->is('systemadmin')) { ?>
-        <a href="<?= Route::url('cron_jobs_enabled') ?>">Cron Jobs</a><br/>
-<?php } ?>
-<?php if($user->is('systemadmin')) { ?>
-        <a href="<?= Route::url('certificates') ?>">Certificates</a><br/>
-<?php } ?>
+
 <?php if($user->is('systemadmin')) { 
 	$unresponded = sizeof(Model_Enquiry::getUnresponded());
-	$enquiry_type_account = Doctrine::em()->getRepository('Model_EnquiryType')->find(3);
-	$unresponded_accounts = sizeof(Model_Enquiry::getUnresponded(array('type' => $enquiry_type_account)));
-?>	
+        $enquiry_type_account = Doctrine::em()->getRepository('Model_EnquiryType')->find(3);
+        $unresponded_accounts = sizeof(Model_Enquiry::getUnresponded(array('type' => $enquiry_type_account)));
+?>
+	<a href="<?= Route::url('current_servers') ?>">Servers</a><br/>
+        <a href="<?= Route::url('cron_jobs_enabled') ?>">Cron Jobs</a><br/>
+        <a href="<?= Route::url('certificates') ?>">Certificates</a><br/>
         <a href="<?= Route::url('unresponded_enquiries') ?>">Enquiries (<?= $unresponded ?>)</a><br/>
 	<a href="<?= Route::url('unresponded_type_enquiries', array('type' => 3)) ?>">Community Account Requests (<?= $unresponded_accounts ?>)</a><br/>
-<?php } ?>
-<?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('inventory') ?>">Inventory</a><br/>
-<?php } ?>
-<?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('radaccts') ?>">Radius Accounting</a><br/>
 <?php } ?>
 
