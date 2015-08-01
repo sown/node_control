@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
@@ -22,27 +23,6 @@ use Doctrine\ORM\Mapping\DiscriminatorMap;
  */
 class Model_Server extends Model_Entity
 {
-	/**
-	 * @var string $name
-	 *
-	 * @Column(name="name", type="string", length=255, nullable=true)
-	 */
-	protected $name;
-
-	/**
-         * @var string $internalName
-         *
-         * @Column(name="internal_name", type="string", length=255, nullable=true)
-         */
-        protected $internalName;
-
-	/**
-         * @var string $internalCname
-         *
-         * @Column(name="internal_cname", type="string", length=255, nullable=true)
-         */
-        protected $internalCname;
-
 	/**
          * @var string $icingaName
          *
@@ -66,90 +46,6 @@ class Model_Server extends Model_Entity
 	 * })
 	 */
 	protected $certificate;
-
-	/**
-         * @var string $externalInterface
-         *
-         * @Column(name="external_interface", type="string", length=20, nullable=true)
-         */
-        protected $externalInterface;
-
-        /**
-         * @var string $internalInterface
-         *
-         * @Column(name="internal_interface", type="string", length=20, nullable=true)
-         */
-        protected $internalInterface;
-
-        /**
-         * @var string $externalMac
-         *
-         * @Column(name="external_mac", type="string", length=17, nullable=true)
-         */
-        protected $externalMac;
-
-        /**
-         * @var string $internalMac
-         *
-         * @Column(name="internal_mac", type="string", length=17, nullable=true)
-         */
-        protected $internalMac;
-
-	 /**
-         * @var string $externalSwitchport
-         *
-         * @Column(name="external_switchport", type="string", length=255, nullable=true)
-         */
-        protected $externalSwitchport;
-
-        /**
-         * @var string $internalSwitchport
-         *
-         * @Column(name="internal_switchport", type="string", length=255, nullable=true)
-         */
-        protected $internalSwitchport;
-
-	 /**
-         * @var string $externalCable
-         *
-         * @Column(name="external_cable", type="string", length=50, nullable=true)
-         */
-        protected $externalCable;
-
-        /**
-         * @var string $internalCable
-         *
-         * @Column(name="internal_cable", type="string", length=50, nullable=true)
-         */
-        protected $internalCable;
-
-	/**
-	 * @var string $externalIPv4
-	 *
-	 * @Column(name="external_ipv4", type="ipv4address", nullable=true)
-	 */
-	protected $externalIPv4;
-
-	/**
-	 * @var string $internalIPv4
-	 *
-	 * @Column(name="internal_ipv4", type="ipv4address", nullable=true)
-	 */
-	protected $internalIPv4;
-
-	/**
-	 * @var string $externalIPv6
-	 *
-	 * @Column(name="external_ipv6", type="ipv6address", nullable=true)
-	 */
-	protected $externalIPv6;
-
-	/**
-	 * @var string $internalIPv6
-	 *
-	 * @Column(name="internal_ipv6", type="ipv6address", nullable=true)
-	 */
-	protected $internalIPv6;
 
 	/**
          * @var datetime $acquiredDate
@@ -229,7 +125,12 @@ class Model_Server extends Model_Entity
          *   @JoinColumn(name="location_id", referencedColumnName="id")
          * })
          */
-        protected $location;	
+        protected $location;
+	
+	/**
+         * @OneToMany(targetEntity="Model_ServerInterface", mappedBy="server", cascade={"persist", "remove"})
+         */
+        protected $interfaces;
 
        	/**
 	* @ManyToMany(targetEntity="Model_CronJob")
@@ -287,9 +188,16 @@ class Model_Server extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Server: {$this->id}, name={$this->name}, internalName={$this->internalName}, icingaName={$this->icingaName}, externalMac={$this->externalMac}, internalMac={$this->internalMac}, externalInterface={$this->externalInterface}, internalInterface={$this->internalInterface}, externalSwitchport={$this->externalSwitchport}, internalSwitcport={$this->internalSwitchport}, externalCable={$this->externalCable}, internalCable={$this->internalCable}, externalIPv4={$this->externalIPv4}, internalIPv4={$this->internalIPv4}, externalIPv6={$this->externalIPv6}, internalIPv6={$this->internalIPv6}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
+		$str  = "Server: {$this->id}, icingaName={$this->icingaName}, description={$this->description}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
+		$str .= "<br/>";
+		$str .= "location={$this->location}";
+		foreach($this->interfaces as $interface)
+                {
+                        $str .= "<br/>";
+                        $str .= "interface={$interface}";
+                }
 		return $str;
 	}
 
@@ -299,22 +207,27 @@ class Model_Server extends Model_Entity
 		$str  = "<div class='server' id='server_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Server</th><td>{$this->id}</td></tr>";
-		foreach(array('name', 'internalName', 'icingaName', 'externalMac', 'internalMac', 'externalInterface', 'internalInterface', 'externalSwitchport', 'internalSwitchport', 'externalCable', 'internalCable', 'externalIPv4', 'internalIPv4', 'externalIPv6', 'internalIPv6') as $field)
+		foreach(array('icingaName', 'description') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
-		foreach(array('certificate') as $field)
+  		
+		foreach(array('certificate', 'location') as $field)
 		{
 			if($this->$field)
 			{
 				$str .= $this->fieldHTML($field, $this->$field->toHTML());
 			}
 		}
-		$str .= $this->fieldHTML('acquiredDate')->format('Y-m-d H:i:s');
+		$str .= $this->fieldHTML('acquiredDate', $this->acquiredDate->format('Y-m-d H:i:s'));
 		foreach(array('retired', 'serverCase', 'processor', 'memory', 'hardDrive', 'networkPorts', 'wakeOnLan', 'kernel', 'os') as $field)
                 {
                         $str .= $this->fieldHTML($field);
                 }
+		foreach($this->interfaces as $interface)
+                {
+                        $str .= $this->fieldHTML('interface', $interface->toHTML());
+                }	
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;
@@ -323,13 +236,7 @@ class Model_Server extends Model_Entity
 	public function toWikiMarkup()
 	{
 		$wm = "";
-		if (!empty($this->internalName)) $wm .= "[[sowndns::{$this->internalName}.sown.org.uk]]";
-		elseif (!empty($this->name)) 
-		{
-			$wm .= "[[ecsdns::{$this->name}]]";
-			$ecsdns = 1;	
-		}
-		else $wm .= $this->icingaName;
+		$wm .= $this->icingaName;
 		$wm .= (empty($this->description) ? ' is a SOWN server' : " is ".$this->description);
 		$wm .= ".\n\n";
 		$hwphrases = array();
@@ -353,55 +260,52 @@ class Model_Server extends Model_Entity
 		$wm .= (sizeof($hwphrases) > 0 ? "\n\n" : "\n");
 		$wm .= (!empty($this->acquiredDate) ? '' : "It was accquired on [[acquired_date::".$this->acquiredDate->format('jS F Y')."]].\n\n");
 		$wm .= "= Network =\n\n";
-		if (!empty($this->internalName))
+		foreach ($this->interfaces as $interface)
 		{
-			if (!empty($this->internalIPv4) || !empty($this->internalIPv6))
+			$intfIPv4Addr = $interface->IPv4Addr;
+			$intfIPv6Addr = $interface->IPv6Addr;
+			$intfHostname = $interface->hostname;
+                        $intfCname = $interface->cname;
+			$intfMac = $interface->mac;
+                        $intfSwitchport = $interface->switchport;
+			$intfName = $interface->name;
+                        $intfCable = $interface->cable;
+			if (!empty($intfIPv4Addr))
 			{
-				$wm .= "This server is connected to the SOWN VLAN with the IP addresses:\n";
-				$wm .= (empty($this->internalIPv4) ? '' : "* [[sownipv4::{$this->internalIPv4}]]\n");
-				$wm .= (empty($this->internalIPv6) ? '' : "* [[sownipv6::".str_replace("::", ":&#58;", $this->internalIPv6)."]]\n");
+				$domain = "";
+				$prefix = "";
+				if ($interface->vlan->name == "SOWN")
+				{
+					$prefix = "sown";
+					$domain = ".sown.org.uk";
+				}
+				elseif ($interface->vlan->name == "ECS DMZ")
+				{
+					$prefix = "ecs";
+				}
+				if (!empty($intfIPv4Addr) || !empty($intfIPv6Addr))
+				{
+					$wm .= "This server is connected to the ".$interface->vlan->name." VLAN with the IP addresses:\n";
+					$wm .= (empty($intfIPv4Addr) ? '' : "* [[{$prefix}ipv4::{$intfIPv4Addr}]]\n");
+					$wm .= (empty($intfIPv6Addr) ? '' : "* [[{$prefix}ipv6::".str_replace("::", ":&#58;", $intfIPv6Addr)."]]\n");
+				}
+				$wm .= "It has the DNS names:\n* [[{$prefix}dns::{$interface->hostname}{$domain}]]\n";
+				$wm .= (empty($intfCname) ? '' : "[[has_cname::{$intfCname}{$domain}]]\n");
+				if (!empty($intfMac) || !empty($infName)  || !empty($intfSwitchport) || !empty($intfCable)) 
+				{
+					$wm .= "Its ";
+					$wm .= (empty($intfMac) ? '' : "MAC address is [[{$prefix}mac::{$intfMac}]]");
+					$wm .= (!empty($intfMac) && !empty($intfName) ? ' on its ' : ' ');
+					$wm .= (empty($intfName) ? '' : "[[{$prefix}interface::{$intfName}]] interface");
+					$wm .= ((!empty($intfMac) || !empty($intfName)) && ((!empty($intfSwitchport) || !empty($intfCable))) ? ' and' : '');
+					$wm .= (!empty($intfSwitchport) || !empty($intfCable) ? ' connected' : '');
+					$wm .= (empty($intfSwitchport) ? '' : " to port [[{$prefix}port::{$intfSwitchport}]]");
+					$wm .= (empty($intfCable) ? '' : " with a {$intfCable} network cable");
+					$wm .= ".\n";
+				}
+				$wm .= "\n";
 			}
-			$wm .= "It has the DNS names:\n* {$this->internalName}.sown.org.uk\n";
-			$wm .= (empty($this->internalCname) ? '' : "[[has_cname::{$this->internalCname}.sown.org.uk]]\n");
-			if (!empty($this->internalMac) || !empty($this->internalInterface))# || !empty($this->internalSwitchPort) || !empty($this->internalCable)) 
-			{
-				$wm .= "Its ";
-				$wm .= (empty($this->internalMac) ? '' : "MAC address is [[sownmac::{$this->internalMac}]]");
-				$wm .= (!empty($this->internalMac) && !empty($this->internalInterface) ? ' on its ' : ' ');
-				$wm .= (empty($this->internalInterface) ? '' : "[[sowninterface::{$this->internalInterface}]] interface");
-				$wm .= ((!empty($this->internalMac) || !empty($this->internalInterface)) && ((!empty($this->internalSwitchport) || !empty($this->internalCable))) ? ' and' : '');
-				$wm .= (!empty($this->internalSwitchport) || !empty($this->internalCable) ? ' connected' : '');
-				$wm .= (empty($this->internalSwitchport) ? '' : " to port [[sownport::{$this->internalSwitchport}]]");
-				$wm .= (empty($this->internalCable) ? '' : " with a {$this->internalCable} network cable");
-				$wm .= ".\n";
-			}
-			$wm .= "\n";
 		}
-		if (!empty($this->name))
-		{
-                        if (!empty($this->externalIPv4) || empty($this->externalIPv6))
-                        {
-                                $wm .= "This server is connected to the ECS VLAN with the IP addresses:\n";
-                                $wm .= (empty($this->externalIPv4) ? '' : "* [[ecsipv4::{$this->externalIPv4}]]\n");
-                                $wm .= (empty($this->externalIPv6) ? '' : "* [[ecsipv6::".str_replace("::", ":&#58;", $this->externalIPv6)."]]\n");
-                        }
-                        $wm .= "It has the DNS names:\n* ";
-			$wm .= (empty($ecsdns) ? "[[ecsdns::{$this->name}]]" : $this->name);
-			$wm .= "\n";
-			if (!empty($this->externalMac) || !empty($this->externalInterface)) #|| !empty($this->externalSwitchport) || !empty($this->externalCable))
-                        {
-                                $wm .= "Its ";
-                                $wm .= (empty($this->externalMac) ? '' : "MAC address is [[ecsmac::{$this->externalMac}]]");
-                                $wm .= (!empty($this->externalMac) && !empty($this->externalInterface) ? ' on its ' : ' ');
-                                $wm .= (empty($this->externalInterface) ? '' : "[[ecsinterface::{$this->externalInterface}]] interface");
-                                $wm .= ((!empty($this->externalMac) || !empty($this->externalInterface)) && ((!empty($this->externalSwitchport) || !empty($this->externalCable))) ? ' and' : '');
-                                $wm .= (!empty($this->externalSwitchport) || !empty($this->externalCable) ? ' connected' : '');
-                                $wm .= (empty($this->externalSwitchport) ? '' : " to port [[ecsport::{$this->externalSwitchport}]]");
-                                $wm .= (empty($this->externalCable) ? '' : " with a {$this->externalCable} network cable");
-                                $wm .= ".\n";
-                        }
-			$wm .= "\n";
-                }
 		if (!empty($this->wakeOnLan))
 		{
 			$wm .= "The WakeOnLAN capability of this server is [[WakeOnLAN::{$this->wakeOnLan}]].\n\n";

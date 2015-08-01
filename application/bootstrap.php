@@ -385,6 +385,12 @@ Route::set('edit_server', 'admin/servers/<id>/edit')
                 'action'     => 'edit',
         ));
 
+Route::set('servers_icinga', 'admin/servers/icinga')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'generate_icinga',
+        ));
+
 Route::set('generate_server_wiki_page', 'admin/servers/<id>/wiki_page')
         ->defaults(array(
                 'controller' => 'servers',

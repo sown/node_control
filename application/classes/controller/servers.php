@@ -23,11 +23,6 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'icingaName' => 'Icinga Name',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
-			'name' => 'ECS FQDN',
-			'externalIPs' => 'ECS IPv4/IPv6',
-			'internalName' => 'SOWN Hostname',
-			'internalCname' => 'SOWN CName',
-			'internalIPs' => 'SOWN IPv4/IPv6',
 			'os' => 'OS',
 			'kernel' => 'Kernel',
 			'retired' => '',
@@ -59,11 +54,6 @@ class Controller_Servers extends Controller_AbstractAdmin
                         'icingaName' => 'Icinga Name',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
-                        'name' => 'ECS FQDN',
-                        'externalIPs' => 'ECS IPv4/IPv6',
-                        'internalName' => 'SOWN Hostname',
-                        'internalCname' => 'SOWN CName',
-                        'internalIPs' => 'SOWN IPv4/IPv6',
                         'os' => 'OS',
                         'kernel' => 'Kernel',
                         'view' => '',
@@ -187,7 +177,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 	public function action_delete()
         {
                 $this->check_login("systemadmin");
-		$server = Doctrine::em()->getRepository('Model_Server')->findOneById($this->request->param('id'));
+		$server = Doctrine::em()->getRepository('Model_Server')->find($this->request->param('id'));
                 if (!is_object($server))
                 {
                         throw new HTTP_Exception_404();
@@ -236,7 +226,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 	public function action_generate_wiki_page()
 	{
 		$this->check_login("systemadmin");
-                $server = Doctrine::em()->getRepository('Model_Server')->findOneById($this->request->param('id'));
+                $server = Doctrine::em()->getRepository('Model_Server')->find($this->request->param('id'));
                 if (!is_object($server))
                 {
                         throw new HTTP_Exception_404();
@@ -254,6 +244,39 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 	}
 
+	public function action_generate_icinga()
+       	{
+		$this->auto_render = FALSE;
+                $this->check_login("systemadmin");
+		$this->response->headers('Content-Type','application/json');
+		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
+		$servers_icinga = array();
+		foreach($servers as $server) 
+		{
+			$ips = array(
+				'sown_ipv4' => null,
+				'sown_ipv6' => null,
+				'ecs_ipv4' => null,
+				'ecs_ipv6' => null,
+			);
+			foreach ($server->interfaces as $interface) 
+			{
+				if ($interface->vlan->name == "SOWN")
+				{	
+					$ips['sown_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
+					$ips['sown_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
+				}
+				elseif ($interface->vlan->name == "ECS DMZ")
+				{
+					$ips['ecs_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
+                                        $ips['ecs_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
+				}
+			}
+			$servers_icinga[$server->icingaName] = $ips;
+		}
+		$this->response->body(SOWN::jsonpp(json_encode($servers_icinga)));
+	}	
+
 	private function _validate($formValues) 
 	{
 		$errors = array();
@@ -268,7 +291,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 	private function _load_from_database($id, $action = 'edit')
 	{
-		$server = Doctrine::em()->getRepository('Model_Server')->findOneById($id);
+		$server = Doctrine::em()->getRepository('Model_Server')->find($id);
                 if (!is_object($server))
                 {
                         throw new HTTP_Exception_404();
@@ -288,26 +311,30 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'wakeOnLan' => $server->wakeOnLan,
 			'kernel' => $server->kernel,
 			'os' => $server->os,
-			'internal' => array(
-				'internalInterface' => $server->internalInterface,
-                                'internalName' => $server->internalName,
-				'internalCname' => $server->internalCname,
-                                'internalMac' => $server->internalMac,
-				'internalSwitchport' => $server->internalSwitchport,
-				'internalCable' => $server->internalCable,
-                                'internalIPv4' => $server->internalIPv4,
-                                'internalIPv6' => $server->internalIPv6,
+			'interfaces' => array(
+                                'currentInterfaces' => array(),
                         ),
-			'external' => array(
-				'externalInterface' => $server->externalInterface,
-				'name' => $server->name,
-				'externalMac' => $server->externalMac,
-				'externalSwitchport' => $server->externalSwitchport,
-                                'externalCable' => $server->externalCable,
-				'externalIPv4' => $server->externalIPv4,
-				'externalIPv6' => $server->externalIPv6,
-			),	
                 );
+                foreach ($server->interfaces as $i => $interface)
+                {
+                        $formValues['interfaces']['currentInterfaces'][$i] = array (
+                                'id' => $interface->id,
+				'vlan' => $interface->vlan->id,
+                                'name' => $interface->name,
+				'hostname' => $interface->hostname,
+				'cname' => $interface->cname,
+				'mac' => $interface->mac,
+				'switchport' => $interface->switchport,
+				'cable' => $interface->cable,
+                                'IPv4Addr' => $interface->IPv4Addr,
+                                'IPv6Addr' => $interface->IPv6Addr,
+                        );
+                        if ($action == 'view')
+                        {
+                                $formValues['interfaces']['currentInterfaces'][$i]['vlan'] = $interface->vlan->name;
+                        }
+                }
+
 		if (is_object($server->location))
 		{
 			$formValues['location'] = $server->location->id;
@@ -316,16 +343,25 @@ class Controller_Servers extends Controller_AbstractAdmin
                 {
 			$formValues['acquiredDate'] = $server->acquiredDate->format('Y-m-d');
 		}
+		
 		if ($action == 'view')
                 {
                         $formValues['retired'] = ( $formValues['retired'] ? 'Yes' : 'No');
 		}
+		if ($action == 'edit')
+                {
+                        foreach ($formValues['interfaces']['currentInterfaces'][$i] as $f => $field)
+                        {
+                                $formValues['interfaces']['currentInterfaces'][$i+1][$f] = '';
+                        }
+                }
 		return $formValues;
 	}
 
 	private function _load_form_template($action = 'edit')
 	{
 		$locations = Sown::get_all_locations();
+		$vlans = Sown::get_all_vlans();
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'icingaName' => array('title' => 'Icinga Name', 'type' => 'input', 'size' => 20),
@@ -341,35 +377,28 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'wakeOnLan' => array('title' => 'Wake-On-Lan', 'type' => 'input', 'size' => 100),
                         'kernel' => array('title' => 'Kernel', 'type' => 'input', 'size' => 50),
                         'os' => array('title' => 'Operating System', 'type' => 'input', 'size' => 50),
-                        'internal' => array(
-				'title' => 'SOWN Interface',
-				'type' => 'fieldset',
-				'fields' => array(
-					'internalInterface' => array('title' => 'Interface Name', 'type' => 'input', 'size' => 6),
-                                	'internalName' => array('title' => 'Hostname', 'type' => 'input', 'size' => 20),
-                                	'internalCname' => array('title' => 'CName', 'type' => 'input', 'size' => 20),
-                                	'internalMac' => array('title' => 'MAC Address', 'type' => 'input', 'size' => 17),
-					'internalSwitchport' => array('title' => 'Switchport', 'type' => 'input', 'size' => 40),
-					'internalCable' => array('title' => 'Cable', 'type' => 'input', 'size' => 20, 'hint' => 'E.g. yellow'),
-                                	'internalIPv4' => array('title' => 'IPv4 Address', 'type' => 'input', 'size' => 15),
-					'internalIPv6' => array('title' => 'IPv6 Address', 'type' => 'input', 'size' => 40),
-				),
-                        ),
-			
-                        'external' => array(
-				'title' => 'External Interface',
+			'interfaces' => array(
+                                'title' => 'Interfaces',
                                 'type' => 'fieldset',
                                 'fields' => array(
-					'externalInterface' => array('title' => 'Interface Name', 'type' => 'input', 'size' => 6),
-                                        'name' => array('title' => 'Hostname', 'type' => 'input', 'size' => 40),
-                                        'externalMac' => array('title' => 'MAC Address', 'type' => 'input', 'size' => 17),
-					'externalSwitchport' => array('title' => 'Switchport', 'type' => 'input', 'size' => 40),
-                                        'externalCable' => array('title' => 'Cable', 'type' => 'input', 'size' => 20, 'hint' => 'E.g. yellow'),
-                                        'externalIPv4' => array('title' => 'IPv4 Address', 'type' => 'input', 'size' => 15),
-                                        'externalIPv6' => array('title' => 'IPv6 Address', 'type' => 'input', 'size' => 40),
+                                        'currentInterfaces' => array(
+                                                'title' => '',
+                                                'type' => 'table',
+                                                'fields' => array(
+                                                        'id' => array('type' => 'hidden'),
+							'vlan' => array('title' => 'VLAN', 'type' => 'select', 'options' => $vlans),
+                                                        'name' => array('title' => 'Name', 'type' => 'input', 'size' => 3),
+							'hostname' => array('title' => 'Hostname', 'type' => 'input', 'size' => 25),
+							'cname' => array('title' => 'CName', 'type' => 'input', 'size' => 15),
+							'mac' => array('title' => 'MAC', 'type' => 'input', 'size' => 14),
+							'switchport' => array('title' => 'Switchport', 'type' => 'input', 'size' => 29),
+							'cable' => array('title' => 'Csble', 'type' => 'input', 'size' => 4),
+                                                        'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 11),
+                                                        'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 25),
+                                                ),
+                                        ),
                                 ),
-
-                        ),
+                        )
 		);
 		if ($action == 'view') 
 		{
@@ -380,7 +409,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 	private function _update($id, $formValues)
 	{
-		$server = Doctrine::em()->getRepository('Model_Server')->findOneById($id);
+		$server = Doctrine::em()->getRepository('Model_Server')->find($id);
 		$server->icingaName = $formValues['icingaName'];
 		$server->description = $formValues['description'];
 		$server->acquiredDate = new \DateTime($formValues['acquiredDate']);
@@ -388,7 +417,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$server->location = null;
 		if (!empty($formValues['location']))
 		{
-			$server->location = Doctrine::em()->getRepository('Model_Location')->findOneById($formValues['location']);
+			$server->location = Doctrine::em()->getRepository('Model_Location')->find($formValues['location']);
 		}
 		$server->serverCase = $formValues['serverCase'];
 		$server->processor = $formValues['processor'];
@@ -398,21 +427,50 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$server->wakeOnLan = $formValues['wakeOnLan'];
                 $server->kernel = $formValues['kernel'];
                 $server->os = $formValues['os'];
-		$server->internalInterface = $formValues['internal']['internalInterface'];
-                $server->internalName = $formValues['internal']['internalName'];
-		$server->internalCname = $formValues['internal']['internalCname'];
-		$server->internalMac = $formValues['internal']['internalMac'];
-		$server->internalSwitchport = $formValues['internal']['internalSwitchport'];
-		$server->internalCable = $formValues['internal']['internalCable'];
-		$server->internalIPv4 = $formValues['internal']['internalIPv4'];
-		$server->internalIPv6 = $formValues['internal']['internalIPv6'];
-		$server->externalInterface = $formValues['external']['externalInterface'];
-                $server->name = $formValues['external']['name'];
-                $server->externalMac = $formValues['external']['externalMac'];
-		$server->externalSwitchport = $formValues['external']['externalSwitchport'];
-                $server->externalCable = $formValues['external']['externalCable'];
-                $server->externalIPv4 = $formValues['external']['externalIPv4'];
-                $server->externalIPv6 = $formValues['external']['externalIPv6'];
+
+		foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interfaceValues)
+                {
+                        if (empty($interfaceValues['name']))
+                        {
+                                if (!empty($interfaceValues['id']))
+                                {
+                                        $interface = Doctrine::em()->getRepository('Model_ServerInterface')->find($interfaceValues['id']);
+                                        $interface->delete();
+                                }
+                        }
+                        else
+                        {
+				$vlan = Doctrine::em()->getRepository('Model_Vlan')->find($interfaceValues['vlan']);
+                                if (empty($interfaceValues['id'])) {
+                                        $server->interfaces->add(Model_ServerInterface::build(
+						$server,
+						$vlan,	
+						$interfaceValues['name'],
+						$interfaceValues['hostname'],
+						$interfaceValues['cname'],	
+						$interfaceValues['mac'],
+						$interfaceValues['switchport'],
+						$interfaceValues['cable'],
+						$interfaceValues['IPv4Addr'],
+                                        	$interfaceValues['IPv6Addr']
+                                        ));
+                                }
+                                else
+                                {
+                                        $interface = Doctrine::em()->getRepository('Model_ServerInterface')->find($interfaceValues['id']);
+                                        $interface->vlan = $vlan;
+					$interface->name = $interfaceValues['name'];
+					$interface->hostname = $interfaceValues['hostname'];
+					$interface->cname = $interfaceValues['cname'];
+					$interface->mac = $interfaceValues['mac'];
+					$interface->switchport = $interfaceValues['switchport'];
+                                        $interface->cable = $interfaceValues['cable'];
+                                        $interface->IPv4Addr = $interfaceValues['IPv4Addr'];
+                                        $interface->IPv6Addr = $interfaceValues['IPv6Addr'];
+                                        $interface->save();
+                                }
+                        }
+                }
 		$server->save();
 	}
 
@@ -422,7 +480,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'id' => array('type' => 'hidden'),
                         'wikiMarkup' => array('title' => '', 'type' => 'textarea', 'rows' => 30, 'cols' => 120),
 		);
-		$server = Doctrine::em()->getRepository('Model_Server')->findOneById($server_id);
+		$server = Doctrine::em()->getRepository('Model_Server')->find($server_id);
 		$formValues = array(
 			'id' => $server_id,
 			'wikiMarkup' => $server->toWikiMarkup(),

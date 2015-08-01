@@ -178,6 +178,19 @@ class SOWN
                 }
 		return $locations;
 	}
+	
+	public static function get_all_vlans()
+        {
+                $locations = array(
+                        0 => '',
+                );
+                $results = Doctrine::em()->getRepository('Model_Vlan')->findBy(array(), array('id' => 'ASC'));
+                foreach ($results as $result)
+                {
+                        $locations[$result->id] = $result->name;
+                }
+                return $locations;
+        }
 
 	public static function get_all_cron_job_hosts()
 	{
@@ -486,6 +499,30 @@ class SOWN
                 }
                 return $certs;
         }
+
+	public static function jsonpp($json, $istr='  ')
+	{	
+    		$q = FALSE;
+    		$result = '';
+    		for($p=$i=0; isset($json[$p]); $p++)
+    		{
+        		if($json[$p] == '"' && ($p>0?$json[$p-1]:'') != '\\')
+        		{
+            			$q=!$q;
+        		}
+		        else if(in_array($json[$p], array('}', ']')) && !$q)
+		        {
+            			$result .= "\n".str_repeat($istr, --$i);
+        		}
+        		$result .= $json[$p];
+        		if(in_array($json[$p], array(',', '{', '[')) && !$q)
+        		{
+        	    		$i += in_array($json[$p], array('{', '['));
+            			$result .= "\n".str_repeat($istr, $i);
+      	  		}
+    		}
+    		return $result;
+	}
 
 }	
 

@@ -90,9 +90,16 @@ class Model_VpnServer extends Model_Server
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "VpnServer: {$this->id}, name={$this->name}, externalIPv4={$this->externalIPv4}, internalIPv4={$this->internalIPv4}, IPv4={$this->IPv4}, externalIPv6={$this->externalIPv6}, internalIPv6={$this->internalIPv6}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}";
+		$str  = "VpnServer: {$this->id}, icingaName={$this->name}, description={$this->description}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
+		$str .= "<br/>";
+                $str .= "location={$this->location}";
+                foreach($this->interfaces as $interface)
+                {
+                        $str .= "<br/>";
+                        $str .= "interface={$interface}";
+                }
 		return $str;
 	}
 
@@ -102,18 +109,27 @@ class Model_VpnServer extends Model_Server
 		$str  = "<div class='vpnServer' id='vpnServer_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>VPN Server</th><td>{$this->id}</td></tr>";
-		foreach(array('name', 'externalIPv4', 'internalIPv4', 'IPv4', 'externalIPv6', 'internalIPv6', 'IPv6') as $field)
+		foreach(array('icingaName', 'description', 'IPv4', 'IPv6') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
 		$str .= $this->fieldHTML('port', $this->portStart.' - '.$this->portEnd);
-		foreach(array('certificate', 'vpnCertificateSet') as $field)
+		foreach(array('certificate', 'vpnCertificateSet', 'location') as $field)
 		{
 			if (is_object($this->$field))
 			{
 				$str .= $this->fieldHTML($field, $this->$field->toHTML());
 			}
 		}
+		$str .= $this->fieldHTML('acquiredDate', $this->acquiredDate->format('Y-m-d H:i:s'));
+                foreach(array('retired', 'serverCase', 'processor', 'memory', 'hardDrive', 'networkPorts', 'wakeOnLan', 'kernel', 'os') as $field)
+                {
+                        $str .= $this->fieldHTML($field);
+                }
+                foreach($this->interfaces as $interface)
+                {
+                        $str .= $this->fieldHTML('interface', $interface->toHTML());
+                }
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;
