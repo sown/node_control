@@ -228,7 +228,7 @@ class Model_Server extends Model_Entity
 		}
 	}
 
-	public static function getByIP($ip)
+	public static function getByIPAddress($ip)
         {
 
                 $query = Doctrine::em()->createQuery("SELECT s.id FROM Model_Server s JOIN s.interfaces si WHERE si.IPv4Addr LIKE '$ip' OR si.IPv6Addr LIKE '$ip'")->setMaxResults(1);

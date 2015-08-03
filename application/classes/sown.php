@@ -8,7 +8,7 @@ class SOWN
 		$port = 4444;
 		
 		if ($_SERVER['HTTP_HOST'] == 'www.sown.org.uk')
-			$host = 'sown-vpn.ecs.soton.ac.uk';
+			$host = 'sown-monitor.ecs.soton.ac.uk';
 		
 		$fp = fsockopen($host, $port);
 		fwrite($fp, $message);
@@ -79,18 +79,12 @@ class SOWN
 		{
 			$hostname = trim(`hostname`);
 			$ipString = trim(`host -t A $hostname | awk 'BEGIN{FS=" "}{print \$NF}'`);
+
 		}
-		$qb = Doctrine::em()->getRepository('Model_Server')->createQueryBuilder('s');
-		$qb->where('s.internalIPv4 LIKE :ip');
-		$qb->orWhere('s.externalIPv4 LIKE :ip');
-		$qb->orWhere('s.internalIPv6 LIKE :ip');
-		$qb->orWhere('s.externalIPv6 LIKE :ip');
-		$qb->setParameter('ip', $ipString);
-		$query = $qb->getQuery();
-		$hosts = $query->getResult();
-                if (!empty($hosts[0]))
+		$server = Model_Server::getByIPAddress($ipString);
+                if (is_object($server))
 		{
-			return $hosts[0];
+			return $server;
 		}
 		$nodes = Doctrine::em()->getRepository('Model_Node')->findAll();
 		try 
@@ -130,17 +124,15 @@ class SOWN
 
 	public static function find_host_by_name($nameString) 
 	{
-		$qb = Doctrine::em()->getRepository('Model_Server')->createQueryBuilder('s');
-                $qb->where('s.name LIKE :name');
-                $qb->orWhere('s.internalName LIKE :name');
-                $qb->orWhere('s.internalCname LIKE :name');
-                $qb->orWhere('s.icingaName LIKE :name');
-                $qb->setParameter('name', $nameString);
-                $query = $qb->getQuery();
-                $hosts = $query->getResult();
-                if (!empty($hosts[0]))
+		$server = Doctrine::em()->getRepository('Model_Server')->findByIcingaName($nameString);
+                if (is_object($server))
                 {
-                        return $hosts[0];
+                        return $server;
+                }
+		$server = Model_Server::getByHostname($nameString);
+		if (is_object($server))
+                {
+                        return $server;
                 }
 		elseif (substr($nameString,0,4) == "node" || substr($nameString,0,4) == "Node") 
 		{
@@ -212,17 +204,6 @@ class SOWN
 		return $hosts;
 	}
 
-	public static function process_cron_jobs2()
-        {
-		if (empty($_POST)) {
-			die("Lists of cron jobs can only be posted to this URL");
-		}
-		if (empty($_POST['jobs'])) {
-			var_dump($_POST);
-			die("No list of cronjobs sent.");
-		}
-	}
-			
 	public static function process_cron_jobs()
 	{
 		$logging = true;
