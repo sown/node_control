@@ -151,14 +151,6 @@ foreach ($fields as $f => $field)
 		$num_unresponded = sizeof(Model_Enquiry::getUnresponded($type));
 		echo "<td><a href=\"" . Route::url('unresponded_type_enquiries', array('type' => $row->id)). "\">" . $row->title . " (${num_unresponded})</a></td>\n";
 	}
-	elseif ($f == "externalIPs")
-	{
-		echo "<td>$row->externalIPv4<br/>$row->externalIPv6</td>\n";
-	}
-	elseif ($f == "internalIPs")
-        {
-                echo "<td>$row->internalIPv4<br/>$row->internalIPv6</td>\n";
-        }
 	else
 	{
 		if (gettype($row->$f) == "object" && get_class($row->$f) == "DateTime")

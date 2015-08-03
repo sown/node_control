@@ -354,7 +354,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                        		'IPv4AddrCidr' => $node->vpnEndpoint->IPv4AddrCidr,
                        		'IPv6Addr' => $node->vpnEndpoint->IPv6Addr,
                        		'IPv6AddrCidr' => $node->vpnEndpoint->IPv6AddrCidr,
-                       		'vpnServer' => $node->vpnEndpoint->vpnServer->name,
+                       		'vpnServer' => $node->vpnEndpoint->vpnServer->id,
 			),
 			'interfaces' => array(
 				'currentInterfaces' => array(),
@@ -468,7 +468,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$vpnEndpoint->IPv4AddrCidr = $formValues['vpnEndpoint']['IPv4AddrCidr'];
 		$vpnEndpoint->IPv6Addr = $formValues['vpnEndpoint']['IPv6Addr'];
                 $vpnEndpoint->IPv6AddrCidr = $formValues['vpnEndpoint']['IPv6AddrCidr'];
-		$vpnEndpoint->vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($formValues['vpnEndpoint']['vpnServer']);
+		$vpnEndpoint->vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->find($formValues['vpnEndpoint']['vpnServer']);
 		$vpnEndpoint->save();
                 foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interfaceValues)
                 {	
@@ -517,7 +517,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				}
 				else
 				{
-					$interface = Doctrine::em()->getRepository('Model_Interface')->findOneById($interfaceValues['id']);
+					$interface = Doctrine::em()->getRepository('Model_Interface')->find($interfaceValues['id']);
 					$interface->name = $interfaceValues['name'];
 					$interface->IPv4Addr = $interfaceValues['IPv4Addr'];
 					$interface->IPv4AddrCidr = $interfaceValues['IPv4AddrCidr'];

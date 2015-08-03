@@ -254,22 +254,22 @@ class Controller_Servers extends Controller_AbstractAdmin
 		foreach($servers as $server) 
 		{
 			$ips = array(
-				'sown_ipv4' => null,
-				'sown_ipv6' => null,
-				'ecs_ipv4' => null,
-				'ecs_ipv6' => null,
+				'internal_ipv4' => null,
+				'internal_ipv6' => null,
+				'external_ipv4' => null,
+				'external_ipv6' => null,
 			);
 			foreach ($server->interfaces as $interface) 
 			{
-				if ($interface->vlan->name == "SOWN")
+				if (in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.internal')))
 				{	
-					$ips['sown_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
-					$ips['sown_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
+					$ips['internal_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
+					$ips['internal_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
 				}
-				elseif ($interface->vlan->name == "ECS DMZ")
+				elseif (in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.external')))
 				{
-					$ips['ecs_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
-                                        $ips['ecs_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
+					$ips['external_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
+                                        $ips['external_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
 				}
 			}
 			$servers_icinga[$server->icingaName] = $ips;
@@ -430,7 +430,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 		foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interfaceValues)
                 {
-                        if (empty($interfaceValues['name']))
+                        if (empty($interfaceValues['name']) && empty($interfaceValues['hostname']))
                         {
                                 if (!empty($interfaceValues['id']))
                                 {

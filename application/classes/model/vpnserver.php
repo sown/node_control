@@ -90,7 +90,7 @@ class Model_VpnServer extends Model_Server
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "VpnServer: {$this->id}, icingaName={$this->name}, description={$this->description}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
+		$str  = "VpnServer: {$this->id}, icingaName={$this->icingaName}, description={$this->description}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -135,6 +135,36 @@ class Model_VpnServer extends Model_Server
 		return $str;
 	}
 
+	public function getPrimaryHostname()
+	{
+		$vpnServerHostname = "";
+                $vpnServerIntfs = $node->vpnEndpoint->vpnServer->interfaces;
+                foreach ($this->interfaces as $interface)
+                {
+                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
+                        {
+				
+                                return $interface->hostname;
+                        }
+                }	
+	}
+	public function getPrimaryIPAddress($version = 4)
+	{
+		foreach ($this->interfaces as $interface)
+                {
+                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
+                        {
+				if ($version == 4) 
+				{
+                                	return $interface->IPv4Addr;
+				}
+				elseif ($version == 6)
+				{
+					return $interface->IPv6Addr;
+				}
+                        }
+                }
+	}
 	public function getFreePort()
 	{
 		$repository = Doctrine::em()->getRepository('Model_VpnEndpoint');
@@ -189,18 +219,18 @@ class Model_VpnServer extends Model_Server
 		$vpnServerNames = array();
 		foreach ($vpnServers as $vpnServer)
 		{
-        		$vpnServerNames[$vpnServer->name] = $vpnServer->name;
+        		$vpnServerNames[$vpnServer->id] = $vpnServer->icingaName;
 		}
 		return $vpnServerNames;
 	}
 
-	public static function validPort($port, $vpnServerName)
+	public static function validPort($port, $vpnServerId)
         {
                 if (!is_numeric($port) || $port < 1 || $port > 65535)
                 {
                         return FALSE;
                 }
-                $vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($vpnServerName);
+                $vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->find($vpnServerId);
                 if ($port < $vpnServer->portStart || $port > $vpnServer->portEnd)
                 {
                         return FALSE;
@@ -209,9 +239,9 @@ class Model_VpnServer extends Model_Server
 
         }
 
-	public static function validIPSubnet($address, $cidr, $version = 4, $vpnServerName = 'sown-auth2.ecs.soton.ac.uk')
+	public static function validIPSubnet($address, $cidr, $version, $vpnServerId)
         {
-		$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($vpnServerName);
+		$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->find($vpnServerId);
 		$IPAddrName = "IPv" . $version . "Addr";
 		$IPCidrName = "IPv" . $version . "AddrCidr";
 		return IP_Network_Address::factory($vpnServer->$IPAddrName, $vpnServer->$IPCidrName)->encloses_subnet(IP_Network_Address::factory($address, $cidr));	

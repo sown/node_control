@@ -19,6 +19,14 @@ class Model_Vlan extends Model_Entity
          */
         protected $name;
 
+	 /**
+         * @var string $prefix
+         *
+         * @Column(name="prefix", type="string", length=120, nullable=true)
+         */
+        protected $prefix;
+
+
 	public function __get($name)
 	{
 		$this->logUse();
@@ -39,7 +47,7 @@ class Model_Vlan extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Vlan: {$this->id}, name={$this->name}";
+		$str  = "Vlan: {$this->id}, name={$this->name}, prefix={$this->prefix}";
 		return $str;
 	}
 
@@ -49,7 +57,7 @@ class Model_Vlan extends Model_Entity
 		$str  = "<div class='vlan' id='vlan_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Vlan</th><td>{$this->id}</td></tr>";
-		foreach(array('name') as $field)
+		foreach(array('name', 'prefix') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
