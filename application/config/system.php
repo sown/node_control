@@ -4,6 +4,8 @@ return array
 (
 	'default' => array
 	(
+		'name' => 'SOWN',
+		'long_name' => 'Southampton Open Wireless Network',
 		'node_config'	=> array
 		(
                         # We need to use the 10.13 address because of the firewall
@@ -69,6 +71,13 @@ return array
 push "route 10.12.0.0 255.254.0.0"
 push "route 152.78.189.82 255.255.255.255"
 ',
+		'vlan'		=> array
+		(
+			'local' => 'SOWN',
+			'vpn' => 'ECS DMZ',
+			'internal' => array('SOWN'),
+			'external' => array('ECS DMZ'),
+		),
 		'filename'	=> __FILE__,
 		'check'		=> array
 		(
