@@ -23,6 +23,13 @@ use Doctrine\ORM\Mapping\DiscriminatorMap;
  */
 class Model_Server extends Model_Entity
 {
+ 	/**
+         * @var string $name
+         *
+         * @Column(name="name", type="string", length=255, nullable=true)
+         */
+        protected $name;
+
 	/**
          * @var string $icingaName
          *
@@ -61,6 +68,31 @@ class Model_Server extends Model_Entity
          */
         protected $retired;
 
+	/**
+         * @var string $externalIPv4
+         *
+         * @Column(name="external_ipv4", type="ipv4address", nullable=true)
+         */
+        protected $externalIPv4;
+        /**
+         * @var string $internalIPv4
+         *
+         * @Column(name="internal_ipv4", type="ipv4address", nullable=true)
+         */
+        protected $internalIPv4;
+        /**
+         * @var string $externalIPv6
+         *
+         * @Column(name="external_ipv6", type="ipv6address", nullable=true)
+         */
+        protected $externalIPv6;
+        /**
+         * @var string $internalIPv6
+         *
+         * @Column(name="internal_ipv6", type="ipv6address", nullable=true)
+         */
+        protected $internalIPv6;
+	
 	/**
          * @var string $serverCase
          *
@@ -185,6 +217,28 @@ class Model_Server extends Model_Entity
 		return Doctrine::em()->getRepository('Model_Server')->findOneByName($name);
 	}
 
+	public static function getByHostname($hostname)
+	{
+		
+		$query = Doctrine::em()->createQuery("SELECT s.id FROM Model_Server s JOIN s.interfaces si WHERE si.hostname LIKE '$hostname' OR si.cname LIKE '$hostname'")->setMaxResults(1);
+                $server_id = $query->getSingleScalarResult();
+		if (!empty($server_id))
+		{
+                	return Doctrine::em()->getRepository('Model_Server')->find($server_id);
+		}
+	}
+
+	public static function getByIP($ip)
+        {
+
+                $query = Doctrine::em()->createQuery("SELECT s.id FROM Model_Server s JOIN s.interfaces si WHERE si.IPv4Addr LIKE '$ip' OR si.IPv6Addr LIKE '$ip'")->setMaxResults(1);
+                $server_id = $query->getSingleScalarResult();
+		if (!empty($server_id))
+                {
+	                return Doctrine::em()->getRepository('Model_Server')->find($server_id);
+		}
+        }
+
 	public function __toString()
 	{
 		$this->logUse();
@@ -237,7 +291,7 @@ class Model_Server extends Model_Entity
 	{
 		$wm = "";
 		$wm .= $this->icingaName;
-		$wm .= (empty($this->description) ? ' is a SOWN server' : " is ".$this->description);
+		$wm .= (empty($this->description) ? ' is a '.Kohana::$config->load('system.default.name').' server' : " is ".$this->description);
 		$wm .= ".\n\n";
 		$hwphrases = array();
 		if (!empty($this->processor)) $hwphrases[] = "a [[cpu::{$this->processor}]] processor";
@@ -273,15 +327,10 @@ class Model_Server extends Model_Entity
 			if (!empty($intfIPv4Addr))
 			{
 				$domain = "";
-				$prefix = "";
-				if ($interface->vlan->name == "SOWN")
+				$prefix = $interface->vlan->prefix;
+				if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.local'))
 				{
-					$prefix = "sown";
-					$domain = ".sown.org.uk";
-				}
-				elseif ($interface->vlan->name == "ECS DMZ")
-				{
-					$prefix = "ecs";
+					$domain = ".".Kohana::$config->load('system.default.domain');
 				}
 				if (!empty($intfIPv4Addr) || !empty($intfIPv6Addr))
 				{
