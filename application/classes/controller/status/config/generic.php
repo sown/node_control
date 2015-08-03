@@ -13,7 +13,7 @@ class Controller_Status_Config_Generic extends Controller
 				$host = Model_Node::getByHostname($hostname);
 				break;
 			case 'lucid':
-				$host = Model_Server::getByName($hostname);
+				$host = Model_Server::getByHostame($hostname);
 				break;
 		}
 

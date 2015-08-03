@@ -210,7 +210,7 @@ abstract class Package_Config
 		openssl_x509_export($cert, $dump);
 
 		// Get node object
-		$server = Model_Server::getByName(static::get_cert_cn());
+		$server = Model_Server::getByHostname(static::get_cert_cn());
 		if($server === null) SOWN::send_irc_message('Server config: failed to find server by certificate.');
 		return $server;
 	}

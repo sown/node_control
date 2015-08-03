@@ -156,7 +156,7 @@ class Controller_Test_Config_Generic extends Controller_AbstractAdmin
 				$entity = Model_Node::getByHostname($hostname);
 				break;
 			case "lucid":
-				$entity = Model_Server::getByName($hostname);
+				$entity = Model_Server::getByHostname($hostname);
 				break;
 		}
 		$cert = $entity->certificate;
