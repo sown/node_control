@@ -137,8 +137,6 @@ class Model_VpnServer extends Model_Server
 
 	public function getPrimaryHostname()
 	{
-		$vpnServerHostname = "";
-                $vpnServerIntfs = $node->vpnEndpoint->vpnServer->interfaces;
                 foreach ($this->interfaces as $interface)
                 {
                         if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
