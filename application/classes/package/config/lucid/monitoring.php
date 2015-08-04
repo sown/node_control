@@ -70,10 +70,11 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$range = $node->currentDeployment->range;
 		$box_number = $node->boxNumber;
 		$node_id = $node->id;
-		$vpn_endpoint = null;
+		$parents = null;
+		$address = null;
 		if($node->vpnEndpoint != null)
 		{
-			$vpn_endpoint = preg_replace('/\..*/', '', $node->vpnEndpoint->vpnServer->name);
+			$parents = $node->vpnEndpoint->vpnServer->icingaName;
 			$address = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
 		}
 		else
@@ -98,7 +99,6 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$radio_details = json_encode($radio_details);
 
 		$o['alias'] = $alias;
-		//$o['notes_url'] = $url;
 		$o['2d_coords'] = $latitude.",".$longitude;
 		$o['3d_coords'] = $latitude.",".$longitude.",".$range;
 		$o['_BOXNUMBER'] = $box_number;
@@ -107,12 +107,8 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 
 		$use = "node";
 
-//		$hostgroups = "*Home Nodes,*OpenWRT Nodes";
 		$hostgroups = "*Backfire Nodes,*Home Nodes";
 
-		//$address = new Addr($ipv4_addrs);
-
-		$parents = strtoupper(str_replace('sown-', '', $vpn_endpoint));
 return "
 define Contact {
 	contact_name			{$name}_admin
@@ -155,6 +151,5 @@ define Service {
 }
 
 ";
-//	notes_url	{$url}
 	}
 }

@@ -16,7 +16,7 @@ class Check_OpenvpnRunning extends Check
                         return;
                 }
 
-		$ip = $host->vpnEndpoint->vpnServer->externalIPv4;
+		$ip = $host->vpnEndpoint->vpnServer->getPrimaryIPAddress();
 		$port = $host->vpnEndpoint->port;
 
                 $handle = fopen($this->file, "r");

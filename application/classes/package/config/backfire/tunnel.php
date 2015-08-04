@@ -25,9 +25,9 @@ class Package_Config_Backfire_Tunnel extends Package_Config
 					
 					'remote' => array(
 						// Connect to the server by DNS name
-						$node->vpnEndpoint->vpnServer->name .' '. $node->vpnEndpoint->port,
+						$node->vpnEndpoint->vpnServer->getPrimaryHostname() .' '. $node->vpnEndpoint->port,
 						// IP address failover incase of DNS lookup failure
-						$node->vpnEndpoint->vpnServer->externalIPv4 .' '. $node->vpnEndpoint->port,
+						$node->vpnEndpoint->vpnServer->getPrimaryIPAddress() .' '. $node->vpnEndpoint->port,
 					),
 					'proto' =>  $node->vpnEndpoint->protocol,
 					

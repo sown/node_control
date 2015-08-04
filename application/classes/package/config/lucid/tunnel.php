@@ -52,7 +52,7 @@ $conf = <<< EOB
 
 # Bind to the server address that the nodes know about.
 # This breaks on udp as the server may reply with a different src_ip.
-local {$ep->vpnServer->externalIPv4}
+local {$ep->vpnServer->getPrimaryIPAddress()}
 
 # Accept Connections on this port.
 port {$ep->port}
