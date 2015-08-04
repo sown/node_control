@@ -124,7 +124,7 @@ class SOWN
 
 	public static function find_host_by_name($nameString) 
 	{
-		$server = Doctrine::em()->getRepository('Model_Server')->findByIcingaName($nameString);
+		$server = Doctrine::em()->getRepository('Model_Server')->findByName($nameString);
                 if (is_object($server))
                 {
                         return $server;
@@ -146,11 +146,11 @@ class SOWN
 		return NULL;
 	}
 
-	public static function get_icinga_name_for_host($host)
+	public static function get_name_for_host($host)
         {
 		if (in_array(get_class($host), array("Model_Server", "Model_VpnServer")))
 		{
-			return $host->icingaName;
+			return $host->name;
 		}
 		elseif (get_class($host) == "Model_Node")
 		{
@@ -187,10 +187,10 @@ class SOWN
 	public static function get_all_cron_job_hosts()
 	{
 		$hosts = array();
-		$servers = Doctrine::em()->getRepository('Model_Server')->findBy(array(), array('icingaName' => 'ASC'));
+		$servers = Doctrine::em()->getRepository('Model_Server')->findBy(array(), array('name' => 'ASC'));
 		foreach ($servers as $server)
 		{
-			$hosts['server:'.$server->id] = $server->icingaName;
+			$hosts['server:'.$server->id] = $server->name;
 		}
 		$hosts['aggregate:all nodes'] = 'all nodes';
                 $hosts['aggregate:bandwidth nodes'] = 'bandwidth nodes';
@@ -219,8 +219,8 @@ class SOWN
                 $hostCronJobsString = $_POST['jobs']; // $in_string
                 $hostAddress = $_SERVER["REMOTE_ADDR"];
                 $host = Sown::find_host_by_ip($hostAddress);
-                $icingaName = Sown::get_icinga_name_for_host($host);
-                $log .= "Icinga Name: $icingaName\n";
+                $name = Sown::get_name_for_host($host);
+                $log .= "Name: $name\n";
                 $dbCronJobs = $host->getEnabledCronJobs();
                 $fromDb = array();
                 foreach ($dbCronJobs as $dbCronJob)
@@ -293,11 +293,11 @@ class SOWN
 		# Send to icinga
                 if (!isset($errors) || $errors == "")
                 {
-                        Sown::notify_icinga($icingaName, "CRONJOBS", 0, "CRONJOBS OK: Cronjobs as expected");
+                        Sown::notify_icinga($name, "CRONJOBS", 0, "CRONJOBS OK: Cronjobs as expected");
                 }
                 else
                 {
-                        Sown::notify_icinga($icingaName, "CRONJOBS", 1, "CRONJOBS WARNING: $errors");
+                        Sown::notify_icinga($name, "CRONJOBS", 1, "CRONJOBS WARNING: $errors");
                 }
                 if (!empty($logging))
                 {

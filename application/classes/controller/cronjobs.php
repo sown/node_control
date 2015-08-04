@@ -29,7 +29,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                 );
 		if (!empty($host))
                 {
-			$hostObj = Doctrine::em()->getRepository('Model_Server')->findOneByIcingaName($host);
+			$hostObj = Doctrine::em()->getRepository('Model_Server')->findOneByName($host);
 			if (empty($hostObj))
                         {
                                 $hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByAggregate($host);
@@ -86,7 +86,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 		
 		if (!empty($host))
                 {
-                        $hostObj = Doctrine::em()->getRepository('Model_Server')->findOneByIcingaName($host);
+                        $hostObj = Doctrine::em()->getRepository('Model_Server')->findOneByName($host);
                         $subtitle .= " on ".$host;
 			if (empty($hostObj))
 			{
@@ -127,104 +127,6 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 	public function action_incoming()
 	{
 		Sown::process_cron_jobs($this->request);
-	/*
-		$logging = true;
-      		$log="";
-		if ($this->request->method() != 'POST') 
-		{
-			die("Lists of cron jobs can only be posted to this URL");
-		}
-		$post = $this->request->post();	
-      		$hostCronJobsString = $post['jobs']; // $in_string
-	        $hostAddress = $_SERVER["REMOTE_ADDR"];
-      		$host = Sown::find_host_by_ip($hostAddress);
-		$icingaName = Sown::get_icinga_name_for_host($host);
-      		$log .= "Icinga Name: $icingaName\n";
-		$dbCronJobs = $host->getEnabledCronJobs();
-		$fromDb = array();
-		foreach ($dbCronJobs as $dbCronJob)
-		{
-			if (!isset($fromDb[$dbCronJob->username][$dbCronJob->command]))
-			{
-				$fromDb[$dbCronJob->username][$dbCronJob->command] = 1;
-			}
-			else
-			{
-				$fromDb[$dbCronJob->username][$dbCronJob->command]++;
-			}
-		}
-      		$log.="=== fromDb ===\n".var_export($fromDb,true)."\n\n";
-      		$hostCronJobs = explode("<FS>", $hostCronJobsString);
-      		for ($i=0; $i<count($hostCronJobs); $i++) 
-		{
-            		$user = substr($hostCronJobs[$i],0,strpos($hostCronJobs[$i],":"));
-			$user = trim($user);
-        	    	$hostCronJob = substr($hostCronJobs[$i],strpos($hostCronJobs[$i],":")+1,strlen($hostCronJobs[$i]));
-            		$hostCronJob = trim($hostCronJob);
-	            	if ($user != "" && $hostCronJob != "" && trim($user) !="cron.update" ) 
-			{
-        	        	if(! isset($from_node[$user][$hostCronJob]))
-                	        	$fromHost[$user][$hostCronJob] = 1;
-                  		else
-                        		$fromHost[$user][$hostCronJob]++;
-            		}
-      		}	
-	      	$log.="=== fromHost ===\n".var_export($fromHost,true)."\n\n";
-		$compare = array();
-		foreach ($fromHost as $user => $jobs) 
-		{
-        		if (!isset($compare[$user]))
-                  		$compare[$user] = array();
-			foreach ($jobs as $job => $value) 
-			{
-                		if (!isset($compare[$user][$job]))
-                        	$compare[$user][$job] = 0;
-                  		$compare[$user][$job] -= $value;
-            		}
-      		}
-	      	foreach ($fromDb as $user => $jobs) 
-		{
-        		if (!isset($compare[$user]))
-                		$compare[$user] = array();
-			foreach ($jobs as $job => $value) 
-			{
-                		if (!isset($compare[$user][$job]))
-                        		$compare[$user][$job] = 0;
-                  		$compare[$user][$job] += $value;
-            		}
-      		}
-      		$log.="=== compared ===\n".var_export($compare, true)."\n\n";
-	      	$errors = '';
-		foreach ($compare as $user => $jobs) 
-		{
-        		foreach ($jobs as $job => $value) 
-			{
-                		if ($value < 0) 
-				{
-                        		$errors .= " Node has unregistered job: ($user : $job) ";
-                  		}
-	                  	elseif ($value > 0)
-        	          	{
-                	        	$errors .= " Node is missing job: ($user : $job) ";
-                  		}
-            		}
-      		}
-
-	      	# Send to icinga
-		if (!isset($errors) || $errors == "") 
-		{
-            		Sown::notify_icinga($icingaName, "CRONJOBS", 0, "CRONJOBS OK: Cronjobs as expected");
-      		} 
-		else 
-		{
-            		Sown::notify_icinga($icingaName, "CRONJOBS", 1, "CRONJOBS WARNING: $errors");
-      		}
-      		if (!empty($logging))
-		{
-            		$handle = fopen("/tmp/crons_incoming_${hostAddress}.log","w");
-            		fwrite($handle,$log);
-            		fclose($handle);
-      		}*/
 	}
 
 	public function action_create()

@@ -90,7 +90,7 @@ class Model_VpnServer extends Model_Server
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "VpnServer: {$this->id}, icingaName={$this->icingaName}, description={$this->description}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
+		$str  = "VpnServer: {$this->id}, name={$this->name}, description={$this->description}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -109,7 +109,7 @@ class Model_VpnServer extends Model_Server
 		$str  = "<div class='vpnServer' id='vpnServer_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>VPN Server</th><td>{$this->id}</td></tr>";
-		foreach(array('icingaName', 'description', 'IPv4', 'IPv6') as $field)
+		foreach(array('name', 'description', 'IPv4', 'IPv6') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -217,7 +217,7 @@ class Model_VpnServer extends Model_Server
 		$vpnServerNames = array();
 		foreach ($vpnServers as $vpnServer)
 		{
-        		$vpnServerNames[$vpnServer->id] = $vpnServer->icingaName;
+        		$vpnServerNames[$vpnServer->id] = $vpnServer->name;
 		}
 		return $vpnServerNames;
 	}

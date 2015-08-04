@@ -90,7 +90,7 @@ class Model_HostCronJob extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "HostCronJob: {$this->id}, cronJob={$this->cronJob->id}, server={$this->server->icingaName}, node=node{$this->node->boxNumber}, aggregate={$this->aggregate}";
+		$str  = "HostCronJob: {$this->id}, cronJob={$this->cronJob->id}, server={$this->server->name}, node=node{$this->node->boxNumber}, aggregate={$this->aggregate}";
 		return $str;
 	}
 
@@ -101,7 +101,7 @@ class Model_HostCronJob extends Model_Entity
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Host Cron Job</th><td>{$this->id}</td></tr>";
 		$str .= $this->fieldHTML($this->cronJob->id);
-		$str .= $this->fieldHTML($this->server->icingaName);
+		$str .= $this->fieldHTML($this->server->name);
 		$str .= $this->fieldHTML($this->node->boxNumber);
 		$str .= $this->fieldHTML($this->aggregate);
 		$str .= "</table>";
@@ -135,7 +135,7 @@ class Model_HostCronJob extends Model_Entity
 	{
 		if (!empty($this->server))
                 {
-                	return $this->server->icingaName;
+                	return $this->server->name;
                 }
                 if (!empty($this->node))
 		{

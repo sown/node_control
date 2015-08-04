@@ -20,7 +20,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 		$fields = array(
                         'id' => 'ID',
-			'icingaName' => 'Icinga Name',
+			'name' => 'Name',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
 			'os' => 'OS',
@@ -51,7 +51,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 
                 $fields = array(
                         'id' => 'ID',
-                        'icingaName' => 'Icinga Name',
+                        'name' => 'Name',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
                         'os' => 'OS',
@@ -82,13 +82,13 @@ class Controller_Servers extends Controller_AbstractAdmin
                 {
 			$formValues = $this->request->post();
 			$validation = Validation::factory($formValues)
-                                ->rule('icingaName', 'not_empty', array(':value'))
-				->rule('icingaName', 'Model_Server::uniqueIcingaName', array(':value'))
+                                ->rule('name', 'not_empty', array(':value'))
+				->rule('name', 'Model_Server::uniqueName', array(':value'))
 				->rule('description', 'not_empty', array(':value'));
                         if ($validation->check())
                         {
-                                $server = Model_Server::build($formValues['icingaName']);
-                                $success = "Successfully created Server with Icinga name: <a href=\"/admin/servers/$server->id/edit\">$server->icingaName</a>.";
+                                $server = Model_Server::build($formValues['name']);
+                                $success = "Successfully created Server with name: <a href=\"/admin/servers/$server->id/edit\">$server->name</a>.";
 
                         }
                         else
@@ -99,12 +99,12 @@ class Controller_Servers extends Controller_AbstractAdmin
                 else
                 {
                         $formValues = array(
-                                'icingaName' => '',
+                                'name' => '',
                         );
 
                 }
                 $formTemplate = array(
-                        'icingaName' => array('title' => 'Icinga Name', 'type' => 'input', 'size' => 20, 'hint' => "e.g. GW, AUTH2, etc."),
+                        'name' => array('title' => 'Name', 'type' => 'input', 'size' => 20, 'hint' => "e.g. GW, AUTH2, etc."),
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100, 'hint' => "What is the purpose of the server?"),
                 );
 
@@ -272,7 +272,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                                         $ips['external_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
 				}
 			}
-			$servers_icinga[$server->icingaName] = $ips;
+			$servers_icinga[$server->name] = $ips;
 		}
 		$this->response->body(SOWN::jsonpp(json_encode($servers_icinga)));
 	}	
@@ -298,7 +298,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                 }
                 $formValues = array(
                         'id' => $server->id,
-                        'icingaName' => $server->icingaName,
+                        'name' => $server->name,
 			'description' => $server->description,
 			'acquiredDate' => '',
 			'retired' => $server->retired,
@@ -364,7 +364,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$vlans = Sown::get_all_vlans();
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
-                        'icingaName' => array('title' => 'Icinga Name', 'type' => 'input', 'size' => 20),
+                        'name' => array('title' => 'Name', 'type' => 'input', 'size' => 20),
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
 			'acquiredDate' => array('title' => 'Acquired Date', 'type' => 'date'),
 			'retired' => array('title' => 'Retired?', 'type' => 'checkbox'),
@@ -410,7 +410,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 	private function _update($id, $formValues)
 	{
 		$server = Doctrine::em()->getRepository('Model_Server')->find($id);
-		$server->icingaName = $formValues['icingaName'];
+		$server->name = $formValues['name'];
 		$server->description = $formValues['description'];
 		$server->acquiredDate = new \DateTime($formValues['acquiredDate']);
 		$server->retired = FormUtils::getCheckboxValue($formValues, 'retired');

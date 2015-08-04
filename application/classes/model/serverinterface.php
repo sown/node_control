@@ -116,7 +116,7 @@ class Model_ServerInterface extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "ServerInterface: {$this->id}, icingaName={$this->server->icingaName} vlan={$this->vlan->name}, name={$this->name}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, switchport={$this->switchport}, cable={$this->cable}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}";
+		$str  = "ServerInterface: {$this->id}, name={$this->server->name} vlan={$this->vlan->name}, name={$this->name}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, switchport={$this->switchport}, cable={$this->cable}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}";
 		return $str;
 	}
 

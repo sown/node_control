@@ -74,7 +74,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$address = null;
 		if($node->vpnEndpoint != null)
 		{
-			$parents = $node->vpnEndpoint->vpnServer->icingaName;
+			$parents = $node->vpnEndpoint->vpnServer->name;
 			$address = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
 		}
 		else

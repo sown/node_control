@@ -24,11 +24,11 @@ use Doctrine\ORM\Mapping\DiscriminatorMap;
 class Model_Server extends Model_Entity
 {
 	/**
-         * @var string $icingaName
+         * @var string $name
          *
-         * @Column(name="icinga_name", type="string", length=255, nullable=true)
+         * @Column(name="name", type="string", length=255, nullable=true)
          */
-        protected $icingaName;
+        protected $name;
 
 	 /**
          * @var string $description
@@ -210,7 +210,7 @@ class Model_Server extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Server: {$this->id}, icingaName={$this->icingaName}, description={$this->description}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
+		$str  = "Server: {$this->id}, name={$this->name}, description={$this->description}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -229,7 +229,7 @@ class Model_Server extends Model_Entity
 		$str  = "<div class='server' id='server_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Server</th><td>{$this->id}</td></tr>";
-		foreach(array('icingaName', 'description') as $field)
+		foreach(array('name', 'description') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -258,7 +258,7 @@ class Model_Server extends Model_Entity
 	public function toWikiMarkup()
 	{
 		$wm = "";
-		$wm .= $this->icingaName;
+		$wm .= $this->name;
 		$wm .= (empty($this->description) ? ' is a '.Kohana::$config->load('system.default.name').' server' : " is ".$this->description);
 		$wm .= ".\n\n";
 		$hwphrases = array();
@@ -331,13 +331,13 @@ class Model_Server extends Model_Entity
 		return $wm;
 	}
 
-	public static function uniqueIcingaName($icingaName, $id = 0)
+	public static function uniqueName($name, $id = 0)
         {
-		if (empty($icingaName))
+		if (empty($name))
 		{
 			return FALSE;
 		}
-                $result = Doctrine::em()->getRepository('Model_Server')->findOneByIcingaName($icingaName);
+                $result = Doctrine::em()->getRepository('Model_Server')->findOneByName($name);
                 if (!empty($result->id) && $result->id == $id)
                 {
                         return TRUE;
@@ -345,10 +345,10 @@ class Model_Server extends Model_Entity
                 return empty($result->id);
         }
 
-	public static function build($icingaName)
+	public static function build($name)
         {
                 $obj = new Model_Server();
-                $obj->icingaName = $icingaName;
+                $obj->name = $name;
 		$obj->save();
                 return $obj;
         }
