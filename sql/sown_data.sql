@@ -447,6 +447,30 @@ CREATE TABLE `reserved_subnets` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `server_interfaces`
+--
+
+DROP TABLE IF EXISTS `server_interfaces`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `server_interfaces` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `server_id` int(11) NOT NULL COMMENT 'ther server the server_interface is on',
+  `vlan_id` int(11) NOT NULL COMMENT 'the vlan the server_interface is on',
+  `name` varchar(20) NOT NULL COMMENT 'the name of the server_interface as it appears in ifconfig',
+  `hostname` varchar(255) NOT NULL COMMENT 'the primary hostname associated with the IPv4/IPv6 address associated with the server_interface',
+  `cname` varchar(255) NOT NULL COMMENT 'any cname for the IPv4/IPv6 address associated with the server_interface',
+  `mac` varchar(17) NOT NULL COMMENT 'the mac address associated with the server_interface',
+  `switchport` varchar(255) NOT NULL COMMENT 'the switchport to which the server_interface is attached',
+  `cable` varchar(255) NOT NULL COMMENT 'a description of the cable connecting the server_interace to the switchport',
+  `ipv4_addr` varchar(17) NOT NULL COMMENT 'the IPv4 address associated with the server_interface',
+  `ipv6_addr` varchar(39) NOT NULL COMMENT 'the IPv6 address associated with the server_interface',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='locations of things';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `servers`
 --
 
@@ -535,6 +559,22 @@ CREATE TABLE `users` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `vlans`
+--
+
+DROP TABLE IF EXISTS `vlans`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vlans` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(255) NOT NULL COMMENT 'name of the vlan',
+  `prefix` varchar(20) DEFAULT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='vlans server_interfaces are on';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `vpn_endpoints`
 --
 
@@ -611,4 +651,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-30  4:23:02
+-- Dump completed on 2015-08-04  1:52:59
