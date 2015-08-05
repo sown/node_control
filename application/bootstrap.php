@@ -391,6 +391,12 @@ Route::set('servers_icinga', 'admin/servers/icinga')
                 'action'     => 'generate_icinga',
         ));
 
+Route::set('servers_incoming', 'admin/servers/incoming')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'incoming',
+        ));
+
 Route::set('generate_server_wiki_page', 'admin/servers/<id>/wiki_page')
         ->defaults(array(
                 'controller' => 'servers',

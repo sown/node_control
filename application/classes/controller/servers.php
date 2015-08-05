@@ -275,7 +275,12 @@ class Controller_Servers extends Controller_AbstractAdmin
 			$servers_icinga[$server->name] = $ips;
 		}
 		$this->response->body(SOWN::jsonpp(json_encode($servers_icinga)));
-	}	
+	}
+
+	public function action_incoming()
+        {
+                Sown::process_server_attributes($this->request);
+        }	
 
 	private function _validate($formValues) 
 	{

@@ -204,16 +204,93 @@ class SOWN
 		return $hosts;
 	}
 
-	public static function process_cron_jobs()
+	public static function process_server_attributes()
 	{
 		$logging = true;
                 $log="";
                 if (empty($_POST))
                 {
+                        die("Lists of server attributes can only be posted to this URL");
+                }
+		if (empty($_POST['attributes'])) 
+		{
+                        die("No list of server attributes sent");
+                }
+                $reportedServerAttributesString = $_POST['attributes']; // $in_string
+                $hostAddress = $_SERVER["REMOTE_ADDR"];
+                $host = Sown::find_host_by_ip($hostAddress);
+                $name = Sown::get_name_for_host($host);
+                $log .= "Name: $name\n";
+		$curSrvAttrs = array();
+		foreach (Kohana::$config->load('system.default.reported_server_attributes') as $srvAttrName) 
+		{
+			$curSrvAttrs[$srvAttrName] = $host->$srvAttrName;
+		}
+	 	$log.="=== fromDB ===\n".var_export($curSrvAttrs,true)."\n\n";
+                $reportedServerAttributes = explode("<FS>", $reportedServerAttributesString);
+                $repSrvAttrs = array();
+		foreach ($reportedServerAttributes as $repSrvAttr)
+		{
+			$repSrvAttr = trim($repSrvAttr);
+			if (!empty($repSrvAttr))
+			{
+				$repSrvAttrBits = explode(":", $repSrvAttr);
+				$repSrvAttrs[$repSrvAttrBits[0]] = $repSrvAttrBits[1];
+			}
+		}
+                $log.="=== fromHost ===\n".var_export($repSrvAttrs,true)."\n\n";
+                $changed = array();
+		$save = 1;
+		$errors = "";
+		foreach ($curSrvAttrs as $srvAttrName => $curSrvAttrValue)
+		{	
+			if (!empty($repSrvAttrs[$srvAttrName]) && $curSrvAttrValue != $repSrvAttrs[$srvAttrName])
+			{
+				$host->$srvAttrName = $repSrvAttrs[$srvAttrName];
+				$changed[$srvAttrName] = 1;
+				$save = 1;
+			}
+			elseif (empty($repSrvAttrs[$srvAttrName]))
+			{
+				$errors .= " No value for $srvAttrName. ";
+			}
+			else {
+				$changed[$srvAttrName] = 0;
+			}
+		}
+                $log.="=== changed ===\n".var_export($changed, true)."\n\n";
+		if ($save)
+		{
+			$host->save();
+		}
+		# Send to icinga
+                if (!isset($errors) || $errors == "")
+                {
+                        Sown::notify_icinga($name, "SERVER-ATTRS", 0, "SERVER-ATTRS OK: All server attributes reported");
+                }
+                else
+                {
+                        Sown::notify_icinga($name, "SERVER-ATTRS", 1, "SERVER-ATTRS WARNING: $errors");
+                }
+                if (!empty($logging))
+                {
+			error_log("Logging to /tmp/server_attributes_incoming_${hostAddress}.log");
+                        $handle = fopen("/tmp/server_attributes_incoming_${hostAddress}.log","w");
+                        fwrite($handle,$log);
+                        fclose($handle);
+                }
+	}
+
+        public static function process_cron_jobs()
+        {
+                $logging = true;
+                $log="";
+                if (empty($_POST))
+                {
                         die("Lists of cron jobs can only be posted to this URL");
                 }
-		if (empty($_POST['jobs'])) 
-		{
+                if (empty($_POST['jobs']))
+                {
                         die("No list of cronjobs sent");
                 }
                 $hostCronJobsString = $_POST['jobs']; // $in_string
@@ -249,7 +326,7 @@ class SOWN
                                 else
                                         $fromHost[$user][$hostCronJob]++;
                         }
-		}
+                }
                 $log.="=== fromHost ===\n".var_export($fromHost,true)."\n\n";
                 $compare = array();
                 foreach ($fromHost as $user => $jobs)
@@ -290,7 +367,7 @@ class SOWN
                                 }
                         }
                 }
-		# Send to icinga
+                # Send to icinga
                 if (!isset($errors) || $errors == "")
                 {
                         Sown::notify_icinga($name, "CRONJOBS", 0, "CRONJOBS OK: Cronjobs as expected");
@@ -305,7 +382,7 @@ class SOWN
                         fwrite($handle,$log);
                         fclose($handle);
                 }
-	}
+        }
 
 	public static function draw_bar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
 	{

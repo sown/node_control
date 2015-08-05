@@ -62,6 +62,14 @@ return array
 			'radutmp'		=>	'/var/log/freeradius/sradutmp',
 			'lastradusers'		=>	'/tmp/lastradiususers.csv',
 		),
+		'reported_server_attributes' => array(
+			'hardDrive',
+			'kernel',
+			'memory',
+			'networkPorts',
+			'os',
+			'processor',		
+		),
 		'rrd' 		=> array
 		(
 			'deployment_path'	=> 	'/srv/radacct-tg-new/nas-rrds/',
