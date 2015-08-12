@@ -333,21 +333,22 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 'currentInterfaces' => array(),
                         ),
                 );
+		#$i = 0;
+		$intf_fields = array('id', 'vlan', 'name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr');
                 foreach ($server->interfaces as $i => $interface)
                 {
-                        $formValues['interfaces']['currentInterfaces'][$i] = array (
-                                'id' => $interface->id,
-				'vlan' => $interface->vlan->id,
-                                'name' => $interface->name,
-				'hostname' => $interface->hostname,
-				'cname' => $interface->cname,
-				'mac' => $interface->mac,
-				'switchport' => $interface->switchport,
-				'cable' => $interface->cable,
-                                'IPv4Addr' => $interface->IPv4Addr,
-                                'IPv6Addr' => $interface->IPv6Addr,
-                        );
-                        if ($action == 'view')
+			foreach ($intf_fields as $if)
+			{
+				if ($if == "vlan")
+				{
+					$formValues['interfaces']['currentInterfaces'][$i][$if] = $interface->$if->id;
+				}
+				else 
+				{
+					$formValues['interfaces']['currentInterfaces'][$i][$if] = $interface->$if;
+				}
+                        }
+			if ($action == 'view')
                         {
                                 $formValues['interfaces']['currentInterfaces'][$i]['vlan'] = $interface->vlan->name;
                         }
@@ -357,7 +358,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		{
 			$formValues['location'] = $server->location->id;
 		}
-		if ($server->acquiredDate->format('U') > 86400)
+		if (is_object($server->acquiredDate) && $server->acquiredDate->format('U') > 86400)
                 {
 			$formValues['acquiredDate'] = $server->acquiredDate->format('Y-m-d');
 		}
@@ -368,9 +369,9 @@ class Controller_Servers extends Controller_AbstractAdmin
 		}
 		if ($action == 'edit')
                 {
-                        foreach ($formValues['interfaces']['currentInterfaces'][$i] as $f => $field)
+			foreach ($intf_fields as $if)
                         {
-                                $formValues['interfaces']['currentInterfaces'][$i+1][$f] = '';
+                                $formValues['interfaces']['currentInterfaces'][$i+1][$if] = '';
                         }
                 }
 		return $formValues;
