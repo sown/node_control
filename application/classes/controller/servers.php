@@ -21,6 +21,8 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$fields = array(
                         'id' => 'ID',
 			'name' => 'Name',
+			'state' => 'State',
+                        'purpose' => 'Purpose',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
 			'os' => 'OS',
@@ -52,6 +54,8 @@ class Controller_Servers extends Controller_AbstractAdmin
                 $fields = array(
                         'id' => 'ID',
                         'name' => 'Name',
+			'state' => 'State',
+			'purpose' => 'Purpose',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
                         'os' => 'OS',
@@ -84,7 +88,9 @@ class Controller_Servers extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues)
                                 ->rule('name', 'not_empty', array(':value'))
 				->rule('name', 'Model_Server::uniqueName', array(':value'))
-				->rule('description', 'not_empty', array(':value'));
+				->rule('description', 'not_empty', array(':value'))
+				->rule('state', 'not_empty', array(':value'))
+				->rule('purpose', 'not_empty', array(':value'));
                         if ($validation->check())
                         {
                                 $server = Model_Server::build($formValues['name']);
@@ -106,6 +112,8 @@ class Controller_Servers extends Controller_AbstractAdmin
                 $formTemplate = array(
                         'name' => array('title' => 'Name', 'type' => 'input', 'size' => 20, 'hint' => "e.g. GW, AUTH2, etc."),
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100, 'hint' => "What is the purpose of the server?"),
+			'state' => array('title' => 'State', 'type' => 'select', 'options' => array('phys' => 'Physical', 'virt' => 'Virtual')),
+			'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'ecs' => 'ECS')),
                 );
 
                 $this->template->sidebar = View::factory('partial/sidebar');
@@ -253,26 +261,29 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$servers_icinga = array();
 		foreach($servers as $server) 
 		{
-			$ips = array(
+			$attrs = array(
+				'type' => $server->state.$server->purpose,
 				'internal_ipv4' => null,
 				'internal_ipv6' => null,
 				'external_ipv4' => null,
 				'external_ipv6' => null,
 			);
+			error_log($server->name." ".$server->state." ".$server->purpose);
+			
 			foreach ($server->interfaces as $interface) 
 			{
 				if (in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.internal')))
 				{	
-					$ips['internal_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
-					$ips['internal_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
+					$attrs['internal_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
+					$attrs['internal_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
 				}
 				elseif (in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.external')))
 				{
-					$ips['external_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
-                                        $ips['external_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
+					$attrs['external_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
+                                        $attrs['external_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
 				}
 			}
-			$servers_icinga[$server->name] = $ips;
+			$servers_icinga[$server->name] = $attrs;
 		}
 		$this->response->body(SOWN::jsonpp(json_encode($servers_icinga)));
 	}
@@ -305,6 +316,8 @@ class Controller_Servers extends Controller_AbstractAdmin
                         'id' => $server->id,
                         'name' => $server->name,
 			'description' => $server->description,
+			'state' => $server->state,
+			'purpose' => $server->purpose,
 			'acquiredDate' => '',
 			'retired' => $server->retired,
 			'location' => '',
@@ -371,6 +384,8 @@ class Controller_Servers extends Controller_AbstractAdmin
                         'id' => array('type' => 'hidden'),
                         'name' => array('title' => 'Name', 'type' => 'input', 'size' => 20),
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
+			'state' => array('title' => 'State', 'type' => 'select', 'options' => array('phys' => 'Physical', 'virt' => 'Virtual')),
+                        'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'ecs' => 'ECS')),
 			'acquiredDate' => array('title' => 'Acquired Date', 'type' => 'date'),
 			'retired' => array('title' => 'Retired?', 'type' => 'checkbox'),
 			'location' => array('title' => 'Location', 'type' => 'select', 'options' => $locations),
@@ -417,6 +432,8 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$server = Doctrine::em()->getRepository('Model_Server')->find($id);
 		$server->name = $formValues['name'];
 		$server->description = $formValues['description'];
+		$server->state = $formValues['state'];
+		$server->purpose = $formValues['purpose'];
 		$server->acquiredDate = new \DateTime($formValues['acquiredDate']);
 		$server->retired = FormUtils::getCheckboxValue($formValues, 'retired');
 		$server->location = null;

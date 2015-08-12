@@ -30,6 +30,20 @@ class Model_Server extends Model_Entity
          */
         protected $name;
 
+	/**
+         * @var string $state
+         *
+         * @Column(name="state", type="string", length=50, nullable=true)
+         */
+        protected $state;
+
+	 /**
+         * @var string $purpose
+         *
+         * @Column(name="purpose", type="string", length=50, nullable=true)
+         */
+        protected $purpose;
+
 	 /**
          * @var string $description
          *
@@ -210,7 +224,7 @@ class Model_Server extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Server: {$this->id}, name={$this->name}, description={$this->description}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
+		$str  = "Server: {$this->id}, name={$this->name}, state={$this->sate}, purpose={$this->purpose}. description={$this->description}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -229,7 +243,7 @@ class Model_Server extends Model_Entity
 		$str  = "<div class='server' id='server_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Server</th><td>{$this->id}</td></tr>";
-		foreach(array('name', 'description') as $field)
+		foreach(array('name', 'state', 'purpose', 'description') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
