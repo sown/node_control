@@ -113,7 +113,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                         'name' => array('title' => 'Name', 'type' => 'input', 'size' => 20, 'hint' => "e.g. GW, AUTH2, etc."),
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100, 'hint' => "What is the purpose of the server?"),
 			'state' => array('title' => 'State', 'type' => 'select', 'options' => array('phys' => 'Physical', 'virt' => 'Virtual')),
-			'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'ecs' => 'ECS')),
+			'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'exc' => 'External (Core)',  'exd' => 'External (Development)')),
                 );
 
                 $this->template->sidebar = View::factory('partial/sidebar');
@@ -385,7 +385,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                         'name' => array('title' => 'Name', 'type' => 'input', 'size' => 20),
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
 			'state' => array('title' => 'State', 'type' => 'select', 'options' => array('phys' => 'Physical', 'virt' => 'Virtual')),
-                        'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'ecs' => 'ECS')),
+                        'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'exc' => 'External (Core)',  'exd' => 'External (Development)')),
 			'acquiredDate' => array('title' => 'Acquired Date', 'type' => 'date'),
 			'retired' => array('title' => 'Retired?', 'type' => 'checkbox'),
 			'location' => array('title' => 'Location', 'type' => 'select', 'options' => $locations),
