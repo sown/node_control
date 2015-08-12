@@ -106,6 +106,8 @@ class Controller_Servers extends Controller_AbstractAdmin
                 {
                         $formValues = array(
                                 'name' => '',
+				'description' => '',
+				'parent' => 'SWITCH',
                         );
 
                 }
@@ -114,6 +116,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100, 'hint' => "What is the purpose of the server?"),
 			'state' => array('title' => 'State', 'type' => 'select', 'options' => array('phys' => 'Physical', 'virt' => 'Virtual')),
 			'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'exc' => 'External (Core)',  'exd' => 'External (Development)')),
+			'parent' => array('title' => 'Parent Host', 'type' => 'input', 'size' => 20, 'hint' => "e.g. SWITCH"),
                 );
 
                 $this->template->sidebar = View::factory('partial/sidebar');
@@ -263,6 +266,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		{
 			$attrs = array(
 				'type' => $server->state.$server->purpose,
+				'parent' => $server->parent,
 				'internal_ipv4' => null,
 				'internal_ipv6' => null,
 				'external_ipv4' => null,
@@ -333,7 +337,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 'currentInterfaces' => array(),
                         ),
                 );
-		#$i = 0;
+		$i = 0;
 		$intf_fields = array('id', 'vlan', 'name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr');
                 foreach ($server->interfaces as $i => $interface)
                 {
@@ -387,6 +391,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'description' => array('title' => 'Description', 'type' => 'input', 'size' => 100),
 			'state' => array('title' => 'State', 'type' => 'select', 'options' => array('phys' => 'Physical', 'virt' => 'Virtual')),
                         'purpose' => array('title' => 'Purpose', 'type' => 'select', 'options' => array('cor' => 'Core', 'dev' => 'Development', 'bac' => 'Backup', 'exc' => 'External (Core)',  'exd' => 'External (Development)')),
+			'parent' => array('title' => 'Parent Host', 'type' => 'input', 'size' => 20, 'hint' => "e.g. SWITCH"),
 			'acquiredDate' => array('title' => 'Acquired Date', 'type' => 'date'),
 			'retired' => array('title' => 'Retired?', 'type' => 'checkbox'),
 			'location' => array('title' => 'Location', 'type' => 'select', 'options' => $locations),
