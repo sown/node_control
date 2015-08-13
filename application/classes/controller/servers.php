@@ -259,8 +259,8 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 	public function action_generate_icinga()
        	{
+		$this->check_ip($_SERVER['REMOTE_ADDR']);
 		$this->auto_render = FALSE;
-                $this->check_login("systemadmin");
 		$this->response->headers('Content-Type','application/json');
 		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
 		$servers_icinga = array();
