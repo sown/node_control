@@ -366,10 +366,14 @@ class Model_Server extends Model_Entity
                 return empty($result->id);
         }
 
-	public static function build($name)
+	public static function build($name, $description, $state, $purpose, $parent)
         {
                 $obj = new Model_Server();
                 $obj->name = $name;
+		$obj->description = $description;
+		$obj->state = $state;
+		$obj->purpose = $purpose;
+		$obj->parent = $parent;		
 		$obj->save();
                 return $obj;
         }

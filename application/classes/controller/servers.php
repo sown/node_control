@@ -23,6 +23,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'name' => 'Name',
 			'state' => 'State',
                         'purpose' => 'Purpose',
+			'parent' => 'Parent',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
 			'os' => 'OS',
@@ -56,6 +57,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                         'name' => 'Name',
 			'state' => 'State',
 			'purpose' => 'Purpose',
+			'parent' => 'Parent',
 			'acquiredDate' => 'Acquired',
 			'location' => 'Location',
                         'os' => 'OS',
@@ -93,7 +95,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 				->rule('purpose', 'not_empty', array(':value'));
                         if ($validation->check())
                         {
-                                $server = Model_Server::build($formValues['name']);
+                                $server = Model_Server::build($formValues['name'], $formValues['description'], $formValues['state'], $formValues['purpose'], $formValues['parent']);
                                 $success = "Successfully created Server with name: <a href=\"/admin/servers/$server->id/edit\">$server->name</a>.";
 
                         }
@@ -272,7 +274,6 @@ class Controller_Servers extends Controller_AbstractAdmin
 				'external_ipv4' => null,
 				'external_ipv6' => null,
 			);
-			error_log($server->name." ".$server->state." ".$server->purpose);
 			
 			foreach ($server->interfaces as $interface) 
 			{
@@ -322,6 +323,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'description' => $server->description,
 			'state' => $server->state,
 			'purpose' => $server->purpose,
+			'parent' => $server->parent,
 			'acquiredDate' => '',
 			'retired' => $server->retired,
 			'location' => '',
@@ -440,6 +442,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$server->description = $formValues['description'];
 		$server->state = $formValues['state'];
 		$server->purpose = $formValues['purpose'];
+		$server->parent = $formValues['parent'];
 		$server->acquiredDate = new \DateTime($formValues['acquiredDate']);
 		$server->retired = FormUtils::getCheckboxValue($formValues, 'retired');
 		$server->location = null;
