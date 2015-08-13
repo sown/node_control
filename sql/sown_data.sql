@@ -481,6 +481,9 @@ CREATE TABLE `servers` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `type` varchar(10) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL COMMENT 'short name (eg. auth)',
+  `state` varchar(50) DEFAULT NULL,
+  `purpose` varchar(50) DEFAULT NULL,
+  `parent` varchar(255) DEFAULT NULL,
   `internal_name` varchar(255) DEFAULT NULL,
   `internal_cname` varchar(255) DEFAULT NULL,
   `icinga_name` varchar(255) DEFAULT NULL,
@@ -651,4 +654,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-04  1:52:59
+-- Dump completed on 2015-08-13  4:23:02
