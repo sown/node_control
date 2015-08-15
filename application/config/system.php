@@ -84,7 +84,7 @@ push "route 152.78.189.82 255.255.255.255"
 			'local' => 'SOWN',
 			'vpn' => 'ECS DMZ',
 			'internal' => array('SOWN'),
-			'external' => array('ECS DMZ'),
+			'external' => array('ECS DMZ', 'ISOLUTIONS', 'JANET'),
 		),
 		'filename'	=> __FILE__,
 		'check'		=> array

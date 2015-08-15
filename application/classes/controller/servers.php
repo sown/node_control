@@ -262,13 +262,15 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$this->check_ip($_SERVER['REMOTE_ADDR']);
 		$this->auto_render = FALSE;
 		$this->response->headers('Content-Type','application/json');
-		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
+		$servers = Doctrine::em()->getRepository('Model_Server')->findBy(array('retired' => 0), array('name' => 'ASC'));
 		$servers_icinga = array();
 		foreach($servers as $server) 
 		{
+			$parent = trim($server->parent);
+			$parent = (empty($parent) ? null : $parent);
 			$attrs = array(
 				'type' => $server->state.$server->purpose,
-				'parent' => $server->parent,
+				'parent' => $parent,
 				'internal_ipv4' => null,
 				'internal_ipv6' => null,
 				'external_ipv4' => null,
