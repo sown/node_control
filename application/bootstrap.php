@@ -379,6 +379,12 @@ Route::set('create_server', 'admin/servers/create')
                 'action'     => 'create',
         ));
 
+Route::set('view_server', 'admin/servers/<id>')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'view',
+        ));
+
 Route::set('delete_server', 'admin/servers/<id>/delete')
         ->defaults(array(
                 'controller' => 'servers',
