@@ -96,6 +96,13 @@ class Model_ServerInterface extends Model_Entity
 	 */
 	protected $IPv6Addr;
 
+	/**
+         * @var integer $subordinate
+         *
+         * @Column(name="subordinate", type="integer", nullable=true)
+         */
+        protected $subordinate;	
+
 	public function __get($name)
 	{
 		$this->logUse();
@@ -116,7 +123,7 @@ class Model_ServerInterface extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "ServerInterface: {$this->id}, name={$this->server->name} vlan={$this->vlan->name}, name={$this->name}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, switchport={$this->switchport}, cable={$this->cable}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}";
+		$str  = "ServerInterface: {$this->id}, name={$this->server->name} vlan={$this->vlan->name}, name={$this->name}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, switchport={$this->switchport}, cable={$this->cable}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, subordinate={$this->subordinate}";
 		return $str;
 	}
 
@@ -127,7 +134,7 @@ class Model_ServerInterface extends Model_Entity
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>ServerInterface</th><td>{$this->id}</td></tr>";
 		$str .= $this->fieldHTML('vlan', $this->vlan->toHTML());
-		foreach(array('name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr') as $field)
+		foreach(array('name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr', 'subordinate') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -136,7 +143,7 @@ class Model_ServerInterface extends Model_Entity
 		return $str;
 	}
 
-	public static function build($server, $vlan, $name, $hostname, $cname, $mac, $switchport, $cable, $IPv4Addr, $IPv6Addr)
+	public static function build($server, $vlan, $name, $hostname, $cname, $mac, $switchport, $cable, $IPv4Addr, $IPv6Addr, $subordinate)
         {
                 $si = new Model_ServerInterface();
 		$si->server = $server;
@@ -149,6 +156,7 @@ class Model_ServerInterface extends Model_Entity
 		$si->cable = $cable;
 		$si->IPv4Addr = $IPv4Addr;
 		$si->IPv6Addr = $IPv6Addr;
+		$si->subordinate = $subordinate;
 		$si->save();
                 return $si;
         }

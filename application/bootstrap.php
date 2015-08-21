@@ -355,6 +355,12 @@ Route::set('edit_reserved_subnet', 'admin/subnets/reserved/<id>/edit')
                 'action'     => 'edit',
         ));
 
+Route::set('dns', 'admin/dns/<zonetype>')
+        ->defaults(array(
+                'controller' => 'dns',
+                'action'     => 'generate_dns',
+        ));
+
 Route::set('servers', 'admin/servers')
         ->defaults(array(
                 'controller' => 'servers',
@@ -385,12 +391,6 @@ Route::set('edit_server', 'admin/servers/<id>/edit')
                 'action'     => 'edit',
         ));
 
-Route::set('servers_icinga', 'admin/servers/icinga')
-        ->defaults(array(
-                'controller' => 'servers',
-                'action'     => 'generate_icinga',
-        ));
-
 Route::set('servers_incoming', 'admin/servers/incoming')
         ->defaults(array(
                 'controller' => 'servers',
@@ -403,10 +403,46 @@ Route::set('generate_server_wiki_page', 'admin/servers/<id>/wiki_page')
                 'action'     => 'generate_wiki_page',
         ));
 
-Route::set('view_server', 'admin/servers/<id>')
+Route::set('hosts', 'admin/hosts')
         ->defaults(array(
-                'controller' => 'servers',
+                'controller' => 'otherhosts',
+                'action'     => 'default',
+        ));
+
+Route::set('current_hosts', 'admin/hosts/current')
+        ->defaults(array(
+                'controller' => 'otherhosts',
+                'action'     => 'current',
+        ));
+
+Route::set('create_host', 'admin/hosts/create')
+        ->defaults(array(
+                'controller' => 'otherhosts',
+                'action'     => 'create',
+        ));
+
+Route::set('view_host', 'admin/hosts/<id>')
+        ->defaults(array(
+                'controller' => 'otherhosts',
                 'action'     => 'view',
+        ));
+
+Route::set('edit_host', 'admin/hosts/<id>/edit')
+        ->defaults(array(
+                'controller' => 'otherhosts',
+                'action'     => 'edit',
+        ));
+
+Route::set('delete_host', 'admin/hosts/<id>/delete')
+        ->defaults(array(
+                'controller' => 'otherhosts',
+                'action'     => 'delete',
+        ));
+
+Route::set('icinga_hosts', 'admin/icinga/hosts')
+        ->defaults(array(
+                'controller' => 'icinga',
+                'action'     => 'hosts',
         ));
 
 Route::set('nodes', 'admin/nodes')

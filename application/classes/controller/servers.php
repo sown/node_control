@@ -257,44 +257,6 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 	}
 
-	public function action_generate_icinga()
-       	{
-		$this->check_ip($_SERVER['REMOTE_ADDR']);
-		$this->auto_render = FALSE;
-		$this->response->headers('Content-Type','application/json');
-		$servers = Doctrine::em()->getRepository('Model_Server')->findBy(array('retired' => 0), array('name' => 'ASC'));
-		$servers_icinga = array();
-		foreach($servers as $server) 
-		{
-			$parent = trim($server->parent);
-			$parent = (empty($parent) ? null : $parent);
-			$attrs = array(
-				'type' => $server->state.$server->purpose,
-				'parent' => $parent,
-				'internal_ipv4' => null,
-				'internal_ipv6' => null,
-				'external_ipv4' => null,
-				'external_ipv6' => null,
-			);
-			
-			foreach ($server->interfaces as $interface) 
-			{
-				if (in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.internal')))
-				{	
-					$attrs['internal_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
-					$attrs['internal_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
-				}
-				elseif (in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.external')))
-				{
-					$attrs['external_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
-                                        $attrs['external_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
-				}
-			}
-			$servers_icinga[$server->name] = $attrs;
-		}
-		$this->response->body(SOWN::jsonpp(json_encode($servers_icinga)));
-	}
-
 	public function action_incoming()
         {
                 Sown::process_server_attributes($this->request);
@@ -342,7 +304,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                         ),
                 );
 		$i = 0;
-		$intf_fields = array('id', 'vlan', 'name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr');
+		$intf_fields = array('id', 'vlan', 'name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr', 'subordinate');
                 foreach ($server->interfaces as $i => $interface)
                 {
 			foreach ($intf_fields as $if)
@@ -374,6 +336,10 @@ class Controller_Servers extends Controller_AbstractAdmin
 		if ($action == 'view')
                 {
                         $formValues['retired'] = ( $formValues['retired'] ? 'Yes' : 'No');
+			foreach ($formValues['interfaces']['currentInterfaces'] as $if => $ifdata)
+                        {
+                                $formValues['interfaces']['currentInterfaces'][$if]['subordinate'] = ($ifdata['subordinate'] ? 'Yes' : 'No');
+                        }
 		}
 		if ($action == 'edit')
                 {
@@ -425,6 +391,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 							'cable' => array('title' => 'Csble', 'type' => 'input', 'size' => 4),
                                                         'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 11),
                                                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 25),
+							'subordinate' => array('title' => 'Sub', 'type' => 'checkbox'),
                                                 ),
                                         ),
                                 ),
@@ -445,13 +412,9 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$server->state = $formValues['state'];
 		$server->purpose = $formValues['purpose'];
 		$server->parent = $formValues['parent'];
-		$server->acquiredDate = new \DateTime($formValues['acquiredDate']);
+		$server->acquiredDate = (!empty($formValues['acquiredDate']) ? new \DateTime($formValues['acquiredDate']) : null);
 		$server->retired = FormUtils::getCheckboxValue($formValues, 'retired');
-		$server->location = null;
-		if (!empty($formValues['location']))
-		{
-			$server->location = Doctrine::em()->getRepository('Model_Location')->find($formValues['location']);
-		}
+		$server->location = (!empty($formValues['location']) ? Doctrine::em()->getRepository('Model_Location')->find($formValues['location']) : null);
 		$server->serverCase = $formValues['serverCase'];
 		$server->processor = $formValues['processor'];
 		$server->memory = $formValues['memory'];
@@ -474,6 +437,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                         else
                         {
 				$vlan = Doctrine::em()->getRepository('Model_Vlan')->find($interfaceValues['vlan']);
+				$interfaceValues['subordinate'] = FormUtils::getCheckboxValue($interfaceValues, 'subordinate');
                                 if (empty($interfaceValues['id'])) {
                                         $server->interfaces->add(Model_ServerInterface::build(
 						$server,
@@ -485,7 +449,8 @@ class Controller_Servers extends Controller_AbstractAdmin
 						$interfaceValues['switchport'],
 						$interfaceValues['cable'],
 						$interfaceValues['IPv4Addr'],
-                                        	$interfaceValues['IPv6Addr']
+                                        	$interfaceValues['IPv6Addr'],
+						$interfaceValues['subordinate']
                                         ));
                                 }
                                 else
@@ -500,6 +465,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                                         $interface->cable = $interfaceValues['cable'];
                                         $interface->IPv4Addr = $interfaceValues['IPv4Addr'];
                                         $interface->IPv6Addr = $interfaceValues['IPv6Addr'];
+					$interface->subordinate = $interfaceValues['subordinate'];
                                         $interface->save();
                                 }
                         }
@@ -520,5 +486,5 @@ class Controller_Servers extends Controller_AbstractAdmin
 		);
 		return array($formTemplate, $formValues);
 	}
-}
-	
+
+}	

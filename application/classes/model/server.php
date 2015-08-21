@@ -352,18 +352,49 @@ class Model_Server extends Model_Entity
 		return $wm;
 	}
 
+	public function hasLocalInterface()
+        {
+		$local_vlan = Kohana::$config->load('system.default.vlan.local');
+		foreach ($this->interfaces as $i)
+		{
+			if (is_object($i->vlan) && $i->vlan->name == $local_vlan) {
+				return true;
+			}
+		}
+		return false;
+        }
+
+	public function hasOnlyLocalCName()
+	{
+		foreach ($this->interfaces as $i)
+                {
+			$hostname_bits = explode('.', $i->hostname);
+			$cname_bits = explode('.', $i->cname);
+			if (strlen($cname_bits[0]) > 0 && sizeof($hostname_bits) > 1 && sizeof($cname_bits) == 1)
+			{
+                                return true;
+                        }
+                }
+		return false;
+	}
+
 	public static function uniqueName($name, $id = 0)
         {
 		if (empty($name))
-		{
-			return FALSE;
-		}
-                $result = Doctrine::em()->getRepository('Model_Server')->findOneByName($name);
-                if (!empty($result->id) && $result->id == $id)
+                {
+                        return FALSE;
+                }
+                $result1 = Doctrine::em()->getRepository('Model_OtherHost')->findOneByName($name);
+                $result2 = Doctrine::em()->getRepository('Model_Server')->findOneByName($name);
+                if (!empty($result1->id) && $result1->id == $id)
                 {
                         return TRUE;
                 }
-                return empty($result->id);
+                if (!empty($result2->id) && $result2->id == $id)
+                {
+                        return TRUE;
+                }
+                return empty($result1->id) && empty($result2->id);
         }
 
 	public static function build($name, $description, $state, $purpose, $parent)

@@ -64,6 +64,7 @@ if(!isset($user))
         $unresponded_accounts = sizeof(Model_Enquiry::getUnresponded(array('type' => $enquiry_type_account)));
 ?>
 	<a href="<?= Route::url('current_servers') ?>">Servers</a><br/>
+	<a href="<?= Route::url('current_hosts') ?>">Other Hosts</a><br/>
         <a href="<?= Route::url('cron_jobs_enabled') ?>">Cron Jobs</a><br/>
         <a href="<?= Route::url('certificates') ?>">Certificates</a><br/>
         <a href="<?= Route::url('unresponded_enquiries') ?>">Enquiries (<?= $unresponded ?>)</a><br/>

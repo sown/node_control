@@ -6,6 +6,7 @@ return array
 	(
 		'name' => 'SOWN',
 		'long_name' => 'Southampton Open Wireless Network',
+		'irc_server' => 'hash.ecs.soton.ac.uk',
 		'node_config'	=> array
 		(
                         # We need to use the 10.13 address because of the firewall
@@ -37,6 +38,18 @@ return array
 		'dns'		=> array
 		(
 			'host'	=> '10.13.0.239',
+			'reverse_subnets' => array(
+				'ipv4' => '10.13',
+				'ipv6' => '2001:630:d0:f700',
+			),
+		),
+		'host_types' 	=> array
+		(
+			'webserver' => 'Web Server',
+			'router' => 'Router',
+			'link' => 'Link',
+			'Internet' => 'Internet',
+			'server-room' => 'Server Room',
 		),
 		'radius'	=> array
 		(
