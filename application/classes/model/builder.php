@@ -1,11 +1,17 @@
 <?php
 class Model_Builder
 {
-	public static function create_node($boxNumber = '', $vpnServerName = 'sown-auth2.ecs.soton.ac.uk', $wiredMac = '', $wirelessMac = '', $firmwareImage = '')
+	public static function create_node($boxNumber = '', $vpnServerId = 0, $wiredMac = '', $wirelessMac = '', $firmwareImage = '')
 	{
 		$certificate = Model_Certificate::build();
-		$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findOneByName($vpnServerName);
-
+		if (empty($vpnServerId)) 
+		{
+			$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->findByName(Kohana::$config->load('system.default.vpn_server'));
+		}
+		else
+		{
+			$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->find($vpnServerId);
+		}
 		$port = $vpnServer->getFreePort();
 		$protocol = 'udp';
 		$ipv4 = $vpnServer->getFreeIPv4Addr(30);

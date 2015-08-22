@@ -99,6 +99,7 @@ push "route 152.78.189.82 255.255.255.255"
 			'internal' => array('SOWN'),
 			'external' => array('ECS DMZ', 'ISOLUTIONS', 'JANET'),
 		),
+		'vpn_server' => 'AUTH2',
 		'filename'	=> __FILE__,
 		'check'		=> array
 		(
