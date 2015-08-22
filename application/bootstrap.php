@@ -379,6 +379,12 @@ Route::set('create_server', 'admin/servers/create')
                 'action'     => 'create',
         ));
 
+Route::set('servers_incoming', 'admin/servers/incoming')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'incoming',
+        ));
+
 Route::set('view_server', 'admin/servers/<id>')
         ->defaults(array(
                 'controller' => 'servers',
@@ -395,12 +401,6 @@ Route::set('edit_server', 'admin/servers/<id>/edit')
         ->defaults(array(
                 'controller' => 'servers',
                 'action'     => 'edit',
-        ));
-
-Route::set('servers_incoming', 'admin/servers/incoming')
-        ->defaults(array(
-                'controller' => 'servers',
-                'action'     => 'incoming',
         ));
 
 Route::set('generate_server_wiki_page', 'admin/servers/<id>/wiki_page')

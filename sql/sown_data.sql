@@ -428,6 +428,35 @@ CREATE TABLE `notes` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `other_hosts`
+--
+
+DROP TABLE IF EXISTS `other_hosts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `other_hosts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(255) DEFAULT NULL COMMENT 'short name (eg. AUTH)',
+  `type` varchar(50) DEFAULT NULL COMMENT 'the type of host (e.g. switch, link, web server etc.)',
+  `parent` varchar(255) DEFAULT NULL COMMENT 'the parent of the other_host for monitoring purposes',
+  `description` text COMMENT 'a descripton of the other_host',
+  `acquired_date` datetime DEFAULT '0000-00-00 00:00:00' COMMENT 'the date the other_host was acquired',
+  `retired` int(1) DEFAULT '0' COMMENT 'whether the other_host has been retired',
+  `internal` int(1) DEFAULT '0' COMMENT 'whether the other_host is internal',
+  `host_case` varchar(255) DEFAULT NULL COMMENT 'the form factor, made and model of the other_host',
+  `location_id` int(11) DEFAULT NULL COMMENT 'the locatinn of the other_host',
+  `hostname` varchar(255) DEFAULT NULL COMMENT 'the hostname associated with the other_host',
+  `cname` varchar(255) DEFAULT NULL COMMENT 'any CNAME associated with the other_host',
+  `ipv4_addr` varchar(17) NOT NULL COMMENT 'the IPv4 address associated with the other_host',
+  `ipv6_addr` varchar(39) NOT NULL COMMENT 'the IPv6 address associated with the other_host',
+  `alias` varchar(255) DEFAULT NULL COMMENT 'an alias for use by monitoring',
+  `check_command` varchar(255) DEFAULT NULL COMMENT 'alternative check command for use by monitoring',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `reserved_subnets`
 --
 
@@ -465,6 +494,7 @@ CREATE TABLE `server_interfaces` (
   `cable` varchar(255) NOT NULL COMMENT 'a description of the cable connecting the server_interace to the switchport',
   `ipv4_addr` varchar(17) NOT NULL COMMENT 'the IPv4 address associated with the server_interface',
   `ipv6_addr` varchar(39) NOT NULL COMMENT 'the IPv6 address associated with the server_interface',
+  `subordinate` int(1) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='locations of things';
@@ -654,4 +684,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-13  4:23:02
+-- Dump completed on 2015-08-22  4:23:02
