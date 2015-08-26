@@ -101,6 +101,13 @@ class Model_OtherHost extends Model_Entity
         protected $cname;
 
 	/**
+         * @var string $mac
+         *
+         * @Column(name="mac", type="string", length=17, nullable=true)
+         */
+        protected $mac;
+
+	/**
          * @var string $IPv4Addr
          *
          * @Column(name="ipv4_addr", type="ipv4address", nullable=true)
@@ -165,7 +172,7 @@ class Model_OtherHost extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "OtherHost: {$this->id}, name={$this->name}, type={$type}, parent={$this->parent}, description={$this->description}, location={$this->location}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, case={$this->case}, hostname={$this->hostname}, cname={$this->cname}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, alias={$this->alias}, checkCommand->{$this->checkCommand}";
+		$str  = "OtherHost: {$this->id}, name={$this->name}, type={$type}, parent={$this->parent}, description={$this->description}, location={$this->location}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, case={$this->case}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, alias={$this->alias}, checkCommand->{$this->checkCommand}";
 		return $str;
 	}
 
@@ -184,7 +191,7 @@ class Model_OtherHost extends Model_Entity
 			$str .= $this->fieldHTML('location', $this->location->toHTML());
 		}
 		$str .= $this->fieldHTML('acquiredDate', $this->acquiredDate->format('Y-m-d H:i:s'));
-		foreach(array('retired', 'case', 'hostname', 'cname', 'IPv4Addr', 'IPv6Addr', 'alias' ,'checkCommand') as $field)
+		foreach(array('retired', 'case', 'hostname', 'cname', 'mac', 'IPv4Addr', 'IPv6Addr', 'alias' ,'checkCommand') as $field)
                 {
                         $str .= $this->fieldHTML($field);
                 }

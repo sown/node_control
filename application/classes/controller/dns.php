@@ -15,28 +15,28 @@ class Controller_Dns extends Controller_AbstractAdmin
                 $zonetype = $this->request->param('zonetype');
                 switch($zonetype)
                 {
-                        case 'forward':
-                                $dns = $this->_build_forward_dns();
-                                break;
-                        case 'reverse_ipv4':
-                                $dns = $this->_build_reverse_ipv4_dns();
-                                break;
-                        case 'reverse_ipv6':
-                                $dns = $this->_build_reverse_ipv6_dns();
-                                break;
-                        default:
-                                throw new Exception("Unsupported DNS zone file type");
-                                exit(1);
+                       	case 'forward':
+                               	$dns = $this->_build_hosts_forward_dns();
+                               	break;
+                       	case 'reverse_ipv4':
+                               	$dns = $this->_build_hosts_reverse_ipv4_dns();
+                               	break;
+                       	case 'reverse_ipv6':
+                               	$dns = $this->_build_hosts_reverse_ipv6_dns();
+                               	break;
+                       	default:
+                               	throw new Exception("Unsupported DNS zone file type for $for");
+                               	exit(1);
                 }
                 echo $dns;
         }
 
-	private function _build_forward_dns()
+	private function _build_hosts_forward_dns()
         {
                 $domain = Kohana::$config->load('system.default.admin_system.domain');
                 $dns = "; Primary Services\n";
                 list($dns2, $nss, $domain_server_interface) = $this->_build_ns_dns_entries(false);
-                $dns .= $dns2 . "\n";
+                $dns .= $dns2;
                 $www_interfaces = Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
                         ->where('si.hostname LIKE :hostname')->orWhere('si.cname LIKE :hostname')
                         ->setParameter('hostname', 'www')
@@ -89,10 +89,28 @@ class Controller_Dns extends Controller_AbstractAdmin
                         {
                                 foreach ($server->interfaces as $interface)
                                 {
-                                        $cname = $interface->cname;
-                                        $dns .= (!empty($cname) && $cname != "www" ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . ".\n" : "");
+					foreach (explode(',', $interface->cname) as $cname) 
+					{
+                                        	$dns .= (!empty($cname) && $cname != "www" ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . ".\n" : "");
+					}
                                 }
                         }
+                }
+		$dns .= "\n; Other Hosts\n";
+		$other_hosts = Doctrine::em()->getRepository('Model_OtherHost')->findByRetired(0);
+                foreach ($other_hosts as $other_host)
+                {
+			if ($other_host->internal) {
+				$tabs = SOWN::tabs($other_host->hostname, 4);
+                                $dns .= (strlen($other_host->IPv4Addr) ? $other_host->hostname . $tabs . "IN\tA\t" . $other_host->IPv4Addr. "\n" : "");
+                                $dns .= (strlen($other_host->IPv6Addr) ? $other_host->hostname . $tabs . "IN\tAAAA\t" . $other_host->IPv6Addr. "\n" : "");
+				$dns .= $other_host->hostname . $tabs . "IN\tTXT\t" . "\"mac: {$other_host->mac} type:{$other_host->type}\"\n";
+                        }
+			foreach (explode(',', $other_host->cname) as $cname)
+                        {
+                        	$dns .= (!empty($cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $other_host->hostname . '.' . Kohana::$config->load('system.default.admin_system.domain') . ".\n" : "");
+                        }
+
                 }
                 return $dns;
         }
@@ -102,15 +120,18 @@ class Controller_Dns extends Controller_AbstractAdmin
                 $dns = "";
                 $ipv4 = $interface->IPv4Addr;
                 $ipv6 = $interface->IPv6Addr;
-                if (is_object($interface->vlan) && (!empty($ipv4) || !empty($ipv6)))
+                if (is_object($interface->vlan) && strlen($interface->hostname) && (!empty($ipv4) || !empty($ipv6)))
                 {
-                        $cname = $interface->cname;
+                        $cname_list = $interface->cname;
                         if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.local'))
                         {
 				$tabs = SOWN::tabs($interface->hostname, 4);
                                 $dns .= $interface->hostname . $tabs . "IN\tA\t" . $ipv4 . "\n";
                                 $dns .= (!empty($ipv6) ? $interface->hostname . $tabs . "IN\tAAAA\t" . $ipv6 . "\n" : "");
-                                $dns .= (!empty($cname) && ! preg_match("/^(ns[0-9]|www)$/", $cname) ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . "." . Kohana::$config->load('system.default.admin_system.domain') . ".\n" : "");
+				foreach (explode(',', $cname_list) as $cname)
+				{
+					$dns .= (!empty($cname) && !preg_match("/^(ns[0-9]|www)$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . "." . Kohana::$config->load('system.default.admin_system.domain') . ".\n" : "");
+				}
                                 $dns .= $interface->hostname . $tabs . "IN\tTXT\t" . "\"mac: ".$interface->mac." type:server\"\n";
                                 $dns .= $interface->hostname . $tabs . "IN\tHINFO\t\"".$interface->server->processor."\" \"".$interface->server->kernel."\"\n";
                         }
@@ -121,7 +142,10 @@ class Controller_Dns extends Controller_AbstractAdmin
                                 $tabs = SOWN::tabs($hostname, 4);
                                 $dns .= $hostname . $tabs . "IN\tA\t" . $ipv4 . "\n";
                                 $dns .= (!empty($ipv6) ? $hostname . $tabs . "IN\tAAAA\t" . $ipv6 . "\n" : "");
-                                $dns .= (!empty($cname) && ! preg_match("/^(ns[0-9]|www)$/", $cname) ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . ".\n" : "");
+				foreach (explode(',', $cname_list) as $cname)
+                                {
+                                        $dns .= (!empty($cname) && !preg_match("/^(ns[0-9]|www)$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . ".\n" : "");
+                                }
                                 $dns .= $hostname . $tabs . "IN\tTXT\t\"mac: ".$interface->mac." type:server\"\n";
                                 $dns .= $hostname . $tabs . "IN\tHINFO\t\"".$interface->server->processor."\" \"".$interface->server->kernel."\"\n";
                         }
@@ -129,21 +153,31 @@ class Controller_Dns extends Controller_AbstractAdmin
                 return $dns;
         }
 
-        private function _build_reverse_ipv4_dns()
+        private function _build_hosts_reverse_ipv4_dns()
         {
                 $domain = Kohana::$config->load('system.default.admin_system.domain');
                 $local_vlan = Kohana::$config->load('system.default.vlan.local');
-                $dns = $this-> _build_ns_dns_entries() . "\n";
+                $ipv4_rev_subnet =  Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
+		$dns = $this-> _build_ns_dns_entries() . "\n";
                 $local_addrs = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.hostname FROM Model_ServerInterface si JOIN si.vlan v JOIN si.server s WHERE v.name = '".$local_vlan."' AND s.retired != 1 AND si.IPv4Addr != '' ORDER BY si.IPv4Addr ASC")->getResult();
                 foreach ($local_addrs as $addr)
                 {
-                        $rdns = SOWN::reverse_dns($addr['IPv4Addr'], Kohana::$config->load('system.default.dns.reverse_subnets.ipv4'), 4);
+                        $rdns = SOWN::reverse_dns($addr['IPv4Addr'], $ipv4_rev_subnet, 4);
                         $dns .= "$rdns\tPTR\t" . $addr['hostname'] . ".$domain.\n";
+                }
+		$local_addrs_other = Doctrine::em()->getRepository('Model_OtherHost')->findBy(array('retired' => 0, 'internal' => 1));
+		foreach ($local_addrs_other as $addr)
+                {
+			if (strlen($addr->IPv4Addr))
+			{
+                        	$rdns = SOWN::reverse_dns($addr->IPv4Addr, $ipv4_rev_subnet, 4);
+                        	$dns .= "$rdns\tPTR\t" . $addr->hostname . ".$domain.\n";
+			}
                 }
                 return $dns;
         }
 
-	private function _build_reverse_ipv6_dns()
+	private function _build_hosts_reverse_ipv6_dns()
         {
                 $domain = Kohana::$config->load('system.default.admin_system.domain');
                 $local_vlan = Kohana::$config->load('system.default.vlan.local');
@@ -159,6 +193,15 @@ class Controller_Dns extends Controller_AbstractAdmin
                 {
                         $rdns = SOWN::reverse_dns($addr['IPv6Addr'], '', 6) . ".ip6.arpa.";
                         $dns .= "$rdns\tPTR\t" . $addr['hostname'] . ".$domain.\n";
+                }
+		$local_addrs_other = Doctrine::em()->getRepository('Model_OtherHost')->findBy(array('retired' => 0, 'internal' => 1));
+                foreach ($local_addrs_other as $addr)
+                {
+			if (strlen($addr->IPv6Addr))
+                        {
+                        	$rdns = SOWN::reverse_dns($addr->IPv6Addr, '', 6);
+                        	$dns .= "$rdns\tPTR\t" . $addr->hostname . ".$domain.\n";
+			}
                 }
                 return $dns;
         }
@@ -177,9 +220,10 @@ class Controller_Dns extends Controller_AbstractAdmin
                 foreach ($ns_interfaces as $nsi)
                 {
                         $ns = (preg_match("/^ns/", $nsi->cname) ? $nsi->cname : $nsi->hostname);
+			$ns = (strpos($ns, ',') ? substr($ns, 0, strpos($ns, ",")) : $ns);
                         $nss[$ns] = array($nsi->IPv4Addr, $nsi->IPv6Addr);
                         $dns .= "@\t\t\t\tIN\tNS\t$ns.$domain.\n";
-                        $domain_server_interface = ($ns == "ns0" ? $nsi : null);
+                        $domain_server_interface = ($ns == "ns0" ? $nsi : $domain_server_interface);
                 }
                 return ($just_text ? $dns : array($dns, $nss, $domain_server_interface));
         }

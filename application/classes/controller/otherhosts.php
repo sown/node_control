@@ -254,17 +254,18 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'case' => $other_host->case,
                         'hostname' => $other_host->hostname,
 			'cname' => $other_host->cname,
+			'mac' => $other_host->mac,
 			'IPv4Addr' => $other_host->IPv4Addr,
                         'IPv6Addr' => $other_host->IPv6Addr,
 			'alias' => $other_host->alias,
 			'checkCommand' => $other_host->checkCommand,
                 );
 
-		if (is_object($other_host->location) && is_int($other_host->location->id))
+		if (isset($other_host->location) && is_int($other_host->location->id))
                 {
                         $formValues['location'] = $other_host->location->id;
                 }
-                if (is_object($other_host->acquiredDate) && $other_host->acquiredDate->format('U') > 86400)
+                if (isset($other_host->acquiredDate) && $other_host->acquiredDate->format('U') > 86400)
                 {
                         $formValues['acquiredDate'] = $other_host->acquiredDate->format('Y-m-d');
                 }
@@ -293,6 +294,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'case' => array('title' => 'Case', 'type' => 'input', 'size' => 20, 'hint' => "e.g. form factor, switch model, etc."),
                         'hostname' => array('title' => 'Hostname', 'type' => 'input', 'size' => 50),
                         'cname' => array('title' => 'CName', 'type' => 'input', 'size' => 50),
+			'mac' => array('title' => 'MAC', 'type' => 'input', 'size' => 17),
                         'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 15),
                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 50),
 			'alias' => array('title' => 'Alias', 'type' => 'input', 'size' => 50),
@@ -315,11 +317,11 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                 $other_host->acquiredDate = (!empty($formValues['acquiredDate']) ? new \DateTime($formValues['acquiredDate']) : null);
                 $other_host->retired = FormUtils::getCheckboxValue($formValues, 'retired');
 		$other_host->internal = FormUtils::getCheckboxValue($formValues, 'internal');
-		error_log("location_id: ".$formValues['location']);
                 $other_host->location = (!empty($formValues['location']) ? Doctrine::em()->getRepository('Model_Location')->find($formValues['location']) : null);
                 $other_host->case = $formValues['case'];
 		$other_host->hostname = $formValues['hostname'];
 		$other_host->cname = $formValues['cname'];
+		$other_host->mac = $formValues['mac'];	
 		$other_host->IPv4Addr = $formValues['IPv4Addr'];
 		$other_host->IPv6Addr = $formValues['IPv6Addr'];
 		$other_host->alias = $formValues['alias'];

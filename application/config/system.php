@@ -46,6 +46,7 @@ return array
 		'host_types' 	=> array
 		(
 			'webserver' => 'Web Server',
+			'ircserver' => 'IRC Server',
 			'router' => 'Router',
 			'link' => 'Link',
 			'Internet' => 'Internet',

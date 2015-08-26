@@ -147,7 +147,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$serverLocation = Doctrine::em()->getRepository('Model_Location')->find($formValues['location']);
-		if (is_object($serverLocation)) 
+		if (isset($serverLocation)) 
 		{
                 	$formValues['location'] = "{$serverLocation->longName} ({$serverLocation->name})";
 		}
