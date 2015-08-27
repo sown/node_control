@@ -447,6 +447,7 @@ CREATE TABLE `other_hosts` (
   `location_id` int(11) DEFAULT NULL COMMENT 'the locatinn of the other_host',
   `hostname` varchar(255) DEFAULT NULL COMMENT 'the hostname associated with the other_host',
   `cname` varchar(255) DEFAULT NULL COMMENT 'any CNAME associated with the other_host',
+  `mac` varchar(17) DEFAULT NULL,
   `ipv4_addr` varchar(17) NOT NULL COMMENT 'the IPv4 address associated with the other_host',
   `ipv6_addr` varchar(39) NOT NULL COMMENT 'the IPv6 address associated with the other_host',
   `alias` varchar(255) DEFAULT NULL COMMENT 'an alias for use by monitoring',
@@ -684,4 +685,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-22  4:23:02
+-- Dump completed on 2015-08-27  4:23:02
