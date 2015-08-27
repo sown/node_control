@@ -123,7 +123,7 @@ class DNSUtils {
                 {
 			if (strlen($addr['IPv6Addr'])) 
 			{
-                        	$rdns = DNSUtils::reversePTR($addr['IPv6Addr'], '', 6) . ".ip6.arpa.";
+                        	$rdns = DNSUtils::reversePTR($addr['IPv6Addr'], '', 6);
                         	$dns6 .= "$rdns\tPTR\t" . $addr['hostname'] . ".$domain.\n";
 			}
                 }
