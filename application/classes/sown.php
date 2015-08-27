@@ -592,40 +592,5 @@ class SOWN
 		return $ret;
 	}
 
-	public static function reverse_dns($addr, $subnet, $protocol = 4)
-	{
-		if ($protocol == 4)
-		{
-			$leftaddr = preg_replace("/^$subnet\.*/", "", $addr);
-			return implode('.', array_reverse(explode('.', $leftaddr)));
-		}
-		elseif ($protocol == 6)
-		{
-			error_log("addr1: $addr");
-			if (strpos($addr, "::") !== FALSE)
-                        {
-				error_log("fill in ::");
-                                $addr_bits = explode(':', $addr);
-                                $addr_filler = array();
-                                for ($a = sizeof($addr_bits); $a < 8; $a++)
-                                {
-                                        $addr_filler[] = "0000";
-                                }
-                                $addr = str_replace("::", ':' . implode(':', $addr_filler) . ':', $addr);
-                        }
-			error_log("addr2: $addr");
-			$leftaddr = preg_replace("/^$subnet/", "", $addr);
-			error_log("leftaddr1: $leftaddr");
-			$addr_bits = explode(':', $leftaddr);
-			foreach($addr_bits as $ab => $addr_bit)
-			{
-				$addr_bits[$ab] = (strlen($addr_bit) > 0 && strlen($addr_bit) < 4 ? $addr_bits[$ab] = str_repeat('0',4 - strlen($addr_bit)) . $addr_bit : $addr_bit);
-			}
-			$leftaddr = implode(':', $addr_bits);
-			error_log("leftaddr2: $leftaddr");
-			return implode('.', str_split(strrev(str_replace(':', '', $leftaddr))));
-		}
-	}
-
 }	
 

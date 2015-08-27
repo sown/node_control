@@ -175,10 +175,28 @@ class Controller_Scripts extends Controller_Template
       		if (empty($tmpdir)) $tmpdir = '/tmp';
 		$tmpdir = str_replace("+", "/", $tmpdir);
 
-      		$query = Doctrine::em()->createQuery("SELECT n.boxNumber, ve.IPv4Addr, ve.IPv6Addr, d.latitude, d.longitude, na.mac, d.type, n.firmwareImage FROM Model_Node n JOIN n.vpnEndpoint ve JOIN n.interfaces i JOIN i.networkAdapter na LEFT JOIN n.nodeDeployments nd LEFT JOIN nd.deployment d WHERE (nd.endDate > CURRENT_TIMESTAMP() OR nd.endDate IS NULL) AND i.name = 'eth0' ORDER BY n.boxNumber ASC");
-		$results = $query->getResult();
-      		DNSUtils::generateNodesReverseFragment($tmpdir, $results);
-      		DNSUtils::generateNodesForwardFragment($tmpdir, $results);
+
+                $nameservers = Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
+                        ->where('si.hostname LIKE :hostname')->orWhere('si.cname LIKE :hostname')
+                        ->orderBy('si.cname', 'ASC')
+                        ->setParameter('hostname', 'ns%')
+                        ->getQuery()->getResult();
+		$wwwserver = Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
+                        ->where('si.hostname LIKE :hostname')->orWhere('si.cname LIKE :hostname')
+                        ->setParameter('hostname', 'www')
+                        ->setMaxResults(1)
+                        ->getQuery()->getResult();
+		$server_interfaces = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname FROM Model_ServerInterface si JOIN si.vlan v JOIN si.server s WHERE v.name = '".Kohana::$config->load('system.default.vlan.local')."' AND s.retired != 1 AND (si.IPv4Addr != '' OR si.IPv6Addr != '') ORDER BY si.IPv4Addr ASC")->getResult(); 
+		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
+		$other_hosts = Doctrine::em()->getRepository('Model_OtherHost')->findByRetired(0);
+		DNSUtils::generateHostsReverseFragment($tmpdir, $nameservers, $server_interfaces, $other_hosts);
+                DNSUtils::generateHostsForwardFragment($tmpdir, $nameservers, $servers, $other_hosts, $wwwserver[0]);
+
+      		$nodes_query = Doctrine::em()->createQuery("SELECT n.boxNumber, ve.IPv4Addr, ve.IPv6Addr, d.latitude, d.longitude, na.mac, d.type, n.firmwareImage FROM Model_Node n JOIN n.vpnEndpoint ve JOIN n.interfaces i JOIN i.networkAdapter na LEFT JOIN n.nodeDeployments nd LEFT JOIN nd.deployment d WHERE (nd.endDate > CURRENT_TIMESTAMP() OR nd.endDate IS NULL) AND i.name = 'eth0' ORDER BY n.boxNumber ASC");
+		$nodes = $nodes_query->getResult();
+      		DNSUtils::generateNodesReverseFragment($tmpdir, $nodes);
+      		DNSUtils::generateNodesForwardFragment($tmpdir, $nodes);
+
       		DNSUtils::generateZoneHeader($tmpdir);
       		DNSUtils::generateReverseZoneIPv4Header($tmpdir);
       		DNSUtils::generateReverseZoneIPv6Header($tmpdir);

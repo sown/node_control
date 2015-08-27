@@ -355,12 +355,6 @@ Route::set('edit_reserved_subnet', 'admin/subnets/reserved/<id>/edit')
                 'action'     => 'edit',
         ));
 
-Route::set('dns', 'admin/dns/<zonetype>')
-        ->defaults(array(
-                'controller' => 'dns',
-                'action'     => 'generate_dns',
-        ));
-
 Route::set('servers', 'admin/servers')
         ->defaults(array(
                 'controller' => 'servers',
