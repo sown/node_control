@@ -360,7 +360,6 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'currentInterfaces' => array(),
 			),
                 );
-		error_log("undeployable: ".var_export($formValues['undeployable'], 1));
                 foreach ($node->interfaces as $i => $interface)
                 {
                        	$formValues['interfaces']['currentInterfaces'][$i] = array (
