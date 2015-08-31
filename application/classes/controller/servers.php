@@ -305,7 +305,18 @@ class Controller_Servers extends Controller_AbstractAdmin
                 );
 		$i = 0;
 		$intf_fields = array('id', 'vlan', 'name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr', 'subordinate');
-                foreach ($server->interfaces as $i => $interface)
+		$server_interfaces = array();
+		$srv_intf_ids = array();
+		// Fixes bug where duplicate interfaces appear when a new interface is added.
+		foreach($server->interfaces as $intf => $interface)
+		{
+			if (!in_array($interface->id, $srv_intf_ids))
+			{
+				$server_interfaces[] = $interface;
+				$srv_intf_ids[] = $interface->id;
+			}
+		}
+                foreach ($server_interfaces as $i => $interface)
                 {
 			foreach ($intf_fields as $if)
 			{
