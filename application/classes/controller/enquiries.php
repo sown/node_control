@@ -176,6 +176,14 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 		if (empty($response_summary)) 
 		{
 			$buttons = array('sendResponse' => 'Send Response', 'markAsHandled' => 'Mark As Handled', 'markAsHandledQuietly' => 'Mark As Handled Quietly', 'acknowledge' => 'Acknowledge');
+			// Test if there are any dodgy characters that cannot be displayed in a textarea before adding original message to response field.
+			try {
+				$formatted_response = htmlspecialchars( (string)$formValues['responsefieldset']['response'], ENT_QUOTES, Kohana::$charset, TRUE);
+			}
+			catch (Exception $e)
+			{
+				$formValues['responsefieldset']['response'] = "";
+			}
 		}
 		else {
 			$formTemplate['responsefieldset']['fields']['response']['type'] = 'static';
