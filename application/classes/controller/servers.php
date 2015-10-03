@@ -399,7 +399,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 							'cname' => array('title' => 'CName', 'type' => 'input', 'size' => 15),
 							'mac' => array('title' => 'MAC', 'type' => 'input', 'size' => 14),
 							'switchport' => array('title' => 'Switchport', 'type' => 'input', 'size' => 29),
-							'cable' => array('title' => 'Csble', 'type' => 'input', 'size' => 4),
+							'cable' => array('title' => 'Cable', 'type' => 'input', 'size' => 4),
                                                         'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 11),
                                                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 25),
 							'subordinate' => array('title' => 'Sub', 'type' => 'checkbox'),
