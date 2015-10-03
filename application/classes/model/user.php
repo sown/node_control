@@ -141,7 +141,8 @@ class Model_User extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "User: {$this->id}, username={$this->username}, name={$this->name}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, wikiUsername={$this->wikiUsername}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordTime={$this->resetPasswordTimestamp()}";
+		$str  = "User: {$this->id}, username={$this->username}, name={$this->name}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, canAccessWiki={$this->canAccessWiki}, wikiUsername={$this->wikiUsername}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordTime={$this->resetPasswordTimestamp()}";
+
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
@@ -161,7 +162,7 @@ class Model_User extends Model_Entity
 		$str  = "<div class='user' id='user_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>User</th><td>{$this->id}</td></tr>";
-		foreach(array('username', 'name', 'email', 'isSystemAdmin', 'wikiUsername', 'resetPasswordHash') as $field)
+		foreach(array('username', 'name', 'email', 'isSystemAdmin', 'canAccessWiki', 'wikiUsername', 'resetPasswordHash') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
