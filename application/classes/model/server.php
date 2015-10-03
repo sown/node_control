@@ -231,7 +231,8 @@ class Model_Server extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Server: {$this->id}, name={$this->name}, state={$this->sate}, purpose={$this->purpose}, parent={$this->parent}, description={$this->description}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
+		$acquiredDate = (is_object($this->acquiredDate) ? $this->acquiredDate->format('Y-m-d H:i:s') : '');
+		$str  = "Server: {$this->id}, name={$this->name}, state={$this->sate}, purpose={$this->purpose}, parent={$this->parent}, description={$this->description}, acquiredDate={$acquiredDate}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -257,12 +258,13 @@ class Model_Server extends Model_Entity
   		
 		foreach(array('certificate', 'location') as $field)
 		{
-			if($this->$field)
+			if(is_object($this->$field))
 			{
 				$str .= $this->fieldHTML($field, $this->$field->toHTML());
 			}
 		}
-		$str .= $this->fieldHTML('acquiredDate', $this->acquiredDate->format('Y-m-d H:i:s'));
+		$acquiredDate = (is_object($this->acquiredDate) ? $this->acquiredDate->format('Y-m-d H:i:s') : '');
+		$str .= $this->fieldHTML('acquiredDate', $acquiredDate);
 		foreach(array('retired', 'serverCase', 'processor', 'memory', 'hardDrive', 'networkPorts', 'wakeOnLan', 'kernel', 'os') as $field)
                 {
                         $str .= $this->fieldHTML($field);
