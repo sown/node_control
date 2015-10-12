@@ -360,23 +360,29 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'currentInterfaces' => array(),
 			),
                 );
+
+		$formValuesMap = array(
+			'id' => 'id', 
+			'name' => 'name', 
+			'IPv4Addr' => 'IPv4Addr', 
+			'IPv4AddrCidr' => 'IPv4AddrCidr', 
+			'IPv6Addr' => 'IPv6Addr', 
+			'IPv6AddrCidr' => 'IPv6AddrCidr', 
+			'ssid' => 'ssid', 
+			'type' => 'type', 
+			'offerDhcp' => 'offerDhcp', 
+			'is1x' => 'is1x', 
+			'networkAdapterMac' => 'networkAdapter:mac', 
+			'networkAdapterWirelessChannel' => 'networkAdapter:wirelessChannel', 
+			'networkAdapterType' => 'networkAdapter:type'
+		);
                 foreach ($node->interfaces as $i => $interface)
                 {
-                       	$formValues['interfaces']['currentInterfaces'][$i] = array (
-	                	'id' => $interface->id,
-        	               	'name' => $interface->name,
-                	        'IPv4Addr' => $interface->IPv4Addr,
-                           	'IPv4AddrCidr' => $interface->IPv4AddrCidr,
-                        	'IPv6Addr' => $interface->IPv6Addr,
-	                       	'IPv6AddrCidr' => $interface->IPv6AddrCidr,
-        	               	'ssid' => $interface->ssid,
-                	       	'type' => $interface->type,
-                           	'offerDhcp' => $interface->offerDhcp,
-	                       	'is1x' => $interface->is1x,
-        	               	'networkAdapterMac' => $interface->networkAdapter->mac,
-                            	'networkAdapterWirelessChannel' => $interface->networkAdapter->wirelessChannel,
-                      	     	'networkAdapterType' => $interface->networkAdapter->type,
-                      	);
+			foreach ($formValuesMap as $fmv_key => $fmv_value)
+			{
+				$fmv_value_bits = explode(":", $fmv_value);
+				$formValues['interfaces']['currentInterfaces'][$i][$fmv_key] = ( sizeof($fmv_value_bits) == 1 ? $interface->$fmv_value : $interface->$fmv_value_bits[0]->$fmv_value_bits[1] );
+			}
 			if ($action == 'view')
 			{
 				$formValues['interfaces']['currentInterfaces'][$i]['offerDhcp'] = ( $formValues['interfaces']['currentInterfaces'][$i]['offerDhcp'] ? 'Yes' : 'No') ;
@@ -385,7 +391,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 }
 		if ($action == 'edit')
 		{
-			foreach ($formValues['interfaces']['currentInterfaces'][$i] as $f => $field)
+			foreach ($formValuesMap as $f => $field)
 			{
 				$formValues['interfaces']['currentInterfaces'][$i+1][$f] = '';
 			}
