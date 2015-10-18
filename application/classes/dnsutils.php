@@ -73,7 +73,9 @@ class DNSUtils {
                         }
                         foreach (explode(',', $other_host->cname) as $cname)
                         {
-                                $dns .= (!empty($cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $other_host->hostname . '.' . Kohana::$config->load('system.default.admin_system.domain') . ".\n" : "");
+				$full_hostname = $other_host->hostname;
+				$full_hostname .= (strpos($full_hostname, '.') ? "." : "");
+                                $dns .= (!empty($cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
                         }
                 }
 		$file = "$dir/fragment.$domain-hosts";
@@ -361,7 +363,9 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
                                 $dns .= (!empty($ipv6) ? $interface->hostname . $tabs . "IN\tAAAA\t" . $ipv6 . "\n" : "");
                                 foreach (explode(',', $cname_list) as $cname)
                                 {
-                                        $dns .= (!empty($cname) && !preg_match("/^(ns[0-9]|www)$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . "." . Kohana::$config->load('system.default.admin_system.domain') . ".\n" : "");
+					$full_hostname = $interface->hostname;
+                                        $full_hostname .= (strpos($full_hostname, '.') ? "." : "");
+                                        $dns .= (!empty($cname) && !preg_match("/^(ns[0-9]|www)$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
                                 }
                                 $dns .= $interface->hostname . $tabs . "IN\tTXT\t" . "\"mac: ".$interface->mac." type:server\"\n";
                                 $dns .= $interface->hostname . $tabs . "IN\tHINFO\t\"".$interface->server->processor."\" \"".$interface->server->kernel."\"\n";
@@ -375,7 +379,9 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
                                 $dns .= (!empty($ipv6) ? $hostname . $tabs . "IN\tAAAA\t" . $ipv6 . "\n" : "");
                                 foreach (explode(',', $cname_list) as $cname)
                                 {
-                                        $dns .= (!empty($cname) && !preg_match("/^(ns[0-9])$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . ".\n" : "");
+					$full_hostname = $interface->hostname;
+					$full_hostname .= (strpos($full_hostname, '.') ? "." : "");
+                                        $dns .= (!empty($cname) && !preg_match("/^(ns[0-9]|www)$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
                                 }
                                 $dns .= $hostname . $tabs . "IN\tTXT\t\"mac: ".$interface->mac." type:server\"\n";
                                 $dns .= $hostname . $tabs . "IN\tHINFO\t\"".$interface->server->processor."\" \"".$interface->server->kernel."\"\n";
