@@ -26,6 +26,13 @@ class Model_Node extends Model_Entity
 	protected $boxNumber;
 
 	/**
+         * @var text $firmwareVersion
+         *
+         * @Column(name="firmware_version", type="string", nullable=false)
+         */
+        protected $firmwareVersion;
+
+	/**
 	 * @var text $firmwareImage
 	 *
 	 * @Column(name="firmware_image", type="text", nullable=false)
@@ -273,7 +280,7 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -307,7 +314,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'firmwareImage', 'undeployable') as $field)
+		foreach(array('boxNumber', 'firmwareVersion', 'fimrwareImage', 'undeployable') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -357,10 +364,11 @@ class Model_Node extends Model_Entity
 		return empty($result->id);
 	}
 
-	public static function build($boxNumber, $firmwareImage, $certificate, $vpnEndpoint)
+	public static function build($boxNumber, $firmwareVersion, $firmwareImage, $certificate, $vpnEndpoint)
 	{
 		$obj = new Model_Node();
 		$obj->boxNumber = $boxNumber;
+		$obj->firmwareVersion = $firmwareVersion;
 		$obj->firmwareImage = $firmwareImage;
 		$obj->certificate = $certificate;
 		$obj->vpnEndpoint = $vpnEndpoint;

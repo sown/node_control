@@ -44,6 +44,13 @@ return array
 				'ipv6' => '2001:630:d0:f700',
 			),
 		),
+		'fiemware_image_default' => 'Attitude Adjusment (Bleeding Edge, r31360)',
+		'firmware_versions'	=> array
+		(
+			'0' => 'NOT APPLICABLE',
+			'backfire' => 'Attitude Adjustment',
+			'designateddriver' => 'Designated Driver',
+		),
 		'host_types' 	=> array
 		(
 			'webserver' => 'Web Server',

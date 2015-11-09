@@ -106,8 +106,26 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$o['contacts'] = "+".$name."_admin";
 
 		$use = "node";
-
-		$hostgroups = "*Backfire Nodes,*Home Nodes";
+		
+		$hostgroups = "*Nodes";
+		$node_dep_type = $node->currentDeployment->type;
+		switch ($node_dep_type)
+		{
+			case 'home':
+				$hostgroups.=",*Home Nodes";
+				break;
+			case 'campus':
+				$hostgroups.=",*Campus Nodes";
+				break;
+		}
+		$node_dep_state = $node->currentDeployment->isDevelopment;
+		$hostgroups .= (!empty($node_dep_state) ? ',*Development Nodes' : '');
+		$firmware_versions = Kohana::$config->load('system.default.firmware_versions');
+		$firmware_version = $node->firmwareVersion;
+		if (!empty($firmware_version)) 
+		{
+			$hostgroups .= ',*'.$firmware_versions[$node->firmwareVersion].' Nodes';
+		}
 
 return "
 define Contact {

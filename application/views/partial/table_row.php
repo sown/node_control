@@ -8,6 +8,7 @@
         <tr class="sowntablerow<?=$shade?>"<?= $style?>>
 <?php
 $latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
+$firmware_versions = Kohana::$config->load('system.default.firmware_versions');
 foreach ($fields as $f => $field) 
 {
 	if (in_array($f, array("configure", "delete", "edit", "reply", "usage", "view", "submit_hash")))
@@ -150,6 +151,18 @@ foreach ($fields as $f => $field)
 		$type = Doctrine::em()->getRepository('Model_EnquiryType')->find($row->id);
 		$num_unresponded = sizeof(Model_Enquiry::getUnresponded($type));
 		echo "<td><a href=\"" . Route::url('unresponded_type_enquiries', array('type' => $row->id)). "\">" . $row->title . " (${num_unresponded})</a></td>\n";
+	}
+	elseif ($f == "firmwareVersion")
+	{
+		$val = $row->$f;
+		if (isset($firmware_versions[$val]))
+		{
+			echo "          <td>$firmware_versions[$val]</td>\n";
+		}
+		else
+		{
+			echo "          <td>UNKNOWN</td>\n";
+		}
 	}
 	else
 	{

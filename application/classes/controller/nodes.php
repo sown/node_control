@@ -22,6 +22,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 	'id' => 'ID',
                		'boxNumber' => 'Box Number',
 			'currentDeployment' => 'Current Deployment',
+			'firmwareVersion' => 'Firmware Version',
                		'firmwareImage' => 'Firmware Image',
 			'undeployable' => 'Deployable?',
 			'certificateWritten' => 'Certificate Written',
@@ -55,6 +56,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'id' => 'ID',
                         'boxNumber' => 'Box Number',
                         'currentDeployment' => 'Current Deployment',
+			'firmwareVersion' => 'Firmware Version',
                         'firmwareImage' => 'Firmware Image',
                         'certificateWritten' => 'Certificate Written',
                         'nodeCA' => 'CA',
@@ -95,7 +97,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 ->rule('wirelessMac', 'not_empty', array(':value'));				
 			if ($validation->check())
         		{
-				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['firmwareImage']);
+				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['firmwareVersion'], $formValues['firmwareImage']);
                         	$success = "Successfully created node with box number: <a href=\"/admin/nodes/$node->boxNumber\">$node->boxNumber</a>.";
  
         		}
@@ -111,7 +113,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'vpnServer' => '',
 				'wiredMac' => '',
 				'wirelessMac' => '',
-				'firmwareImage' => 'Attitude Adjusment (Bleeding Edge, r31360)',
+				'firmwareVersiom' => '',
+				'firmwareImage' => Kohana::$config->load('system.default.firmware_image_default'),
 			);
 			
 		}
@@ -120,6 +123,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'vpnServer' => array('title' => 'VPN Server', 'type' => 'select', 'options' => Model_VpnServer::getVpnServerNames()),
 			'wiredMac' => array('title' => 'Wired Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
                         'wirelessMac' => array('title' => 'Wireless Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
+			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'size' => 50, 'type' => 'input'),
 		);
 	
@@ -343,6 +347,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 $formValues = array(
 		       	'id' => $node->id,
                        	'boxNumber' => $node->boxNumber,
+			'firmwareVersion' => $node->firmwareVersion,
                        	'firmwareImage' => $node->firmwareImage,
 			'undeployable' => $node->undeployable,
 			'certificateWritten' => ( (strlen($node->certificate->privateKey) > 0) ? 'Yes' : 'No' ),
@@ -396,6 +401,12 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				$formValues['interfaces']['currentInterfaces'][$i+1][$f] = '';
 			}
 		}
+		if ($action == 'view')
+		{
+			$formValues['undeployable'] = (!empty($formValues['undeployable']) ? 'Yes' : 'No');
+			$firmware_versions = Kohana::$config->load('system.default.firmware_versions'); 
+			$formValues['firmwareVersion'] = $firmware_versions[$formValues['firmwareVersion']];
+		}
 		return $formValues;
 	}
 
@@ -404,6 +415,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
+			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
 			'certificateWritten' => array('title' => 'Certificate written', 'type' => 'statichidden'),
@@ -457,6 +469,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	private function _update($boxNumber, $formValues)
 	{
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
+		$node->firmwareVersion = $formValues['firmwareVersion'];
 		$node->firmwareImage = $formValues['firmwareImage'];
 		if (empty($formValues['undeployable']))
                 {
