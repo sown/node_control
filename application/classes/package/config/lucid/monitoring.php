@@ -126,6 +126,10 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		{
 			$hostgroups .= ',*'.$firmware_versions[$node->firmwareVersion].' Nodes';
 		}
+		else
+		{
+			$firmware_version = Kohana::$config->load('system.default.firmware_version_default');
+		} 
 		if (empty($is_dev_node))
 		{
 			$notification_lines = "host_notification_commands\tnodeadmin-notify-by-email\n\tservice_notification_commands\tnodeadmin-service-notify-by-email\n\temail\t\t\t\t\t{$email}";
@@ -164,14 +168,14 @@ define Service {
 	host_name	{$parents}
 	use		vpnserver
 	service_description	VPNSERVER-{$name}
-	check_command	check_via_node_control!backfire!{$name}!OpenvpnRunning
+	check_command	check_via_node_control!{$firmware_version}!{$name}!OpenvpnRunning
 }
 
 define Service {
 	host_name	{$parents}
 	use		nodecert
 	service_description	NODECERT-{$name}
-	check_command	check_via_node_control!backfire!{$name}!CertExpiry
+	check_command	check_via_node_control!{$firmware_version}!{$name}!CertExpiry
 }
 
 ";
