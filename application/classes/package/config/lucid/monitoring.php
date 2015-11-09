@@ -118,13 +118,21 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 				$hostgroups.=",*Campus Nodes";
 				break;
 		}
-		$node_dep_state = $node->currentDeployment->isDevelopment;
-		$hostgroups .= (!empty($node_dep_state) ? ',*Development Nodes' : '');
+		$is_dev_node = $node->currentDeployment->isDevelopment;
+		$hostgroups .= (!empty($is_dev_node) ? ',*Development Nodes' : '');
 		$firmware_versions = Kohana::$config->load('system.default.firmware_versions');
 		$firmware_version = $node->firmwareVersion;
 		if (!empty($firmware_version)) 
 		{
 			$hostgroups .= ',*'.$firmware_versions[$node->firmwareVersion].' Nodes';
+		}
+		if (empty($is_dev_node))
+		{
+			$notification_lines = "host_notification_commands\tnodeadmin-notify-by-email\n\tservice_notification_commands\tnodeadmin-service-notify-by-email\n\temail\t\t\t\t\t{$email}";
+		}
+		else 
+		{
+			$notification_lines = "host_notification_commands\thost-notify-by-irc-dev\n\tservice_notification_commands\tnotify-by-irc-dev";
 		}
 
 return "
@@ -134,9 +142,7 @@ define Contact {
 	service_notification_period	24x7
 	host_notification_options	d,r
 	service_notification_options	w,c,r
-	host_notification_commands	nodeadmin-notify-by-email
-	service_notification_commands	nodeadmin-service-notify-by-email
-	email				{$email}
+	$notification_lines
 }
 
 define Host {
