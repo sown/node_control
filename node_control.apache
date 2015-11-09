@@ -1,3 +1,4 @@
+
 <VirtualHost 10.13.0.234:80> 
 	DocumentRoot /usr/local/share/git-repos
 	<Directory "/usr/local/share/git-repos"> 
@@ -9,6 +10,7 @@
 	ScriptAlias /git/ /usr/lib/git-core/git-http-backend/ 
 </VirtualHost>
 
+NameVirtualHost 152.78.189.90:80
 <VirtualHost 152.78.189.90:80>
 	ServerName sown-auth2.ecs.soton.ac.uk
 	ServerAlias sown-auth2
@@ -16,6 +18,14 @@
 	Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
 </VirtualHost>
 
+<VirtualHost 152.78.189.90:80>
+        ServerName sown-auth2-dev.ecs.soton.ac.uk
+        ServerAlias sown-auth2-dev
+        ServerAdmin support@sown.org.uk
+        Redirect permanent / https://sown-auth2-dev.ecs.soton.ac.uk/
+</VirtualHost>
+
+NameVirtualHost [2001:630:d0:f104::5032:239]:80
 <VirtualHost [2001:630:d0:f104::5032:239]:80>
         ServerName sown-auth2.ecs.soton.ac.uk
         ServerAlias sown-auth2
@@ -23,6 +33,12 @@
         Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
 </VirtualHost>
 
+<VirtualHost [2001:630:d0:f104::5032:239]:80>
+        ServerName sown-auth2-dev.ecs.soton.ac.uk
+        ServerAlias sown-auth2-dev
+        ServerAdmin support@sown.org.uk
+        Redirect permanent / https://sown-auth2-dev.ecs.soton.ac.uk/
+</VirtualHost>
 
 <VirtualHost 10.13.0.239:80>
         ServerName auth2.sown.org.uk
@@ -45,12 +61,12 @@
 SSLStrictSNIVHostCheck off
 
 # Default VirtualHost-  sown-auth2.ecs.soton.ac.uk
+
+NameVirtualHost 152.78.189.90:443
 <VirtualHost 152.78.189.90:443>
     ServerAdmin support@sown.org.uk
     ServerName sown-auth2.ecs.soton.ac.uk
-#    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.pub # Moved to /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/2014_selfsigned/sown-auth2.ecs.soton.ac.uk.crt
-#    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.priv # oved to /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/2014_selfsigned/sown-auth2.ecs.soton.ac.uk.key
-    
+   
     SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.crt
     SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.key  
     SSLCertificateChainFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.cachain    
@@ -90,17 +106,101 @@ SSLStrictSNIVHostCheck off
 
 </VirtualHost>
 
+# Secondary VirtualHost-  sown-auth2-dev.ecs.soton.ac.uk
+<VirtualHost 152.78.189.90:443>
+    ServerAdmin support@sown.org.uk
+    ServerName sown-auth2-dev.ecs.soton.ac.uk
+
+    SSLCertificateFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.key
+
+    DocumentRoot "/srv/www/development"
+
+    SSLEngine on
+
+    # StdEnvVars is required to pass SSL values on to php
+    # ExportCertData is required to give php the _whole_ certificate
+    SSLOptions +StrictRequire +StdEnvVars +ExportCertData
+
+    <Directory />
+        SSLRequireSSL
+    </Directory>
+
+    <Location /package>
+        SSLCACertificatePath /etc/apache2/ssl/
+        SSLVerifyClient require
+    </Location>
+
+    <Location /status>
+        SSLCACertificatePath /etc/apache2/ssl/
+        SSLVerifyClient require
+    </Location>
+
+
+    SSLProtocol -all +TLSv1 +SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
+
+    SSLProxyEngine off
+
+    <IfModule mime.c>
+        AddType application/x-x509-ca-cert      .crt
+        AddType application/x-pkcs7-crl         .crl
+    </IfModule>
+
+</VirtualHost>
+
+NameVirtualHost [2001:630:d0:f104::5032:239]:443
 <VirtualHost [2001:630:d0:f104::5032:239]:443>
     ServerAdmin support@sown.org.uk
     ServerName sown-auth2.ecs.soton.ac.uk
-#    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.pub # Moved to /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/2014_selfsigned/sown-auth2.ecs.soton.ac.uk.crt
-#    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk.priv # oved to /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/2014_selfsigned/sown-auth2.ecs.soton.ac.uk.key
 
     SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.crt
     SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.key
     SSLCertificateChainFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.cachain
 
     DocumentRoot "/srv/www/default"
+
+    SSLEngine on
+
+    # StdEnvVars is required to pass SSL values on to php
+    # ExportCertData is required to give php the _whole_ certificate
+    SSLOptions +StrictRequire +StdEnvVars +ExportCertData
+
+    <Directory />
+        SSLRequireSSL
+    </Directory>
+
+    <Location /package>
+        SSLCACertificatePath /etc/apache2/ssl/
+        SSLVerifyClient require
+    </Location>
+
+    <Location /status>
+        SSLCACertificatePath /etc/apache2/ssl/
+        SSLVerifyClient require
+    </Location>
+
+
+    SSLProtocol -all +TLSv1 +SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
+
+    SSLProxyEngine off
+
+    <IfModule mime.c>
+        AddType application/x-x509-ca-cert      .crt
+        AddType application/x-pkcs7-crl         .crl
+    </IfModule>
+
+</VirtualHost>
+
+<VirtualHost [2001:630:d0:f104::5032:239]:443>
+    ServerAdmin support@sown.org.uk
+    ServerName sown-auth2-dev.ecs.soton.ac.uk
+
+    SSLCertificateFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.key
+
+    DocumentRoot "/srv/www/development"
 
     SSLEngine on
 
