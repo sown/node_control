@@ -9,10 +9,10 @@ class Controller_Status_Config_Generic extends Controller
 		$os           = $this->request->param('os');
 		switch($os)
 		{
-			case 'backfire':
+			case 'node':
 				$host = Model_Node::getByHostname($hostname);
 				break;
-			case 'lucid':
+			case 'server':
 				$host = Model_Server::getByHostname($hostname);
 				break;
 		}

@@ -45,7 +45,6 @@ return array
 			),
 		),
 		'firmware_image_default' => 'Attitude Adjusment (Bleeding Edge, r31360)',
-		'firmware_version_default' => 'backfire',
 		'firmware_versions'	=> array
 		(
 			'0' => 'NOT APPLICABLE',
