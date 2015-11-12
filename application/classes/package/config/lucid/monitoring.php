@@ -119,7 +119,8 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 				break;
 		}
 		$is_dev_node = $node->currentDeployment->isDevelopment;
-		$hostgroups .= (!empty($is_dev_node) ? ',*Development Nodes' : '');
+		$use = (!empty($is_dev_node) ? 'devnode' : 'prodnode');
+		$hostgroups .= (!empty($is_dev_node) ? ',*Development Nodes' : ',*Production Nodes');
 		$firmware_versions = Kohana::$config->load('system.default.firmware_versions');
 		if (!empty($firmware_version)) 
 		{
