@@ -386,6 +386,7 @@ CREATE TABLE `nodes` (
   `vpn_endpoint_id` int(11) DEFAULT NULL COMMENT 'link to the vpn endpoints table',
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
   `box_number` int(11) DEFAULT NULL COMMENT 'DEPRECATED. DO NOT USE.',
+  `firmware_version` varchar(255) DEFAULT NULL,
   `firmware_image` text NOT NULL COMMENT 'version of firmware installed on the node (e.g. Backfire 10.03)',
   `password_hash` varchar(255) NOT NULL,
   `undeployable` tinyint(1) NOT NULL,
@@ -685,4 +686,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-08-27  4:23:02
+-- Dump completed on 2015-11-10  4:23:02
