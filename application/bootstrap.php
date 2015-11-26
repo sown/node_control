@@ -569,6 +569,30 @@ Route::set('view_node_request', 'admin/noderequests/<id>')
                 'action'     => 'view',
         ));
 
+Route::set('node_setup_requests', 'admin/nodesetuprequests')
+        ->defaults(array(
+                'controller' => 'nodesetuprequests',
+                'action'     => 'default',
+        ));
+
+Route::set('pending_node_setup_requests', 'admin/nodesetuprequests/pending')
+        ->defaults(array(
+                'controller' => 'nodesetuprequests',
+                'action'     => 'pending',
+        ));
+
+Route::set('delete_node_setup_request', 'admin/nodesetuprequests/<id>/delete')
+        ->defaults(array(
+                'controller' => 'nodesetuprequests',
+                'action'     => 'delete',
+        ));
+
+Route::set('view_node_setup_request', 'admin/nodesetuprequests/<id>')
+        ->defaults(array(
+                'controller' => 'nodesetuprequests',
+                'action'     => 'view',
+        ));
+
 Route::set('enquiries', 'admin/enquiries')
         ->defaults(array(
                 'controller' => 'enquiries',
