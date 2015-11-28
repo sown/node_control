@@ -80,6 +80,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 				$nodeSetupRequest->status = "approved";
 				$nodeSetupRequest->approvedBy = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
 				$nodeSetupRequest->approvedDate = new \DateTime();
+				$nodeSetupRequest->expiryDate = new \DateTime('+1 day');
 				$nodeSetupRequest->save();
 				$success = "Node Setup Request Approved";
 			}

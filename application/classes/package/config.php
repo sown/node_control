@@ -214,6 +214,17 @@ abstract class Package_Config
 		if($server === null) SOWN::send_irc_message('Server config: failed to find server by certificate.');
 		return $server;
 	}
+
+	public static function get_server_node($node_id)
+        {
+		if ($node_id === NULL)
+		{
+			return NULL;
+		}
+		$node = Doctrine::em()->getRepository('Model_Node')->find($node_id);
+		if($node === NULL) SOWN::send_irc_message('Server config: failed to find node by id.');
+		return $node;
+	}
 	
 	public static function get_client_cert()
 	{

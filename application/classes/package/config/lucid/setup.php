@@ -13,7 +13,7 @@ class Package_Config_Lucid_Setup extends Package_Config
 		),
 	);
 
-	public static function config_icinga_v0_1_78(Model_Node $node = null)
+	public static function config_setup_v0_1_78(Model_Node $node = null)
 	{
                 static::send_tgz(array(
                         'client.crt'      => array(
