@@ -75,6 +75,13 @@ class Model_NodeSetupRequest extends Model_Entity
         protected $expiryDate;
 
 	/**
+         * @var datetime $password
+         *
+         * @Column(name="password", type="string", length=255, nullable=false)
+         */
+        protected $password;
+
+	/**
          * @var Model_Node
          *
          * @ManyToOne(targetEntity="Model_Node")
@@ -124,6 +131,8 @@ class Model_NodeSetupRequest extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
+		$password = $this->password;
+		$password = ( empty($password) ? '[UNSET]' : '[SET]' );
 		$str  = "NodeSetupRequest: {$this->id}, nonce={$this->nonce}, mac={$this->mac}, requestedDate={$this->requestedDate->format('Y-m-d H:i:s')}, ipAddr={$this->ipAddr}, status={$this->status}, approvedBy={$this->approvedBy->id}, approvedDate={$this->approvedDate->format('Y-m-d H:i:s')}, expiryDate={$this->expiryDate->format('Y-m-d H:i:s')}, node={$this->node->id}";
 		return $str;
 	}
@@ -131,18 +140,28 @@ class Model_NodeSetupRequest extends Model_Entity
 	public function toHTML()
 	{
 		$this->logUse();
+                $password = $this->password;
+                $this->password = ( empty($password) ? '[UNSET]' : '[SET]' );
 		$str  = "<div class='node' id='node_setup_request_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>NodeSetupRequest</th><td>{$this->id}</td></tr>";
-		foreach(array('nonce', 'mac', 'ipAddr', 'status') as $field)
+		foreach(array('nonce', 'mac', 'ipAddr', 'status', 'password') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
 		foreach(array('requestedDate', 'approvedDate', 'expiryDate') as $field)
 		{
-			$str .= $this->fieldHTML($field, $this->$field->format('Y-m-d H:i:s'));
+			$date = $this->$field;
+			if (!empty($date))
+			{			
+				$str .= $this->fieldHTML($field, $date->format('Y-m-d H:i:s'));
+			}
+			else
+			{
+				$str .= $this->fieldHTML($field, "");
+			}
 		}
-		foreach(array('approvedDate', 'node') as $field)
+		foreach(array('approvedBy') as $field)
                 {
                         $str .= $this->fieldHTML($field, $this->$field->toHTML());
                 }

@@ -84,6 +84,11 @@ class Model_Node extends Model_Entity
 	protected $interfaces;
 
 	/**
+         * @OneToMany(targetEntity="Model_NodeSetupRequest", mappedBy="node")
+         */
+        protected $nodeSetupRequests;
+
+	/**
          * @OneToMany(targetEntity="Model_Note", mappedBy="node", cascade={"persist", "remove"})
          */
         protected $notes;
@@ -100,8 +105,9 @@ class Model_Node extends Model_Entity
 	public function __construct()
 	{
 		parent::__construct();
+	 	$this->interfaces = new ArrayCollection();
 		$this->nodeDeployments = new ArrayCollection();
-		$this->interfaces = new ArrayCollection();
+		$this->nodeSetupRequests = new ArrayCollection();
 	}
 
 	public function __get($name)
@@ -290,6 +296,11 @@ class Model_Node extends Model_Entity
 			$str .= "<br/>";
 			$str .= "interface={$interface}";
 		}
+		foreach($this->nodeSetupRequests as $nodeSetupRequest)
+                {
+                        $str .= "<br/>";
+                        $str .= "nodeSetupRequest={$nodeSetupRequest}";
+                }
 		if($this->currentDeployment != null)
 		{
 			$str .= "<br/>";
@@ -314,7 +325,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'firmwareVersion', 'fimrwareImage', 'undeployable') as $field)
+		foreach(array('boxNumber', 'firmwareVersion', 'firmwareImage', 'undeployable') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -326,6 +337,10 @@ class Model_Node extends Model_Entity
 		{
 			$str .= $this->fieldHTML('interface', $interface->toHTML());
 		}
+		foreach($this->nodeSetupRequests as $nodeSetupRequest)
+                {
+                        $str .= $this->fieldHTML('nodeSetupRequest', $nodeSetupRequest->toHTML());
+                }
 		if($this->currentDeployment != null)
 		{
 			$str .= $this->fieldHTML('currentDeployment', $this->currentDeployment->toHTML());

@@ -81,6 +81,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 				$nodeSetupRequest->approvedBy = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
 				$nodeSetupRequest->approvedDate = new \DateTime();
 				$nodeSetupRequest->expiryDate = new \DateTime('+1 day');
+				$nodeSetupRequest->password = RadAcctUtils::generateRandomString(20); 
 				$nodeSetupRequest->save();
 				$success = "Node Setup Request Approved";
 			}
@@ -89,6 +90,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 				$nodeSetupRequest->status = "rejected";
                                 $nodeSetupRequest->approvedBy = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
                                 $nodeSetupRequest->approvedDate = new \DateTime();
+				$nodeSetupRequest->password = "";
 				$nodeSetupRequest->save();
 				$success = "Node Setup Request Rejected";
 			}
