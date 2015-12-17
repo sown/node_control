@@ -24,6 +24,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 			'ipAddr' => 'Requesting IP Address',
 			'requestedDate' => 'Requested Date',
 			'status' => 'Status',
+			'lastModified' => 'Last Modified',
                         'view' => '',
                         'delete' => '',
                 );
@@ -55,7 +56,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
                         'delete' => '',
                 );
          	$rows = Doctrine::em()->getRepository('Model_NodeSetupRequest')->findByStatus('pending');
-                $objectType = 'NodeSetupRequest';
+                $objectType = 'node_setup_request';
                 $idField = 'id';
                 $content = View::factory('partial/table')
                         ->bind('fields', $fields)
@@ -121,7 +122,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 			
                         if (!empty($formValues['yes']))
                         {
-				$type = 'OBJECT';
+				$type = 'NodeSetupRequest';
 	                        if (Model_Builder::destroy_simple_object($formValues['id'], $type))
 				{
                                 	$this->template->content = "      <p class=\"success\">Successfully deleted Node Setup Request with ID " . $formValues['id'] .".</p>";
@@ -176,6 +177,8 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
                 $formValues['approvedDate'] = (empty($approvedDate) ? '' : $approvedDate->format('Y-m-d H:i:s'));
 		$expiryDate = $nodeSetupRequest->expiryDate;
                 $formValues['expiryDate'] = (empty($expiryDate) ? '' : $expiryDate->format('Y-m-d H:i:s'));
+		$lastModified = $nodeSetupRequest->lastModified;
+                $formValues['lastModified'] = (empty($lastModified) ? '' : $lastModified->format('Y-m-d H:i:s'));
 		$node = $nodeSetupRequest->node;
 		$formValues['node'] = (empty($node) ? '' : $node->boxNumber);
 		return $formValues;
@@ -193,6 +196,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 			'approvedBy' => array('title' => 'Approved By', 'type' => 'static'),
 			'approvedDate' => array('title' => 'Approved Date', 'type' => 'static'),
 			'expiryDate' => array('title' => 'Expiry Date', 'type' => 'static'),
+			'lastModified' => array('title' => 'Last Modified', 'type' => 'static'),
 			'node' => array('title' => 'Node', 'type' => 'static'),
                 );
 

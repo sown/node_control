@@ -164,6 +164,18 @@ Route::set('logout', 'logout', array(
                 'action'     => 'logout',
         ));
 
+Route::set('package_config_designateddriver', 'package/config/designateddriver/<package>/<version>/<request_name>', array(
+		'package'	=> '[A-Za-z0-9_]+',
+		'version'	=> '[0-9.]+',
+		'request_name' => '[A-Za-z0-9_]+',
+	))
+	->defaults(array(
+		'directory'  => 'package/config',
+		'controller' => 'designateddriver',
+		'action'     => 'default',
+	));
+
+
 Route::set('package_config_backfire', 'package/config/backfire/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',
 		'version'	=> '[0-9.]+',
@@ -186,11 +198,12 @@ Route::set('package_config_lucid', 'package/config/lucid/<package>/<version>/<re
 		'action'     => 'default',
 	));
 
-Route::set('package_config_lucid_node', 'package/config/lucid/<package>/<version>/<request_name>/<node_id>', array(
+Route::set('package_config_lucid_node', 'package/config/lucid/<package>/<version>/<request_name>/<node_id>/<nonce>', array(
                 'package'       => '[A-Za-z0-9_]+',
                 'version'       => '[0-9.]+',
-                'request_name' => '[A-Za-z0-9_]+',
+                'request_name'  => '[A-Za-z0-9_]+',
 		'node_id'       => '[0-9]+',
+		'nonce' 	=> '[A-Za-z0-9]+',
         ))
         ->defaults(array(
                 'directory'  => 'package/config',
