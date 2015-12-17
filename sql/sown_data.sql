@@ -390,6 +390,7 @@ CREATE TABLE `node_setup_requests` (
   `status` varchar(255) DEFAULT 'pending' COMMENT 'the current status or the node setup request',
   `approved_by` int(11) DEFAULT NULL COMMENT 'user who approved the request',
   `approved_date` datetime DEFAULT NULL COMMENT 'datetime user approved request',
+  `password` varchar(255) DEFAULT NULL,
   `expiry_date` datetime DEFAULT NULL COMMENT 'datetime until node can no longer download its config tarball',
   `node_id` int(11) DEFAULT NULL COMMENT 'the node this request ultimately gets associated with',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
@@ -711,4 +712,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-11-26  4:23:02
+-- Dump completed on 2015-12-17  4:23:02
