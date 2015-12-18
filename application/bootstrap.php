@@ -489,6 +489,12 @@ Route::set('create_node', 'admin/nodes/create')
                 'action'     => 'create',
         ));
 
+Route::set('create_node_mac', 'admin/nodes/create/<mac>')
+        ->defaults(array(
+                'controller' => 'nodes',
+                'action'     => 'create',
+        ));
+
 Route::set('delete_node', 'admin/nodes/<boxNumber>/delete')
         ->defaults(array(
                 'controller' => 'nodes',

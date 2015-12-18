@@ -24,6 +24,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 			'ipAddr' => 'Requesting IP Address',
 			'requestedDate' => 'Requested Date',
 			'status' => 'Status',
+			'nodeBoxNumber' => 'Node',
 			'lastModified' => 'Last Modified',
                         'view' => '',
                         'delete' => '',
@@ -52,6 +53,8 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
                         'mac' => 'MAC Address',
                         'ipAddr' => 'Requesting IP Address',
                         'requestedDate' => 'Requested Date',
+			'nodeBoxNumber' => 'Node',
+                        'lastModified' => 'Last Modified',
                         'view' => '',
                         'delete' => '',
                 );
@@ -72,11 +75,28 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 		$errors = array();
                 $success = "";
 
+		$nodeSetupRequest = Doctrine::em()->getRepository('Model_NodeSetupRequest')->findOneById($this->request->param('id'));
+		$node = $nodeSetupRequest->node;
+		if (!is_object($node))
+		{
+			$node = Model_Node::getByMac($nodeSetupRequest->mac);
+			if (is_object($node))
+			{
+				$nodeSetupRequest->node = $node;
+				$nodeSetupRequest->save();
+				$nodeSetupRequest = Doctrine::em()->getRepository('Model_NodeSetupRequest')->findOneById($this->request->param('id'));
+			}
+		}
+
 		if ($this->request->method() == 'POST')
                	{
-			$nodeSetupRequest = Doctrine::em()->getRepository('Model_NodeSetupRequest')->findOneById($this->request->param('id'));
 			$formValues = FormUtils::parseForm($this->request->post());
-			if (!empty($formValues['approve']))
+			error_log(var_export($formValues,1));
+			if (!empty($formValues['createnode']))
+			{
+				$this->request->redirect(Route::url('create_node_mac', array('mac' => $nodeSetupRequest->mac)));	
+			}
+			elseif (!empty($formValues['approve']))
 			{
 				$nodeSetupRequest->status = "approved";
 				$nodeSetupRequest->approvedBy = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
@@ -102,7 +122,15 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
-		$this->template->content = FormUtils::drawForm('view_node_setup_request', $formTemplate, $formValues, array('approve' => 'Approve', 'reject' => 'Reject'), $errors, $success);
+		if (is_object($node))
+		{
+			$this->template->content = FormUtils::drawForm('view_node_setup_request', $formTemplate, $formValues, array('approve' => 'Approve', 'reject' => 'Reject'), $errors, $success);
+		}
+		else
+		{
+			$this->template->content = "<p class=\"error\">There is currently no node in the system that has the MAC address used in this setup request.</p>";
+			$this->template->content .= FormUtils::drawForm('view_node_setup_request', $formTemplate, $formValues, array('createnode' => 'Create Node', 'reject' => 'Reject'), $errors, $success);
+		}
 	}
 
 	public function action_delete()
@@ -175,6 +203,8 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 		$formValues['approvedBy'] = (empty($approvedBy) ? '' : $approvedBy->username);
 		$approvedDate = $nodeSetupRequest->approvedDate;
                 $formValues['approvedDate'] = (empty($approvedDate) ? '' : $approvedDate->format('Y-m-d H:i:s'));
+		$password = $nodeSetupRequest->password;
+		$formValues['password'] = (empty($password) ? '[UNSET]' : '[SET]');
 		$expiryDate = $nodeSetupRequest->expiryDate;
                 $formValues['expiryDate'] = (empty($expiryDate) ? '' : $expiryDate->format('Y-m-d H:i:s'));
 		$lastModified = $nodeSetupRequest->lastModified;
@@ -186,7 +216,6 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 
         private function _load_form_template($action = 'view')
         {
-                $formTemplate = array();
 		$formTemplate = array(
                         'nonce' => array('title' => 'Nonce', 'type' => 'static'),
                         'mac' => array('title' => 'MAC Address', 'type' => 'static'),
@@ -195,6 +224,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
                         'status' => array('title' => 'Status', 'type' => 'static'),
 			'approvedBy' => array('title' => 'Approved By', 'type' => 'static'),
 			'approvedDate' => array('title' => 'Approved Date', 'type' => 'static'),
+			'password' => array('title' => 'Password', 'type' => 'static'),
 			'expiryDate' => array('title' => 'Expiry Date', 'type' => 'static'),
 			'lastModified' => array('title' => 'Last Modified', 'type' => 'static'),
 			'node' => array('title' => 'Node', 'type' => 'static'),

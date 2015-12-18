@@ -83,6 +83,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$subtitle = "Create Node";
 		View::bind_global('subtitle', $subtitle);
 		$errors = array();
+		$mac = $this->request->param('mac');
 		$success = "";
 		if ($this->request->method() == 'POST')
                 {
@@ -111,8 +112,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			$formValues = array(
 				'boxNumber' => '',
 				'vpnServer' => '',
-				'wiredMac' => '',
-				'wirelessMac' => '',
+				'wiredMac' => $mac,
+				'wirelessMac' => $mac,
 				'firmwareVersiom' => '',
 				'firmwareImage' => Kohana::$config->load('system.default.firmware_image_default'),
 			);

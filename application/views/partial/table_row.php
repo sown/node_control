@@ -164,6 +164,16 @@ foreach ($fields as $f => $field)
 			echo "          <td>UNKNOWN</td>\n";
 		}
 	}
+	elseif ($f == "nodeBoxNumber")
+	{
+		$val = "";
+		$node = $row->node;
+		if (is_object($node))
+		{	
+			$val = $node->boxNumber;
+		}
+		echo "          <td>" . $val . "</td>\n";
+	}
 	else
 	{
 		if (gettype($row->$f) == "object" && get_class($row->$f) == "DateTime")
