@@ -84,7 +84,7 @@ class Model_Node extends Model_Entity
 	protected $interfaces;
 
 	/**
-         * @OneToMany(targetEntity="Model_NodeSetupRequest", mappedBy="node")
+         * @OneToMany(targetEntity="Model_NodeSetupRequest", mappedBy="node", cascade={"persist", "remove"})
          */
         protected $nodeSetupRequests;
 
