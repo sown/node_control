@@ -4,7 +4,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array("All Node Setup Request" => Route::url('node_setup_requests'), "Pending Node Setup Request" => Route::url('pending_node_setup_requests'),);
+		$this->bannerItems = array("All Node Setup Request" => Route::url('node_setup_requests'), "Pending Node Setup Request" => Route::url('pending_node_setup_requests'), "Create Approved Node Setup Request" => Route::url('create_node_setup_request'),);
                 $title = 'Node Setup Requests';
                 View::bind_global('title', $title);
 		parent::before();
@@ -68,6 +68,61 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
                         ->bind('idField', $idField);
                 $this->template->content = $content;
         }
+
+	public function action_create()
+        {
+                $this->check_login("systemadmin");
+                $subtitle = "Create Approved Node Setup Request";
+                View::bind_global('subtitle', $subtitle);
+                $errors = array();
+                $success = "";
+                if ($this->request->method() == 'POST')
+                {
+                        $formValues = $this->request->post();
+                        $validation = Validation::factory($formValues)
+                                ->rule('ipAddr', 'SownValid::ipv4', array(':value'))
+                                ->rule('ipAddr', 'not_empty', array(':value'))
+				->rule('nodeId', 'not_empty', array(':value'));
+
+                        if ($validation->check())
+                        {
+				$node = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeId']);
+				$nodeSetupRequest = new Model_NodeSetupRequest();
+		                $nodeSetupRequest->node = $node;
+				$nodeSetupRequest->mac = $node->getWiredMac();
+                		$nodeSetupRequest->ipAddr = $formValues['ipAddr'];
+				$nodeSetupRequest->status = 'approved';
+				$nodeSetupRequest->requestedDate = new \DateTime();
+                		$nodeSetupRequest->approvedDate = new \DateTime();
+				$nodeSetupRequest->approvedBy = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user()); 
+                		$nodeSetupRequest->expiryDate = new \DateTime('+1 day');
+                                $nodeSetupRequest->password = RadAcctUtils::generateRandomString(20);
+				$nodeSetupRequest->save();
+                                $success = "Successfully created approved node setup request for box number: $node->boxNumber";
+                        }
+                        else
+                        {
+                                $errors = $validation->errors();
+                        }
+                }
+                else
+                {
+                        $formValues = array(
+                                'nodeId' => '',
+                                'ipAddr' => '',
+                        );
+
+                }
+                $formTemplate = array(
+                        'nodeId' => array('title' => 'Box Number', 'type' => 'select', 'size' => 3, 'options' => Model_Node::getDeployableNodes()),
+                        'ipAddr' => array('title' => 'IP Address', 'type' => 'input', 'size' => 15, 'hint' => 'E.g. 152,78.65.123, 152.78.70.0'),
+                );
+
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+                $this->template->content = FormUtils::drawForm('NodeSetupRequest', $formTemplate, $formValues, array('createNodeSetupRequest' => 'Create Node Setup Reequest'), $errors, $success);
+        }
+
 
 	public function action_view()
 	{

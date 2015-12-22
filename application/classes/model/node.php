@@ -254,6 +254,20 @@ class Model_Node extends Model_Entity
                 return $enabledCronJobs;
         }
 
+	public function getWiredMac()
+	{
+		foreach($this->interfaces as $interface)
+                {
+			$na_type = $interface->networkAdapter->type;
+			$wired_adapter_types = array_keys(Kohana::$config->load('system.default.wired_adapter_types'));
+			if (in_array($na_type, $wired_adapter_types))
+			{
+				return $interface->networkAdapter->mac;
+			}
+                }
+	}
+
+
 	/**
 	 * @PrePersist @PreUpdate
 	 */
@@ -447,4 +461,17 @@ class Model_Node extends Model_Entity
 		}
 		return $undeployedNodes;
 	}
+
+	public static function getDeployableNodes()
+        {
+                $deployableNodes = array();
+                $latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
+                $query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber FROM Model_Node n WHERE n.undeployable != 1");
+                $results = $query->getResult();
+                foreach ($results as $result)
+                {
+                        $deployableNodes[$result['id']] = $result['boxNumber'];
+                }
+                return $deployableNodes;
+        }
 }

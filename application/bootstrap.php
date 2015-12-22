@@ -613,6 +613,12 @@ Route::set('pending_node_setup_requests', 'admin/nodesetuprequests/pending')
                 'action'     => 'pending',
         ));
 
+Route::set('create_node_setup_request', 'admin/nodesetuprequests/create')
+        ->defaults(array(
+                'controller' => 'nodesetuprequests',
+                'action'     => 'create',
+        ));
+
 Route::set('delete_node_setup_request', 'admin/nodesetuprequests/<id>/delete')
         ->defaults(array(
                 'controller' => 'nodesetuprequests',

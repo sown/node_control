@@ -1,5 +1,7 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
+$wireless_adapter_types = array( 'a' => '802.11a', 'b' => '802.11b', 'g' => '802.11g', 'n' => '802.11n' );
+$wired_adapter_types = array( '100M' => '100Mb/s', '1G' => '1Gb/s' );
 return array
 (
 	'default' => array
@@ -26,16 +28,9 @@ return array
 			'valid_external_domains' => array('ecs.soton.ac.uk', 'soton.ac.uk'),
 			'valid_query_ips' => array('127.0.0.1', '127.0.1.1', '152.78.189.39', '10.13.0.250', '152.78.189.44', '10.13.0.243'), // localhost, localhost loopback, sown-dev.ecs.soton.ac.uk+www.sown.org.uk, dev.sown.org.uk, sown-monitor.ecs.soton.ac.uk, monitor.sown.org.uk
 		),
-		'adapter_types' => array
-		(
-			'a' => '802.11a',
-			'b' => '802.11b',
-			'g' => '802.11g',
-			'n' => '802.11n',
-			'ac' => '802.11ac',
-			'100M' => '100Mb/s',
-			'1G' => '1Gb/s',
-		),
+		'adapter_types' => array_merge($wireless_adapter_types, $wired_adapter_types),
+		'wired_adapter_types' => $wired_adapter_types,
+		'wireless_adapter_types' => $wireless_adapter_types,
 		'dns'		=> array
 		(
 			'host'	=> '10.13.0.239',
