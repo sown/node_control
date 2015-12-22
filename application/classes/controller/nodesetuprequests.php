@@ -89,7 +89,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 				$node = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeId']);
 				$nodeSetupRequest = new Model_NodeSetupRequest();
 		                $nodeSetupRequest->node = $node;
-				$nodeSetupRequest->mac = $node->getWiredMac();
+				$nodeSetupRequest->mac = strtolower($node->getWiredMac());
                 		$nodeSetupRequest->ipAddr = $formValues['ipAddr'];
 				$nodeSetupRequest->status = 'approved';
 				$nodeSetupRequest->requestedDate = new \DateTime();
@@ -113,14 +113,16 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
                         );
 
                 }
+		$deployableNodes = Model_Node::getDeployableNodes();
+		asort($deployableNodes);
                 $formTemplate = array(
-                        'nodeId' => array('title' => 'Box Number', 'type' => 'select', 'size' => 3, 'options' => Model_Node::getDeployableNodes()),
+                        'nodeId' => array('title' => 'Box Number', 'type' => 'select', 'size' => 3, 'options' => $deployableNodes),
                         'ipAddr' => array('title' => 'IP Address', 'type' => 'input', 'size' => 15, 'hint' => 'E.g. 152,78.65.123, 152.78.70.0'),
                 );
 
                 $this->template->sidebar = View::factory('partial/sidebar');
                 $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
-                $this->template->content = FormUtils::drawForm('NodeSetupRequest', $formTemplate, $formValues, array('createNodeSetupRequest' => 'Create Node Setup Reequest'), $errors, $success);
+                $this->template->content = FormUtils::drawForm('NodeSetupRequest', $formTemplate, $formValues, array('createNodeSetupRequest' => 'Create Node Setup Request'), $errors, $success);
         }
 
 
