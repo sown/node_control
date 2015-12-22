@@ -4,7 +4,7 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 {
 	public function before()
         {
-		$this->bannerItems = array("All Node Setup Request" => Route::url('node_setup_requests'), "Pending Node Setup Request" => Route::url('pending_node_setup_requests'), "Create Approved Node Setup Request" => Route::url('create_node_setup_request'),);
+		$this->bannerItems = array("All Node Setup Requests" => Route::url('node_setup_requests'), "Pending Node Setup Requests" => Route::url('pending_node_setup_requests'), "Create Approved Node Setup Request" => Route::url('create_node_setup_request'),);
                 $title = 'Node Setup Requests';
                 View::bind_global('title', $title);
 		parent::before();
