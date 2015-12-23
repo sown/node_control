@@ -103,7 +103,8 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$o['3d_coords'] = $latitude.",".$longitude.",".$range;
 		$o['_BOXNUMBER'] = $box_number;
 		$o['_NODEID'] = $node_id;
-
+		$o['contacts'] = "+".$name."_admin";
+	
 		$use = "node";
 		
 		$hostgroups = "*Nodes";
@@ -122,13 +123,12 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		{
 			$use = 'devnode';
 			$hostgroups .= ',*Development Nodes';
-			$notification_lines = "";
+			$notification_lines = "host_notification_commands\thost-notify-by-irc-dev\n\tservice_notification_commands\tnotify-by-irc-dev";
 		}
 		else
 		{
 			$use = 'prodnode';
 			$hostgroups .= ',*Production Nodes';
-			$o['contacts'] = "+".$name."_admin";
 			$notification_lines = "host_notification_commands\tnodeadmin-notify-by-email\n\tservice_notification_commands\tnodeadmin-service-notify-by-email\n\temail\t\t\t\t\t{$email}";
 		}
 		$firmware_versions = Kohana::$config->load('system.default.firmware_versions');
@@ -138,16 +138,16 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		}
 
 return "
-define Contact {
+define contact {
 	contact_name			{$name}_admin
 	host_notification_period	24x7
 	service_notification_period	24x7
 	host_notification_options	d,r
 	service_notification_options	w,c,r
-	$notification_lines
+	{$notification_lines}
 }
 
-define Host {
+define host {
 	host_name	{$name}
 	use		{$use}
 	hostgroups	{$hostgroups}
@@ -162,14 +162,14 @@ define Host {
 	contacts	+{$name}_admin
 }
 
-define Service {
+define service {
 	host_name	{$parents}
 	use		vpnserver
 	service_description	VPNSERVER-{$name}
 	check_command	check_via_node_control!node!{$name}!OpenvpnRunning
 }
 
-define Service {
+define service {
 	host_name	{$parents}
 	use		nodecert
 	service_description	NODECERT-{$name}
