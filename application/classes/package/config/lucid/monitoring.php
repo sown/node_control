@@ -103,7 +103,6 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$o['3d_coords'] = $latitude.",".$longitude.",".$range;
 		$o['_BOXNUMBER'] = $box_number;
 		$o['_NODEID'] = $node_id;
-		$o['contacts'] = "+".$name."_admin";
 
 		$use = "node";
 		
@@ -119,20 +118,23 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 				break;
 		}
 		$is_dev_node = $node->currentDeployment->isDevelopment;
-		$use = (!empty($is_dev_node) ? 'devnode' : 'prodnode');
-		$hostgroups .= (!empty($is_dev_node) ? ',*Development Nodes' : ',*Production Nodes');
+		if (!empty($is_dev_node))
+		{
+			$use = 'devnode';
+			$hostgroups .= ',*Development Nodes';
+			$notification_lines = "";
+		}
+		else
+		{
+			$use = 'prodnode';
+			$hostgroups .= ',*Production Nodes';
+			$o['contacts'] = "+".$name."_admin";
+			$notification_lines = "host_notification_commands\tnodeadmin-notify-by-email\n\tservice_notification_commands\tnodeadmin-service-notify-by-email\n\temail\t\t\t\t\t{$email}";
+		}
 		$firmware_versions = Kohana::$config->load('system.default.firmware_versions');
 		if (!empty($firmware_version)) 
 		{
 			$hostgroups .= ',*'.$firmware_versions[$node->firmwareVersion].' Nodes';
-		}
-		if (empty($is_dev_node))
-		{
-			$notification_lines = "host_notification_commands\tnodeadmin-notify-by-email\n\tservice_notification_commands\tnodeadmin-service-notify-by-email\n\temail\t\t\t\t\t{$email}";
-		}
-		else 
-		{
-			$notification_lines = "host_notification_commands\thost-notify-by-irc-dev\n\tservice_notification_commands\tnotify-by-irc-dev";
 		}
 
 return "
