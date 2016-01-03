@@ -181,7 +181,15 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 		$formTemplate = $this->_load_form_template('view');
 		if (is_object($node))
 		{
-			$this->template->content = FormUtils::drawForm('view_node_setup_request', $formTemplate, $formValues, array('approve' => 'Approve', 'reject' => 'Reject'), $errors, $success);
+			if (strlen($node->certificate->privateKey) > 0)
+			{
+				$this->template->content = FormUtils::drawForm('view_node_setup_request', $formTemplate, $formValues, array('approve' => 'Approve', 'reject' => 'Reject'), $errors, $success);
+			}
+			else 
+			{
+				$errors['Certificate'] = array("created for the node associated with this setup request.");
+				$this->template->content = FormUtils::drawForm('view_node_setup_request', $formTemplate, $formValues, array('reject' => 'Reject'), $errors, $success);
+			}
 		}
 		else
 		{
