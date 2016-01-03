@@ -231,7 +231,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		{
 			$formValues = $this->_load_from_database($this->request->param('id'), 'edit');
                 }
-		$subtitle = "Edit Deployment" . $this->request->param('id') . " (" . $formValues['name'] . ")";
+		$subtitle = "Edit Deployment " . $this->request->param('id') . " (" . $formValues['name'] . ")";
 		View::bind_global('subtitle', $subtitle);
 		$formTemplate = $this->_load_form_template('edit');
 		$deployedNode = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeId']);
