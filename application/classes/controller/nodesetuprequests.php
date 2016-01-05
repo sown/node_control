@@ -15,9 +15,39 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
 		$this->check_login("systemadmin");
 		$subtitle = "All Node Setup Requests";
 		View::bind_global('subtitle', $subtitle);
-		$this->template->sidebar = View::factory('partial/sidebar');
-		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+		$cssFiles =  array('jquery-ui.css');
+                View::bind_global('cssFiles', $cssFiles);
+                $jsFiles = array('jquery.js', 'jquery-ui.js');
+                View::bind_global('jsFiles', $jsFiles);
 
+                $limit = 20;
+                $page = 1;
+                $formValues = $this->request->post();
+                if ($this->request->param('page') && is_numeric($this->request->param('page')) && $this->request->param('page') > 0)
+                {
+                        $page = $this->request->param('page');
+                }
+                elseif(!empty($formValues['page']) && is_numeric($formValues['page']) && $formValues['page'] > 0)
+                {
+                        $page = $formValues['page'];
+                }
+                $offset = ($page-1) * $limit;
+                $date = '';
+		$node = '';
+                $formValues = $this->request->post();
+
+                if (!empty($formValues['date']))
+                {
+                        $date = $formValues['date'];
+                        $dateymd = date("Y-m-d", strtotime($date));
+                }
+		if (!empty($formValues['node']))
+                {
+                        $node = $formValues['node'];
+                }
+                $this->template->sidebar = View::factory('partial/sidebar');
+                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+                $content = $this->template->datenode = View::factory('partial/datenode')->bind('date', $date)->bind('node', $node);
 		$fields = array(
                         'id' => 'ID',
 			'mac' => 'MAC Address',
@@ -29,10 +59,38 @@ class Controller_NodeSetupRequests extends Controller_AbstractAdmin
                         'view' => '',
                         'delete' => '',
                 );
-		$rows = Doctrine::em()->getRepository('Model_NodeSetupRequest')->findAll();
+
+
+		$qb = Doctrine::em()->getRepository('Model_NodeSetupRequest')->createQueryBuilder('nsr');
+                $countdql = "SELECT COUNT(nsr.id) FROM Model_NodeSetupRequest nsr WHERE 1=1 ";
+                $qb->where('1=1');
+                if (!empty($dateymd)) 
+		{
+                        $countdql .= "AND nsr.lastModified >= '$dateymd 00:00:00' AND nsr.lastModified <= '$dateymd 23:59:59' ";
+                        $qb->andWhere("nsr.lastModified >= '$dateymd 00:00:00'")->andWhere("nsr.lastModified <= '$dateymd 23:59:59'");
+
+                }
+		if (!empty($node)) 
+		{
+			$nodeObject = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($node);
+			$countdql .= "AND nsr.node = '{$nodeObject->id}' ";
+                        $qb->andWhere("nsr.node = '{$nodeObject->id}'");
+                }
+                $qb->orderBy('nsr.lastModified', 'DESC');
+                $qb->setFirstResult($offset);
+                $qb->setMaxResults($limit);
+                $query = $qb->getQuery();
+                $rows = $query->getResult();
+                $count = Doctrine::em()->createQuery($countdql)->getSingleScalarResult();
+                $maxpages = ceil($count/$limit);
+                $hiddenfields = array(
+                        'date' => $date,
+			'node' => $node,
+                );
+                $content .= $this->template->pages = View::factory('partial/pages')->bind('page', $page)->bind('maxpages', $maxpages)->bind('hiddenfields', $hiddenfields);
 		$objectType = 'node_setup_request';
                 $idField = 'id';
-		$content = View::factory('partial/table')
+		$content .= View::factory('partial/table')
 			->bind('fields', $fields)
                         ->bind('rows', $rows)	
 			->bind('objectType', $objectType)
