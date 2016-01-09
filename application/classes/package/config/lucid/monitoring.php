@@ -34,7 +34,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 			static::send_file($data, 'nfsen-nodes.perl', 'text/perl');
 		}
 
-		$nfsen_safe_node_name = str_replace(" ", "_", $node->name);
+		$nfsen_safe_node_name = substr(str_replace(" ", "_", $node->name), 0, 19);
 
 		return "'".$nfsen_safe_node_name."' => { 'port' => '".$node->vpnEndpoint->port."', 'col' => '#".substr(md5($node->name), 0, 6)."', 'type' => 'netflow' },\n";
 	}
