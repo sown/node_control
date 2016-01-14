@@ -23,6 +23,13 @@ class Model_Deployment extends Model_Entity
 	protected $name;
 
 	/**
+         * @var string $nfsenName
+         *
+         * @Column(name="nfsen_name", type="string", length=255, nullable=true)
+         */
+        protected $nfsenName;
+
+	/**
 	 * @var boolean $isDevelopment
 	 *
 	 * @Column(name="is_development", type="boolean", nullable=false)
@@ -278,6 +285,7 @@ class Model_Deployment extends Model_Entity
 	{
 		$deployment = new Model_Deployment();
 		$deployment->name = $name;
+		$deployment->nfsenName = Model_Deployment::getUniqueNfsenName($name);
 		$deployment->isDevelopment = 0;
 		$deployment->isPrivate = 0;
 		$deployment->firewall = 0;
@@ -295,7 +303,7 @@ class Model_Deployment extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Deployment: {$this->id}, name={$this->name}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
+		$str  = "Deployment: {$this->id}, name={$this->name}, nfsenName={$this->nfsenName}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
@@ -321,7 +329,7 @@ class Model_Deployment extends Model_Entity
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Deployment</th><td>{$this->id}</td></tr>";
 		$str .= $this->fieldHTML('date', $this->startDate->format('Y-m-d H:i:s').' - '.$this->endDate->format('Y-m-d H:i:s'));
-		foreach(array('name', 'isDevelopment', 'isPrivate', 'firewall', 'advancedFirewall', 'cap', 'range', 'allowedPorts', 'type', 'url', 'latitude', 'longitude', 'address', 'consumption', 'exceedsCap') as $field)
+		foreach(array('name', 'nfsenName', 'isDevelopment', 'isPrivate', 'firewall', 'advancedFirewall', 'cap', 'range', 'allowedPorts', 'type', 'url', 'latitude', 'longitude', 'address', 'consumption', 'exceedsCap') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -341,4 +349,25 @@ class Model_Deployment extends Model_Entity
 		$str .= "</div>";
 		return $str;
 	}
+
+	public static function getUniqueNfsenName($name, $id = 0)
+        {
+		$nfsen_name = substr(str_replace($name, ' ', '_'), 0, 19);
+		$use_nfsen_name = $nfsen_name;
+		$unique = FALSE;
+		$i = 0;
+		while ($unique == FALSE && $i < 100)
+		{
+                	$result = Doctrine::em()->getRepository('Model_Deployment')->findOneByNfsenName($use_nfsen_name);
+			if (empty($result->id) || $result->id == $id)
+			{
+				return $use_nfsen_name;
+			}
+			$i++;
+			$over = strlen($nfsen_name . $i) - 19;
+			$use_nfsen_name = ($over > 0 ? substr($nfsen_name, 0, -$over) . $i : $nsfen_name . $i);
+                }
+		// Should never happen unless we have a lot of deployments with the same name
+		die("ERROR: Could not get unique name for NFSEN.");
+        }
 }

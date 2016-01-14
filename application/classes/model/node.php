@@ -119,6 +119,8 @@ class Model_Node extends Model_Entity
 				return $this->getFQDN();
 			case "name":
 				return $this->getName();
+			case "nfsenName":
+				return $this->getNfsenName();
 			case "hostname":
 				return $this->getHostname();
 			case "updatePoint":
@@ -145,6 +147,7 @@ class Model_Node extends Model_Entity
 		{
 			case "FQDN":
 			case "name":
+			case "nfsenName":
 			case "hostname":
 			case "updatePoint":
 			case "currentDeployment":
@@ -183,6 +186,18 @@ class Model_Node extends Model_Entity
 			return $this->hostname;
 		}
 	}
+
+	protected function getNfsenName()
+        {
+                if ($this->currentDeployment !== null)
+                {
+                        return $this->currentDeployment->nfsenName;
+                }
+                else
+                {
+                        return substr(str_replace(' ', '_', $this->hostname), 0, 19);
+                }
+        }
 
 	protected function getRadiusSecret()
 	{
@@ -339,7 +354,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'firmwareVersion', 'firmwareImage', 'undeployable') as $field)
+		foreach(array('boxNumber', 'nsfenName', 'firmwareVersion', 'firmwareImage', 'undeployable') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
