@@ -161,9 +161,10 @@ class Model_NodeSetupRequest extends Model_Entity
 				$str .= $this->fieldHTML($field, "");
 			}
 		}
-		foreach(array('approvedBy') as $field)
+		$approvedBy = $this->approvedBy;
+		if (is_object($approvedBy))
                 {
-                        $str .= $this->fieldHTML($field, $this->$field->toHTML());
+                        $str .= $this->fieldHTML('approvedBy', $approvedBy->toHTML());
                 }
 		$str .= "</table>";
 		$str .= "</div>";

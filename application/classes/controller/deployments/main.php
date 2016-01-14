@@ -138,6 +138,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues)
 				->rule('nodeId', 'not_empty')
 				->rule('name', 'not_empty')
+				->rule('nfsenName', 'not_empty')
+				->rule('nfsenName', 'Model_Deployment::uniqueNfsenName', array(':value'))
 				->rule('longitude', 'not_empty')
 				->rule('longitude',  'numeric')
 				->rule('latitude', 'not_empty')
