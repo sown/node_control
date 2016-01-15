@@ -1,16 +1,18 @@
+# Go ahead and accept connections for these vhosts from non-SNI clients
+SSLStrictSNIVHostCheck off
 
-<VirtualHost 10.13.0.234:80> 
-	DocumentRoot /usr/local/share/git-repos
-	<Directory "/usr/local/share/git-repos"> 
-		Allow from All Options +ExecCGI
-		AllowOverride All 
-	</Directory> 
-	SetEnv GIT_PROJECT_ROOT /usr/local/share/git-repos
-	SetEnv GIT_HTTP_EXPORT_ALL
-	ScriptAlias /git/ /usr/lib/git-core/git-http-backend/ 
-</VirtualHost>
-
+# HTTP NameVirtualHosts
 NameVirtualHost 152.78.189.90:80
+NameVirtualHost [2001:630:d0:f104::5032:239]:80
+#NameVirtualHost 10.13.0.239:80
+#NameVirtualHost [2001:630:d0:f700::239]:80
+
+# HTTPS NameVirtualHosts
+NameVirtualHost 152.78.189.90:443
+NameVirtualHost [2001:630:d0:f104::5032:239]:443
+#NameVirtualHost 10.13.0.239:443
+#NameVirtualHost [2001:630:d0:f700::239]:443
+
 <VirtualHost 152.78.189.90:80>
 	ServerName sown-auth2.ecs.soton.ac.uk
 	ServerAlias sown-auth2
@@ -18,26 +20,11 @@ NameVirtualHost 152.78.189.90:80
 	Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
 </VirtualHost>
 
-<VirtualHost 152.78.189.90:80>
-        ServerName sown-auth2-dev.ecs.soton.ac.uk
-        ServerAlias sown-auth2-dev
-        ServerAdmin support@sown.org.uk
-        Redirect permanent / https://sown-auth2-dev.ecs.soton.ac.uk/
-</VirtualHost>
-
-NameVirtualHost [2001:630:d0:f104::5032:239]:80
 <VirtualHost [2001:630:d0:f104::5032:239]:80>
         ServerName sown-auth2.ecs.soton.ac.uk
         ServerAlias sown-auth2
         ServerAdmin support@sown.org.uk
         Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
-</VirtualHost>
-
-<VirtualHost [2001:630:d0:f104::5032:239]:80>
-        ServerName sown-auth2-dev.ecs.soton.ac.uk
-        ServerAlias sown-auth2-dev
-        ServerAdmin support@sown.org.uk
-        Redirect permanent / https://sown-auth2-dev.ecs.soton.ac.uk/
 </VirtualHost>
 
 <VirtualHost 10.13.0.239:80>
@@ -54,15 +41,6 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:80
         Redirect permanent / https://auth2.sown.org.uk/
 </VirtualHost>
 
-
-
-# Go ahead and accept connections for these vhosts
-# from non-SNI clients
-SSLStrictSNIVHostCheck off
-
-# Default VirtualHost-  sown-auth2.ecs.soton.ac.uk
-
-NameVirtualHost 152.78.189.90:443
 <VirtualHost 152.78.189.90:443>
     ServerAdmin support@sown.org.uk
     ServerName sown-auth2.ecs.soton.ac.uk
@@ -104,52 +82,12 @@ NameVirtualHost 152.78.189.90:443
         AddType application/x-pkcs7-crl         .crl
     </IfModule>
 
-</VirtualHost>
-
-# Secondary VirtualHost-  sown-auth2-dev.ecs.soton.ac.uk
-<VirtualHost 152.78.189.90:443>
-    ServerAdmin support@sown.org.uk
-    ServerName sown-auth2-dev.ecs.soton.ac.uk
-
-    SSLCertificateFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.crt
-    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.key
-
-    DocumentRoot "/srv/www/development"
-
-    SSLEngine on
-
-    # StdEnvVars is required to pass SSL values on to php
-    # ExportCertData is required to give php the _whole_ certificate
-    SSLOptions +StrictRequire +StdEnvVars +ExportCertData
-
-    <Directory />
-        SSLRequireSSL
-    </Directory>
-
-    <Location /package>
-        SSLCACertificatePath /etc/apache2/ssl/
-        SSLVerifyClient require
-    </Location>
-
-    <Location /status>
-        SSLCACertificatePath /etc/apache2/ssl/
-        SSLVerifyClient require
-    </Location>
-
-
-    SSLProtocol -all +TLSv1 +SSLv3
-    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
-
-    SSLProxyEngine off
-
-    <IfModule mime.c>
-        AddType application/x-x509-ca-cert      .crt
-        AddType application/x-pkcs7-crl         .crl
-    </IfModule>
+    ErrorLog /var/log/apache2/auth2-error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/auth2-access.log combined
 
 </VirtualHost>
 
-NameVirtualHost [2001:630:d0:f104::5032:239]:443
 <VirtualHost [2001:630:d0:f104::5032:239]:443>
     ServerAdmin support@sown.org.uk
     ServerName sown-auth2.ecs.soton.ac.uk
@@ -191,51 +129,12 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
         AddType application/x-pkcs7-crl         .crl
     </IfModule>
 
-</VirtualHost>
-
-<VirtualHost [2001:630:d0:f104::5032:239]:443>
-    ServerAdmin support@sown.org.uk
-    ServerName sown-auth2-dev.ecs.soton.ac.uk
-
-    SSLCertificateFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.crt
-    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2-dev.ecs.soton.ac.uk/current/sown-auth2-dev.ecs.soton.ac.uk.key
-
-    DocumentRoot "/srv/www/development"
-
-    SSLEngine on
-
-    # StdEnvVars is required to pass SSL values on to php
-    # ExportCertData is required to give php the _whole_ certificate
-    SSLOptions +StrictRequire +StdEnvVars +ExportCertData
-
-    <Directory />
-        SSLRequireSSL
-    </Directory>
-
-    <Location /package>
-        SSLCACertificatePath /etc/apache2/ssl/
-        SSLVerifyClient require
-    </Location>
-
-    <Location /status>
-        SSLCACertificatePath /etc/apache2/ssl/
-        SSLVerifyClient require
-    </Location>
-
-
-    SSLProtocol -all +TLSv1 +SSLv3
-    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
-
-    SSLProxyEngine off
-
-    <IfModule mime.c>
-        AddType application/x-x509-ca-cert      .crt
-        AddType application/x-pkcs7-crl         .crl
-    </IfModule>
+    ErrorLog /var/log/apache2/auth2-error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/auth2-access.log combined
 
 </VirtualHost>
 
-# SSL Virtual-host auth2.sown.org.uk
 <VirtualHost 10.13.0.239:443>
     ServerAdmin support@sown.org.uk
     ServerName auth2.sown.org.uk
@@ -277,6 +176,10 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
         AddType application/x-x509-ca-cert      .crt
         AddType application/x-pkcs7-crl         .crl
     </IfModule>
+
+    ErrorLog /var/log/apache2/auth2-error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/auth2-access.log combined
 
 </VirtualHost>
 
@@ -322,5 +225,8 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
         AddType application/x-pkcs7-crl         .crl
     </IfModule>
 
-</VirtualHost>
+    ErrorLog /var/log/apache2/auth2-error.log
+    LogLevel warn
+    CustomLog /var/log/apache2/auth2-access.log combined
 
+</VirtualHost>
