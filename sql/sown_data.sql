@@ -108,6 +108,7 @@ DROP TABLE IF EXISTS `deployments`;
 CREATE TABLE `deployments` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'node deployment id',
   `name` varchar(255) DEFAULT NULL COMMENT 'node deployment name',
+  `nfsen_name` varchar(19) DEFAULT NULL,
   `is_development` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'is a development node',
   `is_private` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'is a private node (dont display on wiki/maps)',
   `firewall` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'is the firewall enabled',
@@ -712,4 +713,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-12-17  4:23:02
+-- Dump completed on 2016-01-10  4:23:02
