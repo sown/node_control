@@ -61,10 +61,10 @@ class Controller_Data extends Controller
 		$firstdate = new \DateTime("-1 month");
 		$firstdateformat = $firstdate->format('Y-m-d');
 		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("DATE_FORMAT(ra.acctstarttime, '%Y-%m%-%d') AS thedate, SUM(1) AS connections, ra.username")
-                        ->where("DATE_FORMAT(ra.acctstarttime, '%Y-%m%-%d') = '$firstdateformat'")
-			->orWhere("ra.acctstarttime > :firstdate")
-                	->groupBy("thedate, ra.username")
+                        ->select("DATE_FORMAT(ra.acctstarttime, '%Y-%m%-%d') AS thedate, SUM(1) AS connections, ra.callingstationid")
+                        ->where("DATE_FORMAT(ra.acctstarttime, '%Y-%m%-%d') = '$firstdateformat' OR ra.acctstarttime > :firstdate")
+			->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0")
+                	->groupBy("thedate, ra.callingstationid")
                         ->orderBy("thedate")
 			->setParameter("firstdate", $firstdate);
                 $results = $qb->getQuery()->getResult();
@@ -90,11 +90,10 @@ class Controller_Data extends Controller
                 $firstdate = new \DateTime("-12 months");
                 $firstdateformat = $firstdate->format('Y-m');
                 $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("DATE_FORMAT(ra.acctstarttime, '%Y-%m') AS orderdate, DATE_FORMAT(ra.acctstarttime, '%b %Y') AS thedate, SUM(1) AS connections, ra.username")
+                        ->select("DATE_FORMAT(ra.acctstarttime, '%Y-%m') AS orderdate, DATE_FORMAT(ra.acctstarttime, '%b %Y') AS thedate, SUM(1) AS connections, ra.callingstationid")
                         ->where("DATE_FORMAT(ra.acctstarttime, '%Y-%m') = '$firstdateformat' OR ra.acctstarttime > :firstdate")
 			->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0")
-                        ->andWhere("ra.acctsessiontime > 0")
-                        ->groupBy("thedate, ra.username")
+                        ->groupBy("thedate, ra.callingstationid")
                         ->orderBy("orderdate")
                         ->setParameter("firstdate", $firstdate);
                 $results = $qb->getQuery()->getResult();
@@ -167,11 +166,10 @@ class Controller_Data extends Controller
 	{
 		$seconds = $days * 86400;
 		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("DATE_FORMAT(ra.acctstarttime, '%k') AS thehour, SUM(1) AS connections, ra.username")
+                        ->select("DATE_FORMAT(ra.acctstarttime, '%k') AS thehour, SUM(1) AS connections, ra.callingstationid")
                         ->where("UNIX_TIMESTAMP(ra.acctstarttime) > UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) - $seconds")
 			->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0")
-                        ->andWhere("ra.acctsessiontime > 0")
-                	->groupBy("thehour, ra.username")
+                	->groupBy("thehour, ra.callingstationid")
                         ->orderBy("thehour");
                 $results = $qb->getQuery()->getResult();
                 return $results;
@@ -206,11 +204,10 @@ class Controller_Data extends Controller
 	{
 		$seconds = $days * 86400;
                 $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("ra.calledstationid AS thenode, SUM(1) AS connections, ra.username")
+                        ->select("ra.calledstationid AS thenode, SUM(1) AS connections, ra.callingstationid")
                         ->where("UNIX_TIMESTAMP(ra.acctstarttime) > UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) - $seconds")
 			->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0")
-			->andWhere("ra.acctsessiontime > 0")
-                        ->groupBy("thenode, ra.username")
+                        ->groupBy("thenode, ra.callingstationid")
                         ->orderBy("thenode");
                 $results = $qb->getQuery()->getResult();
                 return $results;
@@ -251,15 +248,14 @@ class Controller_Data extends Controller
 	private function _get_radius_user_results($select_date_format, $formatted_date = '', $where_date_format = '') 
 	{
 		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("DATE_FORMAT(ra.acctstarttime, '$select_date_format') AS thedate, SUM(1) AS connections, ra.username")
+                        ->select("DATE_FORMAT(ra.acctstarttime, '$select_date_format') AS thedate, SUM(1) AS connections, ra.callingstationid")
 			->where("1=1");
 		if (!empty($formatted_date)) 
 		{
                         $qb->andWhere("DATE_FORMAT(ra.acctstarttime, '$where_date_format') = '$formatted_date'");
 		}
 		$qb->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0")
-                	->andWhere("ra.acctsessiontime > 0")
-                	->groupBy("thedate, ra.username")
+                	->groupBy("thedate, ra.callingstationid")
                 	->orderBy("thedate");
                 $results = $qb->getQuery()->getResult();
 		return $results;
