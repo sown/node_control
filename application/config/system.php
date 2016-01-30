@@ -59,7 +59,7 @@ return array
 			'PC Engines ALIX 2d3',
                         'PC Engines APU1C',
 			'TP-Link Archer C7 AC1750',
-			'TP-Link TL-MR3040',
+			'TP-Link TL-MR3020',
 			'Other',
 		),
 		'wireless_chipsets' => array(
