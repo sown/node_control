@@ -26,7 +26,21 @@ class Model_Node extends Model_Entity
 	protected $boxNumber;
 
 	/**
-         * @var text $firmwareVersion
+         * @var string $hardware
+         *
+         * @Column(name="hardware", type="string", nullable=false)
+         */
+        protected $hardware;
+
+        /**
+         * @var string $wirelessChipset
+         *
+         * @Column(name="wireless_chipset", type="string", nullable=false)
+         */
+        protected $wirelessChipset;
+
+	/**
+         * @var string $firmwareVersion
          *
          * @Column(name="firmware_version", type="string", nullable=false)
          */
@@ -315,7 +329,7 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, hardware={$this->hardware}, wirelessChipset={$this->wirelessChipset}, firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -354,7 +368,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'nsfenName', 'firmwareVersion', 'firmwareImage', 'undeployable') as $field)
+		foreach(array('boxNumber', 'hardware', 'wirelessChipset', 'firmwareVersion', 'firmwareImage', 'undeployable') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -408,10 +422,12 @@ class Model_Node extends Model_Entity
 		return empty($result->id);
 	}
 
-	public static function build($boxNumber, $firmwareVersion, $firmwareImage, $certificate, $vpnEndpoint)
+	public static function build($boxNumber, $hardware, $wirelessChipset, $firmwareVersion, $firmwareImage, $certificate, $vpnEndpoint)
 	{
 		$obj = new Model_Node();
 		$obj->boxNumber = $boxNumber;
+		$obj->hardware = $hardware;
+                $obj->wirelessChipset = $wirelessChipset;
 		$obj->firmwareVersion = $firmwareVersion;
 		$obj->firmwareImage = $firmwareImage;
 		$obj->certificate = $certificate;

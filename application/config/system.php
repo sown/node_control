@@ -39,13 +39,42 @@ return array
 				'ipv6' => '2001:630:d0:f700',
 			),
 		),
-		'firmware_image_default' => 'Attitude Adjusment (Bleeding Edge, r31360)',
+		'firmware_image_default' => 'Designated Driver (Git commit f4eb2f3285b129fdbf5c411468973b8a1f9a820a)',
 		'firmware_versions'	=> array
 		(
 			'0' => 'NOT APPLICABLE',
 			'backfire' => 'Attitude Adjustment',
 			'designateddriver' => 'Designated Driver',
 		),
+		'hardwares' => array
+		(
+			'',
+			'GL Innovations GL-AR150',
+			'Meraki Mini',
+			'Meraki Outdoor',
+			'Open Mesh MR3201A',
+			'Open Mesh MR500',
+			'Open Mesh OM1P',
+			'Open Mesh OM2P',
+			'PC Engines ALIX 2d3',
+                        'PC Engines APU1C',
+			'TP-Link Archer C7 AC1750',
+			'TP-Link TL-MR3040',
+			'Other',
+		),
+		'wireless_chipsets' => array(
+			'',
+			'Atheros AR2315', # Meraki
+			'Atheros AR2315A', # OpenMesh MR3201A and OM1P
+			'Atheros AR7240', # OpenMesh OM2P (v1)
+			'Atheros AR9330', # TP-Link MR3020 
+                        'Atheros AR9331', # GL-AR150 and OpenMesh OM2P (v2)
+			'QualComm Atheros QCA9558', 
+			'QualComm Atheros QCA9558 + QualComm Atheros QCA9880-BR4A', # TP-Link Archer C7
+			'QualComm Atheros QCA9880-BR4A',
+			'Ralink RT3052',
+			'Other',
+                ),
 		'host_types' 	=> array
 		(
 			'webserver' => 'Web Server',

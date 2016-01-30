@@ -592,5 +592,15 @@ class SOWN
 		return $ret;
 	}
 
+	public static function array_keys_and_values($array) 
+	{
+		$hash = array();
+		foreach ($array as $value)
+		{
+			$hash[$value] = $value;
+		}
+		return $hash;
+	}
+
 }	
 

@@ -22,6 +22,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 	'id' => 'ID',
                		'boxNumber' => 'Box Number',
 			'currentDeployment' => 'Current Deployment',
+			'hardware' => 'Hardware',
+                        'wirelessChipset' => 'Wireless Chipset',
 			'firmwareVersion' => 'Firmware Version',
                		'firmwareImage' => 'Firmware Image',
 			'undeployable' => 'Deployable?',
@@ -56,6 +58,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'id' => 'ID',
                         'boxNumber' => 'Box Number',
                         'currentDeployment' => 'Current Deployment',
+			'hardware' => 'Hardware',
+			'wirelessChipset' => 'Wireless Chipset',
 			'firmwareVersion' => 'Firmware Version',
                         'firmwareImage' => 'Firmware Image',
                         'certificateWritten' => 'Certificate Written',
@@ -98,7 +102,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 ->rule('wirelessMac', 'not_empty', array(':value'));				
 			if ($validation->check())
         		{
-				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['firmwareVersion'], $formValues['firmwareImage']);
+				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['hardware'], $formValues['wirelessChipset'], $formValues['firmwareVersion'], $formValues['firmwareImage']);
                         	$success = "Successfully created node with box number: <a href=\"/admin/nodes/$node->boxNumber\">$node->boxNumber</a>.";
  
         		}
@@ -114,6 +118,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'vpnServer' => '',
 				'wiredMac' => $mac,
 				'wirelessMac' => $mac,
+				'hardware' => '',
+				'wirelessChipset' => '',
 				'firmwareVersiom' => '',
 				'firmwareImage' => Kohana::$config->load('system.default.firmware_image_default'),
 			);
@@ -124,6 +130,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'vpnServer' => array('title' => 'VPN Server', 'type' => 'select', 'options' => Model_VpnServer::getVpnServerNames()),
 			'wiredMac' => array('title' => 'Wired Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
                         'wirelessMac' => array('title' => 'Wireless Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
+			'hardware' => array('title' => 'Hardware', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.hardwares'))),
+			'wirelessChipset' => array('title' => 'Wireless Chipset', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.wireless_chipsets'))),
 			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'size' => 50, 'type' => 'input'),
 		);
@@ -348,6 +356,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 $formValues = array(
 		       	'id' => $node->id,
                        	'boxNumber' => $node->boxNumber,
+			'hardware' => $node->hardware,
+			'wirelessChipset' => $node->wirelessChipset,
 			'firmwareVersion' => $node->firmwareVersion,
                        	'firmwareImage' => $node->firmwareImage,
 			'undeployable' => $node->undeployable,
@@ -416,6 +426,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
+			'hardware' => array('title' => 'Hardware', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.hardwares'))),
+                        'wirelessChipset' => array('title' => 'Wireless Chipset', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.wireless_chipsets'))),
 			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
@@ -470,6 +482,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	private function _update($boxNumber, $formValues)
 	{
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
+		$node->hardware = $formValues['hardware'];
+                $node->wirelessChipset = $formValues['wirelessChipset'];
 		$node->firmwareVersion = $formValues['firmwareVersion'];
 		$node->firmwareImage = $formValues['firmwareImage'];
 		if (empty($formValues['undeployable']))
