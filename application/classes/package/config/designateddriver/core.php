@@ -296,8 +296,8 @@ class Package_Config_Designateddriver_Core extends Package_Config
 				$config['wifi-iface'][$fake_iface_name]['auth_port'] = Kohana::$config->load('system.default.radius.auth_port');
 				$config['wifi-iface'][$fake_iface_name]['acct_port'] = Kohana::$config->load('system.default.radius.acct_port');
 				$config['wifi-iface'][$fake_iface_name]['key'] = $node->radiusSecret;
-				$config['wifi-iface'][$fake_iface_name]['auth_key'] = $config['wifi-iface'][$fake_iface_name]['key'];
-				$config['wifi-iface'][$fake_iface_name]['acct_key'] = $config['wifi-iface'][$fake_iface_name]['key'];
+				$config['wifi-iface'][$fake_iface_name]['auth_secret'] = $config['wifi-iface'][$fake_iface_name]['key'];
+				$config['wifi-iface'][$fake_iface_name]['acct_secret'] = $config['wifi-iface'][$fake_iface_name]['key'];
 				$config['wifi-iface'][$fake_iface_name]['nasid'] = $node->FQDN;
 			}
 		}
