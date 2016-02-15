@@ -368,6 +368,10 @@ class Package_Config_Backfire_Core extends Package_Config
 					'enabled' => 'true',
 					'command' => '0 * * * * /usr/sbin/update_sown_config',
 				),		
+                                'restart_ssh' => array(
+                                        'enabled' => 'true',
+                                        'command' => '30 3 * * * /etc/init.d/dropbear restart',
+                                ),
 			),
                 );
 
