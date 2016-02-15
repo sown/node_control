@@ -24,7 +24,6 @@ class Controller_Data extends Controller
 	{
 		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra');
 		$qb->where("ra.acctstoptime IS NULL");
-		$qb->andWhere("ra.acctinputoctets > 0 OR ra.acctoutputoctets > 0");
 		// 600 seconds because records only get updated every 300 seconds so session time may have been increased since 
 		// record was updated. 600 seconds gives enough leeway without including users who have likely disconnected.
 		$qb->andWhere("UNIX_TIMESTAMP(ra.acctstarttime) + ra.acctsessiontime + 600 > UNIX_TIMESTAMP(CURRENT_TIMESTAMP())");
