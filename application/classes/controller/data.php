@@ -165,16 +165,28 @@ class Controller_Data extends Controller
 	{
 		$type = $this->request->param('type');
 		$date = $this->request->param('date');
-                if (!in_array($type, array('user', 'connection')) || !preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $date))
+		$interval = 300;
+                if (!in_array($type, array('user', 'connection')) || (!preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $date) && $date != "now"))
                 {
                         throw new HTTP_Exception_404();
                 }
+		if ($date == "now") 
+		{
+                        $nowsecs = strtotime($date);
+                        $nowsecs = floor($nowsecs / $interval) * $interval - 86400;
+                        $date = date("H:i:s Y-m-d", $nowsecs);
+			$date_title = "Last 24 Hours";
+                }
+		else 
+		{
+			$date_title = 'Throughout '.$date;
+		}
                 $response = $this->request->response();
                 $response->headers('Content-Type', 'image/png');
-		$through_day = $this->_format_radius_users_through_day($this->_get_radius_users_through_day_results($date), $date);
+		$through_day = $this->_format_radius_users_through_day($this->_get_radius_users_through_day_results($date), $date, $interval);
 		$xdata = $through_day['thetime'];
                 $ydata = $through_day['no_'.$type.'s'];
-		SOWN::draw_line_graph('No. of SOWN '.ucfirst($type).'s - Throughout '.$date, '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 0, 12);
+		SOWN::draw_line_graph('No. of SOWN '.ucfirst($type).'s - '.$date_title, '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 0, 12);
 	}
 
 
@@ -242,7 +254,7 @@ class Controller_Data extends Controller
 		return $results;
 	}		
 
-	private function _format_radius_users_through_day($results, $date, $interval = 300)
+	private function _format_radius_users_through_day($results, $date, $interval)
 	{
 		$day_start_secs = strtotime($date);
 		$day_end_secs = $day_start_secs + 86400;
@@ -256,9 +268,9 @@ class Controller_Data extends Controller
         	        	$skip = 1;
 	        	}
 	        	$time = date("H:i:s", $secs);
-			if (sizeof($users) > 0 && $time == "00:00:00")
+			if (isset($users[$time])) 
 			{
-				$time = "24:00:00";
+				$time = " $time";
 			}
 			$users[$time] = 0;
 		        $connections[$time] = 0;
