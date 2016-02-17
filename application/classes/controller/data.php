@@ -9,6 +9,8 @@ class Controller_Data extends Controller
 		echo "<li><a href=\"data/radius_users_day/2013/09/28\">radius_users_day (2013/09/28)</a></li>";
 		echo "</ul>";
 		echo "<p>The following graph calls are available:</p><ul>";
+		echo "<li><a href=\"data/graph/user/day/now\">Concurrent Users in last 24 hours</a></li>";
+                echo "<li><a href=\"data/graph/connection/day/now\">Cocurrent Connections inn last 24 hours</a></li>";
 		echo "<li><a href=\"data/graph/user/day\">Users per day</a></li>";
 		echo "<li><a href=\"data/graph/connection/day\">Connections per day</a></li>";
 		echo "<li><a href=\"data/graph/user/month\">Users per month</a></li>";
@@ -23,6 +25,7 @@ class Controller_Data extends Controller
 	public function action_current_radius_users()
 	{
 		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra');
+		$qb->select("DISTINCT ra.callingstationid AS mac");
 		$qb->where("ra.acctstoptime IS NULL");
 		// 600 seconds because records only get updated every 300 seconds so session time may have been increased since 
 		// record was updated. 600 seconds gives enough leeway without including users who have likely disconnected.
