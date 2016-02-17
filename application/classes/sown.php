@@ -389,7 +389,7 @@ class SOWN
 		require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
 		$graph = SOWN::setup_graph("Graph", array("width" => $width, "height" => $height, "scale" => "textint"));
-		$anagle = SOWN::setup_graph_orientation($graph, $orientate, $margins);
+		$angle = SOWN::setup_graph_orientation($graph, $orientate, $margins, $angle);
 		SOWN::setup_graph_title($graph->title, $title);
 		SOWN::setup_graph_axis($graph->xaxis, $xlabel, $xdata, $angle);
 		SOWN::setup_graph_axis($graph->yaxis, $ylabel);
@@ -414,6 +414,24 @@ class SOWN
 
         }
 
+	public static function draw_line_graph($title, $xlabel, $ylabel, $xdata, $ydata, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical", $show_fraction = 12)
+	{
+		require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
+                require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_line', 'php');
+                $graph = SOWN::setup_graph("Graph", array("width" => $width, "height" => $height, "scale" => "textint", "max" => max($ydata)));
+		$angle = SOWN::setup_graph_orientation($graph, $orientate, $margins, $angle);
+                SOWN::setup_graph_title($graph->title, $title);
+		$xdata_new = array();
+		foreach ($xdata as $x => $val)
+		{
+			$xdata_new[] = ($x % $show_fraction == 0 ? $val : " ");
+		}
+		SOWN::setup_graph_axis($graph->xaxis, $xlabel, $xdata_new, $angle+90);
+                SOWN::setup_graph_axis($graph->yaxis, $ylabel);
+                SOWN::add_graph_lineplot($graph, $ydata);
+                $graph->Stroke();
+	}
+
 	public static function setup_graph($class = null, $attributes = array())
 	{
 		if (is_null($class))
@@ -426,7 +444,7 @@ class SOWN
 			$height = $attributes['height'];
 		$graph = new $class($width, $height, "auto");
 		if (isset($attributes['scale']))
-			$graph->setScale($attributes['scale']);
+			$graph->setScale($attributes['scale'], 0, $attributes['max']);
 		else
 			$graph->setScale("textint");
 		$graph->SetMarginColor('lightblue'); 
@@ -508,6 +526,44 @@ class SOWN
                         $barplot->SetFillColor($fillcolors[$b]);
 		}
 	}
+
+	public static function add_graph_lineplot($graph, $data, $legend = array(), $linewidth = 0.8, $colors = array('#000033'), $fillcolors = array('#000033'))
+        {
+                $single = false;
+                if (!is_array($data[0]))
+                {
+                        $temp = $data;
+                        $data = array($temp);
+                        $single = true;
+                }
+                $l = 0;
+                $lineplots = array();
+                foreach ($data as $series)
+                {
+                        $lineplot = new LinePlot($series);
+                        #$lineplot->SetWidth($linewidth);
+                        if (!$single && isset($legend[$l]))
+                                $lineplot->SetLegend($legend[$l]);
+                        $lineplots[$l++] = $lineplot;
+                }
+                if ($single)
+                {
+                        $graph->Add($lineplots[0]);
+                }
+                else
+                {
+                        $acclineplot = new AccLinePlot($lineplots);
+                        #$acclineplot->SetWidth($linewidth);
+                        $graph->Add($acclineplot);
+		}
+                foreach ($lineplots as $l => $lineplot)
+                {
+                        $lineplot->SetColor($colors[$l]);
+                        #$lineplot->SetFillGradient($fillcolors[$l], "#DDDDFF", GRAD_LEFT_REFLECTION);
+                        #$lineplot->SetFillColor($fillcolors[$l]);
+			
+                }
+        }
 
 	public static function decimal_to_minute_second_degrees($decdeg, $type, $nodecimal = FALSE)
         {

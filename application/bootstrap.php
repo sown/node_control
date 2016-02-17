@@ -925,6 +925,12 @@ Route::set('data_radius_users_day', 'data/radius_users_day/<year>/<month>/<day>'
                 'action'     => 'radius_users_day',
         ));
 
+Route::set('data_graph_through_day', 'data/graph/<type>/day/<date>')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'through_day_graph',
+        ));
+
 Route::set('data_graph_uc_day', 'data/graph/<type>/day')
          ->defaults(array(
                 'controller' => 'data',

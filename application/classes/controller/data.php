@@ -161,6 +161,23 @@ class Controller_Data extends Controller
                 SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, $legend, 600, 400, array(60,25,40,130), 90, "horizontal");
         }
 
+	public function action_through_day_graph()
+	{
+		$type = $this->request->param('type');
+		$date = $this->request->param('date');
+                if (!in_array($type, array('user', 'connection')) || !preg_match("/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/", $date))
+                {
+                        throw new HTTP_Exception_404();
+                }
+                $response = $this->request->response();
+                $response->headers('Content-Type', 'image/png');
+		$through_day = $this->_format_radius_users_through_day($this->_get_radius_users_through_day_results($date), $date);
+		$xdata = $through_day['thetime'];
+                $ydata = $through_day['no_'.$type.'s'];
+		SOWN::draw_line_graph('No. of SOWN '.ucfirst($type).'s - Throughout '.$date, '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 0, 12);
+	}
+
+
 	private function _get_radius_user_hour_results($days)
 	{
 		$seconds = $days * 86400;
@@ -212,6 +229,59 @@ class Controller_Data extends Controller
                 return $results;
 	}
 
+	private function _get_radius_users_through_day_results($date)
+	{
+		$daybefore = strtotime($date) - 86400;
+		$dayafter = strtotime($date) + 86400;
+		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
+			->select("UNIX_TIMESTAMP(ra.acctstarttime) AS start, UNIX_TIMESTAMP(ra.acctstoptime) AS stop, ra.callingstationid AS mac")
+			->where("ra.acctinputoctets+ra.acctoutputoctets > 0 OR (ra.acctsessiontime <= 600 AND ra.acctsessiontime IS NULL)")
+			->andwhere("UNIX_TIMESTAMP(ra.acctstarttime) >= $daybefore")
+			->andwhere("UNIX_TIMESTAMP(ra.acctstarttime) <= $dayafter");
+		$results = $qb->getQuery()->getResult();
+		return $results;
+	}		
+
+	private function _format_radius_users_through_day($results, $date, $interval = 300)
+	{
+		$day_start_secs = strtotime($date);
+		$day_end_secs = $day_start_secs + 86400;
+		$users = array();
+		$connections = array();
+		$skip = 0;
+		for ( $secs = $day_start_secs; $secs <= $day_end_secs; $secs += $interval ) 
+		{
+        		if ($secs > strtotime("now"))
+	        	{
+        	        	$skip = 1;
+	        	}
+	        	$time = date("H:i:s", $secs);
+			if (sizeof($users) > 0 && $time == "00:00:00")
+			{
+				$time = "24:00:00";
+			}
+			$users[$time] = 0;
+		        $connections[$time] = 0;
+			$found_users = array();
+        		if (!$skip) 
+		        {
+        		        foreach ( $results as $ts )
+                		{
+                        		if ( $ts['start'] < $secs && (empty($ts['stop']) || $ts['stop'] > $secs))
+                        		{
+						if (!in_array($ts['mac'], $found_users))
+						{
+							$users[$time]++;
+							$found_users[] = $ts['mac'];
+						}
+                                		$connections[$time]++; 
+	                        	}	
+        	        	}
+        		}
+		}
+		return array("thetime" => array_keys($connections), "no_users" => array_values($users), "no_connections" => array_values($connections));
+	}	
+	
 	private function _format_radius_users_nodes($results)
         {
                 $users = 0;
