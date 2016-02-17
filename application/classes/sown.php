@@ -436,6 +436,8 @@ class SOWN
 	{
 		if (is_null($class))
             		$class = "Graph";
+		if (!isset($attributes['max']))
+			$attributes['max'] = 0;
       		$width = 600;
       		$height = 400;
 		if (isset($attributes['width']))
