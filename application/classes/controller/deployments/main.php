@@ -249,7 +249,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			 $formTemplate['nodeId']['options'][$formValues['nodeId']] = $deployedNode->boxNumber;
 		} 
 		$submits = array('updateDeployment' => 'Update Deployment');
-		if (strtotime($formValues['endDate']) > time() && $this->userRole == "systemadmin")
+		if ((strtotime($formValues['endDate']) > time() || empty($formValues['endDate'])) && Auth::instance()->logged_in("systemadmin"))
 		{
 			$submits['endDeployment'] = "End Deployment";
 		}
