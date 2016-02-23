@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-$wireless_adapter_types = array( 'a' => '802.11a', 'b' => '802.11b', 'g' => '802.11g', 'n' => '802.11n' );
+$wireless_adapter_types = array( 'a' => '802.11a', 'an' => '802.11a/n', 'anac' => '802.11a/n/ac', 'b' => '802.11b', 'bg' => '802.11b/g', 'bgn' => '802.11b/g/n', 'g' => '802.11g', 'n' => '802.11n', 'nac' => '802.11n/ac', 'ac' => '802.11ac' );
 $wired_adapter_types = array( '100M' => '100Mb/s', '1G' => '1Gb/s' );
 return array
 (
