@@ -365,7 +365,7 @@ class Model_Deployment extends Model_Entity
 			}
 			$i++;
 			$over = strlen($nfsen_name . $i) - 19;
-			$use_nfsen_name = ($over > 0 ? substr($nfsen_name, 0, -$over) . $i : $nsfen_name . $i);
+			$use_nfsen_name = ($over > 0 ? substr($nfsen_name, 0, -$over) . $i : $nfsen_name . $i);
                 }
 		// Should never happen unless we have a lot of deployments with the same name
 		die("ERROR: Could not get unique name for NFSEN.");
