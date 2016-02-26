@@ -102,7 +102,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 ->rule('wirelessMac', 'not_empty', array(':value'));				
 			if ($validation->check())
         		{
-				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['hardware'], $formValues['wirelessChipset'], $formValues['firmwareVersion'], $formValues['firmwareImage']);
+				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['hardware'], $formValues['wirelessChipset'], $formValues['firmwareVersion'], $formValues['firmwareImage'], $formValues['externalBuild']);
                         	$success = "Successfully created node with box number: <a href=\"/admin/nodes/$node->boxNumber\">$node->boxNumber</a>.";
  
         		}
@@ -122,6 +122,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'wirelessChipset' => '',
 				'firmwareVersiom' => '',
 				'firmwareImage' => Kohana::$config->load('system.default.firmware_image_default'),
+				'externalBuild' => 0,
 			);
 			
 		}
@@ -134,6 +135,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'wirelessChipset' => array('title' => 'Wireless Chipset', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.wireless_chipsets'))),
 			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'size' => 50, 'type' => 'input'),
+			'externalBuild' => array('title' => 'External Build', 'type' => 'checkbox'),
 		);
 	
                 $this->template->sidebar = View::factory('partial/sidebar');
@@ -153,7 +155,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'view');
-		$formTemplate = $this->_load_form_template('view');
+		$formTemplate = $this->_load_form_template('view', $formValues['externalBuild']);
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'view');
                 $notesFormTemplate = Controller_Notes::load_form_template('view');
 		$this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('editNode' => 'Edit Node')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
@@ -185,7 +187,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		{
 			$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
                 }
-		$formTemplate = $this->_load_form_template('edit');
+		$formTemplate = $this->_load_form_template('edit', $formValues['externalBuild']);
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'edit');
                 $notesFormTemplate = Controller_Notes::load_form_template('edit');
                 $this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('updateNode' => 'Update Node'), $errors, $success) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
@@ -361,6 +363,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'firmwareVersion' => $node->firmwareVersion,
                        	'firmwareImage' => $node->firmwareImage,
 			'undeployable' => $node->undeployable,
+			'externalBuild' => $node->externalBuild,
 			'certificateWritten' => ( (strlen($node->certificate->privateKey) > 0) ? 'Yes' : 'No' ),
 			'vpnEndpoint' => array(	
 	               		'id' => $node->vpnEndpoint->id,
@@ -415,13 +418,14 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		if ($action == 'view')
 		{
 			$formValues['undeployable'] = (!empty($formValues['undeployable']) ? 'Yes' : 'No');
+			$formValues['externalBuild'] = (!empty($formValues['externalBuild']) ? 'Yes' : 'No');
 			$firmware_versions = Kohana::$config->load('system.default.firmware_versions'); 
 			$formValues['firmwareVersion'] = $firmware_versions[$formValues['firmwareVersion']];
 		}
 		return $formValues;
 	}
 
-	private function _load_form_template($action = 'edit')
+	private function _load_form_template($action = 'edit', $externalBuild = 0)
 	{
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
@@ -431,6 +435,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
+			'externalBuild' => array('title' => 'External Build', 'type' => 'checkbox'),
 			'certificateWritten' => array('title' => 'Certificate written', 'type' => 'statichidden'),
                         'vpnEndpoint' => array(
                                 'title' => 'VPN Endpoint',
@@ -472,10 +477,14 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				),
                         ),
                 );
+		if ($externalBuild && $externalBuild != "No") 
+                {
+                        $formTemplate['interfaces']['title'] .= " **Changes here will have no affect**";
+                }
 		if ($action == 'view') 
 		{
 			return FormUtils::makeStaticForm($formTemplate);
-		}	
+		}
 		return $formTemplate;
 	}
 
@@ -486,14 +495,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 $node->wirelessChipset = $formValues['wirelessChipset'];
 		$node->firmwareVersion = $formValues['firmwareVersion'];
 		$node->firmwareImage = $formValues['firmwareImage'];
-		if (empty($formValues['undeployable']))
-                {
-                        $node->undeployable = 0;
-                }
-		else 
-		{
-			$node->undeployable = $formValues['undeployable'];
-		}
+		$node->undeployable = (empty($formValues['undeployable']) ? 0 : $formValues['undeployable']);
+		$node->externalBuild = (empty($formValues['externalBuild']) ? 0 : $formValues['externalBuild']);
 		$vpnEndpoint = $node->vpnEndpoint;
                 $vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
 		$vpnEndpoint->protocol = $formValues['vpnEndpoint']['protocol'];

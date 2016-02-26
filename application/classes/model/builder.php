@@ -1,8 +1,9 @@
 <?php
 class Model_Builder
 {
-	public static function create_node($boxNumber = '', $vpnServerId = 0, $wiredMac = '', $wirelessMac = '', $hardware = '', $wirelessChipset = '', $firmwareVersion = '', $firmwareImage = '')
+	public static function create_node($boxNumber = '', $vpnServerId = 0, $wiredMac = '', $wirelessMac = '', $hardware = '', $wirelessChipset = '', $firmwareVersion = '', $firmwareImage = '', $externalBuild = 0)
 	{
+		error_log("ExternalBuild = $externalBuild");
 		$certificate = Model_Certificate::build();
 		if (empty($vpnServerId)) 
 		{
@@ -21,7 +22,7 @@ class Model_Builder
 		if (empty($boxNumber)) {
 			$boxNumber = Model_Node::getNextBoxNumber();
 		}
-		$node = Model_Node::build($boxNumber, $hardware, $wirelessChipset, $firmwareVersion, $firmwareImage, $certificate, $vpnEndpoint);
+		$node = Model_Node::build($boxNumber, $hardware, $wirelessChipset, $firmwareVersion, $firmwareImage, $externalBuild, $certificate, $vpnEndpoint);
 
 		$wirelessChannel = 0;
 		$type = '100M';

@@ -67,6 +67,13 @@ class Model_Node extends Model_Entity
          */
 	protected $undeployable;
 
+        /**
+         * @var boolean $externalBuild
+         * 
+         * @Column(name="external_build", type="integer", nullable=false)
+         */
+        protected $externalBuild;
+
 	/**
 	 * @var Model_Certificate
 	 *
@@ -329,7 +336,7 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, hardware={$this->hardware}, wirelessChipset={$this->wirelessChipset}, firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, hardware={$this->hardware}, wirelessChipset={$this->wirelessChipset}, firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}, externalBuild={$this->externalBuild}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -368,7 +375,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'hardware', 'wirelessChipset', 'firmwareVersion', 'firmwareImage', 'undeployable') as $field)
+		foreach(array('boxNumber', 'hardware', 'wirelessChipset', 'firmwareVersion', 'firmwareImage', 'undeployable', 'externalBuild') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -422,7 +429,7 @@ class Model_Node extends Model_Entity
 		return empty($result->id);
 	}
 
-	public static function build($boxNumber, $hardware, $wirelessChipset, $firmwareVersion, $firmwareImage, $certificate, $vpnEndpoint)
+	public static function build($boxNumber, $hardware, $wirelessChipset, $firmwareVersion, $firmwareImage, $externalBuild, $certificate, $vpnEndpoint)
 	{
 		$obj = new Model_Node();
 		$obj->boxNumber = $boxNumber;
@@ -430,6 +437,7 @@ class Model_Node extends Model_Entity
                 $obj->wirelessChipset = $wirelessChipset;
 		$obj->firmwareVersion = $firmwareVersion;
 		$obj->firmwareImage = $firmwareImage;
+		$obj->externalBuild = $externalBuild;
 		$obj->certificate = $certificate;
 		$obj->vpnEndpoint = $vpnEndpoint;
 		$obj->passwordHash = "";
