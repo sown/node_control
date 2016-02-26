@@ -1,6 +1,6 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');
 
-$wireless_adapter_types = array( 'a' => '802.11a', 'an' => '802.11a/n', 'anac' => '802.11a/n/ac', 'b' => '802.11b', 'bg' => '802.11b/g', 'bgn' => '802.11b/g/n', 'g' => '802.11g', 'n' => '802.11n', 'nac' => '802.11n/ac', 'ac' => '802.11ac' );
+$wireless_adapter_types = array( 'a' => '802.11a', 'abg' => '802.11a/b/g', 'abgn' => '802.11a/b/g/n', 'b' => '802.11b', 'bg' => '802.11b/g', 'bgn' => '802.11b/g/n', 'g' => '802.11g', 'n' => '802.11n', 'nac' => '802.11n/ac', 'ac' => '802.11ac' );
 $wired_adapter_types = array( '100M' => '100Mb/s', '1G' => '1Gb/s' );
 return array
 (
@@ -67,8 +67,7 @@ return array
 			'Atheros AR2315', # Meraki
 			'Atheros AR2315A', # OpenMesh MR3201A and OM1P
 			'Atheros AR7240', # OpenMesh OM2P (v1)
-			'Atheros AR9330', # TP-Link MR3020 
-                        'Atheros AR9331', # GL-AR150 and OpenMesh OM2P (v2)
+                        'Atheros AR9331', # GL-AR150, OpenMesh OM2P (v2) and TP-Link TL-MR3030
 			'QualComm Atheros QCA9558', 
 			'QualComm Atheros QCA9558 + QualComm Atheros QCA9880-BR4A', # TP-Link Archer C7
 			'QualComm Atheros QCA9880-BR4A',
