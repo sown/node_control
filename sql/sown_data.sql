@@ -419,6 +419,7 @@ CREATE TABLE `nodes` (
   `firmware_image` text NOT NULL COMMENT 'version of firmware installed on the node (e.g. Backfire 10.03)',
   `password_hash` varchar(255) NOT NULL,
   `undeployable` tinyint(1) NOT NULL,
+  `external_build` tinyint(1) NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `node_to_endpoint` (`vpn_endpoint_id`),
@@ -715,4 +716,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-01-30 14:53:15
+-- Dump completed on 2016-02-27  4:23:02
