@@ -261,11 +261,11 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 			'checkCommand' => $other_host->checkCommand,
                 );
 
-		if (isset($other_host->location) && is_int($other_host->location->id))
+		if (is_object($other_host->location) && is_int($other_host->location->id))
                 {
                         $formValues['location'] = $other_host->location->id;
                 }
-                if (isset($other_host->acquiredDate) && $other_host->acquiredDate->format('U') > 86400)
+                if (is_object($other_host->acquiredDate) && $other_host->acquiredDate->format('U') > 86400)
                 {
                         $formValues['acquiredDate'] = $other_host->acquiredDate->format('Y-m-d');
                 }
