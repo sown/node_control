@@ -231,6 +231,22 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                 {
 			$errors = $validation->errors();
                 }
+		foreach ($formValues['contacts']['currentContacts'] as $c => $contact)
+                {
+                        if(!empty($contact['name']))
+                        {
+                                $validation = Validation::factory($contact)
+                                        ->rule('email', 'not_empty', array(':value'))
+                                        ->rule('email', 'email', array(':value'));
+                                if (!$validation->check())
+                                {
+                                        foreach ($validation->errors() as $e => $error)
+                                        {
+                                                $errors["Contact " . $contact['name'] . " $e"] = $error;
+                                        }
+                                }
+                        }
+                }
 		return $errors;
 	}
 
@@ -259,7 +275,30 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'IPv6Addr' => $other_host->IPv6Addr,
 			'alias' => $other_host->alias,
 			'checkCommand' => $other_host->checkCommand,
+			'contacts' => array(
+                                'currentContacts' => array(),
+                        ),
                 );
+
+		$c = 0;
+                $contact_fields = array('id', 'name', 'email');
+                $other_host_contacts = array();
+                $oh_cct_ids = array();
+                foreach($other_host->contacts as $c => $contact)
+                {
+                        if (!in_array($contact->id, $oh_cct_ids))
+                        {
+                                $other_host_contacts[] = $contact;
+                                $oh_cct_ids[] = $contact->id;
+                        }
+                }
+                foreach ($other_host_contacts as $c => $contact)
+                {
+                        foreach ($contact_fields as $cf)
+                        {
+                                $formValues['contacts']['currentContacts'][$c][$cf] = $contact->$cf;
+                        }
+                }
 
 		if (is_object($other_host->location) && is_int($other_host->location->id))
                 {
@@ -275,6 +314,14 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 			$formValues['retired'] = ( $formValues['retired'] ? 'Yes' : 'No');
 			$formValues['internal'] = ( $formValues['internal'] ? 'Yes' : 'No');
 		}
+		if ($action == 'edit')
+                {
+                        foreach ($contact_fields as $cf)
+                        {
+                                $formValues['contacts']['currentContacts'][$c+1][$cf] = '';
+                        }
+                }
+
 		return $formValues;
 	}
 
@@ -299,6 +346,21 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 50),
 			'alias' => array('title' => 'Alias', 'type' => 'input', 'size' => 50),
 			'checkCommand' => array('title' => 'Check Command', 'type' => 'input', 'size' => 50),
+			'contacts' => array(
+                                'title' => 'Contacts',
+                                'type' => 'fieldset',
+                                'fields' => array(
+                                        'currentContacts' => array(
+                                                'title' => '',
+                                                'type' => 'table',
+                                                'fields' => array(
+                                                        'id' => array('type' => 'hidden'),
+                                                        'name' => array('title' => 'Name', 'type' => 'input'),
+                                                        'email' => array('title' => 'Email', 'type' => 'input'),
+                                                ),
+                                        ),
+                                ),
+                        )
 		);
 		if ($action == 'view') 
 		{
@@ -326,6 +388,35 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 		$other_host->IPv6Addr = $formValues['IPv6Addr'];
 		$other_host->alias = $formValues['alias'];
 		$other_host->checkCommand = $formValues['checkCommand'];
+		foreach ($formValues['contacts']['currentContacts'] as $c => $contactValues)
+                {
+                        if (empty($contactValues['name']) && empty($contactValues['email']))
+                        {
+                                if (!empty($contactValues['id']))
+                                {
+                                        $contact = Doctrine::em()->getRepository('Model_Contact')->find($contactValues['id']);
+                                        $contact->delete();
+                                }
+                        }
+                        else
+                        {
+                                if (empty($contactValues['id'])) {
+                                        $other_host->contacts->add(Model_Contact::build(
+                                                'OtherHost',
+                                                $other_host,
+                                                $contactValues['name'],
+                                                $contactValues['email']
+                                        ));
+                                }
+                                else
+                                {
+                                        $contact = Doctrine::em()->getRepository('Model_Contact')->find($contactValues['id']);
+                                        $contact->name = $contactValues['name'];
+                                        $contact->email = $contactValues['email'];
+                                        $contact->save();
+                                }
+                        }
+                }
 		$other_host->save();
 	}
 }

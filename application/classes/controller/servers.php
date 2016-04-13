@@ -271,6 +271,22 @@ class Controller_Servers extends Controller_AbstractAdmin
                 {
 			$errors = $validation->errors();
                 }
+		foreach ($formValues['contacts']['currentContacts'] as $c => $contact)
+                {
+                        if(!empty($contact['name']))
+                        {
+                                $validation = Validation::factory($contact)
+					->rule('email', 'not_empty', array(':value'))
+					->rule('email', 'email', array(':value'));
+			        if (!$validation->check())
+                                {
+                                        foreach ($validation->errors() as $e => $error)
+                                        {
+                                                $errors["Contact " . $contact['name'] . " $e"] = $error;
+                                        }
+                                }
+			}
+		}
 		return $errors;
 	}
 
@@ -301,6 +317,9 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'os' => $server->os,
 			'interfaces' => array(
                                 'currentInterfaces' => array(),
+                        ),
+			'contacts' => array(
+                                'currentContacts' => array(),
                         ),
                 );
 		$i = 0;
@@ -334,6 +353,26 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 $formValues['interfaces']['currentInterfaces'][$i]['vlan'] = $interface->vlan->name;
                         }
                 }
+	
+		$c = 0;	
+		$contact_fields = array('id', 'name', 'email');
+		$server_contacts = array();
+		$srv_cct_ids = array();
+		foreach($server->contacts as $c => $contact)
+                {
+                        if (!in_array($contact->id, $srv_cct_ids))
+                        {
+                                $server_contacts[] = $contact;
+                                $srv_cct_ids[] = $contact->id;
+                        }
+                }
+		foreach ($server_contacts as $c => $contact)
+                {
+                        foreach ($contact_fields as $cf)
+                        {
+                                $formValues['contacts']['currentContacts'][$c][$cf] = $contact->$cf;
+                        }
+                }
 
 		if (is_object($server->location))
 		{
@@ -357,6 +396,10 @@ class Controller_Servers extends Controller_AbstractAdmin
 			foreach ($intf_fields as $if)
                         {
                                 $formValues['interfaces']['currentInterfaces'][$i+1][$if] = '';
+                        }
+			foreach ($contact_fields as $cf)
+                        {
+                                $formValues['contacts']['currentContacts'][$c+1][$cf] = '';
                         }
                 }
 		return $formValues;
@@ -403,6 +446,21 @@ class Controller_Servers extends Controller_AbstractAdmin
                                                         'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 11),
                                                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 25),
 							'subordinate' => array('title' => 'Sub', 'type' => 'checkbox'),
+                                                ),
+                                        ),
+                                ),
+                        ),
+			'contacts' => array(
+                                'title' => 'Contacts',
+                                'type' => 'fieldset',
+                                'fields' => array(
+                                        'currentContacts' => array(
+                                                'title' => '',
+                                                'type' => 'table',
+                                                'fields' => array(
+                                                        'id' => array('type' => 'hidden'),
+                                                        'name' => array('title' => 'Name', 'type' => 'input'),
+                                                        'email' => array('title' => 'Email', 'type' => 'input'),
                                                 ),
                                         ),
                                 ),
@@ -481,6 +539,35 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 }
                         }
                 }
+		foreach ($formValues['contacts']['currentContacts'] as $c => $contactValues)
+                {
+                        if (empty($contactValues['name']) && empty($contactValues['email']))
+                        {
+                                if (!empty($contactValues['id']))
+                                {
+                                        $contact = Doctrine::em()->getRepository('Model_Contact')->find($contactValues['id']);
+                                        $contact->delete();
+                                }
+                        }
+                        else
+                        {
+                                if (empty($contactValues['id'])) {
+                                        $server->contacts->add(Model_Contact::build(
+						'Server',
+                                                $server,
+                                                $contactValues['name'],
+                                                $contactValues['email']
+                                        ));
+                                }
+                                else
+                                {
+                                        $contact = Doctrine::em()->getRepository('Model_Contact')->find($contactValues['id']);
+                                        $contact->name = $contactValues['name'];
+                                        $contact->email = $contactValues['email'];
+                                        $contact->save();
+				}
+			}
+		}
 		$server->save();
 	}
 

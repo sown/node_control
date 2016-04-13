@@ -135,6 +135,10 @@ class Model_OtherHost extends Model_Entity
          */
         protected $checkCommand;
 
+	/**
+         * @OneToMany(targetEntity="Model_Contact", mappedBy="otherHost", cascade={"persist", "remove"})
+         */
+        protected $contacts;
 
 
 	public function __get($name)
@@ -172,7 +176,12 @@ class Model_OtherHost extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "OtherHost: {$this->id}, name={$this->name}, type={$type}, parent={$this->parent}, description={$this->description}, location={$this->location}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, case={$this->case}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, alias={$this->alias}, checkCommand->{$this->checkCommand}";
+		$str  = "OtherHost: {$this->id}, name={$this->name}, type={$type}, parent={$this->parent}, description={$this->description}, location={$this->location}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, case={$this->case}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, alias={$this->alias}, checkCommand={$this->checkCommand}, ";
+		foreach($this->contacts as $contact)
+                {
+                        $str .= "<br/>";
+                        $str .= "contact={$contact}";
+                }
 		return $str;
 	}
 
@@ -194,6 +203,10 @@ class Model_OtherHost extends Model_Entity
 		foreach(array('retired', 'case', 'hostname', 'cname', 'mac', 'IPv4Addr', 'IPv6Addr', 'alias' ,'checkCommand') as $field)
                 {
                         $str .= $this->fieldHTML($field);
+                }
+		foreach($this->contacts as $contact)
+                {
+                        $str .= $this->fieldHTML('contact', $contact->toHTML());
                 }
 		$str .= "</table>";
 		$str .= "</div>";

@@ -153,6 +153,12 @@ class Model_Server extends Model_Entity
          */
         protected $interfaces;
 
+	/**
+         * @OneToMany(targetEntity="Model_Contact", mappedBy="server", cascade={"persist", "remove"})
+         */
+        protected $contacts;
+
+
        	/**
 	* @ManyToMany(targetEntity="Model_CronJob")
 	* @JoinTable(name="host_cron_jobs",
@@ -242,6 +248,11 @@ class Model_Server extends Model_Entity
                         $str .= "<br/>";
                         $str .= "interface={$interface}";
                 }
+		foreach($this->contacts as $contact)
+                {
+                        $str .= "<br/>";
+                        $str .= "contact={$contact}";
+                }
 		return $str;
 	}
 
@@ -272,7 +283,11 @@ class Model_Server extends Model_Entity
 		foreach($this->interfaces as $interface)
                 {
                         $str .= $this->fieldHTML('interface', $interface->toHTML());
-                }	
+               	}
+		foreach($this->contacts as $contact)
+                {
+                        $str .= $this->fieldHTML('contact', $contact->toHTML());
+                }
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;
