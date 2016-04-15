@@ -21,6 +21,7 @@ class Controller_Icinga extends Controller_AbstractAdmin
                                 'internal_ipv6' => null,
                                 'external_ipv4' => null,
                                 'external_ipv6' => null,
+				'contacts' => null,
                         );
 
                         foreach ($server->interfaces as $interface)
@@ -36,6 +37,19 @@ class Controller_Icinga extends Controller_AbstractAdmin
                                         $attrs['external_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
                                 }
                         }
+			$contacts = $server->contacts;
+			if (sizeof($contacts) > 0)
+			{
+				$contactlist = array();
+				foreach ($contacts as $c => $contact)
+				{
+					$contactlist[] = $contact->email;
+				}		
+				if (sizeof($contactlist) > 0)
+				{
+					$attrs['contacts'] = implode(",", $contactlist);
+				}		
+			}
                         $hosts[$server->name] = $attrs;
                 }
 		$other_hosts = Doctrine::em()->getRepository('Model_OtherHost')->findBy(array('retired' => 0), array('name' => 'ASC'));
@@ -52,10 +66,24 @@ class Controller_Icinga extends Controller_AbstractAdmin
 				'hostname' => (strlen($other_host->hostname) ? $other_host->hostname : null),
 				'alias' => (strlen($other_host->alias) ? $other_host->alias : null),
 				'check_command' => (strlen($other_host->checkCommand) ? $other_host->checkCommand : null),
+				'contacts' => null,
 			);
 			$prefix = ($other_host->internal ? 'internal' : 'external');
 			$attrs["{$prefix}_ipv4"] = (strlen($other_host->IPv4Addr) ? $other_host->IPv4Addr : null);
 			$attrs["{$prefix}_ipv6"] = (strlen($other_host->IPv6Addr) ? $other_host->IPv6Addr : null);
+			$contacts = $other_host->contacts;
+                        if (sizeof($contacts) > 0)
+                        {
+				$contactlist = array();
+                                foreach ($contacts as $c => $contact)
+                                {
+                                        $contactlist[] = $contact->email;
+                                }
+                                if (sizeof($contactlist) > 0)
+                                {
+                                        $attrs['contacts'] = implode(",", $contactlist);
+                                }
+                        }
 			$hosts[$other_host->name] = $attrs;
 		}
                 $this->response->body(SOWN::jsonpp(json_encode($hosts)));
