@@ -54,6 +54,28 @@ CREATE TABLE `certificates` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `contacts`
+--
+
+DROP TABLE IF EXISTS `contacts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `contacts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `server_id` int(11) DEFAULT NULL,
+  `other_host_id` int(11) DEFAULT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `contact_to_server` (`server_id`),
+  KEY `contact_to_other_host` (`other_host_id`),
+  CONSTRAINT `contact_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`),
+  CONSTRAINT `contact_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `cron_jobs`
 --
 
@@ -716,4 +738,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-27  4:23:02
+-- Dump completed on 2016-04-14  4:23:02
