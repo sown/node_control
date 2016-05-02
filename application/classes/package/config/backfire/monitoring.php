@@ -180,7 +180,7 @@ class Package_Config_Backfire_Monitoring extends Package_Config
 			),
 		);
 
-		static::send_uci_config('snmpd', $config);
+		static::send_uci_config('snmpd', $config, $mod);
 	}
 
 	public static function config_softflowd_v0_1_78(Model_Node $node)
