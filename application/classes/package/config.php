@@ -51,14 +51,13 @@ abstract class Package_Config
                         SOWN::send_irc_message('!h debug: ignoring send_nsca request from '.$_SERVER['REMOTE_ADDR']);
 		}
 	
-
 		// Sets the Etag. If the client request etag matches, sends the 304 and exits
 		$r->check_cache('"'.$hash.'"', $req);
 
 		// check if the client sent an 'if-modified-since' header
 		$sa = strptime($req->headers('If-Modified-Since'), '%a, %e %b %Y %H:%M:%S');
 
-		$since = mktime($sa['tm_hour'], $sa['tm_min'], $sa['tm_sec'], $sa['tm_mon']+1, $sa['tm_mday'], $sa['tm_year']+1900);
+		$since = gmmktime($sa['tm_hour'], $sa['tm_min'], $sa['tm_sec'], $sa['tm_mon']+1, $sa['tm_mday'], $sa['tm_year']+1900);
 
 		if($since !== FALSE)
 		{

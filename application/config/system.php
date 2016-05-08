@@ -100,6 +100,11 @@ return array
 		'gateway'	=> '10.13.0.254',
 		'domain'	=> 'sown.org.uk',
 		'oid'		=> '.1.3.6.1.4.1.12275.5032',
+		'packages'	=> array(
+			'ca' => '/etc/sown/www.sown.org.uk.ca.crt',
+			'groups' => 'base custom',
+			'url' => 'http://www.sown.org.uk/packages/',
+		),
 		'static_files'	=> array
 		(
 			'authorized_keys'	=>	'/srv/www/static_files/authorized_keys',
@@ -124,6 +129,10 @@ return array
 push "route 10.12.0.0 255.254.0.0"
 push "route 152.78.189.82 255.255.255.255"
 ',
+		'syslog'	=> array
+		(
+			'port' => '5140',
+		),
 		'vlan'		=> array
 		(
 			'local' => 'SOWN',

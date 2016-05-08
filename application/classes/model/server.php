@@ -369,6 +369,62 @@ class Model_Server extends Model_Entity
 		return $wm;
 	}
 
+	public function getIPAddresses($version = NULL, $vlan = NULL, $subordinate = NULL)
+	{
+		$versions = array();
+                if ($version === NULL)
+                {
+			$versions = array('IPv4Addr','IPv6Addr');
+		}
+		else
+		{
+			$versions[] = "IPv${version}Addr";
+		}
+		if ($vlan = "LOCAL") 
+		{
+			$vlan = Kohana::$config->load('system.default.vlan.local');
+		}
+
+		$ip_addrs = array();
+		foreach ($this->interfaces as $i)
+                {
+			if ($vlan !== NULL && is_object($i->vlan) && $i->vlan->name == $vlan) 
+			{
+				$ip_addrs = Model_Server::getIPsVersionAndSubordinate($i, $versions, $subordinate, $ip_addrs);
+                        }
+			elseif ($vlan === NULL)
+			{
+				$ip_addrs = Model_Server::getIPsVersionAndSubordinate($i, $versions, $subordinate, $ip_addrs);	
+			}
+                }
+                return $ip_addrs;
+	}
+
+	private static function getIPsVersionAndSubordinate($interface, $versions, $subordinate, $ip_addrs)
+	{
+		if ($subordinate === NULL)
+                {
+                	foreach ($versions as $v)
+                        {
+				$ip_addr = $interface->$v;
+				if (!empty($ip_addr))
+				{
+                        		$ip_addrs[] = $interface->$v;
+				}
+                        }
+                        return $ip_addrs;
+		}
+                foreach ($versions as $v)
+                {
+			$ip_addr = $interface->$v;
+			if (!empty($ip_addr) && $interface->subordinate == $subordinate)
+			{
+                        	$ip_addrs[] = $interface->$v;
+                        }
+		}
+                return $ip_addrs;
+	}
+
 	public function hasLocalInterface()
         {
 		$local_vlan = Kohana::$config->load('system.default.vlan.local');

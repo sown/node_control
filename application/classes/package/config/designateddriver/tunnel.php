@@ -16,6 +16,9 @@ class Package_Config_Designateddriver_Tunnel extends Package_Config
 
 	public static function config_openvpn_v0_1_78_raw(Model_Node $node)
 	{
+		$server_id = $node->vpnEndpoint->vpnServer->id; # For some reason needed to make getIPAddresses command work
+                $server_ips = $node->vpnEndpoint->vpnServer->getIPAddresses(4,'LOCAL',0);
+
 		$config = array(
 			'openvpn' => array(
 				'sown_tunnel' => array(
@@ -60,7 +63,10 @@ class Package_Config_Designateddriver_Tunnel extends Package_Config
 					'script_security' => 2,
 					
 					'up'   => '/etc/sown/events/tunnel_up',
-					'down' => '/etc/sown/events/tunnel_down'
+					'down' => '/etc/sown/events/tunnel_down',
+
+					// Ping target for maintain_sown_tunnel
+					'remote_ping_target' => $server_ips[0],
 				),
 			)
 		);
