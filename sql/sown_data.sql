@@ -70,8 +70,8 @@ CREATE TABLE `contacts` (
   PRIMARY KEY (`id`),
   KEY `contact_to_server` (`server_id`),
   KEY `contact_to_other_host` (`other_host_id`),
-  CONSTRAINT `contact_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`),
-  CONSTRAINT `contact_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`)
+  CONSTRAINT `contact_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`),
+  CONSTRAINT `contact_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -738,4 +738,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-04-14  4:23:02
+-- Dump completed on 2016-06-06  4:23:01
