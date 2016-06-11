@@ -303,7 +303,7 @@ class Model_Server extends Model_Entity
 		if (!empty($this->processor)) $hwphrases[] = "a [[cpu::{$this->processor}]] processor";
 		if (!empty($this->memory)) $hwphrases[] = "[[memory::{$this->memory}]] of memory";
 		if (!empty($this->hardDrive)) $hwphrases[] = "[[harddrive::{$this->hardDrive}]] of memory";
-		if (!empty($this->networkPorts)) $hwphrases[] = "[[networkinterfaces::{$this->networkPorts}]] network intefaces";
+		if (!empty($this->networkPorts)) $hwphrases[] = "[[networkinterfaces::{$this->networkPorts}]] network interfaces";
 		$wm .= (sizeof($hwphrases) > 0 ? "It has {$hwphrases[0]}" : '');
 		for ($h = 1; $h < sizeof($hwphrases); $h++) 
 		{
