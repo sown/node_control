@@ -47,6 +47,15 @@ class FormUtils {
 		if (!empty($success)) 
 		{
 			$formHtml .= "  <div class=\"success\">$success</div>\n";
+			$submitKeys = array_keys($submits);
+			foreach ($submitKeys as $submitKey)
+			{
+				if (substr($submitKey, 0, 6) == "create")
+				{
+					$formHtml .= Form::close();
+                			return $formHtml;
+				}
+			}
 		}
 		$inlineclass='';
                 if (!empty($attributes['inline']))
