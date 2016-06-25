@@ -352,7 +352,7 @@ class Model_Deployment extends Model_Entity
 
 	public static function getUniqueNfsenName($name, $id = 0)
         {
-		$nfsen_name = substr(str_replace($name, ' ', '_'), 0, 19);
+		$nfsen_name = substr(str_replace(' ', '_', $name), 0, 19);
 		$use_nfsen_name = $nfsen_name;
 		$unique = FALSE;
 		$i = 0;
