@@ -370,7 +370,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$validation = Validation::factory($formValues['configuration'])
 			->rule('cap', 'not_empty')
                         ->rule('cap', 'digit')
-                        ->rule('allowedPorts', 'SownValid::csvlist', array(':value'));
+                        ->rule('allowedPorts', 'SownValid::csvlist', array(':value'))
+			->rule('pingAttempts', 'not_empty')
+                        ->rule('pingAttempts', 'digit')
+			->rule('wifiDownAfter', 'not_empty')
+                        ->rule('wifiDownAfter', 'digit');
 		if (!$validation->check())
                 {
                         $errors = $validation->errors();
@@ -413,6 +417,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 				'allowedPorts' => $deployment->allowedPorts,
 				'advancedFirewall' => $deployment->advancedFirewall,
 				'cap' => $deployment->cap,
+				'pingAttempts' => $deployment->pingAttempts,
+				'wifiDownAfter' => $deployment->wifiDownAfter,
 			),
 			'location' => array(
                                 'longitude' => $deployment->longitude,
@@ -475,6 +481,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 					'allowedPorts' => array('title' => 'Additionally allowed ports', 'type' => 'input', 'size' => 20, 'hint' => 'Comma-separated (e.g. 123,993,8080)'),
 					'advancedFirewall' => array('title' => 'Advanced firewall', 'type' => 'checkbox'),
 					'cap' => array('title' => 'Usage cap', 'type' => 'input', 'size' => 5, 'hint' => 'MB'),	
+					'pingAttempts' => array('title' => 'Ping attempts', 'type' => 'input', 'size' => 5, 'hint' => 'Number of pings to test VPN tunnel is up'),
+					'wifiDownAfter' => array('title' => 'Wi-Fi down after', 'type' => 'input', 'size' => 5, 'hint' => 'Number of failed ping attempts before taking down Wi-Fi'),
 				),
 			),
 			'location' => array(

@@ -72,6 +72,20 @@ class Model_Deployment extends Model_Entity
         protected $capExceeded; // This is the current database value for whether the node deployment is over its cap.  This gets updated by the nodeexceedscap check and causes the node_deployment records last_modified to change so the node will pull down the new node config.
 
 	/**
+         * @var int $pingAttempts
+         *
+         * @Column(name="ping_attempts", type="integer", nullable=false)
+         */
+        protected $pingAttempts;
+
+	/**
+         * @var int $wifiDownAfter
+         *
+         * @Column(name="wifi_down_after", type="integer", nullable=false)
+         */
+        protected $wifiDownAfter;
+
+	/**
 	 * @var datetime $startDate
 	 *
 	 * @Column(name="start_date", type="datetime", nullable=false)
@@ -295,6 +309,8 @@ class Model_Deployment extends Model_Entity
 		$deployment->range = 20;
 		$deployment->cap = $cap;
 		$deployment->capExceeded = False;
+		$deployment->pingAttempts = 4;
+		$deployment->wifiDownAfter = 1;
 		$deployment->type = 'home';
 		$deployment->startDate = new \DateTime();
 		$deployment->endDate = new \DateTime(Kohana::$config->load('system.default.admin_system.latest_end_datetime'));
@@ -303,7 +319,7 @@ class Model_Deployment extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Deployment: {$this->id}, name={$this->name}, nfsenName={$this->nfsenName}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
+		$str  = "Deployment: {$this->id}, name={$this->name}, nfsenName={$this->nfsenName}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, pingAttempts={$this->pingAttempts}, wifiDownAfter={$this->wifiDownAfter}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
@@ -329,7 +345,7 @@ class Model_Deployment extends Model_Entity
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Deployment</th><td>{$this->id}</td></tr>";
 		$str .= $this->fieldHTML('date', $this->startDate->format('Y-m-d H:i:s').' - '.$this->endDate->format('Y-m-d H:i:s'));
-		foreach(array('name', 'nfsenName', 'isDevelopment', 'isPrivate', 'firewall', 'advancedFirewall', 'cap', 'range', 'allowedPorts', 'type', 'url', 'latitude', 'longitude', 'address', 'consumption', 'exceedsCap') as $field)
+		foreach(array('name', 'nfsenName', 'isDevelopment', 'isPrivate', 'firewall', 'advancedFirewall', 'cap', 'pingAttempts', 'wifiDownAfter', 'range', 'allowedPorts', 'type', 'url', 'latitude', 'longitude', 'address', 'consumption', 'exceedsCap') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
