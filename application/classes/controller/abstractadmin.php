@@ -44,11 +44,11 @@ abstract class Controller_AbstractAdmin extends Controller_Template
 
 	protected function check_ip($ip)
 	{
-		if (!in_array($ip, Kohana::$config->load('system.default.admin_system.valid_query_ips'))) 
+		if (in_array($ip, Kohana::$config->load('system.default.admin_system.valid_query_ips'))) 
 		{
-			throw new HTTP_Exception_403('Your IP ('.$ip.') does not have permission to access this page.');
+			return;
 		}
-		
+		throw new HTTP_Exception_403('Your IP ('.$ip.') does not have permission to access this page.');
 	}	
 
 }
