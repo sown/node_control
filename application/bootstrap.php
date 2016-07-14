@@ -802,6 +802,12 @@ Route::set('details_user', 'admin/users/<username>/details', array('username' =>
                 'action'     => 'view_details_json',
         ));
 
+Route::set('site_users_list', 'admin/users/site/list')
+        ->defaults(array(
+                'controller' => 'users',
+                'action'     => 'site_users_list',
+        ));
+
 Route::set('edit_user', 'admin/users/<id>/edit')
         ->defaults(array(
                 'controller' => 'users',

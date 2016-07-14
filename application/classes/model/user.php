@@ -86,6 +86,12 @@ class Model_User extends Model_Entity
          */
         protected $notes;
 
+	 /**
+         * @OneToMany(targetEntity="Model_UserAccount", mappedBy="user", cascade={"persist", "remove"})
+         */
+        protected $accounts;
+
+
 	public function __get($name)
 	{
 		$this->logUse();
@@ -167,6 +173,10 @@ class Model_User extends Model_Entity
 			$str .= $this->fieldHTML($field);
 		}
 		$str .= $this->fieldHTML('resetPasswordTime', $this->resetPasswordTimestamp());
+		foreach($this->accounts as $account)
+                {
+                        $str .= $this->fieldHTML('admin', $account->toHTML());
+                }
 		foreach($this->admins as $admin)
 		{
 			$str .= $this->fieldHTML('admin', $admin->toHTML());

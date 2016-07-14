@@ -42,7 +42,7 @@ class Controller_Users extends Controller_AbstractAdmin
 			'name' => 'Name',
 			'email' => 'Email',
 			'isSystemAdmin' => 'Admin',
-                        'canAccessWiki' => 'Wiki<br/>Editor',
+			'numAccounts' => 'No. Accounts',
 			'latestNote' => 'Latest Note',
                         'view' => '',
                         'edit' => '',
@@ -52,7 +52,6 @@ class Controller_Users extends Controller_AbstractAdmin
 		foreach ($rows as $r => $row)
 		{
 			$rows[$r]->isSystemAdmin = ( $row->isSystemAdmin ? 'Yes' : 'No') ;
-			$rows[$r]->canAccessWiki = ( $row->canAccessWiki ? 'Yes' : 'No') ;
 		}
 		
 		$objectType = 'user';
@@ -72,11 +71,12 @@ class Controller_Users extends Controller_AbstractAdmin
 		View::bind_global('title', $title);
 		$errors = array();
 		$success = "";
+		$domain = Kohana::$config->load('system.default.domain');
 		if ($this->request->method() == 'POST')
                 {
 			$formValues = $this->request->post();
 			$usernameOnly = $formValues['username'];
-			$formValues['username'] .= "@sown.org.uk";
+			$formValues['username'] .= "@$domain";
 			$validation = Validation::factory($formValues)
 				->rule('username', 'not_empty')
 				->rule('username', 'email')
@@ -135,7 +135,7 @@ class Controller_Users extends Controller_AbstractAdmin
 			);	
 		}
 		$formTemplate = array(
-			'username' => array('title' => 'Username', 'type' => 'input', 'hint' => '@sown.org.uk'),
+			'username' => array('title' => 'Username', 'type' => 'input', 'hint' => "@$domain"),
 			'name' => array('title' => 'Full Name', 'type' => 'input'),
 			'email' => array('title' => 'Email', 'type' => 'input'),
 			'password' => array('title' => 'Password', 'type' => 'password'),
@@ -319,7 +319,7 @@ class Controller_Users extends Controller_AbstractAdmin
                         {
                                 $users = Doctrine::em()->getRepository('Model_User')->findByEmail($username_email);
                                 foreach ($users as $tempuser){
-                                        if (strpos($tempuser->username, "@" . Kohana::$config->load('system.default.admin_system.domain')) > 0)
+                                        if (strpos($tempuser->username, "@" . $domain) > 0)
                                         {
                                                 $user = $tempuser;
                                                 break;
@@ -363,25 +363,81 @@ class Controller_Users extends Controller_AbstractAdmin
 
 	public function action_view_details_json()
 	{
-		$this->check_ip($_SERVER['REMOTE_ADDR']);
-		$user =  $user = Doctrine::em()->getRepository('Model_User')->findOneByUsername($this->request->param('username') . "@" . Kohana::$config->load('system.default.admin_system.domain'));
+		$referer = $this->request->referrer();
+		$site = Doctrine::em()->getRepository('Model_Site')->findOneByUrl($referer);
+		if (!is_object($site))
+		{
+			$this->check_ip($_SERVER['REMOTE_ADDR']);
+		}
+		else 
+		{
+			$ipAddrs = explode(",", $site->ipAddrs);
+			if (!in_array($_SERVER['REMOTE_ADDR'], $ipAddrs))
+			{
+				throw new HTTP_Exception_403("You do not have permission to access this resource.");
+			}
+		}
+		$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername($this->request->param('username') . "@" . Kohana::$config->load('system.default.domain'));
 		if (!is_object($user))
 		{
-			throw new HTTP_Exception_404();
+			throw new HTTP_Exception_404("No user with this username.");
                 }	
-		$details = array(
-			'username' => $user->username,
-			'name' => $user->name,
-			'email' => $user->email,
-			'canAccessWiki' => $user->canAccessWiki,
-			'wikiUsername' => $user->wikiUsername,
-			'isSystemAdmin' => $user->isSystemAdmin,
-		);
+		if (is_object($site))
+                {
+			$account = Doctrine::em()->getRepository('Model_UserAccount')->findOneBy(array("user" => $user, "site" => $site));
+			if (is_object($account))
+			{
+				$details = array(
+					'username' => $user->username,
+	                	       	'name' => $user->name,
+        	                	'email' => $user->email,
+					'siteUsername' => $account->username,
+					'sitePermissions' => $account->permissions
+				);
+			}
+			else {
+				throw new HTTP_Exception_404("User has not account for site specified.");
+			}
+		}
+		else
+		{
+			$details = array(
+				'username' => $user->username,
+				'name' => $user->name,
+				'email' => $user->email,
+				'isSystemAdmin' => $user->isSystemAdmin,
+			);
+                $site = null;
+		}
 		echo json_encode($details);
 		exit(0);
 	}
-	
 
+	public function action_site_users_list()
+	{
+		$referer = $this->request->referrer();
+		$site = Doctrine::em()->getRepository('Model_Site')->findOneByUrl($referer);
+                if ($site == null || !in_array($_SERVER['REMOTE_ADDR'], explode(",", $site->ipAddrs)))
+		{
+			throw new HTTP_Exception_403('Your do not have permission to access this page.');
+		}
+		$accounts = Doctrine::em()->getRepository('Model_UserAccount')->findBySite($site);
+		$userlist = array();
+		$domain = "@" . Kohana::$config->load('system.default.domain');
+		foreach ($accounts as $account)
+		{
+			$username = $account->user->username;
+			error_log("username: $username, domain: $domain");
+			if (preg_match('/' . $domain . '$/', $username))
+			{
+				error_log("matched domain");
+				$userlist[] = str_replace($domain, "", $username);
+			}
+		}
+		echo implode(" ", $userlist);
+		exit(0);
+	}
+	
 	public function action_edit()
         {
                 $this->check_login("systemadmin");
@@ -512,13 +568,55 @@ class Controller_Users extends Controller_AbstractAdmin
 			'canAccessWiki' => $user->canAccessWiki,
 			'wikiUsername' => $user->wikiUsername,
 			'isSystemAdmin' => $user->isSystemAdmin,
-			
+			'accounts' => array(
+				'currentAccounts' => array(),
+			),
 		);
+
+		$accountFields = array('id', 'site', 'username', 'permissions');
+		$a = 0;
+		$usr_acc_ids = array();
+		$user_accounts = array();
+		// Fixes bug where duplicate interfaces appear when a new interface is added.
+		foreach ($user->accounts as $a => $account)
+                {
+                        if (!in_array($account->id, $usr_acc_ids))
+                        {
+                                $user_accounts[] = $account;
+                                $usr_acc_ids[] = $account->id;
+                        }
+                }
+                foreach ($user_accounts as $a => $account)
+                {
+			foreach ($accountFields as $af)
+			{
+				if ($af == "site")
+        	                {
+                	        	$formValues['accounts']['currentAccounts'][$a][$af] = $account->$af->id;
+                                }
+                                else
+	                        {
+        	                	$formValues['accounts']['currentAccounts'][$a][$af] = $account->$af;
+                	        }
+	                }
+        	        if ($action == 'view')
+                	{
+                                $formValues['accounts']['currentAccounts'][$a]['site'] = $account->site->name;
+                       	}
+                }
+
+		if ($action == 'edit')
+                {
+                        foreach ($accountFields as $f => $field)
+                        {
+                                $formValues['accounts']['currentAccounts'][$a+1][$f] = '';
+                        }
+                }
+
 		if ($action == 'view') 
 		{
 			$formValues['canAccessWiki'] = ($formValues['canAccessWiki'] ? 'Yes' : 'No');
 			$formValues['isSystemAdmin'] = ($formValues['isSystemAdmin'] ? 'Yes' : 'No');
-			
 		}
 		return $formValues;
 	}
@@ -533,7 +631,24 @@ class Controller_Users extends Controller_AbstractAdmin
 			'canAccessWiki' => array('title' => 'Wiki editor', 'type' => 'checkbox'),
 			'wikiUsername' => array('title' => 'Wiki username', 'type' => 'input'),
 			'isSystemAdmin' => array('title' => 'System admin', 'type' => 'checkbox'),
+			'accounts' => array(
+                                'title' => 'Accounts',
+                                'type' => 'fieldset',
+                                'fields' => array(
+                                        'currentAccounts' => array(
+                                                'title' => '',
+                                                'type' => 'table',
+                                                'fields' => array(
+                                                        'id' => array('type' => 'hidden'),
+                                                        'site' => array('title' => 'Site', 'type' => 'select', 'options' => array_merge(array('0' => ''), Model_Site::getSiteNames())),
+                                                        'username' => array('title' => 'Username', 'type' => 'input', 'size' => 20),
+                                                        'permissions' => array('title' => 'Permissions', 'type' => 'input', 'size' => 50),
+                                                ),
+                                        ),
+                                ),
+                        ),
 		);
+
 		if ($action == 'view') 
 		{
 			return FormUtils::makeStaticForm($formTemplate);
@@ -564,6 +679,39 @@ class Controller_Users extends Controller_AbstractAdmin
                 }
 		$user->isSystemAdmin = $formValues['isSystemAdmin'];
 		$user->save();
+		foreach ($formValues['accounts']['currentAccounts'] as $a => $accountValues)
+                {
+                        if (empty($accountValues['site']))
+                        {
+                                if (!empty($accountValues['id']))
+                                {
+                                        $account = Doctrine::em()->getRepository('Model_UserAccount')->find($accountValues['id']);
+                                        $account->delete();
+                                }
+                        }
+                        else
+                        {
+				$site = Doctrine::em()->getRepository('Model_Site')->find($accountValues['site']);
+                                if (empty($accountValues['id'])) 
+				{
+                                        $user->accounts->add(Model_UserAccount::build(
+						$user,
+                                                $site,
+						$accountValues['username'],
+                                                $accountValues['permissions']
+                                        ));
+                                }
+                                else
+                                {
+                                        $account = Doctrine::em()->getRepository('Model_UserAccount')->find($accountValues['id']);
+                                        $account->site = $site;
+                                        $account->username = $accountValues['username'];
+					$account->permissions = $accountValues['permissions'];
+                                        $account->save();
+                                }
+                        }
+                }
+
 	}
 }
 	

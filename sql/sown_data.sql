@@ -137,6 +137,8 @@ CREATE TABLE `deployments` (
   `advanced_firewall` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'is the advanced firewall enabled',
   `cap` bigint(20) NOT NULL DEFAULT '0' COMMENT 'bandwidth cap per month in MB',
   `cap_exceeded` tinyint(1) NOT NULL,
+  `ping_attempts` int(11) DEFAULT '4',
+  `wifi_down_after` int(11) DEFAULT '1',
   `start_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'start date of the deployment',
   `end_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'end date of the deployment',
   `radius` int(11) DEFAULT '20',
@@ -604,6 +606,25 @@ CREATE TABLE `servers` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `sites`
+--
+
+DROP TABLE IF EXISTS `sites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sites` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(255) DEFAULT NULL COMMENT 'human-readable name of the site',
+  `url` text COMMENT 'the base url of the site',
+  `ip_addrs` text COMMENT 'ip addresses that the site may appear from',
+  `default_permissions` varchar(255) DEFAULT NULL COMMENT 'default permissions to assign to a user account for this site',
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'when the site was added',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'when the site was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `stats_login`
 --
 
@@ -621,6 +642,29 @@ CREATE TABLE `stats_login` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `user_accounts`
+--
+
+DROP TABLE IF EXISTS `user_accounts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_accounts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `user_id` int(11) NOT NULL COMMENT 'id of the user who has an account',
+  `site_id` int(11) NOT NULL COMMENT 'id of site acccount is for',
+  `username` varchar(255) DEFAULT NULL COMMENT 'username of account on site',
+  `permissions` varchar(255) DEFAULT NULL COMMENT 'permissions for the user account',
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'when the user account was created',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'when the user account was last modified',
+  PRIMARY KEY (`id`),
+  KEY `user_accounts_to_users` (`user_id`),
+  KEY `user_accounts_to_sites` (`site_id`),
+  CONSTRAINT `user_accounts_to_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `user_accounts_to_sites` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -738,4 +782,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-06-06  4:23:01
+-- Dump completed on 2016-06-28  4:23:03

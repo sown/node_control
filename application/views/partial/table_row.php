@@ -123,6 +123,11 @@ foreach ($fields as $f => $field)
 		}
 		echo "</td>\n";
 	}
+	elseif ($f == "numAccounts")
+	{
+		$accounts = $row->accounts;
+		echo "<td>".sizeof($accounts)."</td>\n";
+	}
 	elseif ($f == "location" && is_object($row->$f))
         {
 		echo "          <td>" . $row->location->name . "</td>\n";
