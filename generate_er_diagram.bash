@@ -16,6 +16,6 @@ if [ `diff $sqlfile sql/sown_data.sql | egrep -v "^[0-9]+c[0-9]+" | egrep -v "^[
 	mv $sqlfile sql/sown_data.sql
 	sqlt-diagram -d=MySQL -t="sown_data - `date`" -o=diagrams/sown_data.png sql/sown_data.sql >/dev/null
 else
-	#rm $sqlfile
+	rm $sqlfile
 	touch diagrams/sown_data.png
 fi
