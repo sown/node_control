@@ -187,7 +187,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		{
 			$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
                 }
-		$formTemplate = $this->_load_form_template('edit', $formValues['externalBuild']);
+		$formTemplate = $this->_load_form_template('edit', isset($formValues['externalBuild']));
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'edit');
                 $notesFormTemplate = Controller_Notes::load_form_template('edit');
                 $this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('updateNode' => 'Update Node'), $errors, $success) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
