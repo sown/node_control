@@ -19,14 +19,13 @@ return array
 		(
 			'site_name' => 'SOWN Admin System',
                         'url'   => 'https://sown-auth2.ecs.soton.ac.uk',
-			'domain' => 'sown.org.uk',
 			'contact_email' => 'support@sown.org.uk',
 			'sender_email' => 'NO-REPLY@sown.org.uk',
 			'sender_name' => 'Southampton Open Wireless Network team',
 			'email_subject_prefix' => '[sown-accounts]',
                         'latest_end_datetime' => '2037-12-31 23:59:59',
 			'valid_external_domains' => array('ecs.soton.ac.uk', 'soton.ac.uk'),
-			'valid_query_ips' => array('127.0.0.1', '127.0.1.1', '152.78.189.39', '10.13.0.250', '152.78.189.44', '10.13.0.243'), // localhost, localhost loopback, sown-dev.ecs.soton.ac.uk+www.sown.org.uk, dev.sown.org.uk, sown-monitor.ecs.soton.ac.uk, monitor.sown.org.uk
+			'valid_query_ips' => array('127.0.0.1', '127.0.1.1', '::1', '152.78.189.44', '2001:630:d0:f104::5032:243', '10.13.0.243', '2001:630:d0:f700::243'), // localhost, localhost loopback, sown-monitor.ecs.soton.ac.uk, monitor.sown.org.uk
 		),
 		'adapter_types' => array_merge($wireless_adapter_types, $wired_adapter_types),
 		'wired_adapter_types' => $wired_adapter_types,

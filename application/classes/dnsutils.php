@@ -4,7 +4,7 @@ class DNSUtils {
 
  	public static function generateHostsForwardFragment($dir, $nameservers, $servers, $other_hosts, $wwwserver)
         {
-		$domain = Kohana::$config->load('system.default.admin_system.domain');
+		$domain = Kohana::$config->load('system.default.domain');
 
                 $dns = "; Primary Services\n";
                 list($dns2, $nss, $domain_server_interface) = DNSUtils::generateNameserverEntries($nameservers, false);
@@ -88,7 +88,7 @@ class DNSUtils {
 	public static function generateHostsReverseFragment($dir, $nameservers, $server_interfaces, $other_hosts)
         {
 		$dns_head = DNSUtils::generateNameserverEntries($nameservers) . "\n";
-		$domain = Kohana::$config->load('system.default.admin_system.domain');
+		$domain = Kohana::$config->load('system.default.domain');
                 $local_vlan = Kohana::$config->load('system.default.vlan.local');
                 $ipv4_rev_subnet =  Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
 		$dns4 = $dns_head;
@@ -285,7 +285,7 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
 
 	private static function generateNameserverEntries($nameservers, $just_text = true)
 	{
-                $domain = Kohana::$config->load('system.default.admin_system.domain');
+                $domain = Kohana::$config->load('system.default.domain');
                 $dns = "";
                 $nss = array();
                 $domain_server_interface = null;
