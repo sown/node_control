@@ -187,7 +187,7 @@ class SOWN
 	public static function get_all_cron_job_hosts()
 	{
 		$hosts = array();
-		$servers = Doctrine::em()->getRepository('Model_Server')->findBy(array(), array('name' => 'ASC'));
+		$servers = Doctrine::em()->getRepository('Model_Server')->findBy(array("retired" => 0), array('name' => 'ASC'));
 		foreach ($servers as $server)
 		{
 			$hosts['server:'.$server->id] = $server->name;
