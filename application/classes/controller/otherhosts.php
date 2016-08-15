@@ -275,6 +275,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'IPv6Addr' => $other_host->IPv6Addr,
 			'alias' => $other_host->alias,
 			'checkCommand' => $other_host->checkCommand,
+			'services' => array(),
 			'contacts' => array(
                                 'currentContacts' => array(),
                         ),
@@ -313,12 +314,24 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                 {	
 			$formValues['retired'] = ( $formValues['retired'] ? 'Yes' : 'No');
 			$formValues['internal'] = ( $formValues['internal'] ? 'Yes' : 'No');
+			$services = array();
+                        foreach ($other_host->services as $hostService)
+                        {
+                                $services[] = $hostService->service->label;
+                        }
+                        $formValues['services'] = implode(", ", $services);
 		}
 		if ($action == 'edit')
                 {
                         foreach ($contact_fields as $cf)
                         {
                                 $formValues['contacts']['currentContacts'][$c+1][$cf] = '';
+                        }
+			// Cannot use $server->Services because these are not updated quick enough to be displayed on page reload.
+                        $hostServices = Doctrine::em()->getRepository('Model_HostService')->findByOtherHost($other_host);
+                        foreach ($hostServices as $hostService)
+                        {
+                                $formValues['services'][] = $hostService->service->id;
                         }
                 }
 
@@ -328,6 +341,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 	private function _load_form_template($action = 'edit')
 	{
 		$locations = Sown::get_all_locations();
+		$services = Sown::get_all_host_services();
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'name' => array('title' => 'Name', 'type' => 'input', 'size' => 20),
@@ -346,6 +360,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 50),
 			'alias' => array('title' => 'Alias', 'type' => 'input', 'size' => 50),
 			'checkCommand' => array('title' => 'Check Command', 'type' => 'input', 'size' => 50),
+			'services' => array('title' => 'Services', 'type' => 'multiselect', 'options' => $services),
 			'contacts' => array(
                                 'title' => 'Contacts',
                                 'type' => 'fieldset',
@@ -388,6 +403,34 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 		$other_host->IPv6Addr = $formValues['IPv6Addr'];
 		$other_host->alias = $formValues['alias'];
 		$other_host->checkCommand = $formValues['checkCommand'];
+
+		$dbServices = array();
+                $hostServices = Doctrine::em()->getRepository('Model_HostService')->findByOtherHost($other_host);
+                foreach ($hostServices as $hostService)
+                {
+                        $serviceId = $hostService->service->id;
+                        if (!in_array($serviceId, $formValues['services']))
+                        {
+                                Model_Builder::destroy_simple_object($hostService->id, 'HostService');
+                        }
+                        else
+                        {
+                                $dbServices[] = $serviceId;
+                        }
+                }
+                foreach ($formValues['services'] as $serviceId)
+                {
+                        if (!in_array($serviceId, $dbServices))
+                        {
+                                $service = Doctrine::em()->getRepository('Model_Service')->find($serviceId);
+                                $hostService = Model_HostService::build(null, $other_host, $service);
+                                if (is_object($hostService))
+                                {
+                                        $hostService->save();
+                                }
+                        }
+                }
+
 		foreach ($formValues['contacts']['currentContacts'] as $c => $contactValues)
                 {
                         if (empty($contactValues['name']) && empty($contactValues['email']))

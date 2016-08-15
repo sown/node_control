@@ -140,6 +140,14 @@ class Model_OtherHost extends Model_Entity
          */
         protected $contacts;
 
+	/**
+        * @ManyToMany(targetEntity="Model_HostService")
+        * @JoinTable(name="host_services",
+        *      joinColumns={@JoinColumn(name="other_host_id", referencedColumnName="id")},
+        *      inverseJoinColumns={@JoinColumn(name="server_id", referencedColumnName="id")}
+        *      )
+        */
+        protected $services;
 
 	public function __get($name)
 	{
@@ -160,7 +168,7 @@ class Model_OtherHost extends Model_Entity
 
 	public static function getByName($name)
 	{
-		return Doctrine::em()->getRepository('ModelOtherHost')->findOneByName($name);
+		return Doctrine::em()->getRepository('Model_OtherHost')->findOneByName($name);
 	}
 
 	public static function getByHostname($hostname)
@@ -177,6 +185,11 @@ class Model_OtherHost extends Model_Entity
 	{
 		$this->logUse();
 		$str  = "OtherHost: {$this->id}, name={$this->name}, type={$type}, parent={$this->parent}, description={$this->description}, location={$this->location}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, case={$this->case}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, alias={$this->alias}, checkCommand={$this->checkCommand}, ";
+		foreach($this->services as $hostService)
+                {
+                        $str .= "<br/>";
+                        $str .= "service={$hostService->service->name}";
+                }
 		foreach($this->contacts as $contact)
                 {
                         $str .= "<br/>";
@@ -203,6 +216,10 @@ class Model_OtherHost extends Model_Entity
 		foreach(array('retired', 'case', 'hostname', 'cname', 'mac', 'IPv4Addr', 'IPv6Addr', 'alias' ,'checkCommand') as $field)
                 {
                         $str .= $this->fieldHTML($field);
+                }
+		foreach($this->services as $hostService)
+                {
+                        $str .= $this->fieldHTML('service', $hostService->toHTML());
                 }
 		foreach($this->contacts as $contact)
                 {

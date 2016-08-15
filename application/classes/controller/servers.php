@@ -297,6 +297,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                 {
                         throw new HTTP_Exception_404();
                 }
+		
                 $formValues = array(
                         'id' => $server->id,
                         'name' => $server->name,
@@ -315,6 +316,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'wakeOnLan' => $server->wakeOnLan,
 			'kernel' => $server->kernel,
 			'os' => $server->os,
+			'services' => array(),
 			'interfaces' => array(
                                 'currentInterfaces' => array(),
                         ),
@@ -390,6 +392,12 @@ class Controller_Servers extends Controller_AbstractAdmin
                         {
                                 $formValues['interfaces']['currentInterfaces'][$if]['subordinate'] = ($ifdata['subordinate'] ? 'Yes' : 'No');
                         }
+			$services = array();
+			foreach ($server->services as $hostService)
+			{
+				$services[] = $hostService->service->label;
+			}
+			$formValues['services'] = implode(", ", $services);
 		}
 		if ($action == 'edit')
                 {
@@ -401,6 +409,12 @@ class Controller_Servers extends Controller_AbstractAdmin
                         {
                                 $formValues['contacts']['currentContacts'][$c+1][$cf] = '';
                         }
+			// Cannot use $server->Services because these are not updated quick enough to be displayed on page reload.
+                        $hostServices = Doctrine::em()->getRepository('Model_HostService')->findByServer($server);
+			foreach ($hostServices as $hostService)
+                        {
+                                $formValues['services'][] = $hostService->service->id;
+                        }
                 }
 		return $formValues;
 	}
@@ -408,6 +422,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 	private function _load_form_template($action = 'edit')
 	{
 		$locations = Sown::get_all_locations();
+		$services = Sown::get_all_host_services();
 		$vlans = Sown::get_all_vlans();
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
@@ -427,6 +442,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			'wakeOnLan' => array('title' => 'Wake-On-Lan', 'type' => 'input', 'size' => 100),
                         'kernel' => array('title' => 'Kernel', 'type' => 'input', 'size' => 50),
                         'os' => array('title' => 'Operating System', 'type' => 'input', 'size' => 50),
+			'services' => array('title' => 'Services', 'type' => 'multiselect', 'options' => $services),
 			'interfaces' => array(
                                 'title' => 'Interfaces',
                                 'type' => 'fieldset',
@@ -492,6 +508,33 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$server->wakeOnLan = $formValues['wakeOnLan'];
                 $server->kernel = $formValues['kernel'];
                 $server->os = $formValues['os'];
+
+		$dbServices = array();
+		$hostServices = Doctrine::em()->getRepository('Model_HostService')->findByServer($server);
+		foreach ($hostServices as $hostService)
+                {
+                        $serviceId = $hostService->service->id;
+                        if (!in_array($serviceId, $formValues['services']))
+                        {
+                                Model_Builder::destroy_simple_object($hostService->id, 'HostService');
+                        }
+                        else
+                        {
+                                $dbServices[] = $serviceId;
+                        }
+                }
+                foreach ($formValues['services'] as $serviceId)
+                {
+                        if (!in_array($serviceId, $dbServices))
+                        {
+				$service = Doctrine::em()->getRepository('Model_Service')->find($serviceId);
+                                $hostService = Model_HostService::build($server, null, $service);
+                                if (is_object($hostService))
+                                {
+                                        $hostService->save();
+                                }
+                        }
+                }
 
 		foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interfaceValues)
                 {

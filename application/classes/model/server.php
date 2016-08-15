@@ -167,6 +167,15 @@ class Model_Server extends Model_Entity
 	*      )
 	*/ 
 	protected $cronJobs;
+
+	/**
+        * @ManyToMany(targetEntity="Model_HostService")
+        * @JoinTable(name="host_services",
+        *      joinColumns={@JoinColumn(name="server_id", referencedColumnName="id")},
+	*      inverseJoinColumns={@JoinColumn(name="service_id", referencedColumnName="id")}
+        *      )
+        */
+        protected $services;
 	
 
 	public function __get($name)
@@ -279,6 +288,10 @@ class Model_Server extends Model_Entity
 		foreach(array('retired', 'serverCase', 'processor', 'memory', 'hardDrive', 'networkPorts', 'wakeOnLan', 'kernel', 'os') as $field)
                 {
                         $str .= $this->fieldHTML($field);
+                }
+		foreach($this->services as $hostService)
+                {
+                        $str .= $this->fieldHTML('service', $hostService->toHTML());
                 }
 		foreach($this->interfaces as $interface)
                 {

@@ -13,14 +13,25 @@ class Controller_Icinga extends Controller_AbstractAdmin
                 {
                         $parent = trim($server->parent);
                         $parent = (empty($parent) ? null : $parent);
+			$os = trim($server->os);
+                        $os = (empty($os) ? null : $os);
+			$services = array();
+			// Cannot use $server->Services because these are not updated quick enough to be displayed on page reload.
+                        $hostServices = Doctrine::em()->getRepository('Model_HostService')->findByServer($server);
+			foreach ($hostServices as $hostService)
+			{
+				$services[] = $hostService->service->name;
+			}
                         $attrs = array(
                                 'type' => $server->state.$server->purpose,
 				'use_var' => true,
                                 'parent' => $parent,
+				'os' => $os,
                                 'internal_ipv4' => null,
                                 'internal_ipv6' => null,
                                 'external_ipv4' => null,
                                 'external_ipv6' => null,
+				'services' => $services,
 				'contacts' => null,
                         );
 
@@ -55,10 +66,18 @@ class Controller_Icinga extends Controller_AbstractAdmin
 		$other_hosts = Doctrine::em()->getRepository('Model_OtherHost')->findBy(array('retired' => 0), array('name' => 'ASC'));
 		foreach($other_hosts as $other_host)
                 {
+			$services = array();
+			// Cannot use $server->Services because these are not updated quick enough to be displayed on page reload.
+                        $hostServices = Doctrine::em()->getRepository('Model_HostService')->findByOtherHost($other_host);
+			foreach ($other_host->services as $hostService)
+                        {
+                                $services[] = $hostService->service->name;
+                        }
 			$attrs = array(
 				'type' => $other_host->type,
 				'use_var' => false,
                                 'parent' => (strlen($other_host->parent) ? $other_host->parent : null),
+				'os' => 'unknown',
                                 'internal_ipv4' => null,
                                 'internal_ipv6' => null,
                                 'external_ipv4' => null,
@@ -66,6 +85,7 @@ class Controller_Icinga extends Controller_AbstractAdmin
 				'hostname' => (strlen($other_host->hostname) ? $other_host->hostname : null),
 				'alias' => (strlen($other_host->alias) ? $other_host->alias : null),
 				'check_command' => (strlen($other_host->checkCommand) ? $other_host->checkCommand : null),
+				'services' => $services,
 				'contacts' => null,
 			);
 			$prefix = ($other_host->internal ? 'internal' : 'external');

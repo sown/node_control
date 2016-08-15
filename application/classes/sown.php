@@ -204,6 +204,17 @@ class SOWN
 		return $hosts;
 	}
 
+	public static function get_all_host_services()
+        {
+		$host_services = array();
+		$services = Doctrine::em()->getRepository('Model_Service')->findAll();
+                foreach ($services as $service)
+                {
+                        $host_services[$service->id] = $service->label;
+                }
+		return $host_services;
+	}
+
 	public static function process_server_attributes()
 	{
 		$logging = true;

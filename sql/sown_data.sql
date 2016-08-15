@@ -254,6 +254,27 @@ CREATE TABLE `host_cron_jobs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `host_services`
+--
+
+DROP TABLE IF EXISTS `host_services`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `host_services` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `server_id` int(11) DEFAULT NULL COMMENT 'id of server',
+  `other_host_id` int(11) DEFAULT NULL COMMENT 'id od other_host',
+  `service_id` int(11) NOT NULL COMMENT 'id of service',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `host_service_to_server` (`server_id`),
+  KEY `host_service_to_other_host` (`other_host_id`),
+  KEY `host_service_to_service` (`service_id`),
+  CONSTRAINT `host_service_to_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='services assigned to hosts';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `interfaces`
 --
 
@@ -598,11 +619,29 @@ CREATE TABLE `servers` (
   `wake_on_lan` varchar(255) DEFAULT NULL,
   `kernel` varchar(255) DEFAULT NULL,
   `os` varchar(255) DEFAULT NULL,
+  `stores_backups` int(1) NOT NULL DEFAULT '0',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `server_to_certificate` (`certificate_id`),
   CONSTRAINT `server_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `services`
+--
+
+DROP TABLE IF EXISTS `services`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `services` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(255) NOT NULL COMMENT 'machine-readable name for the service',
+  `label` varchar(255) NOT NULL COMMENT 'human-readable label for the service',
+  `description` text NOT NULL COMMENT 'human-readable description for the service',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='services assignable to hosts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -782,4 +821,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-06-28  4:23:03
+-- Dump completed on 2016-08-11  4:23:03
