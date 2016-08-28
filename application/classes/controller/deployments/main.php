@@ -530,7 +530,10 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($id);
 		$deployment->name = $formValues['name'];
 		$deployment->url = $formValues['url'];
-		$deployment->type = $formValues['type'];
+		if (isset($formValues['type']))
+		{
+			$deployment->type = $formValues['type'];
+		}
 		if ($this->userRole == 'systemadmin')
 		{
 			$deployment->type = $formValues['type'];
