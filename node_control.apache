@@ -10,8 +10,16 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:80
 # HTTPS NameVirtualHosts
 NameVirtualHost 152.78.189.90:443
 NameVirtualHost [2001:630:d0:f104::5032:239]:443
-#NameVirtualHost 10.13.0.239:443
-#NameVirtualHost [2001:630:d0:f700::239]:443
+NameVirtualHost 10.13.0.239:443
+NameVirtualHost [2001:630:d0:f700::239]:443
+
+<VirtualHost 152.78.189.82:80>
+ 	ServerName sown-auth.ecs.soton.ac.uk
+        ServerAlias sown-auth
+        ServerAdmin support@sown.org.uk
+        Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
+</VirtualHost>
+
 
 <VirtualHost 152.78.189.90:80>
 	ServerName sown-auth2.ecs.soton.ac.uk
@@ -23,6 +31,8 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
 <VirtualHost 127.0.1.1:80>
         ServerName sown-auth2.ecs.soton.ac.uk
         ServerAlias sown-auth2
+	ServerAlias sown-auth.ecs.soton.ac.uk
+        ServerAlias sown-auth
         ServerAdmin support@sown.org.uk
         Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
 </VirtualHost>
@@ -34,9 +44,18 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
         Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
 </VirtualHost>
 
+<VirtualHost 2001:630:d0:f104::5032:252:80>
+        ServerName sown-auth.ecs.soton.ac.uk
+        ServerAlias sown-auth
+        ServerAdmin support@sown.org.uk
+        Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
+</VirtualHost>
+
 <VirtualHost 10.13.0.239:80>
         ServerName auth2.sown.org.uk
 	ServerAlias auth2
+	ServerAlias auth.sown.org.uk
+	ServerAlias auth
         ServerAdmin support@sown.org.uk
 	Redirect permanent / https://auth2.sown.org.uk/
 </VirtualHost>
@@ -44,6 +63,8 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
 <VirtualHost [2001:630:d0:f700::239]:80>
         ServerName auth2.sown.org.uk
         ServerAlias auth2
+	ServerAlias auth.sown.org.uk
+        ServerAlias auth
         ServerAdmin support@sown.org.uk
         Redirect permanent / https://auth2.sown.org.uk/
 </VirtualHost>
@@ -93,6 +114,20 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
     LogLevel warn
     CustomLog /var/log/apache2/auth2-access.log combined
 
+</VirtualHost>
+
+<VirtualHost 152.78.189.82:443>
+    ServerAdmin support@sown.org.uk
+    ServerName sown-auth.ecs.soton.ac.uk
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.key
+    SSLCertificateChainFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.cachain
+    SSLProtocol -all +TLSv1 +SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
+
+    Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
 </VirtualHost>
 
 <VirtualHost 127.0.1.1:443>
@@ -189,6 +224,21 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
 
 </VirtualHost>
 
+<VirtualHost [2001:630:d0:f104::5032:252]:443>
+    ServerAdmin support@sown.org.uk
+    ServerName sown-auth.ecs.soton.ac.uk
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.key
+    SSLCertificateChainFile /etc/apache2/ssl/sown-auth2.ecs.soton.ac.uk/current/sown-auth2.ecs.soton.ac.uk.cachain
+    SSLProtocol -all +TLSv1 +SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
+
+    Redirect permanent / https://sown-auth2.ecs.soton.ac.uk/
+</VirtualHost>
+
+
 <VirtualHost 10.13.0.239:443>
     ServerAdmin support@sown.org.uk
     ServerName auth2.sown.org.uk
@@ -235,6 +285,20 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
     LogLevel warn
     CustomLog /var/log/apache2/auth2-access.log combined
 
+</VirtualHost>
+
+<VirtualHost 10.13.0.239:443>
+    ServerAdmin support@sown.org.uk
+    ServerName auth2.sown.org.uk
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.key
+    SSLCertificateChainFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.cachain
+    SSLProtocol -all +TLSv1 +SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
+
+    Redirect permanent / https://auth2.sown.org.uk/
 </VirtualHost>
 
 <VirtualHost [2001:630:d0:f700::239]:443>
@@ -284,3 +348,18 @@ NameVirtualHost [2001:630:d0:f104::5032:239]:443
     CustomLog /var/log/apache2/auth2-access.log combined
 
 </VirtualHost>
+
+<VirtualHost [2001:630:d0:f700::239]:443>
+    ServerAdmin support@sown.org.uk
+    ServerName auth2.sown.org.uk
+
+    SSLEngine on
+    SSLCertificateFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.key
+    SSLCertificateChainFile /etc/apache2/ssl/auth2.sown.org.uk/current/auth2.sown.org.uk.cachain
+    SSLProtocol -all +TLSv1 +SSLv3
+    SSLCipherSuite HIGH:MEDIUM:!aNULL:+SHA1:+MD5:+HIGH:+MEDIUM
+
+    Redirect permanent / https://auth2.sown.org.uk/
+</VirtualHost>
+
