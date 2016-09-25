@@ -62,20 +62,19 @@
 			</p>
 		</form>
 	</div>
-	<!-- Accepted Users List -->
-	<!--
 	<div id='valid_institutions'>
-		<h4>Currently accepted users:</h4>
+		<h4>Users from the following domains can login to managed their accounts or a node that they host:</h4>
 	
 		<dl class="list">
+                        <dt><abbr title="Southampton Open Wireless Network">SOWN</abbr> <span class='no_bold'>(@sown.org.uk)</span></dt>
+                                <dd>&raquo; If you have forgotten your password <a href="forgot_password">click here</a>.</dd>
 			<dt>University of Southampton <span class='no_bold'>(@soton.ac.uk)</span></dt>
 				<dd>&raquo; This uses your <strong>iSolutions</strong> username &amp; password.</dd>
 			<dt><abbr title="Electronics and Computer Science">ECS</abbr> <span class='no_bold'>(@ecs.soton.ac.uk)</span></dt>
 				<dd>&raquo; This uses your ECS username and password.</dd>
-			<dt><abbr title="Southampton Open Wireless Network">SOWN</abbr> <span class='no_bold'>(@sown.org.uk)</span></dt>
-				<dd>&raquo; If you have forgotten your password <a href="forgot_password">click here</a>.</dd>
 		</dl>
 	</div>
+        <!--
 	<div id='contact_sown'>
 		<h4>Contact SOWN</h4>
 		<p>Please contact SOWN if you...</p>
