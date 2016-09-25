@@ -44,20 +44,6 @@ class Model_User extends Model_Entity
 	protected $isSystemAdmin;
 
 	/**
-         * @var boolean $canAccessWiki
-         *
-         * @Column(name="can_access_wiki", type="boolean", nullable=false)
-         */
-        protected $canAccessWiki;
-
-	/**
-         * @var text $wikiUsername
-         *
-         * @Column(name="wiki_username", type="text", nullable=false)
-         */
-        protected $wikiUsername;
-
-	/**
 	 * @var text $resetPasswordHash
 	 *
 	 * @Column(name="reset_password_hash", type="text", nullable=false)
@@ -131,15 +117,13 @@ class Model_User extends Model_Entity
 		}
 	}
 
-	public static function build($username, $name, $email, $isSystemAdmin = FALSE, $canAccessWiki = FALSE, $wikiUsername = "")
+	public static function build($username, $name, $email, $isSystemAdmin = FALSE)
         {
                 $obj = new Model_User();
                 $obj->username = $username;
 		$obj->name = $name;
                 $obj->email = $email;
                 $obj->isSystemAdmin = $isSystemAdmin;
-		$obj->canAccessWiki = $canAccessWiki;
-		$obj->wikiUsername = $wikiUsername;
 		$obj->resetPasswordHash = "";
                 return $obj;
         }
@@ -147,7 +131,7 @@ class Model_User extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "User: {$this->id}, username={$this->username}, name={$this->name}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, canAccessWiki={$this->canAccessWiki}, wikiUsername={$this->wikiUsername}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordTime={$this->resetPasswordTimestamp()}";
+		$str  = "User: {$this->id}, username={$this->username}, name={$this->name}, email={$this->email}, isSystemAdmin={$this->isSystemAdmin}, resetPasswordHash={$this->resetPasswordHash}, resetPasswordTime={$this->resetPasswordTimestamp()}";
 
 		foreach($this->admins as $admin)
 		{
@@ -168,7 +152,7 @@ class Model_User extends Model_Entity
 		$str  = "<div class='user' id='user_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>User</th><td>{$this->id}</td></tr>";
-		foreach(array('username', 'name', 'email', 'isSystemAdmin', 'canAccessWiki', 'wikiUsername', 'resetPasswordHash') as $field)
+		foreach(array('username', 'name', 'email', 'isSystemAdmin', 'resetPasswordHash') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}

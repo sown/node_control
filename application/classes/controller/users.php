@@ -356,6 +356,11 @@ class Controller_Users extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$formTemplate = $this->_load_form_template('view');
+		$domain = Kohana::$config->load('system.default.domain');
+		if (!preg_match('/'.$domain.'$/', $formValues['username']))
+		{
+			unset($formTemplate['accounts']);
+		}
 		$notesFormValues = Controller_Notes::load_from_database('User', $formValues['id'], 'view');
                 $notesFormTemplate = Controller_Notes::load_form_template('view');
 		$this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('editUser' => 'Edit User')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
@@ -468,6 +473,11 @@ class Controller_Users extends Controller_AbstractAdmin
 		{
 			$formTemplate['email']['type'] = 'statichidden';
 		}
+		$domain = Kohana::$config->load('system.default.domain');
+                if (!preg_match('/'.$domain.'$/', $formValues['username']))
+                {
+                        unset($formTemplate['accounts']);
+                }
 		$notesFormValues = Controller_Notes::load_from_database('User', $formValues['id'], 'edit');
                 $notesFormTemplate = Controller_Notes::load_form_template('edit');
                 $this->template->content = FormUtils::drawForm('User', $formTemplate, $formValues, array('updateUser' => 'Update User'), $errors, $success) .  FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
@@ -565,8 +575,6 @@ class Controller_Users extends Controller_AbstractAdmin
 			'username' => $user->username,
 			'name' => $user->name,
 			'email' => $user->email,
-			'canAccessWiki' => $user->canAccessWiki,
-			'wikiUsername' => $user->wikiUsername,
 			'isSystemAdmin' => $user->isSystemAdmin,
 			'accounts' => array(
 				'currentAccounts' => array(),
@@ -615,7 +623,6 @@ class Controller_Users extends Controller_AbstractAdmin
 
 		if ($action == 'view') 
 		{
-			$formValues['canAccessWiki'] = ($formValues['canAccessWiki'] ? 'Yes' : 'No');
 			$formValues['isSystemAdmin'] = ($formValues['isSystemAdmin'] ? 'Yes' : 'No');
 		}
 		return $formValues;
@@ -628,8 +635,6 @@ class Controller_Users extends Controller_AbstractAdmin
 			'username' => array('title' => 'Username', 'type' => 'statichidden'),
 			'name' => array('title' => 'Full Name', 'type' => 'input'),
 			'email' => array('title' => 'Email', 'type' => 'input'),
-			'canAccessWiki' => array('title' => 'Wiki editor', 'type' => 'checkbox'),
-			'wikiUsername' => array('title' => 'Wiki username', 'type' => 'input'),
 			'isSystemAdmin' => array('title' => 'System admin', 'type' => 'checkbox'),
 			'accounts' => array(
                                 'title' => 'Accounts',
@@ -667,12 +672,6 @@ class Controller_Users extends Controller_AbstractAdmin
 		{
 			$user->email = $formValues['email'];
 		}
-		if (!isset($formValues['canAccessWiki']))
-                {
-                        $formValues['canAccessWiki'] = 0;
-                }
-		$user->canAccessWiki = $formValues['canAccessWiki'];
-                $user->wikiUsername = $formValues['wikiUsername'];
 		if (!isset($formValues['isSystemAdmin']))
                 {
         		$formValues['isSystemAdmin'] = 0;
