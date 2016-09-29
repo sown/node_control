@@ -301,33 +301,49 @@ class Controller_Data extends Controller
         {
                 $users = 0;
                 $connections = 0;
-                $lastnode = '';
+                $calledstationid = '';
                 $array = array();
                 foreach ($results as $result)
                 {
-                        if (!empty($lastnode) && $result['thenode'] != $lastnode)
+                        if (!empty($calledstationid) && $result['thenode'] != $calledstationid)
                         {
-				$lnbits = explode(":", $lastnode);
-				$lnmac = str_replace("-", ":", $lnbits[0]);
-				$node = Model_Node::getByMac($lnmac);	
-				$nodename = $lnmac;
-				if (!empty($node))
-				{
-					$nodename =  $node->boxNumber;
-				}
-                                $array[$nodename] = array('thenode' => $nodename, 'no_users' => $users, 'no_connections' => $connections);
+				$array = $this->_set_update_node_users_connections($array, $calledstationid, $users, $connections);
                                 $users = 0;
                                 $connections = 0;
                         }
                         $users++;
                         $connections += $result['connections'];
-                        $lastnode = $result['thenode'];
+                        $calledstationid = $result['thenode'];
                 }
-                if ($users > 0) {
-                         $array[] = array('thenode' => $lastnode, 'no_users' => $users, 'no_connections' => $connections);
+                if ($users > 0) 
+		{
+			$array = $this->_set_update_node_users_connections($array, $calledstationid, $users, $connections);
                 }
+		ksort($array);
                 return $array;
         }
+
+	private function _set_update_node_users_connections($array, $calledstationid, $users, $connections)
+	{
+		$csibits = explode(":", $calledstationid);
+                $csimac = str_replace("-", ":", $csibits[0]);
+                $node = Model_Node::getByMac($csimac);
+		if (empty($node))
+                {
+			return $array;
+		}
+		$index = $node->boxNumber;
+		if (isset($array[$index]))
+                {
+                        $array[$index]['no_users'] += $users;
+                        $array[$index]['no_users'] += $connections;
+                }
+                else
+                {
+                        $array[$index] = array('thenode' => $index, 'no_users' => $users, 'no_connections' => $connections);
+        	}
+		return $array;
+	}
 
 	private function _get_radius_user_results($select_date_format, $formatted_date = '', $where_date_format = '') 
 	{
