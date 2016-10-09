@@ -102,6 +102,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 ->rule('wirelessMac', 'not_empty', array(':value'));				
 			if ($validation->check())
         		{
+				if (!isset($formValues['externalBuild']))
+				{
+					$formValues['externalBuild'] = 0;
+				}
 				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['hardware'], $formValues['wirelessChipset'], $formValues['firmwareVersion'], $formValues['firmwareImage'], $formValues['externalBuild']);
                         	$success = "Successfully created node with box number: <a href=\"/admin/nodes/$node->boxNumber\">$node->boxNumber</a>.";
  
