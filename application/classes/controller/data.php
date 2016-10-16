@@ -10,7 +10,7 @@ class Controller_Data extends Controller
 		echo "</ul>";
 		echo "<p>The following graph calls are available:</p><ul>";
 		echo "<li><a href=\"data/graph/user/day/now\">Concurrent Users in last 24 hours</a></li>";
-                echo "<li><a href=\"data/graph/connection/day/now\">Cocurrent Connections inn last 24 hours</a></li>";
+                echo "<li><a href=\"data/graph/connection/day/now\">Concurrent Connections in last 24 hours</a></li>";
 		echo "<li><a href=\"data/graph/user/day\">Users per day</a></li>";
 		echo "<li><a href=\"data/graph/connection/day\">Connections per day</a></li>";
 		echo "<li><a href=\"data/graph/user/month\">Users per month</a></li>";
