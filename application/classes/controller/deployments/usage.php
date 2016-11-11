@@ -57,7 +57,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 				$ydata[$m++] = 0;
 		}
 		
-		SOWN::draw_bar_graph('Last 12 months usage', 'Month', 'Usage (GB)', $months, $ydata);	
+		SOWN::draw_bar_graph('Last 3 months usage', 'Month', 'Usage (GB)', $months, $ydata);	
 	}
 
 	public function action_daily_graph()
