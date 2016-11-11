@@ -94,7 +94,6 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$subtitle = "My Deployments";
                 View::bind_global('subtitle', $subtitle);
                 $this->template->sidebar = View::factory('partial/sidebar');
-                $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		if (sizeof($deployments) == 0)
 		{
 			$content="<p><b>You have no current deployments!</b></p>";
@@ -189,7 +188,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			$this->request->redirect(Route::url('edit_deployment', array('id' => $this->request->param('id'))));
 		}
 		$this->template->sidebar = View::factory('partial/sidebar');
-		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+		$user = Auth::instance();
+                if ($user->is('systemadmin'))
+                {
+                        $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+                }
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$deployedNode = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeId']);
 		$formValues['nodeId'] = $deployedNode->boxNumber;
@@ -209,7 +212,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$jsFiles = array('jquery.js', 'jquery-ui.js');
 		View::bind_global('jsFiles', $jsFiles);
                 $this->template->sidebar = View::factory('partial/sidebar');
-		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+		$user = Auth::instance();
+                if ($user->is('systemadmin'))
+                {
+                        $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
+                }	
 		$errors = array();
                 $success = "";
 		if ($this->request->method() == 'POST')
