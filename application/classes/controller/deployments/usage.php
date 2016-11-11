@@ -39,6 +39,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		foreach (array_slice($allmonths, 0, date("n")) as $month)
                         $months[] = $month . " ". date('y');
 
+		$months = array_slice($months, -3);
 		$nodeDeploymentsUsage = array();
 		$path = Kohana::$config->load('system.default.rrd.deployment_path');
 		foreach($deployment->nodeDeployments as $nodeDeployment)
