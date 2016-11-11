@@ -179,7 +179,10 @@ class Model_User extends Model_Entity
                 $deployments = array();
                 foreach($this->admins as $admin)
                 {
-                        $deployments[] = $admin->deployment;
+			if ($admin->endDate->format('Y-m-d H:i:s') == Kohana::$config->load('system.default.admin_system.latest_end_datetime'))
+			{
+                        	$deployments[] = $admin->deployment;
+			}
                 }
                 return $deployments;
         }
