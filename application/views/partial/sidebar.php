@@ -9,9 +9,9 @@ if(!isset($user))
     <div class="logout">
       <a title="Logout" href="/logout">Logout</a>
     </div>
-    <div class="banner">Your details</div>
+    <div class="banner">My details</div>
       <div class="content">
-        You are logged in as:
+        Logged in username:
         <br/>
         <div style='text-align:center'>
           <br/>
@@ -20,12 +20,10 @@ if(!isset($user))
         </div>
       </div>
     </div>
+<?php if($user->is('systemadmin') || $user->is('local')) { ?>
     <div class="gadget">
       <div class="banner">Main Menu</div>
       <div class="content">
-<?php if($user->is('systemadmin')) { ?>
-        <a href="<?= Route::url('test') ?>">Test</a><br/>
-<?php } ?>
 <?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('users') ?>">Users</a><br/>
 <?php } ?>
@@ -34,32 +32,34 @@ if(!isset($user))
 <?php } ?>
       </div>
     </div>
+<?php } ?>
+<?php if($user->is('systemadmin')) { ?>
     <div class="gadget">
       <div class="banner">Nodes/Deployments</div>
       <div class="content">
-<?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('nodes') ?>">Nodes</a><br/>
-<?php } ?>
-<?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('deployments') ?>">Deployments</a><br/>
-<?php } ?>
-<?php if($user->is('deploymentadmin')) { ?>
-        <a href="<?= Route::url('my_deployments') ?>">My Deployment(s)</a><br/>
-        <a href="<?= Route::url('deployments_usage') ?>">My Deployment(s) Usage</a><br/>
-<?php } ?>
-<?php if($user->is('systemadmin')) { ?>
         <a href="<?= Route::url('deployments_usage_all') ?>">All Deployments Usage</a><br/>
 	<a href="<?= Route::url('pending_node_requests') ?>">Pending Node Requests</a><br/>
 	<a href="<?= Route::url('pending_node_setup_requests') ?>">Pending Node Setup Requests</a><br/>
 	<a href="<?= Route::url('reserved_subnets') ?>">Reserved Subnets</a><br/>
-<?php } ?>
-      </div>
+     </div>
     </div>
+<?php } ?>
+<?php if($user->is('deploymentadmin')) { ?>
      <div class="gadget">
+      <div class="banner">My Deployment(s)</div>
+      <div class="content">
+        <a href="<?= Route::url('my_deployments') ?>">Configuration</a><br/>
+        <a href="<?= Route::url('deployments_usage') ?>">Usage</a><br/>
+       </div>
+    </div>
+<?php } ?>
+<?php if($user->is('systemadmin')) { ?>
+    <div class="gadget">
       <div class="banner">Miscellaneous</div>
       <div class="content">
-
-<?php if($user->is('systemadmin')) { 
+<?php 
 	$unresponded = sizeof(Model_Enquiry::getUnresponded());
         $enquiry_type_account = Doctrine::em()->getRepository('Model_EnquiryType')->find(3);
         $unresponded_accounts = sizeof(Model_Enquiry::getUnresponded(array('type' => $enquiry_type_account)));
@@ -72,8 +72,8 @@ if(!isset($user))
 	<a href="<?= Route::url('unresponded_type_enquiries', array('type' => 3)) ?>">Community Account Requests (<?= $unresponded_accounts ?>)</a><br/>
         <a href="<?= Route::url('inventory') ?>">Inventory</a><br/>
         <a href="<?= Route::url('radaccts') ?>">Radius Accounting</a><br/>
-<?php } ?>
-
       </div>
   </div>
+<?php } ?>
+
 </div>
