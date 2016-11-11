@@ -492,7 +492,7 @@ class Model_Node extends Model_Entity
 	{
 		$undeployedNodes = array();
 		$latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
- 		$query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber FROM Model_Node n WHERE n NOT IN (SELECT n2 FROM Model_NodeDeployment nd JOIN nd.node n2 WHERE nd.endDate = '$latest_end_datetime') AND n.undeployable != 1"); 
+ 		$query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber FROM Model_Node n WHERE n NOT IN (SELECT n2 FROM Model_NodeDeployment nd JOIN nd.node n2 WHERE nd.endDate = '$latest_end_datetime') AND n.undeployable != 1 ORDER BY n.boxNumber"); 
 		$results = $query->getResult();
 		foreach ($results as $result)
 		{
