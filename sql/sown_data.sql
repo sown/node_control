@@ -392,6 +392,35 @@ CREATE TABLE `node_deployments` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `node_hardwares`
+--
+
+DROP TABLE IF EXISTS `node_hardwares`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node_hardwares` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the node type',
+  `manufacturer` varchar(255) NOT NULL COMMENT 'manufacturer of the node hardware',
+  `model` varchar(255) NOT NULL COMMENT 'model of the node hardware',
+  `revision` varchar(255) NOT NULL COMMENT 'revision of the node hardware model',
+  `soc` varchar(255) NOT NULL COMMENT 'system-on-chip of the node hardware',
+  `ram` int(11) NOT NULL COMMENT 'RAM on the node hardware',
+  `flash` int(11) NOT NULL COMMENT 'flash memory of the node hardware',
+  `wireless_protocols` varchar(255) NOT NULL COMMENT 'wireless protocols supported of the node hardware',
+  `ethernet_ports` varchar(255) NOT NULL COMMENT 'number and type of ethernet ports on node hardware',
+  `power` varchar(255) NOT NULL COMMENT 'voltage current and connector type used by node hardware',
+  `fccid` varchar(255) NOT NULL COMMENT 'FCC ID for the node hardware',
+  `openwrt_page` varchar(255) NOT NULL COMMENT 'OpenWRT page about the node hardware',
+  `development_status` enum('supported','under development','planned','deprecated','partially deprecated') NOT NULL,
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  `switch_id` int(11) DEFAULT NULL COMMENT 'switch part of the node hardware',
+  PRIMARY KEY (`id`),
+  KEY `node_hardware_to_switch` (`switch_id`),
+  CONSTRAINT `node_hardware_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `node_requests`
 --
 
@@ -684,6 +713,85 @@ CREATE TABLE `stats_login` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `switch_ports`
+--
+
+DROP TABLE IF EXISTS `switch_ports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `switch_ports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the switch port',
+  `switch_id` int(11) NOT NULL COMMENT 'switch the switch port belongs to',
+  `port_number` int(11) NOT NULL COMMENT 'the number of the switch port',
+  `primary_vlan` int(11) NOT NULL COMMENT 'primary vlan of the switch port',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `switch_port_to_switch` (`switch_id`),
+  CONSTRAINT `switch_port_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `switch_vlan_ports`
+--
+
+DROP TABLE IF EXISTS `switch_vlan_ports`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `switch_vlan_ports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the switch vlan port',
+  `switch_id` int(11) NOT NULL COMMENT 'switch of the vlan port',
+  `switch_vlan_id` int(11) NOT NULL COMMENT 'switch vlam of the vlan port',
+  `switch_port_id` int(11) NOT NULL COMMENT 'switch port of the vlan port',
+  `tagged` int(1) NOT NULL DEFAULT '0' COMMENT 'whether the vlan port is tagged',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `switch_vlan_port_to_switch` (`switch_id`),
+  KEY `switch_vlan_port_to_switch_vlan` (`switch_vlan_id`),
+  KEY `switch_vlan_port_to_switch_port` (`switch_port_id`),
+  CONSTRAINT `switch_vlan_port_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`),
+  CONSTRAINT `switch_vlan_port_to_switch_vlan` FOREIGN KEY (`switch_vlan_id`) REFERENCES `switch_vlans` (`id`),
+  CONSTRAINT `switch_vlan_port_to_switch_port` FOREIGN KEY (`switch_port_id`) REFERENCES `switch_ports` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `switch_vlans`
+--
+
+DROP TABLE IF EXISTS `switch_vlans`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `switch_vlans` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the switch vlan',
+  `switch_id` int(11) NOT NULL COMMENT 'switch the switch vlan belongs to',
+  `vlan_number` int(11) NOT NULL COMMENT 'the number of the switch vlan',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `switch_vlan_to_switch` (`switch_id`),
+  CONSTRAINT `switch_vlan_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `switches`
+--
+
+DROP TABLE IF EXISTS `switches`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `switches` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the node type',
+  `name` varchar(255) NOT NULL COMMENT 'name of the switch',
+  `enable` int(1) NOT NULL DEFAULT '1' COMMENT 'whether the switch is enabled',
+  `enable_vlan` int(1) NOT NULL DEFAULT '1' COMMENT 'whether the switch vlan is enabled',
+  `reset` int(1) NOT NULL DEFAULT '1' COMMENT 'whether the switch is reset',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `user_accounts`
 --
 
@@ -821,4 +929,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-11  4:23:03
+-- Dump completed on 2016-12-21  2:28:14
