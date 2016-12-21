@@ -139,7 +139,8 @@ class Controller_NodeHardwares extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
-		$formTemplate = $this->_load_form_template('view');
+		$nodeHardware = Doctrine::em()->getRepository('Model_NodeHardware')->findOneById($this->request->param('id'));
+		$formTemplate = $this->_load_form_template('view', $nodeHardware->switch);
 		$this->template->content = FormUtils::drawForm('view_node_hardware', $formTemplate, $formValues, array('editNodeHardware' => 'Edit Node Hardware'));
 	}
 
