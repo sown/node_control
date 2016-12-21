@@ -133,7 +133,30 @@ class FormUtils {
 
 	private static function drawFormTable($table, $name, $values)
 	{
-		$formHtml = "    <table id=\"$name\" class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n      <tr class=\"tabletitle\">\n";
+		$formHtml = "";
+		if (!empty($table['clear']))
+		{
+			$formHtml = "    <div style=\"clear: ".$table['clear'].";\"></div>\n";
+		}
+		$width = " width: 100%;";
+                if (!empty($table['width']))
+                {
+                        $width = " width: ".$table['width'].";";
+                }
+		if (!empty($table['float']))
+		{
+			$formHtml = "    <div style=\"float: ".$table['float'].";$width\">\n";
+		}
+		else
+		{
+			$formHtml = "    <div style=\"display: block;$width\">\n";
+		}
+
+		if (!empty($table['title']))
+		{
+			$formHtml .= "    <h3 style=\"margin-bottom: 0px;\">".$table['title']."</h3>\n";
+		}
+		$formHtml .= "    <table id=\"$name\" class=\"sowntable\" style=\"margin-bottom: 0.5em;\">\n      <tr class=\"tabletitle\">\n";
 		foreach ($table['fields'] as $f => $field) 
 		{
 			if (empty($field['type']))
@@ -178,7 +201,7 @@ class FormUtils {
 				$shade = "";
 			}
 		}
-		$formHtml .= "    </table>\n";	
+		$formHtml .= "    </table>\n    </div>\n";
 		return $formHtml;	
 	}
 

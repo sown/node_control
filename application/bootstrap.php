@@ -471,6 +471,36 @@ Route::set('icinga_hosts', 'admin/icinga/hosts')
                 'action'     => 'hosts',
         ));
 
+Route::set('node_hardwares', 'admin/node_hardwares')
+        ->defaults(array(
+                'controller' => 'nodehardwares',
+                'action'     => 'default',
+        ));
+
+Route::set('create_node_hardware', 'admin/node_hardwares/create')
+        ->defaults(array(
+                'controller' => 'nodehardwares',
+                'action'     => 'create',
+        ));
+
+Route::set('delete_node_hardware', 'admin/node_hardwares/<id>/delete')
+        ->defaults(array(
+                'controller' => 'nodehardwares',
+                'action'     => 'delete',
+        ));
+
+Route::set('edit_node_hardware', 'admin/node_hardwares/<id>/edit')
+        ->defaults(array(
+                'controller' => 'nodehardwares',
+                'action'     => 'edit',
+        ));
+
+Route::set('view_node_hardware', 'admin/node_hardwares/<id>')
+        ->defaults(array(
+                'controller' => 'nodehardwares',
+                'action'     => 'view',
+        ));
+
 Route::set('nodes', 'admin/nodes')
         ->defaults(array(
                 'controller' => 'nodes',
@@ -968,3 +998,4 @@ Doctrine\DBAL\Types\Type::addType('ipv4networkaddress', 'Model_Type_IPv4NetworkA
 Doctrine\DBAL\Types\Type::addType('ipv6networkaddress', 'Model_Type_IPv6NetworkAddress');
 Doctrine\DBAL\Types\Type::addType('deploymenttype', 'Model_Type_DeploymentType');
 Doctrine\DBAL\Types\Type::addType('tunnelprotocol', 'Model_Type_TunnelProtocol');
+Doctrine\DBAL\Types\Type::addType('developmentstatus', 'Model_Type_DevelopmentStatus');
