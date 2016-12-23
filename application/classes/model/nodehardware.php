@@ -166,6 +166,10 @@ class Model_NodeHardware extends Model_Entity
 	{
 		$this->logUse();
 		$str  = "NodeHardware: {$this->id}, manufacturer={$this->manufacturer}, model=$this->model, revision={$this->revision}, systemOnChip={$this->systemOnChip}, ram={$this->ram}, flash={$this->flash}, wirelessProtocols={$this->wirelessProtocols}, ethernetPorts={$this->ethernetPorts}, power={$this->power},  fccid={$this->fccid}, openwrtPage={$this->openwrtPage}, developmentStatus={$this->developmentStatus}";
+		if (!empty($this->switch))
+		{
+			$str .= "switch={$this->switch->id}";
+		}
 		return $str;
 	}
 
@@ -173,21 +177,29 @@ class Model_NodeHardware extends Model_Entity
 	{
 		$this->logUse();
 		$str  = "<div class='nodeHardware' id='nodeHardware_{$this->id}'>";
-		$str .= "<table>";
-                $str .= $this->fieldHTML('manufacturer', $this->$manufacturer->toHTML());
-		$str .= $this->fieldHTML('model', $this->$model->toHTML());
-		$str .= $this->fieldHTML('revision', $this->$revision->toHTML());
-		$str .= $this->fieldHTML('systemOnChip', $this->$systemOnChip->toHTML());
-		$str .= $this->fieldHTML('ram', $this->$ram->toHTML());
-		$str .= $this->fieldHTML('flash', $this->$flash->toHTML());
-		$str .= $this->fieldHTML('wirelessProtocols', $this->$wirelessProtocols->toHTML());
-		$str .= $this->fieldHTML('ethernetPorts', $this->$ethernetPorts->toHTML());
-		$str .= $this->fieldHTML('power', $this->$power->toHTML());
-		$str .= $this->fieldHTML('fccid', $this->$fccid->toHTML());
-		$str .= $this->fieldHTML('openwrtPage', $this->$openwrtPage->toHTML());
-		$str .= $this->fieldHTML('developmentStatus', $this->$developmentStatus->toHTML());
+                foreach(array('manufacturer', 'model', 'revision', 'systemOnChip', 'ram', 'flash', 'wirelessProtocols', 'ethernetPorts', 'power', 'fccid', 'openwrtPage', 'developmentStatus') as $field)
+                {
+                        $str .= $this->fieldHTML($field);
+                }
+		if (!empty($this->switch))
+                {
+                        $str .= "";
+                }
+
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;
+	}
+
+	public static function getNodeHardwareOptions()
+	{
+		
+		$nodeHardwares = Doctrine::em()->getRepository('Model_NodeHardware')->findAll();		
+		$options = array();
+		foreach ($nodeHardwares as $nodeHardware)
+		{
+			$options[$nodeHardware->id] = $nodeHardware->manufacturer . " " . $nodeHardware->model;
+		}
+		return $options;
 	}
 }

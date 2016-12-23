@@ -84,11 +84,7 @@ class Model_SwitchVlanPort extends Model_Entity
 	
 	public static function getValuesForForm($switch, $action = '')
 	{
-		$switchVlanPorts = array();
-                if (is_array($switch->switchVlanPorts))
-                {
-                        $switchVlans = $switch->switchVlanPorts;
-                }
+                $switchVlanPorts = $switch->switchVlanPorts;
 		$vlan_port_fields = array('id', 'switchVlan', 'switchPort', 'tagged');
                 $switch_vlan_ports = array();
                 $switch_vlan_port_ids = array();
@@ -106,8 +102,16 @@ class Model_SwitchVlanPort extends Model_Entity
                 foreach ($switch_vlan_ports as $vp => $switchVlanPort)
                 {
                 	$formValues[$vp]['id'] = $switchVlanPort->id;
-                        $formValues[$vp]['switchVlan'] = $switchVlanPort->switchVlan->id;
-                        $formValues[$vp]['switchPort'] = $switchVlanPort->switchPort->id;
+			if ($action == 'view')
+			{
+				$formValues[$vp]['switchVlan'] = $switchVlanPort->switchVlan->vlanNumber;
+                                $formValues[$vp]['switchPort'] = $switchVlanPort->switchPort->portNumber;
+			}
+			else
+			{
+                        	$formValues[$vp]['switchVlan'] = $switchVlanPort->switchVlan->id;
+                       	 	$formValues[$vp]['switchPort'] = $switchVlanPort->switchPort->id;
+			}
                         $formValues[$vp]['tagged'] = $switchVlanPort->tagged;
                 }
 		if ($action == 'edit')
@@ -133,6 +137,7 @@ class Model_SwitchVlanPort extends Model_Entity
 		$switchVlan_options = array();
 		if (isset($switch) && $switch->id > 0)
 		{
+			echo "switch:id ".$switch->id."<br/>";
 			$switchPort_options = $switch->getSwitchPortOptions();
                 	$switchVlan_options = $switch->getSwitchVlanOptions();
 		}

@@ -78,11 +78,7 @@ class Model_SwitchPort extends Model_Entity
 
 	public static function getValuesForForm($switch, $action = 'view')
         {
-		$switchPorts = array();
-		if (is_array($switch->switchPorts))
-		{
-			$switchPorts = $switch->switchPorts;
-		}
+		$switchPorts = $switch->switchPorts;
                 $port_fields = array('id', 'portNumber', 'primaryVlan');
                 $switch_ports = array();
                 $switch_port_ids = array();

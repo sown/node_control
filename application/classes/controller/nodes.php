@@ -22,8 +22,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 	'id' => 'ID',
                		'boxNumber' => 'Box Number',
 			'currentDeployment' => 'Current Deployment',
-			'hardware' => 'Hardware',
-                        'wirelessChipset' => 'Wireless Chipset',
+			'nodeHardware' => 'Node Hardware',
 			'firmwareVersion' => 'Firmware Version',
                		'firmwareImage' => 'Firmware Image',
 			'undeployable' => 'Deployable?',
@@ -58,8 +57,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'id' => 'ID',
                         'boxNumber' => 'Box Number',
                         'currentDeployment' => 'Current Deployment',
-			'hardware' => 'Hardware',
-			'wirelessChipset' => 'Wireless Chipset',
+			'nodeHardware' => 'Node Hardware',
 			'firmwareVersion' => 'Firmware Version',
                         'firmwareImage' => 'Firmware Image',
                         'certificateWritten' => 'Certificate Written',
@@ -106,7 +104,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				{
 					$formValues['externalBuild'] = 0;
 				}
-				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['hardware'], $formValues['wirelessChipset'], $formValues['firmwareVersion'], $formValues['firmwareImage'], $formValues['externalBuild']);
+				
+				$node = Model_Builder::create_node($formValues['boxNumber'], $formValues['vpnServer'], $formValues['wiredMac'], $formValues['wirelessMac'], $formValues['nodeHardware'], $formValues['firmwareVersion'], $formValues['firmwareImage'], $formValues['externalBuild']);
                         	$success = "Successfully created node with box number: <a href=\"/admin/nodes/$node->boxNumber\">$node->boxNumber</a>.";
  
         		}
@@ -122,8 +121,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'vpnServer' => '',
 				'wiredMac' => $mac,
 				'wirelessMac' => $mac,
-				'hardware' => '',
-				'wirelessChipset' => '',
+				'nodeHardware' => '',
 				'firmwareVersiom' => '',
 				'firmwareImage' => Kohana::$config->load('system.default.firmware_image_default'),
 				'externalBuild' => 0,
@@ -135,8 +133,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'vpnServer' => array('title' => 'VPN Server', 'type' => 'select', 'options' => Model_VpnServer::getVpnServerNames()),
 			'wiredMac' => array('title' => 'Wired Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
                         'wirelessMac' => array('title' => 'Wireless Mac', 'type' => 'input', 'size' => 15, 'hint' => "e.g. 01:23:45:67:89:AB"),
-			'hardware' => array('title' => 'Hardware', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.hardwares'))),
-			'wirelessChipset' => array('title' => 'Wireless Chipset', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.wireless_chipsets'))),
+			'nodeHardware' => array('title' => 'Hardware', 'type' => 'select', 'options' => Model_NodeHardware::getNodeHardwareOptions()),
 			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'size' => 50, 'type' => 'input'),
 			'externalBuild' => array('title' => 'External Build', 'type' => 'checkbox'),
@@ -159,7 +156,9 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$this->template->sidebar = View::factory('partial/sidebar');
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'view');
-		$formTemplate = $this->_load_form_template('view', $formValues['externalBuild']);
+		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
+		$switch = $node->switch;
+		$formTemplate = $this->_load_form_template('view', $formValues['externalBuild'], $switch);
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'view');
                 $notesFormTemplate = Controller_Notes::load_form_template('view');
 		$this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('editNode' => 'Edit Node')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
@@ -179,22 +178,52 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = FormUtils::parseForm($this->request->post());
-			$errors = $this->_validate($formValues);
-			if (sizeof($errors) == 0)
-			{
-				$this->_update($this->request->param('boxNumber'), $formValues);
-				$success = "Successfully updated node";
-				$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
+			if (!empty($formValues['updateNodeHardware']))
+                        {
+				$errors = $this->_validate($formValues);
+				if (sizeof($errors) == 0)
+				{
+					$this->_update($this->request->param('boxNumber'), $formValues);
+					$success = "Successfully updated node";
+					$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
+				}
 			}
+			elseif (!empty($formValues['addSwitch']))
+                        {
+                                $node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
+                                $switch = Model_Switch::build("eth1");
+                                $node->switch = $switch;
+                                $node->save();
+                                $success = "Successfully created switch for node";
+
+                        }
+                        elseif (!empty($formValues['removeSwitch']))
+                        {
+                                $node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
+                                $switch = $node->switch;
+                                $node->switch = null;
+                                $switch->delete();
+                                $node->save();
+                                $success = "Successfully deleted switch for node";
+                        }
+
 		}
-		else
-		{
-			$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
+		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
+		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
+		$switch = $node->switch;
+		$formTemplate = $this->_load_form_template('edit', isset($formValues['externalBuild']), $switch);
+		$formButtons = array('updateNode' => 'Update Node');
+		if (isset($switch) && $switch->id > 0)
+                {
+                        $formButtons['removeSwitch'] = "Remove Switch";
                 }
-		$formTemplate = $this->_load_form_template('edit', isset($formValues['externalBuild']));
+                else
+                {
+                        $formButtons['addSwitch'] = "Add Switch";
+                }
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'edit');
                 $notesFormTemplate = Controller_Notes::load_form_template('edit');
-                $this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('updateNode' => 'Update Node'), $errors, $success) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
+                $this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, $formButtons, $errors, $success) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null) . Controller_Notes::generate_form_javascript();
         }
 
 	public function action_submit_hash()
@@ -362,8 +391,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 $formValues = array(
 		       	'id' => $node->id,
                        	'boxNumber' => $node->boxNumber,
-			'hardware' => $node->hardware,
-			'wirelessChipset' => $node->wirelessChipset,
+			'nodeHardware' => $node->nodeHardware->id,
 			'firmwareVersion' => $node->firmwareVersion,
                        	'firmwareImage' => $node->firmwareImage,
 			'undeployable' => $node->undeployable,
@@ -412,6 +440,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				$formValues['interfaces']['currentInterfaces'][$i]['is1x'] = ( $formValues['interfaces']['currentInterfaces'][$i]['is1x'] ? 'Yes' : 'No') ;
 			}	
                 }
+		$switch = $node->switch;
+                if (!empty($switch) && $switch->id > 0)
+                {
+                        $formValues['switch'] = Model_Switch::getValuesForForm($switch, $action);
+                }
 		if ($action == 'edit')
 		{
 			foreach ($formValuesMap as $f => $field)
@@ -429,13 +462,12 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		return $formValues;
 	}
 
-	private function _load_form_template($action = 'edit', $externalBuild = 0)
+	private function _load_form_template($action = 'edit', $externalBuild = 0, $switch = null)
 	{
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
-			'hardware' => array('title' => 'Hardware', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.hardwares'))),
-                        'wirelessChipset' => array('title' => 'Wireless Chipset', 'type' => 'select', 'options' => SOWN::array_keys_and_values(Kohana::$config->load('system.default.wireless_chipsets'))),
+			'nodeHardware' => array('title' => 'Node Hardware', 'type' => 'select', 'options' => Model_NodeHardware::getNodeHardwareOptions()),
 			'firmwareVersion' => array('title' => 'Firmware Version', 'type' => 'select', 'options' => Kohana::$config->load('system.default.firmware_versions')),
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
@@ -481,6 +513,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				),
                         ),
                 );
+		if (!empty($switch))
+                {
+                        $formTemplate['switch'] = Model_Switch::getFormTemplate($switch, $action);
+                }
 		if ($externalBuild && $externalBuild != "No") 
                 {
                         $formTemplate['interfaces']['title'] .= " **Changes here will have no affect**";
@@ -495,8 +531,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	private function _update($boxNumber, $formValues)
 	{
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
-		$node->hardware = $formValues['hardware'];
-                $node->wirelessChipset = $formValues['wirelessChipset'];
+		$nodeHardware = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeHardware']);
+		$node->nodeHardware = $nodeHardware;
 		$node->firmwareVersion = $formValues['firmwareVersion'];
 		$node->firmwareImage = $formValues['firmwareImage'];
 		$node->undeployable = (empty($formValues['undeployable']) ? 0 : $formValues['undeployable']);
@@ -574,6 +610,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
 					$interface->save();
 				}	
                         }
+                }
+		if (isset($formValues['switch']))
+                {
+			$switch = $node->switch;
+                        Model_Switch::update($switch, $formValues['switch']);
                 }
 		$node->save();
 	}

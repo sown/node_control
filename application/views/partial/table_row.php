@@ -95,6 +95,10 @@ foreach ($fields as $f => $field)
         {
                 echo "          <td>" . $row->certificate->ca . "</td>\n";
         }
+	elseif ($f == "nodeHardware")
+	{
+		echo "          <td>" . $row->nodeHardware->manufacturer . " " . $row->nodeHardware->model . " (" . $row->nodeHardware->systemOnChip . ")";
+	}
 	elseif ($f == "deploymentBoxNumber")
         {
 		$nodes = Doctrine::em()->createQuery("SELECT n.boxNumber FROM Model_NodeDeployment nd JOIN nd.node n WHERE nd.deployment = " . $row->id . " ORDER BY nd.startDate DESC")->getResult();

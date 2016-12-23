@@ -219,16 +219,16 @@ class Controller_Inventory extends Controller_AbstractAdmin
 				$type = 'InventoryItem';
 	                        if (Model_Builder::destroy_simple_object($formValues['id'], $type))
 				{
-                                	$this->template->content = "      <p class=\"success\">Successfully deleted inventory item with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">Inventory</a>.</p></p>";
+                                	$this->template->content = "      <p class=\"success\">Successfully deleted inventory item with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('inventory')."\">Inventory</a>.</p></p>";
 				}
 				else
 				{
-					$this->template->content = "      <p class=\"error\">Could not delete inventory item with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('objects')."\">Inventory</a>.</p>";
+					$this->template->content = "      <p class=\"error\">Could not delete inventory item with ID " . $formValues['id'] .".  Go back to <a href=\"".Route::url('inventory')."\">Inventory</a>.</p>";
 				}
                         }
                         elseif (!empty($formValues['no']))
                         {
-                              	$this->template->content = "      <p class=\"success\">Inventory item with ID " . $formValues['id'] . " was not deleted.  Go back to <a href=\"".Route::url('objects')."\">Inventory</a>.</p>";
+                              	$this->template->content = "      <p class=\"success\">Inventory item with ID " . $formValues['id'] . " was not deleted.  Go back to <a href=\"".Route::url('inventory')."\">Inventory</a>.</p>";
                         }
 			
 		}

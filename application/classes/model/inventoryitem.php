@@ -180,18 +180,18 @@ class Model_InventoryItem extends Model_Entity
 		$this->logUse();
 		$str  = "<div class='inventoryItem' id='inventoryItem_{$this->id}'>";
 		$str .= "<table>";
-                $str .= $this->fieldHTML('uniqueIdentifier', $this->$uniqueIdentifier->toHTML());
-		$str .= $this->fieldHTML('type', $this->$type->toHTML());
-		$str .= $this->fieldHTML('model', $this->$model->toHTML());
-		$str .= $this->fieldHTML('writtenOffDate', $this->$writtenOffDate->format('Y-m-d H:i:s'));
-		$str .= $this->fieldHTML('description', $this->$description->toHTML());
-		$str .= $this->fieldHTML('price', $this->$price->toHTML());
-		$str .= $this->fieldHTML('location', $this->$location->toHTML());
-		$str .= $this->fieldHTML('wikiLink', $this->$wikiLink->toHTML());
-		$str .= $this->fieldHTML('addedBy', $this->$addedBy->toHTML());
-		$str .= $this->fieldHTML('acquiredDate', $this->$acquiredDate->format('Y-m-d H:i:s'));
-		$str .= $this->fieldHTML('state', $this->$state->toHTML());
-		$str .= $this->fieldHTML('architecture', $this->$architecture->toHTML());
+                $str .= $this->fieldHTML('uniqueIdentifier', $this->uniqueIdentifier->toHTML());
+		$str .= $this->fieldHTML('type', $this->type->toHTML());
+		$str .= $this->fieldHTML('model', $this->model->toHTML());
+		$str .= $this->fieldHTML('writtenOffDate', $this->writtenOffDate->format('Y-m-d H:i:s'));
+		$str .= $this->fieldHTML('description', $this->description->toHTML());
+		$str .= $this->fieldHTML('price', $this->price->toHTML());
+		$str .= $this->fieldHTML('location', $this->location->toHTML());
+		$str .= $this->fieldHTML('wikiLink', $this->wikiLink->toHTML());
+		$str .= $this->fieldHTML('addedBy', $this->addedBy->toHTML());
+		$str .= $this->fieldHTML('acquiredDate', $this->acquiredDate->format('Y-m-d H:i:s'));
+		$str .= $this->fieldHTML('state', $this->state->toHTML());
+		$str .= $this->fieldHTML('architecture', $this->architecture->toHTML());
 		foreach($this->notes as $note)
                 {
                         $str .= $this->fieldHTML('note', $note->toHTML());

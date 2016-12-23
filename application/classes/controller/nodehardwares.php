@@ -140,7 +140,8 @@ class Controller_NodeHardwares extends Controller_AbstractAdmin
 		$this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
 		$formValues = $this->_load_from_database($this->request->param('id'), 'view');
 		$nodeHardware = Doctrine::em()->getRepository('Model_NodeHardware')->findOneById($this->request->param('id'));
-		$formTemplate = $this->_load_form_template('view', $nodeHardware->switch);
+		$switch = $nodeHardware->switch;
+		$formTemplate = $this->_load_form_template('view', $switch);
 		$this->template->content = FormUtils::drawForm('view_node_hardware', $formTemplate, $formValues, array('editNodeHardware' => 'Edit Node Hardware'));
 	}
 
@@ -348,7 +349,8 @@ class Controller_NodeHardwares extends Controller_AbstractAdmin
 		$nodeHardware->developmentStatus = $formValues['developmentStatus'];
 		if (isset($formValues['switch']))
 		{
-			Model_Switch::update($nodeHardware->switch, $formValues['switch']);
+			$switch = $nodeHardware->switch;
+			Model_Switch::update($switch, $formValues['switch']);
                 }
 		$nodeHardware->save();
 	}

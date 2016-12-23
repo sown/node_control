@@ -92,12 +92,9 @@ class Model_Switch extends Model_Entity
 	{
 		$switchVlan_options = array('0' => '');
 		$switchVlans = $this->switchVlans;
-		if (is_array($switchVlans))
-                {
-			foreach ($switchVlans as $sv => $switchVlan)
-			{
-				$switchVlan_options[$switchVlan->id] = $switchVlan->vlanNumber;
-			}
+		foreach ($switchVlans as $sv => $switchVlan)
+		{
+			$switchVlan_options[$switchVlan->id] = $switchVlan->vlanNumber;
 		}
 		return $switchVlan_options;
 	}
@@ -106,12 +103,9 @@ class Model_Switch extends Model_Entity
         {
                 $switchPort_options = array('0' => '');
 		$switchPorts = $this->switchPorts;
-		if (is_array($switchPorts))
-		{
-	                foreach ($switchPorts as $sp => $switchPort)
-        	        {
-                	        $switchPort_options[$switchPort->id] = $switchPort->portNumber;
-                	}
+	        foreach ($switchPorts as $sp => $switchPort)
+        	{
+                	$switchPort_options[$switchPort->id] = $switchPort->portNumber;
 		}
                 return $switchPort_options;
         }
@@ -126,6 +120,61 @@ class Model_Switch extends Model_Entity
 		return $obj;
 	}
 
+	public function cloneSwitch()
+	{
+		$newSwitch = new Model_Switch();
+		$newSwitch->name = $this->name;
+		$newSwitch->enable = $this->enable;
+		$newSwitch->enableVlan = $this->enableVlan;
+		$newSwitch->reset = $this->reset;
+		$newSwitch->save();
+		$newSwitchPorts = array();
+		foreach ($this->switchPorts as $switchPort)
+		{
+			$newSwitchPort = new Model_SwitchPort();
+			$newSwitchPort->switch = $newSwitch;
+			$newSwitchPort->portNumber = $switchPort->portNumber;
+			$newSwitchPort->primaryVlan = $switchPort->primaryVlan;
+			$newSwitchPort->save();
+			$newSwitchPorts[] = $newSwitchPort;
+		}
+		$newSwitchVlans = array();
+		foreach ($this->switchVlans as $switchVlan)
+                {
+                        $newSwitchVlan = new Model_SwitchVlan();
+                        $newSwitchVlan->switch = $newSwitch;
+                        $newSwitchVlan->vlanNumber = $switchVlan->vlanNumber;
+                        $newSwitchVlan->save();
+                        $newSwitchVlans[] = $newSwitchVlan;
+                }
+		foreach ($this->switchVlanPorts as $switchVlanPort)
+		{
+			$svpVlanNumber = $switchVlanPort->switchVlan->vlanNumber;
+			$svpPortNumber = $switchVlanPort->switchPort->portNumber;
+			$newSwitchVlanPort = new Model_SwitchVlanPort();
+			$newSwitchVlanPort->switch = $newSwitch;
+			$newSwitchVlanPort->tagged = $switchVlanPort->tagged;
+			foreach ($newSwitchVlans as $newSwitchVlan)
+			{
+				if ($newSwitchVlan->vlanNumber == $svpVlanNumber)
+				{
+					$newSwitchVlanPort->switchVlan = $newSwitchVlan;
+					break;
+				}
+			}
+			foreach ($newSwitchPorts as $newSwitchPort)
+                        {
+                                if ($newSwitchPort->portNumber == $svpPortNumber)
+                                {
+                                        $newSwitchVlanPort->switchPort = $newSwitchPort;
+                                        break;
+                                }
+                        }
+			$newSwitchVlanPort->save();
+		}
+		return $newSwitch;
+	}
+		
 	public static function getValuesForForm($switch, $action = 'view')
 	{
 		return array(

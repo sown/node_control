@@ -201,9 +201,9 @@ class Model_OtherHost extends Model_Entity
 	public function toHTML()
 	{
 		$this->logUse();
-		$str  = "<div class='server' id='server_{$this->id}'>";
+		$str  = "<div class='other_host' id='other_host_{$this->id}'>";
 		$str .= "<table>";
-		$str .= "<tr class='ID'><th>Server</th><td>{$this->id}</td></tr>";
+		$str .= "<tr class='ID'><th>Other Host</th><td>{$this->id}</td></tr>";
 		foreach(array('name', 'type', 'parent', 'description',) as $eield)
 		{
 			$str .= $this->fieldHTML($field);

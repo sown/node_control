@@ -74,11 +74,7 @@ class Model_SwitchVlan extends Model_Entity
 
 	public static function getValuesForForm($switch, $action = 'view')
 	{
-		$switchVlans = array();
-                if (is_array($switch->switchVlans))
-                {
-                        $switchVlans = $switch->switchVlans;
-                }
+                $switchVlans = $switch->switchVlans;
 		$vlan_fields = array('id', 'vlanNumber');
                 $switch_vlans = array();
                 $switch_vlan_ids = array();

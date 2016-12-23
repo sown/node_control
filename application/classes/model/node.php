@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\ORM\Mapping\OneToOne;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -26,18 +27,14 @@ class Model_Node extends Model_Entity
 	protected $boxNumber;
 
 	/**
-         * @var string $hardware
+         * @var Model_NodeHardware
          *
-         * @Column(name="hardware", type="string", nullable=false)
+         * @ManyToOne(targetEntity="Model_NodeHardware")
+         * @JoinColumns({
+         *   @JoinColumn(name="node_hardware_id", referencedColumnName="id")
+         * })
          */
-        protected $hardware;
-
-        /**
-         * @var string $wirelessChipset
-         *
-         * @Column(name="wireless_chipset", type="string", nullable=false)
-         */
-        protected $wirelessChipset;
+	protected $nodeHardware;
 
 	/**
          * @var string $firmwareVersion
@@ -93,6 +90,16 @@ class Model_Node extends Model_Entity
 	 * })
 	 */
 	protected $vpnEndpoint;
+
+ 	/**
+         * @var Model_Switch
+         *
+         * @OneToOne(targetEntity="Model_Switch", cascade={"persist", "remove"})
+         * @JoinColumns({
+         *   @JoinColumn(name="switch_id", referencedColumnName="id")
+         * })
+         */
+        protected $switch;
 
 	/**
 	 * @OneToMany(targetEntity="Model_NodeDeployment", mappedBy="node")
@@ -336,11 +343,15 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, hardware={$this->hardware}, wirelessChipset={$this->wirelessChipset}, firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}, externalBuild={$this->externalBuild}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, nodeHardware={$this->nodeHardware->manufacturer} {$this->nodeHardware->model},  firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}, externalBuild={$this->externalBuild}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
-		$str .= "vpnEndpoint={$this->vpnEndpoint}";
+		$str .= "vpnEndpoint={$this->vpnEndpoint->id}";
+		if (!empty($this->switch))
+                {
+                        $str .= ", switch={$this->switch->id}";
+                }
 		foreach($this->interfaces as $interface)
 		{
 			$str .= "<br/>";
@@ -375,11 +386,11 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'hardware', 'wirelessChipset', 'firmwareVersion', 'firmwareImage', 'undeployable', 'externalBuild') as $field)
+		foreach(array('boxNumber', 'firmwareVersion', 'firmwareImage', 'undeployable', 'externalBuild') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
-		foreach(array('certificate', 'vpnEndpoint') as $field)
+		foreach(array('certificate', 'vpnEndpoint', 'nodeHardware') as $field)
 		{
 			$str .= $this->fieldHTML($field, $this->$field->toHTML());
 		}
@@ -429,12 +440,17 @@ class Model_Node extends Model_Entity
 		return empty($result->id);
 	}
 
-	public static function build($boxNumber, $hardware, $wirelessChipset, $firmwareVersion, $firmwareImage, $externalBuild, $certificate, $vpnEndpoint)
+	public static function build($boxNumber, $nodeHardwareId, $firmwareVersion, $firmwareImage, $externalBuild, $certificate, $vpnEndpoint)
 	{
+		$nodeHardware = Doctrine::em()->getRepository('Model_NodeHardware')->findOneById($nodeHardwareId);
 		$obj = new Model_Node();
 		$obj->boxNumber = $boxNumber;
-		$obj->hardware = $hardware;
-                $obj->wirelessChipset = $wirelessChipset;
+		$obj->nodeHardware = $nodeHardware;
+		$nodeHardwareSwitch = $nodeHardware->switch;
+		if (!empty($nodeHardwareSwitch))
+		{
+			$obj->switch = $nodeHardwareSwitch->cloneSwitch();
+		}
 		$obj->firmwareVersion = $firmwareVersion;
 		$obj->firmwareImage = $firmwareImage;
 		$obj->externalBuild = $externalBuild;
