@@ -27,6 +27,7 @@ class SOWN
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
 		return curl_exec($ch);
 	}
 
