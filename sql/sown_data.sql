@@ -211,7 +211,9 @@ CREATE TABLE `enquiries` (
   `response` text,
   `acknowledged_until` datetime DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `enquiry_to_enquiry_type` (`type_id`),
+  CONSTRAINT `enquiry_to_enquiry_type` FOREIGN KEY (`type_id`) REFERENCES `enquiry_types` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -249,7 +251,13 @@ CREATE TABLE `host_cron_jobs` (
   `node_id` int(11) DEFAULT NULL,
   `aggregate` varchar(255) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `host_cron_job_to_cron_job` (`cron_job_id`),
+  KEY `host_cron_job_to_server` (`server_id`),
+  KEY `host_cron_job_to_node` (`node_id`),
+  CONSTRAINT `host_cron_job_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`),
+  CONSTRAINT `host_cron_job_to_cron_job` FOREIGN KEY (`cron_job_id`) REFERENCES `cron_jobs` (`id`),
+  CONSTRAINT `host_cron_job_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -270,6 +278,8 @@ CREATE TABLE `host_services` (
   KEY `host_service_to_server` (`server_id`),
   KEY `host_service_to_other_host` (`other_host_id`),
   KEY `host_service_to_service` (`service_id`),
+  CONSTRAINT `host_service_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`),
+  CONSTRAINT `host_service_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`),
   CONSTRAINT `host_service_to_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='services assigned to hosts';
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -445,7 +455,9 @@ CREATE TABLE `node_requests` (
   `notes` text,
   `deployment_id` int(11) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `node_request_to_deployment` (`deployment_id`),
+  CONSTRAINT `node_request_to_deployment` FOREIGN KEY (`deployment_id`) REFERENCES `deployments` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -471,7 +483,9 @@ CREATE TABLE `node_setup_requests` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `node_setup_request_to_user` (`approved_by`),
-  KEY `node_setup_request_to_node` (`node_id`)
+  KEY `node_setup_request_to_node` (`node_id`),
+  CONSTRAINT `node_setup_request_to_user` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`),
+  CONSTRAINT `node_setup_request_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -484,8 +498,10 @@ DROP TABLE IF EXISTS `nodes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `nodes` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the node',
+  `node_hardware_id` int(11) NOT NULL COMMENT 'hardware of the node',
   `vpn_endpoint_id` int(11) DEFAULT NULL COMMENT 'link to the vpn endpoints table',
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
+  `switch_id` int(11) DEFAULT NULL COMMENT 'switch on the node',
   `box_number` int(11) DEFAULT NULL COMMENT 'DEPRECATED. DO NOT USE.',
   `hardware` varchar(255) DEFAULT NULL,
   `wireless_chipset` varchar(255) DEFAULT NULL,
@@ -498,8 +514,12 @@ CREATE TABLE `nodes` (
   PRIMARY KEY (`id`),
   KEY `node_to_endpoint` (`vpn_endpoint_id`),
   KEY `node_to_certificate` (`certificate_id`),
+  KEY `node_to_switch` (`switch_id`),
+  KEY `node_to_node_hardware` (`node_hardware_id`),
+  CONSTRAINT `node_to_node_hardware` FOREIGN KEY (`node_hardware_id`) REFERENCES `node_hardwares` (`id`),
   CONSTRAINT `node_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
-  CONSTRAINT `node_to_endpoint` FOREIGN KEY (`vpn_endpoint_id`) REFERENCES `vpn_endpoints` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `node_to_endpoint` FOREIGN KEY (`vpn_endpoint_id`) REFERENCES `vpn_endpoints` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `node_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -525,6 +545,8 @@ CREATE TABLE `notes` (
   KEY `note_to_user` (`user_id`),
   KEY `note_to_node` (`node_id`),
   KEY `note_to_deployment` (`deployment_id`),
+  KEY `note_to_inventory` (`inventory_id`),
+  CONSTRAINT `note_to_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventory` (`id`),
   CONSTRAINT `note_to_deployment` FOREIGN KEY (`deployment_id`) REFERENCES `deployments` (`id`),
   CONSTRAINT `note_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
   CONSTRAINT `note_to_notetaker` FOREIGN KEY (`notetaker_id`) REFERENCES `users` (`id`),
@@ -558,7 +580,9 @@ CREATE TABLE `other_hosts` (
   `alias` varchar(255) DEFAULT NULL COMMENT 'an alias for use by monitoring',
   `check_command` varchar(255) DEFAULT NULL COMMENT 'alternative check command for use by monitoring',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `other_host_to_location` (`location_id`),
+  CONSTRAINT `other_host_to_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -602,7 +626,11 @@ CREATE TABLE `server_interfaces` (
   `ipv6_addr` varchar(39) NOT NULL COMMENT 'the IPv6 address associated with the server_interface',
   `subordinate` int(1) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `server_interface_to_server` (`server_id`),
+  KEY `server_interface_to_vlan` (`vlan_id`),
+  CONSTRAINT `server_interface_to_vlan` FOREIGN KEY (`vlan_id`) REFERENCES `vlans` (`id`),
+  CONSTRAINT `server_interface_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='locations of things';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -652,6 +680,8 @@ CREATE TABLE `servers` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `server_to_certificate` (`certificate_id`),
+  KEY `server_to_location` (`location_id`),
+  CONSTRAINT `server_to_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `server_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -929,4 +959,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-21  2:28:14
+-- Dump completed on 2016-12-24 14:31:03
