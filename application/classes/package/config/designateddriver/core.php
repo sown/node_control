@@ -360,11 +360,13 @@ class Package_Config_Designateddriver_Core extends Package_Config
 	public static function config_crontabs_v0_1_78(Model_Node $node) 
 	{
 		$minute = $node->id % 60;
+		$minuteplus5 = $node->id + 5;
+                $minuteplus5 = $minuteplus5 % 60;
 		$config = array(
                         'feature' => array(
                                 'cron_check' => array(
                                         'enabled' => 'true',
-                                        'command' => '5 * * * * /usr/sbin/cron_check',
+                                        'command' => $minuteplus5 . ' * * * * /usr/sbin/cron_check',
                                 ),
 				'syslog' => array(
                                         'enabled' => 'true',
