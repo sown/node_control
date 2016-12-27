@@ -359,6 +359,7 @@ class Package_Config_Designateddriver_Core extends Package_Config
 
 	public static function config_crontabs_v0_1_78(Model_Node $node) 
 	{
+		$minute = $node->id % 60;
 		$config = array(
                         'feature' => array(
                                 'cron_check' => array(
@@ -375,7 +376,7 @@ class Package_Config_Designateddriver_Core extends Package_Config
 				),
 				'update_sown_config' => array(
 					'enabled' => 'true',
-					'command' => '0 * * * * /usr/sbin/update_sown_config',
+					'command' => $minute . ' * * * * /usr/sbin/update_sown_config',
 				),		
 			),
                 );
