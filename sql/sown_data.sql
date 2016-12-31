@@ -32,7 +32,7 @@ CREATE TABLE `certificate_sets` (
   KEY `certificate_id` (`certificate_id`),
   KEY `setid` (`setid`),
   CONSTRAINT `certificate_set_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='set of certificates';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='set of certificates';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `contacts` (
   KEY `contact_to_other_host` (`other_host_id`),
   CONSTRAINT `contact_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`),
   CONSTRAINT `contact_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,7 +95,7 @@ CREATE TABLE `cron_jobs` (
   `updated_at` datetime NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -205,16 +205,16 @@ CREATE TABLE `enquiries` (
   `from_name` varchar(255) NOT NULL,
   `from_email` varchar(255) NOT NULL,
   `subject` varchar(255) NOT NULL,
-  `message` text NOT NULL,
+  `message` mediumtext NOT NULL,
   `ip_address` varchar(255) NOT NULL,
   `response_summary` varchar(255) DEFAULT NULL,
-  `response` text,
+  `response` mediumtext,
   `acknowledged_until` datetime DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `enquiry_to_enquiry_type` (`type_id`),
   CONSTRAINT `enquiry_to_enquiry_type` FOREIGN KEY (`type_id`) REFERENCES `enquiry_types` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -227,14 +227,14 @@ DROP TABLE IF EXISTS `enquiry_types`;
 CREATE TABLE `enquiry_types` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
-  `description` text,
+  `description` mediumtext,
   `email` varchar(255) NOT NULL,
-  `enabled_message` text NOT NULL,
+  `enabled_message` mediumtext NOT NULL,
   `disabled` tinyint(1) NOT NULL DEFAULT '0',
-  `disabled_message` text NOT NULL,
+  `disabled_message` mediumtext NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -255,10 +255,10 @@ CREATE TABLE `host_cron_jobs` (
   KEY `host_cron_job_to_cron_job` (`cron_job_id`),
   KEY `host_cron_job_to_server` (`server_id`),
   KEY `host_cron_job_to_node` (`node_id`),
-  CONSTRAINT `host_cron_job_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`),
   CONSTRAINT `host_cron_job_to_cron_job` FOREIGN KEY (`cron_job_id`) REFERENCES `cron_jobs` (`id`),
-  CONSTRAINT `host_cron_job_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CONSTRAINT `host_cron_job_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
+  CONSTRAINT `host_cron_job_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -281,7 +281,7 @@ CREATE TABLE `host_services` (
   CONSTRAINT `host_service_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`),
   CONSTRAINT `host_service_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`),
   CONSTRAINT `host_service_to_service` FOREIGN KEY (`service_id`) REFERENCES `services` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='services assigned to hosts';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='services assigned to hosts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -327,7 +327,7 @@ CREATE TABLE `inventory` (
   `type` varchar(255) DEFAULT NULL,
   `model` varchar(255) DEFAULT NULL,
   `written_off` datetime NOT NULL,
-  `hardware_desc` text NOT NULL,
+  `hardware_desc` mediumtext NOT NULL,
   `price` varchar(24) DEFAULT NULL,
   `location` varchar(255) NOT NULL DEFAULT 'PENDING',
   `photo` mediumblob,
@@ -338,7 +338,7 @@ CREATE TABLE `inventory` (
   `architecture` varchar(255) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='This table stores a list of items held by SOWN';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='This table stores a list of items held by SOWN';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -356,7 +356,7 @@ CREATE TABLE `locations` (
   `latitude` decimal(14,7) DEFAULT NULL COMMENT 'latitude of the location',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='locations of things';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='locations of things';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -447,18 +447,18 @@ CREATE TABLE `node_requests` (
   `houseno` varchar(100) DEFAULT NULL,
   `street` varchar(100) DEFAULT NULL,
   `postcode` varchar(8) DEFAULT NULL,
-  `facilities` text,
+  `facilities` mediumtext,
   `timestamp` datetime DEFAULT NULL,
   `lat` varchar(255) DEFAULT NULL,
   `longitude` varchar(255) DEFAULT NULL,
   `approved` tinyint(1) DEFAULT NULL,
-  `notes` text,
+  `notes` mediumtext,
   `deployment_id` int(11) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `node_request_to_deployment` (`deployment_id`),
   CONSTRAINT `node_request_to_deployment` FOREIGN KEY (`deployment_id`) REFERENCES `deployments` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -484,8 +484,8 @@ CREATE TABLE `node_setup_requests` (
   PRIMARY KEY (`id`),
   KEY `node_setup_request_to_user` (`approved_by`),
   KEY `node_setup_request_to_node` (`node_id`),
-  CONSTRAINT `node_setup_request_to_user` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`),
-  CONSTRAINT `node_setup_request_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
+  CONSTRAINT `node_setup_request_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
+  CONSTRAINT `node_setup_request_to_user` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -516,9 +516,9 @@ CREATE TABLE `nodes` (
   KEY `node_to_certificate` (`certificate_id`),
   KEY `node_to_switch` (`switch_id`),
   KEY `node_to_node_hardware` (`node_hardware_id`),
-  CONSTRAINT `node_to_node_hardware` FOREIGN KEY (`node_hardware_id`) REFERENCES `node_hardwares` (`id`),
   CONSTRAINT `node_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
   CONSTRAINT `node_to_endpoint` FOREIGN KEY (`vpn_endpoint_id`) REFERENCES `vpn_endpoints` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `node_to_node_hardware` FOREIGN KEY (`node_hardware_id`) REFERENCES `node_hardwares` (`id`),
   CONSTRAINT `node_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -532,7 +532,7 @@ DROP TABLE IF EXISTS `notes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `note_text` text,
+  `note_text` mediumtext,
   `notetaker_id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `deployment_id` int(11) DEFAULT NULL,
@@ -546,12 +546,12 @@ CREATE TABLE `notes` (
   KEY `note_to_node` (`node_id`),
   KEY `note_to_deployment` (`deployment_id`),
   KEY `note_to_inventory` (`inventory_id`),
-  CONSTRAINT `note_to_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventory` (`id`),
   CONSTRAINT `note_to_deployment` FOREIGN KEY (`deployment_id`) REFERENCES `deployments` (`id`),
+  CONSTRAINT `note_to_inventory` FOREIGN KEY (`inventory_id`) REFERENCES `inventory` (`id`),
   CONSTRAINT `note_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
   CONSTRAINT `note_to_notetaker` FOREIGN KEY (`notetaker_id`) REFERENCES `users` (`id`),
   CONSTRAINT `note_to_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -629,9 +629,9 @@ CREATE TABLE `server_interfaces` (
   PRIMARY KEY (`id`),
   KEY `server_interface_to_server` (`server_id`),
   KEY `server_interface_to_vlan` (`vlan_id`),
-  CONSTRAINT `server_interface_to_vlan` FOREIGN KEY (`vlan_id`) REFERENCES `vlans` (`id`),
-  CONSTRAINT `server_interface_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='locations of things';
+  CONSTRAINT `server_interface_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`),
+  CONSTRAINT `server_interface_to_vlan` FOREIGN KEY (`vlan_id`) REFERENCES `vlans` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='locations of things';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -681,8 +681,8 @@ CREATE TABLE `servers` (
   PRIMARY KEY (`id`),
   KEY `server_to_certificate` (`certificate_id`),
   KEY `server_to_location` (`location_id`),
-  CONSTRAINT `server_to_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
-  CONSTRAINT `server_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`)
+  CONSTRAINT `server_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
+  CONSTRAINT `server_to_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -697,10 +697,10 @@ CREATE TABLE `services` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(255) NOT NULL COMMENT 'machine-readable name for the service',
   `label` varchar(255) NOT NULL COMMENT 'human-readable label for the service',
-  `description` text NOT NULL COMMENT 'human-readable description for the service',
+  `description` mediumtext NOT NULL COMMENT 'human-readable description for the service',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='services assignable to hosts';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='services assignable to hosts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -713,13 +713,13 @@ DROP TABLE IF EXISTS `sites`;
 CREATE TABLE `sites` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(255) DEFAULT NULL COMMENT 'human-readable name of the site',
-  `url` text COMMENT 'the base url of the site',
-  `ip_addrs` text COMMENT 'ip addresses that the site may appear from',
+  `url` mediumtext COMMENT 'the base url of the site',
+  `ip_addrs` mediumtext COMMENT 'ip addresses that the site may appear from',
   `default_permissions` varchar(255) DEFAULT NULL COMMENT 'default permissions to assign to a user account for this site',
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'when the site was added',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'when the site was last modified',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -780,8 +780,8 @@ CREATE TABLE `switch_vlan_ports` (
   KEY `switch_vlan_port_to_switch_vlan` (`switch_vlan_id`),
   KEY `switch_vlan_port_to_switch_port` (`switch_port_id`),
   CONSTRAINT `switch_vlan_port_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`),
-  CONSTRAINT `switch_vlan_port_to_switch_vlan` FOREIGN KEY (`switch_vlan_id`) REFERENCES `switch_vlans` (`id`),
-  CONSTRAINT `switch_vlan_port_to_switch_port` FOREIGN KEY (`switch_port_id`) REFERENCES `switch_ports` (`id`)
+  CONSTRAINT `switch_vlan_port_to_switch_port` FOREIGN KEY (`switch_port_id`) REFERENCES `switch_ports` (`id`),
+  CONSTRAINT `switch_vlan_port_to_switch_vlan` FOREIGN KEY (`switch_vlan_id`) REFERENCES `switch_vlans` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -839,9 +839,9 @@ CREATE TABLE `user_accounts` (
   PRIMARY KEY (`id`),
   KEY `user_accounts_to_users` (`user_id`),
   KEY `user_accounts_to_sites` (`site_id`),
-  CONSTRAINT `user_accounts_to_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `user_accounts_to_sites` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CONSTRAINT `user_accounts_to_sites` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`),
+  CONSTRAINT `user_accounts_to_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -879,7 +879,7 @@ CREATE TABLE `vlans` (
   `prefix` varchar(20) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='vlans server_interfaces are on';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='vlans server_interfaces are on';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -959,4 +959,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-24 14:31:03
+-- Dump completed on 2016-12-31 15:59:35
