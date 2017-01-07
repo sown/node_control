@@ -178,7 +178,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		if ($this->request->method() == 'POST')
                 {
                         $formValues = FormUtils::parseForm($this->request->post());
-			if (!empty($formValues['updateNodeHardware']))
+			if (!empty($formValues['updateNode']))
                         {
 				$errors = $this->_validate($formValues);
 				if (sizeof($errors) == 0)
