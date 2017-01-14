@@ -106,6 +106,7 @@ class Controller_Scripts extends Controller_Template
 		                system($cmd);
 		        }
 		}
+		Doctrine::em()->getConnection()->close();
 		exit();
 	}
 
@@ -166,6 +167,7 @@ class Controller_Scripts extends Controller_Template
         			system($cmd);
 			}
 		}
+		Doctrine::em()->getConnection()->close();
 		exit();
 	}
 
@@ -200,6 +202,7 @@ class Controller_Scripts extends Controller_Template
       		DNSUtils::generateZoneHeader($tmpdir);
       		DNSUtils::generateReverseZoneIPv4Header($tmpdir);
       		DNSUtils::generateReverseZoneIPv6Header($tmpdir);
+		Doctrine::em()->getConnection()->close();
 		exit();
 	}
 
