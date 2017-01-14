@@ -380,6 +380,31 @@ CREATE TABLE `network_adapters` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `node_client_list_macs`
+--
+
+DROP TABLE IF EXISTS `node_client_list_macs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node_client_list_macs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id of the mac address for the client connecting to to the node',
+  `node_id` int(11) NOT NULL COMMENT 'id of the node tp associate with the client mac',
+  `mac` varchar(17) NOT NULL COMMENT 'mac address of the client in the node',
+  `type` enum('black','white') NOT NULL COMMENT 'whether the back is to be white or black listed',
+  `disabled` int(1) NOT NULL DEFAULT '0' COMMENT 'whether the mac listing is disabled',
+  `description` text NOT NULL COMMENT 'a description of the client with mac',
+  `lister_id` int(11) NOT NULL COMMENT 'user who created the mac list entry',
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT 'when the mac list entry was created',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `node_client_list_mac_to_node` (`node_id`),
+  KEY `node_client_list_mac_to_user` (`lister_id`),
+  CONSTRAINT `node_client_list_mac_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
+  CONSTRAINT `node_client_list_mac_to_user` FOREIGN KEY (`lister_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `node_deployments`
 --
 
@@ -959,4 +984,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-31 15:59:35
+-- Dump completed on 2017-01-08 13:15:43
