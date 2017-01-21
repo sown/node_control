@@ -137,7 +137,6 @@ class Model_SwitchVlanPort extends Model_Entity
 		$switchVlan_options = array();
 		if (isset($switch) && $switch->id > 0)
 		{
-			echo "switch:id ".$switch->id."<br/>";
 			$switchPort_options = $switch->getSwitchPortOptions();
                 	$switchVlan_options = $switch->getSwitchVlanOptions();
 		}
