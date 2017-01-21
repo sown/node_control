@@ -295,6 +295,20 @@ class Model_Deployment extends Model_Entity
 		}
 	}
 
+	public function getLastNodeDeployment()
+	{
+		$latest_time = 0;
+		$lastNodeDeployment = null;
+		foreach ($this->nodeDeployments as $nodeDeployment)
+                {
+                        if ($nodeDeployment->endDate->getTimestamp() > $latest_time)
+                        {
+                                $lastNodeDeployment = $nodeDeployment;
+                        }
+                }
+		return $lastNodeDeployment;
+	}
+
 	public static function build($name, $latitude, $longitude, $cap = 5120)
 	{
 		$deployment = new Model_Deployment();

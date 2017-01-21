@@ -919,6 +919,12 @@ Route::set('deployments_usage_daily_graph', 'admin/deployments/usage/graphs/dail
                 'action'     => 'daily_graph',
         ));
 
+Route::set('deployments_usage_throughout_day_average_graph', 'admin/deployments/usage/graphs/throughout_day_average/<deployment_id>')
+        ->defaults(array(
+                'controller' => 'deployments_usage',
+                'action'     => 'throughout_day_average_graph',
+        ));
+
 Route::set('update_dnz_zones', 'scripts/update_dns_zones/<tmpdir>')
         ->defaults(array(
                 'controller' => 'scripts',

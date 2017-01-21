@@ -101,6 +101,24 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 	
 	}
 
+	public function action_throughout_day_average_graph()
+	{
+		$deployment = $this->_initialize_graph();
+		if(!is_object($deployment))
+                        return;
+
+		#$type = $this->request->param('type');
+		$type = "user";
+                $interval = 300;
+                $response = $this->request->response();
+                $response->headers('Content-Type', 'image/png');
+		$start_date = $deployment->getLastNodeDeployment()->startDate;
+                $through_day = $this->_format_radius_connections_throughout_day_average($this->_get_radius_connections_through_day_for_deployment_results($deployment, $interval), $interval, $start_date);
+                $xdata = $through_day['thetime'];
+                $ydata = $through_day['no_connections'];
+                SOWN::draw_line_graph('Average connections throughout day', '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 0, 12);
+	}
+
 	public function action_default()
 	{
 		$this->check_login();
@@ -178,10 +196,87 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		}
 
 		$content .="<img src=\"/admin/deployments/usage/graphs/daily/{$deployment->id}\" alt=\"Last 30 days usage graph for {$deployment->name} deployment\" />\n<br/><br/>";
-		$content .="<img src=\"/admin/deployments/usage/graphs/monthly/{$deployment->id}\" alt=\"Historical monthly usage graph for {$deployment->name} deployment\" />\n";
+		$content .="<img src=\"/admin/deployments/usage/graphs/monthly/{$deployment->id}\" alt=\"Historical monthly usage graph for {$deployment->name} deployment\" /><br/><br/>\n";
+		$content .="<img src=\"/admin/deployments/usage/graphs/throughout_day_average/{$deployment->id}\" alt=\"Throughout day average usage graph for {$deployment->name} deployment\" />\n";
 		$content .= "</div>\n";
 		return $content;
 	}
+
+	private function _get_radius_connections_through_day_for_deployment_results($deployment, $interval)
+        {
+                $calledstationid = "[UNSET]";
+                $node = $deployment->getLastNodeDeployment()->node;
+                foreach ($node->interfaces as $interface)
+                {
+                        $ssid = $interface->ssid;
+                        if (!empty($ssid))
+                        {
+                                $calledstationid = str_replace(":", "-", strtoupper($interface->networkAdapter->mac));
+                                break;
+                        }
+                }
+                $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
+                        ->select("UNIX_TIMESTAMP(ra.acctstarttime) AS start, UNIX_TIMESTAMP(ra.acctstoptime) AS stop, ra.callingstationid AS mac")
+                        ->where("ra.acctinputoctets+ra.acctoutputoctets > 0 OR (ra.acctsessiontime <= $interval AND ra.acctsessiontime IS NULL)")
+                        ->andWhere("ra.calledstationid LIKE '%$calledstationid%'");
+		$sql = $qb->getQuery()->getSql();
+                $results = $qb->getQuery()->getResult();
+                return $results;
+        }
+
+	private function _format_radius_connections_throughout_day_average($results, $interval, $start_date)
+        {
+                $connections = array();
+                for ( $secs = 0; $secs < 86400; $secs += $interval )
+                {
+                        $time = date("H:i:s", $secs);
+                        $connections[$time] = 0;
+                        foreach ( $results as $ts )
+                        {
+                                $ts['start'] = $ts['start'] % 86400;
+                                if (!empty($ts['stop']))
+                                {
+                                        $ts['stop'] = $ts['stop'] % 86400;
+                                }
+                                if ( $ts['start'] < $secs && (empty($ts['stop']) || $ts['stop'] > $secs))
+                                {
+                                        $connections[$time]++;
+                                }
+                        }
+                }
+		$start_date_secs = $start_date->format('U');
+		$end_date_secs = time();
+		$days = floor(($end_date_secs - $start_date_secs ) / 86400);
+		$start_date_tod = $start_date_secs % 86400;
+		$end_date_tod = $end_date_secs % 86400;
+		for ( $secs = 0; $secs < 86400; $secs += $interval )
+                {
+			$time = date("H:i:s", $secs);
+			if ( $start_date_tod > $end_date_tod )
+			{
+				if ($secs > $start_date_tod || $secs < $end_date_tod)
+				{
+					$connections[$time] = $connections[$time] / ($days + 1);
+				}
+				else 
+				{
+					$connections[$time] = $connections[$time] / $days;
+				}
+			}
+			else {
+				if ($secs > $start_date_tod && $secs < $end_date_tod)
+                                {
+                                        $connections[$time] = $connections[$time] / ($days + 1);
+                                }
+                                else
+                                {
+                                        $connections[$time] = $connections[$time] / $days;
+                                }
+			}
+		}
+                return array("thetime" => array_keys($connections), "no_connections" => array_values($connections));
+        }
+
 
 	private function _render_page($title, $content) 
 	{
