@@ -109,14 +109,14 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 
 		#$type = $this->request->param('type');
 		$type = "user";
-                $interval = 300;
+                $interval = 600;
                 $response = $this->request->response();
-                $response->headers('Content-Type', 'image/png');
+                #$response->headers('Content-Type', 'image/png');
 		$start_date = $deployment->getLastNodeDeployment()->startDate;
-                $through_day = $this->_format_radius_connections_throughout_day_average($this->_get_radius_connections_through_day_for_deployment_results($deployment, $interval), $interval, $start_date);
+                $through_day = $this->_format_radius_connections_throughout_day_average($this->_get_radius_connections_through_day_for_deployment_results($deployment), $interval, $start_date);
                 $xdata = $through_day['thetime'];
                 $ydata = $through_day['no_connections'];
-                SOWN::draw_line_graph('Average connections throughout day', '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 0, 12);
+                SOWN::draw_line_graph('Average connections throughout day', '', '', $xdata, $ydata, 600, 400, array(45,20,30,90), 0, 'vertical', 6);
 	}
 
 	public function action_default()
@@ -202,7 +202,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		return $content;
 	}
 
-	private function _get_radius_connections_through_day_for_deployment_results($deployment, $interval)
+	private function _get_radius_connections_through_day_for_deployment_results($deployment)
         {
                 $calledstationid = "[UNSET]";
                 $node = $deployment->getLastNodeDeployment()->node;
@@ -216,8 +216,8 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
                         }
                 }
                 $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("UNIX_TIMESTAMP(ra.acctstarttime) AS start, UNIX_TIMESTAMP(ra.acctstoptime) AS stop, ra.callingstationid AS mac")
-                        ->where("ra.acctinputoctets+ra.acctoutputoctets > 0 OR (ra.acctsessiontime <= $interval AND ra.acctsessiontime IS NULL)")
+                        ->select("UNIX_TIMESTAMP(ra.acctstarttime) AS start, UNIX_TIMESTAMP(ra.acctstoptime) AS stop, ra.acctsessiontime AS length, ra.callingstationid AS mac")
+                        ->where("ra.acctinputoctets+ra.acctoutputoctets > 0 OR (UNIX_TIMESTAMP(ra.acctstarttime) + ra.acctsessiontime + 600 > UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) AND ra.acctstoptime IS NULL)")
                         ->andWhere("ra.calledstationid LIKE '%$calledstationid%'");
 		$sql = $qb->getQuery()->getSql();
                 $results = $qb->getQuery()->getResult();
@@ -227,21 +227,34 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 	private function _format_radius_connections_throughout_day_average($results, $interval, $start_date)
         {
                 $connections = array();
+
                 for ( $secs = 0; $secs < 86400; $secs += $interval )
                 {
-                        $time = date("H:i:s", $secs);
+			# date returns 1am for 0 seconds
+                        $time = date("H:i:s", $secs-3600);
                         $connections[$time] = 0;
                         foreach ( $results as $ts )
                         {
-                                $ts['start'] = $ts['start'] % 86400;
-                                if (!empty($ts['stop']))
+				if (empty($ts['stop']))
                                 {
-                                        $ts['stop'] = $ts['stop'] % 86400;
+                                        $ts['stop'] = time();
                                 }
-                                if ( $ts['start'] < $secs && (empty($ts['stop']) || $ts['stop'] > $secs))
+                                $start = $ts['start'] % 86400;
+				$stop = $ts['stop'] % 86400;
+				$days = floor($ts['length'] / 86400);
+				$connections[$time] = $connections[$time] + $days;
+				if ($start < $stop && $start <= $secs && $stop >= $secs)
                                 {
                                         $connections[$time]++;
                                 }
+				elseif ($start > $stop && ($start >= $secs || $stop <= $secs))
+				{
+					$connections[$time]++;
+				}
+				elseif ($ts['start'] - $ts['stop'] < $interval && (($start >= $secs && $stop < $secs + $interval * 2) || ($start > $secs - $interval && $stop < $secs + $interval)))
+				{
+					$connections[$time]++;
+				}
                         }
                 }
 		$start_date_secs = $start_date->format('U');
@@ -254,7 +267,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 			$time = date("H:i:s", $secs);
 			if ( $start_date_tod > $end_date_tod )
 			{
-				if ($secs > $start_date_tod || $secs < $end_date_tod)
+				if ($secs >= $start_date_tod || $secs <= $end_date_tod)
 				{
 					$connections[$time] = $connections[$time] / ($days + 1);
 				}
@@ -264,7 +277,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 				}
 			}
 			else {
-				if ($secs > $start_date_tod && $secs < $end_date_tod)
+				if ($secs >= $start_date_tod && $secs <= $end_date_tod)
                                 {
                                         $connections[$time] = $connections[$time] / ($days + 1);
                                 }
