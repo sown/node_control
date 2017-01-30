@@ -39,6 +39,40 @@ class Controller_Data extends Controller
 			echo $activeusers;
 	}
 
+	public function action_current_radius_node_users()
+        {
+                $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra');
+                $qb->select("DISTINCT ra.callingstationid AS user_mac, ra.calledstationid AS node_mac");
+                $qb->where("ra.acctstoptime IS NULL");
+                // 600 seconds because records only get updated every 300 seconds so session time may have been increased since 
+                // record was updated. 600 seconds gives enough leeway without including users who have likely disconnected.
+                $qb->andWhere("UNIX_TIMESTAMP(ra.acctstarttime) + ra.acctsessiontime + 600 > UNIX_TIMESTAMP(CURRENT_TIMESTAMP())");
+                $query = $qb->getQuery();
+                $curusers = $query->getResult();
+		$nodeusers = array();
+		$nodeusersnode = array();
+		foreach ($curusers as $curuser)
+		{
+			$node_mac = trim(strtoupper(str_replace("-", ":", substr($curuser['node_mac'], 0, strpos($curuser['node_mac'], ":")))));
+			if (!isset($nodeusers[$node_mac]))
+			{
+				$nodeusers[$node_mac] = 0;
+			}
+			$nodeusers[$node_mac]++;
+		}
+		$netadapters = Doctrine::em()->getRepository('Model_NetworkAdapter')->findAll();
+		foreach ($netadapters as $na)
+		{
+			$namac = strtoupper($na->mac);
+			if (isset($nodeusers[$namac]))
+			{
+				$nodeusersnode[$na->node->boxNumber] = $nodeusers[$namac];
+			}
+		}
+		echo json_encode($nodeusersnode);
+        }
+
+
 	public function action_radius_users_day() 
 	{
 		$formatted_date = $this->request->param('year') . "-" . $this->request->param('month') . "-" . $this->request->param('day');

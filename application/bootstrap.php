@@ -961,6 +961,12 @@ Route::set('data_current_radius_users', 'data/current_radius_users')
                 'action'     => 'current_radius_users',
         ));
 
+Route::set('data_current_radius_node_users', 'data/current_radius_node_users')
+        ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'current_radius_node_users',
+        ));
+
 Route::set('data_radius_users_day', 'data/radius_users_day/<year>/<month>/<day>')
 	 ->defaults(array(
                 'controller' => 'data',
