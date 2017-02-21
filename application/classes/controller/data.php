@@ -168,7 +168,7 @@ class Controller_Data extends Controller
                         $ydata[2][] = $yearcount - $monthcount;
 		}
 		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
-		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,60), 0);
+		#SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,60), 0);
 	}
 
 	public function action_node_graph()
@@ -195,8 +195,53 @@ class Controller_Data extends Controller
                         $ydata[2][] = $node['no_'.$type.'s'] - $monthcount;
                 }
 		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
-                SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, $legend, 600, 400, array(60,25,40,130), 90, "horizontal");
+                SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Node', '', '', $xdata, $ydata, $legend, 600, 500, array(75,25,40,50), 90, "horizontal", 60);
         }
+	
+	public function action_deployment_graph()
+        {
+		$type = $this->request->param('type');
+                if (!in_array($type, array('user', 'connection')))
+                {
+                        throw new HTTP_Exception_404();
+                }
+		$response = $this->request->response();
+                $response->headers('Content-Type', 'image/png');
+		$week = array();
+		$month = array();
+		$day = array();
+		$now = time();
+		$yearago = date('Y-m-d H:i:s', strtotime("-1 year"));
+		$deployments = Model_Deployment::getAllDeploymentsDuring($yearago);
+		foreach ($deployments as $d)
+		{
+			$nds = $d->nodeDeployments;
+			$calledstationids = array();
+			foreach ($nds[0]->node->interfaces as $interface)
+			{
+				$calledstationids[strtoupper(str_replace(":", "-", $interface->networkAdapter->mac))] =2;
+			}
+			$calledstationids = array_keys($calledstationids);
+			$start_seconds = $d->startDate->format('U');
+			$end_seconds = $d->endDate->format('U');
+		
+		#	echo time(). " | ".$nds[0]->node->boxNumber.":<br/>\n";
+                	$dweek = $this->_get_radius_user_deployment_results($start_seconds, $end_seconds, $now, $calledstationids, 7, $type);
+		#	echo "week: $dweek;<br/>\n" ;
+                	$dmonth = $this->_get_radius_user_deployment_results($start_seconds, $end_seconds, $now, $calledstationids, 30, $type);
+		#	echo "month: $dmonth;<br/>\n";
+                	$dyear = $this->_get_radius_user_deployment_results($start_seconds, $end_seconds, $now, $calledstationids, 365, $type);
+		#	echo "year: $dyear;<br/>\n";
+			$xdata[] = $d->name . " (#".$nds[0]->node->boxNumber.")";
+                        $ydata[0][] = $dweek;
+                        $ydata[1][] = $dmonth - $dweek;
+                        $ydata[2][] = $dyear - $dmonth;
+                }
+                $legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
+		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Deployment', '', '', $xdata, $ydata, $legend, 600, 500, array(75,25,40,210), 90, "horizontal", 45);
+
+        }
+	
 
 	public function action_through_day_graph()
 	{
@@ -276,6 +321,42 @@ class Controller_Data extends Controller
                         ->orderBy("thenode");
                 $results = $qb->getQuery()->getResult();
                 return $results;
+	}
+
+	private function _get_radius_user_deployment_results($start_seconds, $end_seconds, $now, $calledstationids, $days, $type = "user")
+	{
+		if ($start_seconds < $now - $days * 86400)
+		{
+			$start_seconds = $now - $days * 86400;
+		}
+		if ($start_seconds > $end_seconds)	
+		{
+			return 0;
+		}
+		$calledstationids_str = implode(' ', $calledstationids);
+		$qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
+                        ->select("ra.calledstationid AS thenode, SUM(1) AS connections, ra.callingstationid")
+                        ->where("UNIX_TIMESTAMP(ra.acctstarttime) >= $start_seconds");
+		if ($end_seconds < $now)
+		{
+			$qb->andWhere("UNIX_TIMESTAMP(ra.acctstarttime) < $end_seconds");
+		}
+		$qb->andWhere("ra.calledstationid LIKE '$calledstationids_str%'")
+                        ->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0")
+                        ->groupBy("ra.callingstationid");
+		$sql = $qb->getQuery()->getSQL();
+		#echo time()." | $sql<br/>\n";
+                $results = $qb->getQuery()->getResult();
+		if ($type == "user")
+		{
+			return sizeof($results);
+		}
+		$connections = 0;
+                foreach ($results as $result)
+                {
+                        $connections += $result['connections'];
+                }
+                return $connections;
 	}
 
 	private function _get_radius_users_through_day_results($date)

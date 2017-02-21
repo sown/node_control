@@ -427,6 +427,9 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 				'pingAttempts' => $deployment->pingAttempts,
 				'wifiDownAfter' => $deployment->wifiDownAfter,
 			),
+			'blacklist' => array(
+				'currentNodeClientListMacs' => array(),
+			),
 			'location' => array(
                                 'longitude' => $deployment->longitude,
                                 'latitude' => $deployment->latitude,
@@ -490,6 +493,23 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 					'cap' => array('title' => 'Usage cap', 'type' => 'input', 'size' => 5, 'hint' => 'MB'),	
 					'pingAttempts' => array('title' => 'Ping attempts', 'type' => 'input', 'size' => 5, 'hint' => 'Number of pings to test VPN tunnel is up'),
 					'wifiDownAfter' => array('title' => 'Wi-Fi down after', 'type' => 'input', 'size' => 5, 'hint' => 'Number of failed ping attempts before taking down Wi-Fi'),
+				),
+			),
+			'blacklist' => array(
+				'title' => 'Black List',
+				'type' => 'fieldset',
+				'fields' => array(
+					'currentNodeClientListMacs' => array(
+                                                'title' => '',
+                                                'type' => 'table',
+                                                'fields' => array(
+                                                        'id' => array('type' => 'hidden'),
+                                                        'mac' => array('title' => 'MAC', 'type' => 'input', 'hint' => '00:11:22:33:44:55'),
+                                                        'description' => array('title' => 'Description', 'type' => 'input', 'size' => 70),
+                                                       	'disabled' => array('title' => 'Disabled', 'type' => 'checkbox'), 
+                                                ),
+                                        ),
+
 				),
 			),
 			'location' => array(

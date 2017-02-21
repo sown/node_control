@@ -410,16 +410,16 @@ class SOWN
 
 	}
 
-	public static function draw_accbar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $legend, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical")
+	public static function draw_accbar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $legend, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical", $angle2 = 90)
 	{
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
 		$graph = SOWN::setup_graph("Graph", array("height" => $height, "width" => $width, "scale" => "textint"));
 
-		$angle = SOWN::setup_graph_orientation($graph, $orientate, $margins, $angle);
+		$angle = SOWN::setup_graph_orientation($graph, $orientate, $margins, $angle, $angle);
 		SOWN::setup_graph_title($graph->title, $title);
 		SOWN::setup_graph_axis($graph->xaxis, $xlabel, $xdata, $angle);
-		SOWN::setup_graph_axis($graph->yaxis, $ylabel);
+		SOWN::setup_graph_axis($graph->yaxis, $ylabel, null, $angle2);
 		SOWN::add_graph_barplot($graph, $ydata, $legend, 0.8, array("#000033", "#003399", "#0066FF"), array("#000033", "#003399", "#0066FF"));
 		$graph->graph_theme = null;
                 $graph->Stroke();

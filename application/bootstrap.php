@@ -1003,6 +1003,12 @@ Route::set('data_graph_uc_node', 'data/graph/<type>/node')
                 'action'     => 'node_graph',
         ));
 
+Route::set('data_graph_uc_deployment', 'data/graph/<type>/deployment')
+         ->defaults(array(
+                'controller' => 'data',
+                'action'     => 'deployment_graph',
+        ));
+
 require_once(APPPATH.'/classes/mysql-dbo.php');
 Doctrine\DBAL\Types\Type::addType('ipv4address', 'Model_Type_IPv4Address');
 Doctrine\DBAL\Types\Type::addType('ipv6address', 'Model_Type_IPv6Address');
