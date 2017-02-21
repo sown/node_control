@@ -168,7 +168,7 @@ class Controller_Data extends Controller
                         $ydata[2][] = $yearcount - $monthcount;
 		}
 		$legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
-		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,60), 0, 'vertical', 90);
+		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,60), 0, 'vertical', 0);
 	}
 
 	public function action_node_graph()
