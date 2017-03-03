@@ -149,7 +149,7 @@ class Controller_Scripts extends Controller_Template
 		{
 			$hourago_dt = new \DateTime('-1 hour');
                 	$hourago = $hourago_dt->format("Y-m-d H:i:s");
-			$whererecent = "WHERE ra.callingstationid IN (SELECT ra2.callingstationid FROM Model_Radacct ra2 WHERE ra2.acctstoptime IS NULL OR ra2.acctstoptime > '$hourago')";
+			$whererecent = "WHERE ra.callingstationid IN (SELECT DISTINCT ra2.callingstationid FROM Model_Radacct ra2 WHERE ra2.acctstoptime IS NULL OR ra2.acctstoptime > '$hourago')";
 		}
 		$query_str = "SELECT ra.callingstationid, SUM(ra.acctinputoctets) as acctinputoctets_total, SUM(ra.acctoutputoctets) as acctoutputoctets_total FROM Model_Radacct ra $whererecent GROUP BY ra.callingstationid";
 		$query = Doctrine::em()->createQuery($query_str);
