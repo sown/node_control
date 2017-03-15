@@ -523,17 +523,20 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 $dbServices[] = $serviceId;
                         }
                 }
-                foreach ($formValues['services'] as $serviceId)
-                {
-                        if (!in_array($serviceId, $dbServices))
-                        {
-				$service = Doctrine::em()->getRepository('Model_Service')->find($serviceId);
-                                $hostService = Model_HostService::build($server, null, $service);
-                                if (is_object($hostService))
-                                {
-                                        $hostService->save();
-                                }
-                        }
+		if (isset($formValues['services']))
+		{
+	                foreach ($formValues['services'] as $serviceId)
+        	        {
+                	        if (!in_array($serviceId, $dbServices))
+                        	{
+					$service = Doctrine::em()->getRepository('Model_Service')->find($serviceId);
+                                	$hostService = Model_HostService::build($server, null, $service);
+                                	if (is_object($hostService))
+                                	{
+                                        	$hostService->save();
+                                	}
+                        	}
+			}
                 }
 
 		foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interfaceValues)
