@@ -410,11 +410,17 @@ class SOWN
 
 	}
 
-	public static function draw_accbar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $legend, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical", $angle2 = 90)
+	public static function draw_accbar_graph($title, $xlabel, $ylabel, $xdata, $ydata, $legend, $width = 600, $height = 400, $margins = array(70, 10, 30, 60), $angle = 50, $orientate = "vertical", $angle2 = 90, $log = false)
 	{
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph', 'php');
                 require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_bar', 'php');
-		$graph = SOWN::setup_graph("Graph", array("height" => $height, "width" => $width, "scale" => "textint"));
+		$scale = "textint";
+		if ($log) 
+		{
+			require_once Kohana::find_file('vendor', 'jpgraph/src/jpgraph_log', 'php');
+			$scale = "textlog";
+		}
+		$graph = SOWN::setup_graph("Graph", array("height" => $height, "width" => $width, "scale" => $scale));
 
 		$angle = SOWN::setup_graph_orientation($graph, $orientate, $margins, $angle, $angle);
 		SOWN::setup_graph_title($graph->title, $title);

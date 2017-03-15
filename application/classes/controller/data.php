@@ -171,6 +171,76 @@ class Controller_Data extends Controller
 		SOWN::draw_accbar_graph('No. of SOWN '.ucfirst($type).'s - By Hour', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,60), 0, 'vertical', 0);
 	}
 
+	public function action_length_graph()
+	{
+                $response = $this->request->response();
+                $response->headers('Content-Type', 'image/png');
+                $week = $this->_format_radius_session_lengths($this->_get_radius_session_length_results(7));
+                $month = $this->_format_radius_session_lengths($this->_get_radius_session_length_results(30));
+                $year = $this->_format_radius_session_lengths($this->_get_radius_session_length_results(365));
+		$mins = 360;
+		$imins = 5;
+                for ($l=$imins; $l<=$mins; $l=$l+$imins)
+                {
+			if ($l % ($imins * 6) == 0)
+			{
+                      		$xdata[] = $l;
+			}
+			else
+			{
+				$xdata[] = "";
+			}
+                        $weekcount = 0;
+                        $monthcount = 0;
+                        $yearcount = 0;
+                        if (isset($week[$l])) $weekcount = $week[$l];
+                        if (isset($month[$l])) $monthcount = $month[$l];
+                        if (isset($year[$l])) $yearcount = $year[$l];
+                        $ydata[0][] = $weekcount;
+                        $ydata[1][] = $monthcount - $weekcount;
+                        $ydata[2][] = $yearcount - $monthcount;
+                }
+		$l = "+";
+		$xdata[] = $l;
+                $weekcount = 0;
+                $monthcount = 0;
+                $yearcount = 0;
+                if (isset($week[$l])) $weekcount = $week[$l];
+                if (isset($month[$l])) $monthcount = $month[$l];
+                if (isset($year[$l])) $yearcount = $year[$l];
+                $ydata[0][] = $weekcount;
+                $ydata[1][] = $monthcount - $weekcount;
+                $ydata[2][] = $yearcount - $monthcount;
+                $legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
+                SOWN::draw_accbar_graph('No. of SOWN sessions - By Length (up to minutes)', '', '', $xdata, $ydata, $legend, 600, 400, array(45,20,30,75), 45, 'vertical', 0, true);
+		$cols = array();
+        }
+
+	public function action_usage_graph()
+        {
+                $response = $this->request->response();
+                $response->headers('Content-Type', 'image/png');
+                $week = $this->_format_radius_session_usage($this->_get_radius_session_usage_results(7));
+                $month = $this->_format_radius_session_usage($this->_get_radius_session_usage_results(30));
+                $year = $this->_format_radius_session_usage($this->_get_radius_session_usage_results(365));
+		$cols = array( '100', '1K', '10K', '100K', '1M', '10M', '100M', '1G', '10G', '100G', '1T');
+                foreach ($cols as $c)
+                {
+                        $xdata[] = $c;
+                        $weekcount = 0;
+                        $monthcount = 0;
+                        $yearcount = 0;
+                        if (isset($week[$c])) $weekcount = $week[$c];
+                        if (isset($month[$c])) $monthcount = $month[$c];
+                        if (isset($year[$c])) $yearcount = $year[$c];
+                        $ydata[0][] = $weekcount;
+                        $ydata[1][] = $monthcount - $weekcount;
+                        $ydata[2][] = $yearcount - $monthcount;
+                }
+                $legend = array("Last 7 Days", "Last 30 Days", "Last 365 Days");
+		SOWN::draw_accbar_graph('No. of SOWN sessions - By Usage (up to bytes)', '', '', $xdata, $ydata, $legend, 600, 400, array(55,20,30,80), 45, 'vertical', 0, true);
+        }
+
 	public function action_node_graph()
         {
                 $type = $this->request->param('type');
@@ -308,6 +378,71 @@ class Controller_Data extends Controller
                          $array[$lasthour] = array('thehour' => $lasthour, 'no_users' => $users, 'no_connections' => $connections);
                 }
 		return $array;
+        }
+
+	private function _get_radius_session_length_results($days)
+        {
+
+                $seconds = $days * 86400;
+                $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
+			->select("ra.acctsessiontime")
+                        ->where("UNIX_TIMESTAMP(ra.acctstarttime) > UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) - $seconds")
+                        ->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0");
+                $results = $qb->getQuery()->getResult();
+                return $results;
+        }
+
+	private function _get_radius_session_usage_results($days)
+        {
+
+                $seconds = $days * 86400;
+                $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
+                        ->select("ra.acctinputoctets+ra.acctoutputoctets AS mysize")
+                        ->where("UNIX_TIMESTAMP(ra.acctstarttime) > UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) - $seconds")
+                        ->andWhere("ra.acctinputoctets+ra.acctoutputoctets > 0");
+                $results = $qb->getQuery()->getResult();
+                return $results;
+        }
+
+	private function _format_radius_session_lengths($results)
+        {
+                $array = array();
+		$mins = 360;
+		$imins = 5;
+		for ($m = $imins; $m <= $mins; $m = $m+$imins)
+		{
+			$array[$m] = 0;
+		}
+		$array["$mins+"] = 0;
+                foreach ($results as $result)
+                {
+			$sessiontime = floor(($result['acctsessiontime']+$imins*60)/60);
+			if ($sessiontime > $mins)
+                        {
+				$array["$mins+"]++;
+			}
+			elseif (isset($array[$sessiontime]))
+			{
+				$array[$sessiontime]++;
+			}
+                }
+                return $array;
+        }
+
+	private function _format_radius_session_usage($results)
+        {
+		$cols = array( '100', '1K', '10K', '100K', '1M', '10M', '100M', '1G', '10G', '100G', '1T');
+                $array = array();
+                foreach ($cols as $col)
+                {
+                        $array[$col] = 0;
+                }
+                foreach ($results as $result)
+                {
+			$size = strlen($result['mysize']);
+			$array[$cols[$size-2]]++;
+                }
+                return $array;
         }
 
 	private function _get_radius_user_node_results($days)
@@ -451,7 +586,7 @@ class Controller_Data extends Controller
 		if (isset($array[$index]))
                 {
                         $array[$index]['no_users'] += $users;
-                        $array[$index]['no_users'] += $connections;
+                        $array[$index]['no_connections'] += $connections;
                 }
                 else
                 {
