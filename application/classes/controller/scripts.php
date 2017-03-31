@@ -185,7 +185,7 @@ class Controller_Scripts extends Controller_Template
                         ->getQuery()->getResult();
 		$wwwserver = Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
                         ->where('si.hostname LIKE :hostname')->orWhere('si.cname LIKE :hostname')
-                        ->setParameter('hostname', 'www')
+                        ->setParameter('hostname', 'www%')
                         ->setMaxResults(1)
                         ->getQuery()->getResult();
 		$server_interfaces = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname FROM Model_ServerInterface si JOIN si.vlan v JOIN si.server s WHERE v.name = '".Kohana::$config->load('system.default.vlan.local')."' AND s.retired != 1 AND (si.IPv4Addr != '' OR si.IPv6Addr != '') ORDER BY si.IPv4Addr ASC")->getResult(); 
