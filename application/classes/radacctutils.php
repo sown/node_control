@@ -40,9 +40,10 @@ class RadAcctUtils {
 	private static function getDataSet($rrd_file, $resolution)
 	{
 		$rv = array();
-		$two_months = 60*60*24*31*2;
+		$thirteen_months = 60*60*24*31*13;
 
-		$options = array("AVERAGE", "-s", "-$two_months", "-r", $resolution);
+		$options = array("AVERAGE", "-s", "-$thirteen_months", "-r", $resolution);
+		
 		$data = rrd_fetch($rrd_file, $options);
 
 		if(!is_array($data))
@@ -197,7 +198,7 @@ class RadAcctUtils {
 		$data_two = RadAcctUtils::getDataSet($rrd_file, 1800);
 		$data_three = RadAcctUtils::getDataSet($rrd_file, 7200);
 		$data_four = RadAcctUtils::getDataSet($rrd_file, 86400);
-
+	
 		if(!is_array($data_two))
 		{
 			print "Data one isn't an array\n";
