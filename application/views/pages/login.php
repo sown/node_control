@@ -66,11 +66,11 @@
 		<h4>Users from the following domains can login to managed their accounts or a node that they host:</h4>
 	
 		<dl class="list">
-                        <dt><abbr title="Southampton Open Wireless Network">SOWN</abbr> <span class='no_bold'>(@sown.org.uk)</span></dt>
+                        <dt><abbr title="Southampton Open Wireless Network">SOWN</abbr> <span class='no_bold'>(e.g. username@sown.org.uk)</span></dt>
                                 <dd>&raquo; If you have forgotten your password <a href="forgot_password">click here</a>.</dd>
-			<dt>University of Southampton <span class='no_bold'>(@soton.ac.uk)</span></dt>
+			<dt>University of Southampton <span class='no_bold'>(e.g. username@soton.ac.uk)</span></dt>
 				<dd>&raquo; This uses your <strong>iSolutions</strong> username &amp; password.</dd>
-			<dt><abbr title="Electronics and Computer Science">ECS</abbr> <span class='no_bold'>(@ecs.soton.ac.uk)</span></dt>
+			<dt><abbr title="Electronics and Computer Science">ECS</abbr> <span class='no_bold'>(e.g. username@ecs.soton.ac.uk)</span></dt>
 				<dd>&raquo; This uses your ECS username and password.</dd>
 		</dl>
 	</div>
