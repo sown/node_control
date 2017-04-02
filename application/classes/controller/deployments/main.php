@@ -435,6 +435,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                                 'latitude' => $deployment->latitude,
                                 'range' => $deployment->range,
 				'address' => $deployment->address,
+				'isMobile' => $deployment->isMobile,
                         ),
 			'admins' => array(
 				'currentAdmins' => array(),
@@ -466,6 +467,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 				$formValues['configuration']['cap'] = $formValues['configuration']['cap'] . " MB";
 			}
 			$formValues['location']['range'] = $formValues['location']['range'] . " metres";
+			$formValues['location']['isMobile'] = ( $formValues['location']['isMobile'] ? 'Yes' : 'No');
                 }
 		$formValues['endDate'] = ( $formValues['endDate'] == $latest_end_datetime ? '' : $formValues['endDate']);
 		return $formValues;
@@ -520,6 +522,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 					'latitude' => array('title' => "Latitude", 'type' => 'input', 'size' => 10),
 					'range' => array('title' => 'Range', 'type' => 'input', 'size' => '3', 'hint' => 'metres'),
 					'address' => array('title' => 'Address', 'type' => 'textarea'),
+					'isMobile' => array('title' => 'Mobile', 'type' => 'checkbox'),
 				),
 			),
 			'admins' => array(
@@ -580,6 +583,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$deployment->latitude = $formValues['location']['latitude'];
 		$deployment->range = $formValues['location']['range'];
 		$deployment->address = $formValues['location']['address'];
+		$deployment->isMobile = $formValues['location']['isMobile'];
 		if (isset($formValues['admins']['currentAdmins']))
 		{
 			foreach ($formValues['admins']['currentAdmins'] as $admin)

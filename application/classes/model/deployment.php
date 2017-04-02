@@ -148,6 +148,13 @@ class Model_Deployment extends Model_Entity
 	 */
 	protected $address;
 
+ 	/**
+         * @var boolean $isMobile
+         *
+         * @Column(name="is_mobile", type="boolean", nullable=false)
+         */
+        protected $isMobile;
+
 	/**
 	 * @OneToMany(targetEntity="Model_DeploymentAdmin", mappedBy="deployment", cascade={"persist", "remove"})
 	 */
@@ -321,6 +328,7 @@ class Model_Deployment extends Model_Entity
 		$deployment->longitude = $longitude;
 		$deployment->latitude = $latitude;
 		$deployment->range = 20;
+		$deployment->isMobile = 0;
 		$deployment->cap = $cap;
 		$deployment->capExceeded = False;
 		$deployment->pingAttempts = 4;
@@ -333,7 +341,7 @@ class Model_Deployment extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Deployment: {$this->id}, name={$this->name}, nfsenName={$this->nfsenName}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, pingAttempts={$this->pingAttempts}, wifiDownAfter={$this->wifiDownAfter}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
+		$str  = "Deployment: {$this->id}, name={$this->name}, nfsenName={$this->nfsenName}, isDevelopment={$this->isDevelopment}, isPrivate={$this->isPrivate}, firewall={$this->firewall}, advancedFirewall={$this->advancedFirewall}, cap={$this->cap}, pingAttempts={$this->pingAttempts}, wifiDownAfter={$this->wifiDownAfter}, startDate={$this->startDate->format('Y-m-d H:i:s')}, endDate={$this->endDate->format('Y-m-d H:i:s')}, range={$this->range}, allowedPorts={$this->allowedPorts}, type={$this->type}, url={$this->url}, latitude={$this->latitude}, longitude={$this->longitude}, address={$this->address}, isMobile={$this->isMobile}, consumption={$this->consumption}, exceedsCap={$this->exceedsCap}";
 		foreach($this->admins as $admin)
 		{
 			$str .= "<br/>";
@@ -359,7 +367,7 @@ class Model_Deployment extends Model_Entity
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Deployment</th><td>{$this->id}</td></tr>";
 		$str .= $this->fieldHTML('date', $this->startDate->format('Y-m-d H:i:s').' - '.$this->endDate->format('Y-m-d H:i:s'));
-		foreach(array('name', 'nfsenName', 'isDevelopment', 'isPrivate', 'firewall', 'advancedFirewall', 'cap', 'pingAttempts', 'wifiDownAfter', 'range', 'allowedPorts', 'type', 'url', 'latitude', 'longitude', 'address', 'consumption', 'exceedsCap') as $field)
+		foreach(array('name', 'nfsenName', 'isDevelopment', 'isPrivate', 'firewall', 'advancedFirewall', 'cap', 'pingAttempts', 'wifiDownAfter', 'range', 'allowedPorts', 'type', 'url', 'latitude', 'longitude', 'isMobile', 'address', 'consumption', 'exceedsCap') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -400,4 +408,33 @@ class Model_Deployment extends Model_Entity
 		// Should never happen unless we have a lot of deployments with the same name
 		die("ERROR: Could not get unique name for NFSEN.");
         }
+
+	public static function getAllDeploymentsDuring($start_date, $end_date = '')
+	{
+		if (empty($end_date))
+		{
+			$end_date = date('Y-m-d H:i:s');
+		}
+		$qb = Doctrine::em()->getRepository('Model_Deployment')->createQueryBuilder('d');	
+		$qb->where("d.endDate >= '$start_date'")->andWhere("d.startDate <= '$end_date'");
+		$qb->orderBy("d.name");
+		return $qb->getQuery()->getResult();
+		
+	}
+	public static function getDeploymentByBoxNumber($box_number,$date = '')
+	{
+		if ($date == '')
+		{
+			$date = time();
+		}	
+		$node = Doctrine::em()->getRepository('Model_Node')->findByBoxNumber($box_number);
+		$qb = Doctrine::em()->getRepository('Model_Deploymebt')->createQueryBuilder('d');
+		$qb->where("d.startDate >= '$date'")->andWhere("d.endDate <= '$date'");
+		$deployments = $qb->getQuery()->getResult();
+		if (sizeof($deployments) > 0)
+		{
+			return $deployments[0];
+		}
+		return null;
+	}
 }
