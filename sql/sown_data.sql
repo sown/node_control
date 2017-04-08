@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.1.73-0ubuntu0.10.04.1
+-- Server version	5.1.73-0ubuntu0.10.04.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -148,6 +148,7 @@ CREATE TABLE `deployments` (
   `longitude` decimal(14,7) DEFAULT NULL COMMENT 'longitude of the deployment',
   `latitude` decimal(14,7) DEFAULT NULL COMMENT 'latitude of the deployment',
   `address` text COMMENT 'postal adress of the deployment',
+  `is_mobile` tinyint(1) NOT NULL DEFAULT '0',
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -984,4 +985,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-01-08 13:15:43
+-- Dump completed on 2017-04-03  4:23:09
