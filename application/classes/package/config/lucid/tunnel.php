@@ -27,7 +27,7 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 		{
 			$files = array();
 			$repository = Doctrine::em()->getRepository('Model_Node');
-			foreach($repository->findAll() as $node)
+			foreach($repository->findByUndeployable(0) as $node)
 			{
 				$fn =  __function__;
 				$files = array_merge($files, static::$fn($node));
