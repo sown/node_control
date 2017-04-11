@@ -531,7 +531,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	private function _update($boxNumber, $formValues)
 	{
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($boxNumber);
-		$nodeHardware = Doctrine::em()->getRepository('Model_Node')->find($formValues['nodeHardware']);
+		$nodeHardware = Doctrine::em()->getRepository('Model_NodeHardware')->find($formValues['nodeHardware']);
 		$node->nodeHardware = $nodeHardware;
 		$node->firmwareVersion = $formValues['firmwareVersion'];
 		$node->firmwareImage = $formValues['firmwareImage'];
