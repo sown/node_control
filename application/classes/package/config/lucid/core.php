@@ -25,7 +25,7 @@ class Package_Config_Lucid_Core extends Package_Config
 		{
 			$repository = Doctrine::em()->getRepository('Model_Node');
 			$data = "";
-			foreach($repository->findAll() as $node)
+			foreach($repository->findByUndeployable(0) as $node)
 			{
 				$fn =  __function__;
 				$data .= static::$fn($node);
