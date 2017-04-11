@@ -155,10 +155,13 @@ abstract class Package_Config
 		require_once('Archive/Tar.php');
 		$archive = new Archive_Tar($file, 'gz');
 		$archive->createModify($list, '', $dirname);
-		
-		// PHP doesn't have a nice way of doing this
-		// TODO: find a better way of doing this
-		`rm -rf $dirname`;
+	
+		# This work better than an `rm -rf $dirname`
+		foreach(glob("{$dirname}/*") as $filename)
+		{
+			unlink($filename);
+		}
+		rmdir($dirname);
 		
 		Request::$current->response()->send_file($file, FALSE, array(
 			'delete'    => TRUE,
