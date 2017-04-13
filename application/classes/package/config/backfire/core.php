@@ -291,10 +291,21 @@ class Package_Config_Backfire_Core extends Package_Config
 			{
 				$mod[] = Kohana::$config->load('system.default.filename');
 				$config['wifi-iface'][$fake_iface_name]['encryption'] = $interface->encryption;
-				$config['wifi-iface'][$fake_iface_name]['auth_server'] = Kohana::$config->load('system.default.radius.host');
-				$config['wifi-iface'][$fake_iface_name]['acct_server'] = Kohana::$config->load('system.default.radius.host');
-				$config['wifi-iface'][$fake_iface_name]['auth_port'] = Kohana::$config->load('system.default.radius.auth_port');
-				$config['wifi-iface'][$fake_iface_name]['acct_port'] = Kohana::$config->load('system.default.radius.acct_port');
+				$radiusConfig = $interface->radiusConfig;
+                                if (isset($radiusConfig))
+                                {
+                                        $config['wifi-iface'][$fake_iface_name]['auth_server'] = $radiusConfig->authIPv4Addr;
+                                        $config['wifi-iface'][$fake_iface_name]['acct_server'] = $radiusConfig->acctIPv4Addr;
+                                        $config['wifi-iface'][$fake_iface_name]['auth_port'] = $radiusConfig->authPort;
+                                        $config['wifi-iface'][$fake_iface_name]['acct_port'] = $radiusConfig->acctPort;
+                                }
+                                else
+                                {
+                                        $config['wifi-iface'][$fake_iface_name]['auth_server'] = Kohana::$config->load('system.default.radius.host');
+                                        $config['wifi-iface'][$fake_iface_name]['acct_server'] = Kohana::$config->load('system.default.radius.host');
+                                        $config['wifi-iface'][$fake_iface_name]['auth_port'] = Kohana::$config->load('system.default.radius.auth_port');
+                                        $config['wifi-iface'][$fake_iface_name]['acct_port'] = Kohana::$config->load('system.default.radius.acct_port');
+                                }
 				$config['wifi-iface'][$fake_iface_name]['key'] = $node->radiusSecret;
 				$config['wifi-iface'][$fake_iface_name]['auth_key'] = $config['wifi-iface'][$fake_iface_name]['key'];
 				$config['wifi-iface'][$fake_iface_name]['acct_key'] = $config['wifi-iface'][$fake_iface_name]['key'];

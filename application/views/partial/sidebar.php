@@ -37,7 +37,7 @@ if(!isset($user))
     <div class="gadget">
       <div class="banner">Nodes/Deployments</div>
       <div class="content">
-        <a href="<?= Route::url('nodes') ?>">Nodes</a><br/>
+        <a href="<?= Route::url('deployable_nodes') ?>">Nodes</a><br/>
         <a href="<?= Route::url('node_hardwares') ?>">Node Hardwares</a><br/>
         <a href="<?= Route::url('deployments') ?>">Deployments</a><br/>
         <a href="<?= Route::url('deployments_usage_all') ?>">All Deployments Usage</a><br/>

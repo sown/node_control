@@ -48,7 +48,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	public function action_deployable()
         {
                 $this->check_login("systemadmin");
-                $subtitle = "All Nodes";
+                $subtitle = "Deployable Nodes";
                 View::bind_global('subtitle', $subtitle);
                 $this->template->sidebar = View::factory('partial/sidebar');
                 $this->template->banner = View::factory('partial/banner')->bind('bannerItems', $this->bannerItems);
@@ -423,6 +423,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'type' => 'type', 
 			'offerDhcp' => 'offerDhcp', 
 			'is1x' => 'is1x', 
+			'radiusConfig' => 'radiusConfig:id',
 			'networkAdapterMac' => 'networkAdapter:mac', 
 			'networkAdapterWirelessChannel' => 'networkAdapter:wirelessChannel', 
 			'networkAdapterType' => 'networkAdapter:type'
@@ -432,7 +433,18 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			foreach ($formValuesMap as $fmv_key => $fmv_value)
 			{
 				$fmv_value_bits = explode(":", $fmv_value);
-				$formValues['interfaces']['currentInterfaces'][$i][$fmv_key] = ( sizeof($fmv_value_bits) == 1 ? $interface->$fmv_value : $interface->$fmv_value_bits[0]->$fmv_value_bits[1] );
+				if (sizeof($fmv_value_bits) == 1)
+				{
+					$formValues['interfaces']['currentInterfaces'][$i][$fmv_key] = $interface->$fmv_value;
+				}
+				else 
+				{	
+					$object = $interface->$fmv_value_bits[0];
+					if (isset($object))
+					{
+						$formValues['interfaces']['currentInterfaces'][$i][$fmv_key] = $object->$fmv_value_bits[1];
+					}
+				}
 			}
 			if ($action == 'view')
 			{
@@ -496,17 +508,18 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 		'type' => 'table',
                                 		'fields' => array(
               			                        'id' => array('type' => 'hidden'),
-                                        		'name' => array('title' => 'Name', 'type' => 'input', 'size' => 10),
+                                        		'name' => array('title' => 'Name', 'type' => 'input', 'size' => 7),
 	                	                        'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 12),
         	                	                'IPv4AddrCidr' => array('title' => '', 'type' => 'input', 'size' => 2),
                 	                	        'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 20),
 		                                        'IPv6AddrCidr' => array('title' => '', 'type' => 'input', 'size' => 2),
-                		                        'ssid' => array('title' => 'SSID', 'type' => 'input', 'size' => 15),
+                		                        'ssid' => array('title' => 'SSID', 'type' => 'input', 'size' => 10),
                                 		        'type' => array('title' => 'Type', 'type' => 'select', 'options' => array("dhcp" => "DHCP", "static" => "Static")),
 		                                        'offerDhcp' => array('title' => 'Offer DHCP', 'type' => 'checkbox'),
                 		                        'is1x' => array('title' => 'Is 1x', 'type' => 'checkbox'),
+							'radiusConfig' => array('title' => 'RADIUS Config', 'type' => 'select', 'options' => Model_RadiusConfig::getRadiusConfigNames(true)),
                                 		        'networkAdapterMac' => array('title' => 'Mac', 'type' => 'input', 'size' => 15),
-		                                        'networkAdapterWirelessChannel' => array('title' => 'Channel', 'type' => 'input', 'size' => 3),
+		                                        'networkAdapterWirelessChannel' => array('title' => 'Channel', 'type' => 'input', 'size' => 2),
                 		                        'networkAdapterType' => array('title' => 'Adapter Type', 'type' => 'select', 'options' => Kohana::$config->load('system.default.adapter_types')),
                                 		),
 					),
@@ -566,6 +579,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 {
                                         $interfaceValues['is1x'] = 0;
                                 }
+				if (!isset($interfaceValues['radiusConfig']))
+                                {
+                                        $interfaceValues['radiuseConfig'] = 0;
+                                }
 				if (empty($interfaceValues['id'])) {
 					$ipv4 = IP_Network_Address::factory($interfaceValues['IPv4Addr'], $interfaceValues['IPv4AddrCidr']);
 					$ipv6 = IP_Network_Address::factory($interfaceValues['IPv6Addr'], $interfaceValues['IPv6AddrCidr']);
@@ -587,6 +604,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 						$interfaceValues['type'], 
 						$interfaceValues['offerDhcp'], 
 						$interfaceValues['is1x'], 
+						$interfaceValues['radiusConfig'],
 						$networkAdapter, 
 						$node
 					));
@@ -602,6 +620,12 @@ class Controller_Nodes extends Controller_AbstractAdmin
  					$interface->ssid = $interfaceValues['ssid'];
 					$interface->offerDhcp = $interfaceValues['offerDhcp']; 
 					$interface->is1x = $interfaceValues['is1x'];
+					$radiusConfig = null;
+					if (!empty($interfaceValues['radiusConfig']))
+					{
+						$radiusConfig = Doctrine::em()->getRepository('Model_RadiusConfig')->find($interfaceValues['radiusConfig']);
+					}
+					$interface->radiusConfig = $radiusConfig;
 					$networkAdapter = $interface->networkAdapter;
 					$networkAdapter->mac = $interfaceValues['networkAdapterMac'];
                                         $networkAdapter->wirelessChannel = $interfaceValues['networkAdapterWirelessChannel']; 

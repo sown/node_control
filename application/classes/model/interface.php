@@ -77,15 +77,25 @@ class Model_Interface extends Model_Entity
 	 */
 	protected $is1x;
 
+        /**
+         * @var Model_RadiusConfig
+         *
+         * @ManyToOne(targetEntity="Model_RadiusConfig")
+         * @JoinColumns({
+         *   @JoinColumn(name="radius_config_id", referencedColumnName="id")
+         * })
+         */
+        protected $radiusConfig;
+
 	/**
-	 * @var Model_NetworkAdapter
-	 *
-	 * @ManyToOne(targetEntity="Model_NetworkAdapter", cascade={"persist", "remove"})
-	 * @JoinColumns({
-	 *   @JoinColumn(name="network_adapter_id", referencedColumnName="id")
-	 * })
-	 */
-	protected $networkAdapter;
+         * @var Model_NetworkAdapter
+         *
+         * @ManyToOne(targetEntity="Model_NetworkAdapter", cascade={"persist", "remove"})
+         * @JoinColumns({
+         *   @JoinColumn(name="network_adapter_id", referencedColumnName="id")
+         * })
+         */
+        protected $networkAdapter;
 
 	/**
 	 * @var Model_Node
@@ -205,6 +215,7 @@ class Model_Interface extends Model_Entity
 		$this->logUse();
 		$str  = "Interface: {$this->id}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, name={$this->name}, ssid={$this->ssid}, type={$this->type}, offerDhcp={$this->offerDhcp}, is1x={$this->is1x}";
 		$str .= "<br/>";
+		$str .= "radiusConfig={$this->radiusConfig}";
 		$str .= "networkAdapter={$this->networkAdapter}";
 		return $str;
 	}
@@ -228,7 +239,7 @@ class Model_Interface extends Model_Entity
 		return $str;
 	}
 
-	public static function build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $networkAdapter, $node)
+	public static function build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node)
 	{
 		$obj = new Model_Interface();
 		$obj->IPv4 = $ipv4;
@@ -238,6 +249,11 @@ class Model_Interface extends Model_Entity
 		$obj->type = $type;
 		$obj->offerDhcp = $offerDhcp;
 		$obj->is1x = $is1x;
+		if (!empty($radiusConfig))
+		{
+			$radiusConfig = Doctrine::em()->getRepository('Model_RadiusConfig')->find($radiusConfigId);
+			$obj->radiusConfig = $radiusConfig;
+		}
 		$obj->networkAdapter = $networkAdapter;
 		$obj->node = $node;
 		return $obj;
