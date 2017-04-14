@@ -307,9 +307,12 @@ CREATE TABLE `interfaces` (
   `is_1x` tinyint(1) NOT NULL COMMENT 'is the interface 802.1x encrypted',
   `disabled` tinyint(1) NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  `radius_config_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `interface_to_node` (`node_id`),
   KEY `interface_to_adapter` (`network_adapter_id`),
+  KEY `radius_config_id` (`radius_config_id`),
+  CONSTRAINT `interface_to_radius_config` FOREIGN KEY (`radius_config_id`) REFERENCES `radius_configs` (`id`),
   CONSTRAINT `interface_to_adapter` FOREIGN KEY (`network_adapter_id`) REFERENCES `network_adapters` (`id`),
   CONSTRAINT `interface_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='interfaces installed on node';
@@ -609,6 +612,27 @@ CREATE TABLE `other_hosts` (
   PRIMARY KEY (`id`),
   KEY `other_host_to_location` (`location_id`),
   CONSTRAINT `other_host_to_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `radius_configs`
+--
+
+DROP TABLE IF EXISTS `radius_configs`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `radius_configs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL COMMENT 'name for the RADIUS config',
+  `auth_ipv4_addr` varchar(15) NOT NULL COMMENT 'IPv4 address for RADIUS authentication',
+  `auth_ipv6_addr` varchar(39) NOT NULL COMMENT 'IPv6 address for RADIUS authentication',
+  `auth_port` int(11) NOT NULL COMMENT 'port for RADIUS authentication',
+  `acct_ipv4_addr` varchar(15) NOT NULL COMMENT 'IPv4 address for RADIUS accounting',
+  `acct_ipv6_addr` varchar(39) NOT NULL COMMENT 'IPv6 address for RADIUS accounting',
+  `acct_port` int(11) NOT NULL COMMENT 'port for RADIUS accounting',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -985,4 +1009,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-03  4:23:09
+-- Dump completed on 2017-04-14  4:23:03
