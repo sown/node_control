@@ -432,7 +432,6 @@ class Controller_Users extends Controller_AbstractAdmin
 		foreach ($accounts as $account)
 		{
 			$username = $account->user->username;
-			error_log("username: $username, domain: $domain");
 			if (preg_match('/' . $domain . '$/', $username))
 			{
 				error_log("matched domain");
