@@ -583,7 +583,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$deployment->latitude = $formValues['location']['latitude'];
 		$deployment->range = $formValues['location']['range'];
 		$deployment->address = $formValues['location']['address'];
-		$deployment->isMobile = $formValues['location']['isMobile'];
+		$deployment->isMobile =  ( isset($formValues['location']['isMobile']) ? 1 : 0 );
 		if (isset($formValues['admins']['currentAdmins']))
 		{
 			foreach ($formValues['admins']['currentAdmins'] as $admin)
