@@ -149,7 +149,19 @@ class Controller_Scripts extends Controller_Template
 		{
 			$hourago_dt = new \DateTime('-1 hour');
                 	$hourago = $hourago_dt->format("Y-m-d H:i:s");
-			$whererecent = "WHERE ra.callingstationid IN (SELECT DISTINCT ra2.callingstationid FROM Model_Radacct ra2 WHERE ra2.acctstoptime IS NULL OR ra2.acctstoptime > '$hourago')";
+			$cs_query_str = "SELECT ra.callingstationid FROM Model_Radacct ra WHERE ra.acctstoptime IS NULL OR ra.acctstoptime > '$hourago'";
+			$cs_query = Doctrine::em()->createQuery($cs_query_str);
+			$cs_results = $cs_query->getResult();
+			if (sizeof($cs_results) == 0)
+                        {
+                                exit();
+                        }
+			$callingstationids = array();
+			foreach ($cs_results as $cs_row)
+                	{
+				$callingstationids[] = $cs_row['callingstationid'];
+			}
+			$whererecent = "WHERE ra.callingstationid IN ('".implode("', '", $callingstationids)."')";
 		}
 		$query_str = "SELECT ra.callingstationid, SUM(ra.acctinputoctets) as acctinputoctets_total, SUM(ra.acctoutputoctets) as acctoutputoctets_total FROM Model_Radacct ra $whererecent GROUP BY ra.callingstationid";
 		$query = Doctrine::em()->createQuery($query_str);
