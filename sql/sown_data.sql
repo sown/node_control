@@ -312,9 +312,9 @@ CREATE TABLE `interfaces` (
   KEY `interface_to_node` (`node_id`),
   KEY `interface_to_adapter` (`network_adapter_id`),
   KEY `radius_config_id` (`radius_config_id`),
-  CONSTRAINT `interface_to_radius_config` FOREIGN KEY (`radius_config_id`) REFERENCES `radius_configs` (`id`),
   CONSTRAINT `interface_to_adapter` FOREIGN KEY (`network_adapter_id`) REFERENCES `network_adapters` (`id`),
-  CONSTRAINT `interface_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
+  CONSTRAINT `interface_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`),
+  CONSTRAINT `interface_to_radius_config` FOREIGN KEY (`radius_config_id`) REFERENCES `radius_configs` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='interfaces installed on node';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1009,4 +1009,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-14  4:23:03
+-- Dump completed on 2017-04-22  4:23:04
