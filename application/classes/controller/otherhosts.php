@@ -418,19 +418,21 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                                 $dbServices[] = $serviceId;
                         }
                 }
-                foreach ($formValues['services'] as $serviceId)
-                {
-                        if (!in_array($serviceId, $dbServices))
-                        {
-                                $service = Doctrine::em()->getRepository('Model_Service')->find($serviceId);
-                                $hostService = Model_HostService::build(null, $other_host, $service);
-                                if (is_object($hostService))
-                                {
-                                        $hostService->save();
-                                }
-                        }
-                }
-
+		if (!empty($formValues['services']))
+		{
+	                foreach ($formValues['services'] as $serviceId)
+        	        {
+                	        if (!in_array($serviceId, $dbServices))
+                        	{
+                                	$service = Doctrine::em()->getRepository('Model_Service')->find($serviceId);
+	                                $hostService = Model_HostService::build(null, $other_host, $service);
+        	                        if (is_object($hostService))
+                	                {
+                        	                $hostService->save();
+	                                }
+        	                }
+        	        }
+		}
 		foreach ($formValues['contacts']['currentContacts'] as $c => $contactValues)
                 {
                         if (empty($contactValues['name']) && empty($contactValues['email']))
