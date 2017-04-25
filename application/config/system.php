@@ -125,8 +125,7 @@ return array
 			'client_path' 		=> 	'/srv/radacct-tg-new/sta-rrds/',
 		),
 		'routes'	=> '
-push "route 10.12.0.0 255.254.0.0"
-push "route 152.78.189.82 255.255.255.255"
+push "route 10.13.0.0 255.255.0.0"
 ',
 		'syslog'	=> array
 		(
