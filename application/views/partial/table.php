@@ -1,4 +1,4 @@
-<?
+<?php
 	if(isset($remove) && is_array($remove))
 	{
 		foreach ($remove as $item) {

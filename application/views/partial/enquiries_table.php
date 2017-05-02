@@ -1,4 +1,4 @@
-<?
+<?php
 	$columns = array(
 		'date_sent' => 'Date Sent',
 		'type'      => 'Type',

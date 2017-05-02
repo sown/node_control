@@ -21,5 +21,5 @@ if (isset($_SERVER["SERVER_NAME"]) && ! preg_match("/auth2\./", $_SERVER["SERVER
                 <a href='#' style='color:white;' onclick='javascript: this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode); document.cookie="hideDevSplash=true"; return false;'>[close]</a>
         </div>
   </div>
-<? } ?>
+<?php } ?>
 
