@@ -34,8 +34,9 @@ class Model_Builder
 		$ssid = '';
 		$type = 'dhcp';
 		$offerDhcp = '';
+		$radiusConfigId = '';
 		$is1x = '';
-		$node->interfaces->add(Model_Interface::build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $networkAdapter, $node));
+		$node->interfaces->add(Model_Interface::build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node));
 
 		$wirelessChannel = 1;
 		$type = 'g';
@@ -48,8 +49,9 @@ class Model_Builder
 		$ssid = 'eduroam';
 		$type = 'static';
 		$offerDhcp = 1;
+		$radiusConfigId = '';
 		$is1x = 1;
-		$node->interfaces->add(Model_Interface::build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $networkAdapter, $node));
+		$node->interfaces->add(Model_Interface::build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node));
 
 		$node->save();
 		
