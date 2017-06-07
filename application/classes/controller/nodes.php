@@ -618,6 +618,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 					$interface->IPv6Addr = $interfaceValues['IPv6Addr'];
 	        	                $interface->IPv6AddrCidr = $interfaceValues['IPv6AddrCidr'];
  					$interface->ssid = $interfaceValues['ssid'];
+ 					$interface->type = $interfaceValues['type'];
 					$interface->offerDhcp = $interfaceValues['offerDhcp']; 
 					$interface->is1x = $interfaceValues['is1x'];
 					$radiusConfig = null;
