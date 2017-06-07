@@ -85,6 +85,21 @@ class Model_Node extends Model_Entity
          */
         protected $secondaryDNSIPv4Addr;
 
+	 /**
+         * @var string $primaryDNSIPv6Addr
+         *
+         * @Column(name="primary_dns_ipv6_addr", type="ipv6address", nullable=false)
+         */
+        protected $primaryDNSIPv6Addr;
+
+        /**
+         * @var string $secondaryDNSIPv6Addr
+         *
+         * @Column(name="secondary_dns_ipv6_addr", type="ipv6address", nullable=false)
+         */
+        protected $secondaryDNSIPv6Addr;
+
+
 	/**
 	 * @var Model_Certificate
 	 *
@@ -357,7 +372,7 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, nodeHardware={$this->nodeHardware->manufacturer} {$this->nodeHardware->model},  firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}, externalBuild={$this->externalBuild}, primaryDNSIPv4Addr={$this->primaryDNSIPv4Addr}, secondaryDNSIPv4Addr={$this->secondaryDNSIPv4Addr}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, nodeHardware={$this->nodeHardware->manufacturer} {$this->nodeHardware->model},  firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}, externalBuild={$this->externalBuild}, primaryDNSIPv4Addr={$this->primaryDNSIPv4Addr}, secondaryDNSIPv4Addr={$this->secondaryDNSIPv4Addr}, primaryDNSIPv6Addr={$this->primaryDNSIPv6Addr}, secondaryDNSIPv6Addr={$this->secondaryDNSIPv6Addr}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -400,7 +415,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'firmwareVersion', 'firmwareImage', 'undeployable', 'externalBuild', 'primaryDNSIPv4Addr', 'secondaryDNSIPv4Addr') as $field)
+		foreach(array('boxNumber', 'firmwareVersion', 'firmwareImage', 'undeployable', 'externalBuild', 'primaryDNSIPv4Addr', 'secondaryDNSIPv4Addr', 'primaryDNSIPv6Addr', 'secondaryDNSIPv6Addr') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -474,6 +489,8 @@ class Model_Node extends Model_Entity
 		$obj->undeployable = 0;
 		$obj->primaryDNSIPv4Addr = "";
 		$obj->secondaryDNSIPv4Addr = "";
+		$obj->primaryDNSIPv6Addr = "";
+                $obj->secondaryDNSIPv6Addr = "";
 		return $obj;
 	}
 

@@ -312,7 +312,9 @@ class Controller_Nodes extends Controller_AbstractAdmin
 
 		$validation = Validation::factory($formValues)
 			->rule('primaryDNSIPv4Addr', 'SownValid::ipv4', array(':value', true))
-			->rule('secondaryDNSIPv4Addr', 'SownValid::ipv4', array(':value', true));
+			->rule('secondaryDNSIPv4Addr', 'SownValid::ipv4', array(':value', true))
+			->rule('primaryDNSIPv6Addr', 'SownValid::ipv6', array(':value', true))
+                        ->rule('secondaryDNSIPv6Addr', 'SownValid::ipv6', array(':value', true));
 
 		if (!$validation->check())
                 {
@@ -413,6 +415,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'externalBuild' => $node->externalBuild,
 			'primaryDNSIPv4Addr' => $node->primaryDNSIPv4Addr,
 			'secondaryDNSIPv4Addr' => $node->secondaryDNSIPv4Addr,
+			'primaryDNSIPv6Addr' => $node->primaryDNSIPv6Addr,
+                        'secondaryDNSIPv6Addr' => $node->secondaryDNSIPv6Addr,
 			'certificateWritten' => ( (strlen($node->certificate->privateKey) > 0) ? 'Yes' : 'No' ),
 			'vpnEndpoint' => array(	
 	               		'id' => $node->vpnEndpoint->id,
@@ -503,8 +507,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
 			'externalBuild' => array('title' => 'External Build', 'type' => 'checkbox'),
-			'primaryDNSIPv4Addr' => array('title' => 'Primary DNS Server', 'type' => 'input', 'size' => 15, 'hint' => "8.8.8.8"),
-			'secondaryDNSIPv4Addr' => array('title' => 'Secondary DNS Server', 'type' => 'input', 'size' => 15, 'hint' => "8.8.4.4"),
+			'primaryDNSIPv4Addr' => array('title' => 'Primary DNS Server (IPv4)', 'type' => 'input', 'size' => 15, 'hint' => "8.8.8.8"),
+			'secondaryDNSIPv4Addr' => array('title' => 'Secondary DNS Server (IPv4)', 'type' => 'input', 'size' => 15, 'hint' => "8.8.4.4"),
+			'primaryDNSIPv6Addr' => array('title' => 'Primary DNS Server (IPv6)', 'type' => 'input', 'size' => 39, 'hint' => "2001:4860:4860::8888"),
+                        'secondaryDNSIPv6Addr' => array('title' => 'Secondary DNS Server (IPv6)', 'type' => 'input', 'size' => 39, 'hint' => " 2001:4860:4860::8844"),
 			'certificateWritten' => array('title' => 'Certificate written', 'type' => 'statichidden'),
                         'vpnEndpoint' => array(
                                 'title' => 'VPN Endpoint',
@@ -575,6 +581,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$node->externalBuild = (empty($formValues['externalBuild']) ? 0 : $formValues['externalBuild']);
 		$node->primaryDNSIPv4Addr = $formValues['primaryDNSIPv4Addr'];
 		$node->secondaryDNSIPv4Addr = $formValues['secondaryDNSIPv4Addr'];
+		$node->primaryDNSIPv6Addr = $formValues['primaryDNSIPv6Addr'];
+                $node->secondaryDNSIPv6Addr = $formValues['secondaryDNSIPv6Addr'];
 		$vpnEndpoint = $node->vpnEndpoint;
                 $vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
 		$vpnEndpoint->protocol = $formValues['vpnEndpoint']['protocol'];
