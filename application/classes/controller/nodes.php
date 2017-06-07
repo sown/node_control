@@ -122,7 +122,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'wiredMac' => $mac,
 				'wirelessMac' => $mac,
 				'nodeHardware' => '',
-				'firmwareVersiom' => '',
+				'firmwareVersion' => '',
 				'firmwareImage' => Kohana::$config->load('system.default.firmware_image_default'),
 				'externalBuild' => 0,
 			);
@@ -309,6 +309,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	private function _validate($formValues) 
 	{
 		$errors = array();
+		
 		$validation = Validation::factory($formValues['vpnEndpoint'])
 	               ->rule('port','not_empty', array(':value'))
                        ->rule('port', 'Model_VpnServer::validPort', array(':value', $formValues['vpnEndpoint']['vpnServer']))
@@ -396,6 +397,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                        	'firmwareImage' => $node->firmwareImage,
 			'undeployable' => $node->undeployable,
 			'externalBuild' => $node->externalBuild,
+			'primaryDNSIPv4Addr' => $node->primaryDNSIPv4Addr,
+			'secondaryDNSIPv4Addr' => $node->secondaryDNSIPv4Addr,
 			'certificateWritten' => ( (strlen($node->certificate->privateKey) > 0) ? 'Yes' : 'No' ),
 			'vpnEndpoint' => array(	
 	               		'id' => $node->vpnEndpoint->id,
@@ -484,6 +487,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
 			'externalBuild' => array('title' => 'External Build', 'type' => 'checkbox'),
+			'primaryDNSIPv4Addr' => array('title' => 'Primary DNS Server', 'type' => 'input', 'size' => 15, 'hint' => "8.8.8.8"),
+			'secondaryDNSIPv4Addr' => array('title' => 'Secondary DNS Server', 'type' => 'input', 'size' => 15, 'hint' => "8.8.4.4"),
 			'certificateWritten' => array('title' => 'Certificate written', 'type' => 'statichidden'),
                         'vpnEndpoint' => array(
                                 'title' => 'VPN Endpoint',
@@ -550,6 +555,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$node->firmwareImage = $formValues['firmwareImage'];
 		$node->undeployable = (empty($formValues['undeployable']) ? 0 : $formValues['undeployable']);
 		$node->externalBuild = (empty($formValues['externalBuild']) ? 0 : $formValues['externalBuild']);
+		$node->primaryDNSIPv4Addr = $formValues['primaryDNSIPv4Addr'];
+		$node->secondaryDNSIPv4Addr = $formValues['secondaryDNSIPv4Addr'];
 		$vpnEndpoint = $node->vpnEndpoint;
                 $vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
 		$vpnEndpoint->protocol = $formValues['vpnEndpoint']['protocol'];

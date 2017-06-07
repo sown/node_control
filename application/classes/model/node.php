@@ -72,6 +72,20 @@ class Model_Node extends Model_Entity
         protected $externalBuild;
 
 	/**
+         * @var string $primaryDNSIPv4Addr
+         *
+         * @Column(name="primary_dns_ipv4_addr", type="ipv4address", nullable=false)
+         */
+        protected $primaryDNSIPv4Addr;
+
+	/**
+         * @var string $secondaryDNSIPv4Addr
+         *
+         * @Column(name="secondary_dns_ipv4_addr", type="ipv4address", nullable=false)
+         */
+        protected $secondaryDNSIPv4Addr;
+
+	/**
 	 * @var Model_Certificate
 	 *
 	 * @ManyToOne(targetEntity="Model_Certificate", cascade={"persist", "remove"})
@@ -343,7 +357,7 @@ class Model_Node extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, nodeHardware={$this->nodeHardware->manufacturer} {$this->nodeHardware->model},  firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}, externalBuild={$this->externalBuild}";
+		$str  = "Node: {$this->id}, boxNumber={$this->boxNumber}, nodeHardware={$this->nodeHardware->manufacturer} {$this->nodeHardware->model},  firmwareVersion={$this->firmwareVersion}, firmwareImage={$this->firmwareImage}, undeployable={$this->undeployable}, externalBuild={$this->externalBuild}, primaryDNSIPv4Addr={$this->primaryDNSIPv4Addr}, secondaryDNSIPv4Addr={$this->secondaryDNSIPv4Addr}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
@@ -386,7 +400,7 @@ class Model_Node extends Model_Entity
 		$str  = "<div class='node' id='node_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Node</th><td>{$this->id}</td></tr>";
-		foreach(array('boxNumber', 'firmwareVersion', 'firmwareImage', 'undeployable', 'externalBuild') as $field)
+		foreach(array('boxNumber', 'firmwareVersion', 'firmwareImage', 'undeployable', 'externalBuild', 'primaryDNSIPv4Addr', 'secondaryDNSIPv4Addr') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -458,6 +472,8 @@ class Model_Node extends Model_Entity
 		$obj->vpnEndpoint = $vpnEndpoint;
 		$obj->passwordHash = "";
 		$obj->undeployable = 0;
+		$obj->primaryDNSIPv4Addr = "";
+		$obj->secondaryDNSIPv4Addr = "";
 		return $obj;
 	}
 
