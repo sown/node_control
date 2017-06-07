@@ -7,24 +7,26 @@ class SownValid extends Valid {
                 return (bool) preg_match('/^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$/', $value);
         }
 
-	public static function ipv4($value)
+	public static function ipv4($value, $allownull=false)
 	{
+		if ($allownull && $value == "") return true;
 		return (bool) filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
 	}
 
 	public static function ipv4cidr($value)
         {
-                return (is_numeric($value) && $value <=30 && $value >=1);
+                return (is_numeric($value) && $value <=30 && $value >=0);
         }
 
-	public static function ipv6($value)
+	public static function ipv6($value,$allownull=false)
         {
+		if ($allownull && $value == "") return true;
                 return (bool) filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
         }
 
 	public static function ipv6cidr($value)
         {
-                return (is_numeric($value) && $value <=126 && $value >=1);
+                return (is_numeric($value) && $value <=126 && $value >=0);
         }
 
 	public static function ssid($value)

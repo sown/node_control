@@ -29,6 +29,13 @@ class Model_Interface extends Model_Entity
 	protected $IPv4AddrCidr;
 
 	/**
+         * @var integer $IPv4GatewayAddr
+         *
+         * @Column(name="ipv4_gateway_addr", type="ipv4address", nullable=false)
+         */
+        protected $IPv4GatewayAddr;
+
+	/**
 	 * @var string $IPv6Addr
 	 *
 	 * @Column(name="ipv6_addr", type="ipv6address", nullable=false)
@@ -41,6 +48,13 @@ class Model_Interface extends Model_Entity
 	 * @Column(name="ipv6_addr_cidr", type="integer", nullable=false)
 	 */
 	protected $IPv6AddrCidr;
+
+	/**
+         * @var integer $IPv6GatewayAddr
+         *
+         * @Column(name="ipv6_gateway_addr", type="ipv6address", nullable=false)
+         */
+        protected $IPv6GatewayAddr;
 
 	/**
 	 * @var text $name
@@ -239,11 +253,13 @@ class Model_Interface extends Model_Entity
 		return $str;
 	}
 
-	public static function build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node)
+	public static function build($ipv4, $ipv4GatewayAddr, $ipv6, $ipv6GatewayAddr, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node)
 	{
 		$obj = new Model_Interface();
 		$obj->IPv4 = $ipv4;
+		$obj->IPv4GatewayAddr = $ipv4GatewayAddr;
 		$obj->IPv6 = $ipv6;
+		$obj->IPv6GatewayAddr = $ipv6GatewayAddr;
 		$obj->name = $name;
 		$obj->ssid = $ssid;
 		$obj->type = $type;

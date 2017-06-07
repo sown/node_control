@@ -309,23 +309,35 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	private function _validate($formValues) 
 	{
 		$errors = array();
+
+		$validation = Validation::factory($formValues)
+			->rule('primaryDNSIPv4Addr', 'SownValid::ipv4', array(':value', true))
+			->rule('secondaryDNSIPv4Addr', 'SownValid::ipv4', array(':value', true));
+
+		if (!$validation->check())
+                {
+                        foreach ($validation->errors() as $e => $error)
+                        {
+                                $errors["Node $e"] = $error;
+                        }
+                }
 		
 		$validation = Validation::factory($formValues['vpnEndpoint'])
-	               ->rule('port','not_empty', array(':value'))
-                       ->rule('port', 'Model_VpnServer::validPort', array(':value', $formValues['vpnEndpoint']['vpnServer']))
-                       ->rule('port', 'Model_VpnEndpoint::freePort', array(':value', $formValues['vpnEndpoint']['id']))
-                       ->rule('IPv4Addr', 'not_empty', array(':value'))
-                       ->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
-                       ->rule('IPv4AddrCidr', 'not_empty', array(':value'))
-                       ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
-                       ->rule('IPv4Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['vpnServer']))
-                       ->rule('IPv4Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
-                       ->rule('IPv6Addr', 'not_empty', array(':value'))
-                       ->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
-                       ->rule('IPv6AddrCidr', 'not_empty', array(':value'))
-                       ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
-                       ->rule('IPv6Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['vpnServer']))
-                       ->rule('IPv6Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));
+	                ->rule('port','not_empty', array(':value'))
+                        ->rule('port', 'Model_VpnServer::validPort', array(':value', $formValues['vpnEndpoint']['vpnServer']))
+                        ->rule('port', 'Model_VpnEndpoint::freePort', array(':value', $formValues['vpnEndpoint']['id']))
+			->rule('IPv4Addr', 'not_empty', array(':value'))
+                        ->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
+                        ->rule('IPv4AddrCidr', 'not_empty', array(':value'))
+                        ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
+                        ->rule('IPv4Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['vpnServer']))
+                        ->rule('IPv4Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
+                        ->rule('IPv6Addr', 'not_empty', array(':value'))
+                        ->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
+                        ->rule('IPv6AddrCidr', 'not_empty', array(':value'))
+                        ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
+                        ->rule('IPv6Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['vpnServer']))
+                        ->rule('IPv6Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));
 
                 if (!$validation->check())
                 {
@@ -350,10 +362,12 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                         	->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
                                                 ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
                                                 ->rule('IPv4Addr', 'Model_Interface::freeIPSubnet', array(':value', $interface['IPv4AddrCidr'], 4, $interface['id']))
+						->rule('IPv4GatewayAddr', 'SownValid::ipv4', array(':value'), true)
                                                 ->rule('IPv6Addr', 'not_empty', array(':value'))
                                                 ->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
                                                 ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
-                                                ->rule('IPv6Addr', 'Model_Interface::freeIPSubnet', array(':value', $interface['IPv6AddrCidr'], 6, $interface['id']));
+                                                ->rule('IPv6Addr', 'Model_Interface::freeIPSubnet', array(':value', $interface['IPv6AddrCidr'], 6, $interface['id']))
+						->rule('IPv6GatewayAddr', 'SownValid::ipv6', array(':value'), true);
                                 }
                                 else
                                 {
@@ -420,8 +434,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'name' => 'name', 
 			'IPv4Addr' => 'IPv4Addr', 
 			'IPv4AddrCidr' => 'IPv4AddrCidr', 
+			'IPv4GatewayAddr' => 'IPv4GatewayAddr',
 			'IPv6Addr' => 'IPv6Addr', 
 			'IPv6AddrCidr' => 'IPv6AddrCidr', 
+			'IPv6GatewayAddr' => 'IPv6GatewayAddr',
 			'ssid' => 'ssid', 
 			'type' => 'type', 
 			'offerDhcp' => 'offerDhcp', 
@@ -516,8 +532,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                         		'name' => array('title' => 'Name', 'type' => 'input', 'size' => 7),
 	                	                        'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 12),
         	                	                'IPv4AddrCidr' => array('title' => '', 'type' => 'input', 'size' => 2),
+							'IPv4GatewayAddr' => array('title' => 'IPv4 GW', 'type' => 'input', 'size' => 12),
                 	                	        'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 20),
-		                                        'IPv6AddrCidr' => array('title' => '', 'type' => 'input', 'size' => 2),
+		                                        'IPv6AddrCidr' => array('title' => '', 'type' => 'input', 'size' => 2),	
+							'IPv6GatewayAddr' => array('title' => 'IPv6 GW', 'type' => 'input', 'size' => 20),
                 		                        'ssid' => array('title' => 'SSID', 'type' => 'input', 'size' => 10),
                                 		        'type' => array('title' => 'Type', 'type' => 'select', 'options' => array("dhcp" => "DHCP", "static" => "Static")),
 		                                        'offerDhcp' => array('title' => 'Offer DHCP', 'type' => 'checkbox'),
@@ -588,7 +606,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 }
 				if (!isset($interfaceValues['radiusConfig']))
                                 {
-                                        $interfaceValues['radiuseConfig'] = 0;
+                                        $interfaceValues['radiusConfig'] = 0;
                                 }
 				if (empty($interfaceValues['id'])) {
 					$ipv4 = IP_Network_Address::factory($interfaceValues['IPv4Addr'], $interfaceValues['IPv4AddrCidr']);
@@ -605,7 +623,9 @@ class Controller_Nodes extends Controller_AbstractAdmin
 					}
 					$node->interfaces->add(Model_Interface::build(
 						$ipv4, 
+						$interfaceValues['ipv4GatewayAddr'],
 						$ipv6, 
+						$interfaceValues['ipv6GatewayAddr'],
 						$interfaceValues['name'],
 						$interfaceValues['ssid'], 
 						$interfaceValues['type'], 
@@ -622,8 +642,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
 					$interface->name = $interfaceValues['name'];
 					$interface->IPv4Addr = $interfaceValues['IPv4Addr'];
 					$interface->IPv4AddrCidr = $interfaceValues['IPv4AddrCidr'];
+					$interface->IPv4GatewayAddr = $interfaceValues['IPv4GatewayAddr'];
 					$interface->IPv6Addr = $interfaceValues['IPv6Addr'];
 	        	                $interface->IPv6AddrCidr = $interfaceValues['IPv6AddrCidr'];
+					$interface->IPv6GatewayAddr = $interfaceValues['IPv6GatewayAddr'];
  					$interface->ssid = $interfaceValues['ssid'];
  					$interface->type = $interfaceValues['type'];
 					$interface->offerDhcp = $interfaceValues['offerDhcp']; 
