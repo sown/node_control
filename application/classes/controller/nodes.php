@@ -445,6 +445,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'ssid' => 'ssid', 
 			'type' => 'type', 
 			'offerDhcp' => 'offerDhcp', 
+			'offerDhcpV6' => 'offerDhcpV6', 
 			'is1x' => 'is1x', 
 			'radiusConfig' => 'radiusConfig:id',
 			'networkAdapterMac' => 'networkAdapter:mac', 
@@ -472,6 +473,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			if ($action == 'view')
 			{
 				$formValues['interfaces']['currentInterfaces'][$i]['offerDhcp'] = ( $formValues['interfaces']['currentInterfaces'][$i]['offerDhcp'] ? 'Yes' : 'No') ;
+			 	$formValues['interfaces']['currentInterfaces'][$i]['offerDhcpV6'] = ( $formValues['interfaces']['currentInterfaces'][$i]['offerDhcpV6'] ? 'Yes' : 'No') ;
 				$formValues['interfaces']['currentInterfaces'][$i]['is1x'] = ( $formValues['interfaces']['currentInterfaces'][$i]['is1x'] ? 'Yes' : 'No') ;
 			}	
                 }
@@ -499,6 +501,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 
 	private function _load_form_template($action = 'edit', $externalBuild = 0, $switch = null)
 	{
+		error_log("Calling _load_form_template");
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
@@ -545,6 +548,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 		                        'ssid' => array('title' => 'SSID', 'type' => 'input', 'size' => 10),
                                 		        'type' => array('title' => 'Type', 'type' => 'select', 'options' => array("dhcp" => "DHCP", "static" => "Static")),
 		                                        'offerDhcp' => array('title' => 'Offer DHCP', 'type' => 'checkbox'),
+		                                        'offerDhcpV6' => array('title' => 'Offer DHCPv6', 'type' => 'checkbox'),
                 		                        'is1x' => array('title' => 'Is 1x', 'type' => 'checkbox'),
 							'radiusConfig' => array('title' => 'RADIUS Config', 'type' => 'select', 'options' => Model_RadiusConfig::getRadiusConfigNames(true)),
                                 		        'networkAdapterMac' => array('title' => 'Mac', 'type' => 'input', 'size' => 15),
@@ -608,6 +612,10 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 {
                                         $interfaceValues['offerDhcp'] = 0;
                                 }
+			 	if (!isset($interfaceValues['offerDhcpV6']))
+                                {
+                                        $interfaceValues['offerDhcpV6'] = 0;
+                                }
                                 if (!isset($interfaceValues['is1x']))
                                 {
                                         $interfaceValues['is1x'] = 0;
@@ -638,6 +646,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 						$interfaceValues['ssid'], 
 						$interfaceValues['type'], 
 						$interfaceValues['offerDhcp'], 
+						$interfaceValues['offerDhcpV6'], 
 						$interfaceValues['is1x'], 
 						$interfaceValues['radiusConfig'],
 						$networkAdapter, 
@@ -657,6 +666,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
  					$interface->ssid = $interfaceValues['ssid'];
  					$interface->type = $interfaceValues['type'];
 					$interface->offerDhcp = $interfaceValues['offerDhcp']; 
+					$interface->offerDhcpV6 = $interfaceValues['offerDhcpV6']; 
 					$interface->is1x = $interfaceValues['is1x'];
 					$radiusConfig = null;
 					if (!empty($interfaceValues['radiusConfig']))

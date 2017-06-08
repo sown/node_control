@@ -85,6 +85,13 @@ class Model_Interface extends Model_Entity
 	protected $offerDhcp;
 
 	/**
+	 * @var boolean $offerDhcpV6
+	 *
+	 * @Column(name="offer_dhcpv6", type="boolean", nullable=false)
+	 */
+	protected $offerDhcpV6;
+
+	/**
 	 * @var boolean $is1x
 	 *
 	 * @Column(name="is_1x", type="boolean", nullable=false)
@@ -253,7 +260,7 @@ class Model_Interface extends Model_Entity
 		return $str;
 	}
 
-	public static function build($ipv4, $ipv4GatewayAddr, $ipv6, $ipv6GatewayAddr, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node)
+	public static function build($ipv4, $ipv4GatewayAddr, $ipv6, $ipv6GatewayAddr, $name, $ssid, $type, $offerDhcp, $offerDhcpV6, $is1x, $radiusConfigId, $networkAdapter, $node)
 	{
 		$obj = new Model_Interface();
 		$obj->IPv4 = $ipv4;
@@ -264,6 +271,7 @@ class Model_Interface extends Model_Entity
 		$obj->ssid = $ssid;
 		$obj->type = $type;
 		$obj->offerDhcp = $offerDhcp;
+		$obj->offerDhcpV6 = $offerDhcpV6;
 		$obj->is1x = $is1x;
 		if (!empty($radiusConfig))
 		{
