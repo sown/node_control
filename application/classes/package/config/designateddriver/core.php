@@ -165,39 +165,51 @@ class Package_Config_Designateddriver_Core extends Package_Config
 		$mod[] = __FILE__;
 		$mod[] = Kohana::$config->load('system.default.filename');
 
+		$staticifnum = 0;
+
 		foreach ($node->interfaces as $iface)
 		{
 			$iface_config = array();
 			
 			$iface_config['ifname'] = $iface->name;
 			
-			$iface_config['proto'] = $iface->type;
-			
+			$iface_config['proto'] = $iface->type;	
+
 			if($iface->type == 'static')
 			{
-				$v4_net_addr = IPv4_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
+				if($iface->IPv4Addr){
+					$v4_net_addr = IPv4_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
 				
-				$iface_config['ipaddr'] = $v4_net_addr->get_address();
-				$iface_config['netmask'] = $v4_net_addr->get_subnet_mask();
-				// TODO get DNS servers for static IPs from the database
-				// morse: Currently disabled while I work out how the node should handle DNS
-				// $iface_config['dns'] = Kohana::$config->load('system.default.dns.host');
-				
+					$iface_config['ipaddr'] = $v4_net_addr->get_address();
+					$iface_config['netmask'] = $v4_net_addr->get_subnet_mask();
+				}	
 				if($iface->IPv6Addr)
 				{
 					$v6_net_addr = IPv6_Network_Address::factory($iface->IPv6Addr, $iface->IPv6AddrCidr);
-
 					$iface_config['ip6addr'] = $v6_net_addr;
-					if ($iface->name == 'tap0')
-					{
-						$iface_config['ip6gw'] = $v6_net_addr->get_address_in_network(1);
-					}
 				}
-			}
-			
-			if(false /* TODO Node is a campus node*/ && $iface->name == 'eth0')
-			{
-				$iface_config['gateway'] = Kohana::$config->load('system.default.gateway');
+				// IPv4: Gateway if set
+				if($iface->IPv4GatewayAddr){
+					$iface_config['gateway'] = $iface->IPv4GatewayAddr;
+				}
+				// IPv6: Gateway if set
+				if($iface->IPv6GatewayAddr){
+					$iface_config['ip6gw'] = $iface->IPv6GatewayAddr;
+				}
+				if($staticifnum == 0){
+					// Copy across any/all name servers given.
+					$servers = array( $node->primaryDNSIPv4Addr, $node->primaryDNSIPv6Addr, $node->secondaryDNSIPv4Addr, $node->secondaryDNSIPv6Addr );
+					$iface_config["dns"] = array();
+					foreach($servers as $server){
+						if($server){
+							$iface_config["dns"][] = $server;
+						}
+					}
+					// If none specified, do not send the option
+					if( count($iface_config["dns"]) == 0)
+						unset($iface_config["dns"]);
+				}
+				$staticifnum++;
 			}
 			
 			$config['interface'][$iface->name] = $iface_config;
@@ -362,6 +374,14 @@ class Package_Config_Designateddriver_Core extends Package_Config
 				$if_config['ignore'] = 1;
 			}
 			
+			if($iface->IPv6Addr && $iface->offerDhcpV6){
+				// IPv6 on this interface is available - enable IPv6.
+
+				// Unset the ignore flag if set
+				if(isset($if_config["ignore"])) unset($if_config["ignore"]);
+				$if_config["dhcpv6"] = "server";
+				$if_config["ra"] = "server";
+			}
 			$config['dhcp'][$iface->name] = $if_config;
 		}
 
