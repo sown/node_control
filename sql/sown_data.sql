@@ -297,13 +297,16 @@ CREATE TABLE `interfaces` (
   `node_id` int(11) NOT NULL COMMENT 'id of the node the interface is on',
   `ipv4_addr` varchar(15) NOT NULL,
   `ipv4_addr_cidr` int(2) NOT NULL,
+  `ipv4_gateway_addr` varchar(15) NOT NULL,
   `ipv6_addr` varchar(39) NOT NULL,
   `ipv6_addr_cidr` int(3) NOT NULL,
+  `ipv6_gateway_addr` varchar(39) NOT NULL,
   `name` text NOT NULL COMMENT 'name of the interface',
   `ssid` text NOT NULL COMMENT 'ssid of the interface',
   `network_adapter_id` int(11) NOT NULL COMMENT 'id of the network adapter the interface uses',
   `type` enum('dhcp','bridge','static') NOT NULL COMMENT 'type of config DHCP,BRIDGE,STATIC',
   `offer_dhcp` tinyint(1) NOT NULL COMMENT 'does the interface offer DHCP',
+  `offer_dhcpv6` tinyint(1) NOT NULL DEFAULT '0',
   `is_1x` tinyint(1) NOT NULL COMMENT 'is the interface 802.1x encrypted',
   `disabled` tinyint(1) NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
@@ -539,6 +542,10 @@ CREATE TABLE `nodes` (
   `password_hash` varchar(255) NOT NULL,
   `undeployable` tinyint(1) NOT NULL,
   `external_build` tinyint(1) NOT NULL,
+  `primary_dns_ipv4_addr` varchar(15) NOT NULL,
+  `secondary_dns_ipv4_addr` varchar(15) NOT NULL,
+  `primary_dns_ipv6_addr` varchar(39) NOT NULL,
+  `secondary_dns_ipv6_addr` varchar(39) NOT NULL,
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`),
   KEY `node_to_endpoint` (`vpn_endpoint_id`),
@@ -1009,4 +1016,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-22  4:23:04
+-- Dump completed on 2017-06-09  4:23:04
