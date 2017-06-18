@@ -87,6 +87,10 @@ foreach ($fields as $f => $field)
                 }
         }
 	// Need to figure out how to do this generically
+	elseif ($f == "isDevelopment")
+	{
+		echo "          <td>" . ( ($row->isDevelopment) ? 'Yes' : 'No') . "</td>\n";
+	}
 	elseif ($f == "certificateWritten")
 	{
 		echo "          <td>" . ( (strlen($row->certificate->privateKey) > 0) ? 'Yes' : 'No')  . "</td>\n";
