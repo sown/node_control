@@ -29,29 +29,35 @@ class Model_Builder
 		$networkAdapter = Model_NetworkAdapter::build($wiredMac, $wirelessChannel, $type, $node);
 
 		$ipv4 = null;
+		$ipv4GatewayAddr = null;
 		$ipv6 = null;
+		$ipv6GatewayAddr = null;
 		$name = 'eth0';
 		$ssid = '';
 		$type = 'dhcp';
 		$offerDhcp = '';
+		$offerDhcpV6 = '';
 		$radiusConfigId = '';
 		$is1x = '';
-		$node->interfaces->add(Model_Interface::build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node));
+		$node->interfaces->add(Model_Interface::build($ipv4, $ipv4GatewayAddr, $ipv6, $ipv6GatewayAddr, $name, $ssid, $type, $offerDhcp, $offerDhcpV6, $is1x, $radiusConfigId, $networkAdapter, $node));
 
 		$wirelessChannel = 1;
 		$type = 'g';
 		$networkAdapter = Model_NetworkAdapter::build($wirelessMac, $wirelessChannel, $type, $node);
 
 		$ipv4 = IP_Network_Address::factory($vpnServer->getFreeIPv4Addr(24)->get_address_in_network(-1), 24);
+		$ipv4GatewayAddr = null;
 		//$ipv6 = IP_Network_Address::factory($vpnServer->getFreeIPv6Addr(64)->get_address_in_network(-1), 64);
 		$ipv6 = $vpnServer->getFreeIPv6Addr(64);
+ 		$ipv4GatewayAddr = null;
 		$name = 'wlan0';
 		$ssid = 'eduroam';
 		$type = 'static';
 		$offerDhcp = 1;
+		$offerDhcpV6 = 0;
 		$radiusConfigId = '';
 		$is1x = 1;
-		$node->interfaces->add(Model_Interface::build($ipv4, $ipv6, $name, $ssid, $type, $offerDhcp, $is1x, $radiusConfigId, $networkAdapter, $node));
+		$node->interfaces->add(Model_Interface::build($ipv4, $ipv4GatewayAddr, $ipv6, $ipv6GatewayAddr, $name, $ssid, $type, $offerDhcp, $offerDhcpV6, $is1x, $radiusConfigId, $networkAdapter, $node));
 
 		$node->save();
 		
