@@ -581,6 +581,8 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		$deployment->allowedPorts = $formValues['configuration']['allowedPorts'];
 		$deployment->advancedFirewall = ( isset($formValues['configuration']['advancedFirewall']) ? 1 : 0 );
 		$deployment->cap = $formValues['configuration']['cap'];
+		$deployment->pingAttempts = $formValues['configuration']['pingAttempts'];
+		$deployment->wifiDownAfter = $formValues['configuration']['wifiDownAfter'];
 		$deployment->longitude = $formValues['location']['longitude'];
 		$deployment->latitude = $formValues['location']['latitude'];
 		$deployment->range = $formValues['location']['range'];
