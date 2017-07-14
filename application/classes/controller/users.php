@@ -677,37 +677,40 @@ class Controller_Users extends Controller_AbstractAdmin
                 }
 		$user->isSystemAdmin = $formValues['isSystemAdmin'];
 		$user->save();
-		foreach ($formValues['accounts']['currentAccounts'] as $a => $accountValues)
-                {
-                        if (empty($accountValues['site']))
-                        {
-                                if (!empty($accountValues['id']))
-                                {
-                                        $account = Doctrine::em()->getRepository('Model_UserAccount')->find($accountValues['id']);
-                                        $account->delete();
-                                }
-                        }
-                        else
-                        {
-				$site = Doctrine::em()->getRepository('Model_Site')->find($accountValues['site']);
-                                if (empty($accountValues['id'])) 
-				{
-                                        $user->accounts->add(Model_UserAccount::build(
-						$user,
-                                                $site,
-						$accountValues['username'],
-                                                $accountValues['permissions']
-                                        ));
-                                }
-                                else
-                                {
-                                        $account = Doctrine::em()->getRepository('Model_UserAccount')->find($accountValues['id']);
-                                        $account->site = $site;
-                                        $account->username = $accountValues['username'];
-					$account->permissions = $accountValues['permissions'];
-                                        $account->save();
-                                }
-                        }
+		if (!empty($formValues['accounts']))
+		{
+			foreach ($formValues['accounts']['currentAccounts'] as $a => $accountValues)
+        	        {
+                	        if (empty($accountValues['site']))
+                        	{
+                                	if (!empty($accountValues['id']))
+	                                {
+        	                                $account = Doctrine::em()->getRepository('Model_UserAccount')->find($accountValues['id']);
+                	                        $account->delete();
+                        	        }
+	                        }
+        	                else
+                	        {
+					$site = Doctrine::em()->getRepository('Model_Site')->find($accountValues['site']);
+                                	if (empty($accountValues['id'])) 
+					{
+        	                                $user->accounts->add(Model_UserAccount::build(
+							$user,
+                        	                        $site,
+							$accountValues['username'],
+                                        	        $accountValues['permissions']
+	                                        ));
+        	                        }
+                	                else
+                        	        {
+                                	        $account = Doctrine::em()->getRepository('Model_UserAccount')->find($accountValues['id']);
+                                        	$account->site = $site;
+	                                        $account->username = $accountValues['username'];
+						$account->permissions = $accountValues['permissions'];
+                	                        $account->save();
+                        	        }
+                        	}
+			}
                 }
 
 	}
