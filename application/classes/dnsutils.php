@@ -157,7 +157,11 @@ class DNSUtils {
       		fwrite($handle, "; Nodes Forward Fragment - Generated automatically using admin system's DNSUtils on ".date("Y-m-d H:i:s")."\n");
       		foreach($results as $r => $result)
       		{
-                        $ipv4 = DNSUtils::convertToEndpoint($result['IPv4Addr'], 4);
+			if($result["DNSIPv4Addr"]){
+	                        $ipv4 = $result['DNSIPv4Addr'];
+			}else{
+	                        $ipv4 = DNSUtils::convertToEndpoint($result['VPNIPv4Addr'], 4);
+			}		
                         $ipv6 = DNSUtils::convertToEndpoint($result['IPv6Addr'], 6);
             		$hostname = "node".$result['boxNumber'];
             		$lat = $result['latitude'];
@@ -207,7 +211,12 @@ class DNSUtils {
       		fwrite($handle6, "; Nodes IPv6 Reverse Fragment - Generated automatically using admin system's DNSUtils on ".date("Y-m-d H:i:s")."\n");
       		foreach ($results as $r => $result)
       		{
-			$ipv4 = DNSUtils::convertToEndpoint($result['IPv4Addr'], 4);
+			if($result["DNSIPv4Addr"]){
+	                        $ipv4 = $result['DNSIPv4Addr'];
+			}else{
+	                        $ipv4 = DNSUtils::convertToEndpoint($result['VPNIPv4Addr'], 4);
+			}		
+			#$ipv4 = DNSUtils::convertToEndpoint($result['IPv4Addr'], 4);
                         $ipv6 = DNSUtils::convertToEndpoint($result['IPv6Addr'], 6);
             		$hostname = "node".$result['boxNumber'];
 

@@ -120,6 +120,16 @@ class Model_Node extends Model_Entity
 	 */
 	protected $vpnEndpoint;
 
+        /**
+         * @var Model_Interface
+	 *
+         * @OneToOne(targetEntity="Model_Interface")
+         * @JoinColumns({
+         *   @JoinColumn(name="dns_interface_id", referencedColumnName="id")
+         * })
+         */
+        protected $dnsInterface;
+
  	/**
          * @var Model_Switch
          *
@@ -377,6 +387,11 @@ class Model_Node extends Model_Entity
 		$str .= "certificate={$this->certificate}";
 		$str .= "<br/>";
 		$str .= "vpnEndpoint={$this->vpnEndpoint->id}";
+		if (!empty($this->dnsInterface))
+		{
+			$str .= "dnsInterface{$this->dnsInterface->name}";
+			$str .= "<br/>";
+		}
 		if (!empty($this->switch))
                 {
                         $str .= ", switch={$this->switch->id}";
@@ -419,9 +434,12 @@ class Model_Node extends Model_Entity
 		{
 			$str .= $this->fieldHTML($field);
 		}
-		foreach(array('certificate', 'vpnEndpoint', 'nodeHardware') as $field)
+		foreach(array('certificate', 'vpnEndpoint', 'dnsInterface', 'nodeHardware') as $field)
 		{
-			$str .= $this->fieldHTML($field, $this->$field->toHTML());
+			if (!empty($this->$field))
+			{
+				$str .= $this->fieldHTML($field, $this->$field->toHTML());
+			}
 		}
 		foreach($this->interfaces as $interface)
 		{
@@ -485,6 +503,7 @@ class Model_Node extends Model_Entity
 		$obj->externalBuild = $externalBuild;
 		$obj->certificate = $certificate;
 		$obj->vpnEndpoint = $vpnEndpoint;
+		$obj->dnsInterface = null;
 		$obj->passwordHash = "";
 		$obj->undeployable = 0;
 		$obj->primaryDNSIPv4Addr = "";

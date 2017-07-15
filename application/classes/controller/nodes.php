@@ -158,7 +158,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'view');
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
 		$switch = $node->switch;
-		$formTemplate = $this->_load_form_template('view', $formValues['externalBuild'], $switch);
+		$formTemplate = $this->_load_form_template('view', $node, $formValues['externalBuild'], $switch);
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'view');
                 $notesFormTemplate = Controller_Notes::load_form_template('view');
 		$this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('editNode' => 'Edit Node')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
@@ -211,7 +211,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
 		$switch = $node->switch;
-		$formTemplate = $this->_load_form_template('edit', isset($formValues['externalBuild']), $switch);
+		$formTemplate = $this->_load_form_template('edit', $node, isset($formValues['externalBuild']), $switch);
 		$formButtons = array('updateNode' => 'Update Node');
 		if (isset($switch) && $switch->id > 0)
                 {
@@ -429,9 +429,15 @@ class Controller_Nodes extends Controller_AbstractAdmin
                        		'vpnServer' => $node->vpnEndpoint->vpnServer->id,
 			),
 			'interfaces' => array(
+				'dnsInterface' => "",
 				'currentInterfaces' => array(),
 			),
                 );
+		$dnsInterface = $node->dnsInterface;
+		if (!empty($dnsInterface))
+		{
+			$formValues['interfaces']['dnsInterface'] = $dnsInterface->id;
+		}
 
 		$formValuesMap = array(
 			'id' => 'id', 
@@ -495,13 +501,21 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			$formValues['externalBuild'] = (!empty($formValues['externalBuild']) ? 'Yes' : 'No');
 			$firmware_versions = Kohana::$config->load('system.default.firmware_versions'); 
 			$formValues['firmwareVersion'] = $firmware_versions[$formValues['firmwareVersion']];
+			if (!empty($formValues['dnsInterface']))
+			{
+				$dnsInterface = Doctrine::em()->getRepository('Model_Interface')->findOneById($formValues['dnsInterface']);
+				$formValues['dnsInterface'] = $dnsInterface->name;
+			}
+			else	
+			{
+				$formValues['dnsInterface'] = 'VPN';
+			}
 		}
 		return $formValues;
 	}
 
-	private function _load_form_template($action = 'edit', $externalBuild = 0, $switch = null)
+	private function _load_form_template($action = 'edit', $node = null, $externalBuild = 0, $switch = null)
 	{
-		error_log("Calling _load_form_template");
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
                         'boxNumber' => array('title' => 'Box Number', 'type' => 'statichidden'),
@@ -533,6 +547,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 'title' => 'Interfaces',
 				'type' => 'fieldset',
 				'fields' => array(
+					'dnsInterface' => array( 'title' => 'DNS Interface', 'type' => 'select', 'options' => SOWN::getStaticInterfaceOptionsForNode($node)),
 					'currentInterfaces' => array(
 						'title' => '',
                                 		'type' => 'table',
@@ -587,6 +602,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$node->secondaryDNSIPv4Addr = $formValues['secondaryDNSIPv4Addr'];
 		$node->primaryDNSIPv6Addr = $formValues['primaryDNSIPv6Addr'];
                 $node->secondaryDNSIPv6Addr = $formValues['secondaryDNSIPv6Addr'];
+		$node->dnsInterface = null;
+		if (!empty($formValues['interfaces']['dnsInterface']))
+		{
+			$node->dnsInterface = Doctrine::em()->getRepository('Model_Interface')->findOneById($formValues['interfaces']['dnsInterface']);
+		}
 		$vpnEndpoint = $node->vpnEndpoint;
                 $vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
 		$vpnEndpoint->protocol = $formValues['vpnEndpoint']['protocol'];

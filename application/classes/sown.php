@@ -678,5 +678,17 @@ class SOWN
 		return $hash;
 	}
 
+	public static function getStaticInterfaceOptionsForNode($node)
+	{
+		$interfaces = array("" => "VPN");
+		foreach ($node->interfaces as $intf)
+		{
+			if ($intf->type == "static")
+			{
+				$interfaces[$intf->id] = $intf->name;
+			}
+		}
+		return $interfaces;
+	}
 }	
 
