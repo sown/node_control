@@ -12,8 +12,18 @@ use Doctrine\ORM\Mapping\JoinColumn;
  * @Table(name="vpn_servers")
  * @Entity
  */
-class Model_VpnServer extends Model_Server
+class Model_VpnServer extends Model_Entity
 {
+
+	/**
+         * @var Model_Server
+         *
+         * @ManyToOne(targetEntity="Model_Server")
+         * @JoinColumns({
+         *   @JoinColumn(name="server_id", referencedColumnName="id")
+         * })
+         */
+        protected $server;
 	/**
          * @var Model_CertificateSet
          *
@@ -90,16 +100,9 @@ class Model_VpnServer extends Model_Server
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "VpnServer: {$this->id}, name={$this->name}, description={$this->description}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, serverCase={$this->serverCase}, processor={$this->processor}, memory={$this->memory}, hardDrive={$this->hardDrive}, networkPorts={$this->networkPorts}, wakeOnLan={$this->wakeOnLan},` kernel={$this->kernel}, os={$this->os}";
+		$str  = "VpnServer: {$this->id}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
-		$str .= "<br/>";
-                $str .= "location={$this->location}";
-                foreach($this->interfaces as $interface)
-                {
-                        $str .= "<br/>";
-                        $str .= "interface={$interface}";
-                }
 		return $str;
 	}
 
@@ -109,27 +112,18 @@ class Model_VpnServer extends Model_Server
 		$str  = "<div class='vpnServer' id='vpnServer_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>VPN Server</th><td>{$this->id}</td></tr>";
-		foreach(array('name', 'description', 'IPv4', 'IPv6') as $field)
+		foreach(array('IPv4', 'IPv6') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
 		$str .= $this->fieldHTML('port', $this->portStart.' - '.$this->portEnd);
-		foreach(array('certificate', 'vpnCertificateSet', 'location') as $field)
+		foreach(array('certificate', 'vpnCertificateSet') as $field)
 		{
 			if (is_object($this->$field))
 			{
 				$str .= $this->fieldHTML($field, $this->$field->toHTML());
 			}
 		}
-		$str .= $this->fieldHTML('acquiredDate', $this->acquiredDate->format('Y-m-d H:i:s'));
-                foreach(array('retired', 'serverCase', 'processor', 'memory', 'hardDrive', 'networkPorts', 'wakeOnLan', 'kernel', 'os') as $field)
-                {
-                        $str .= $this->fieldHTML($field);
-                }
-                foreach($this->interfaces as $interface)
-                {
-                        $str .= $this->fieldHTML('interface', $interface->toHTML());
-                }
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;
@@ -137,28 +131,28 @@ class Model_VpnServer extends Model_Server
 
 	public function getPrimaryHostname()
 	{
-                foreach ($this->interfaces as $interface)
+                foreach ($this->server->interfaces as $interface)
                 {
-                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
+                        if ($interface->server->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
                         {
 				
-                                return $interface->hostname;
+                                return $interface->server->hostname;
                         }
                 }	
 	}
 	public function getPrimaryIPAddress($version = 4)
 	{
-		foreach ($this->interfaces as $interface)
+		foreach ($this->server->interfaces as $interface)
                 {
-                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
+                        if ($interface->server->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
                         {
 				if ($version == 4) 
 				{
-                                	return $interface->IPv4Addr;
+                                	return $interface->server->IPv4Addr;
 				}
 				elseif ($version == 6)
 				{
-					return $interface->IPv6Addr;
+					return $interface->server->IPv6Addr;
 				}
                         }
                 }
@@ -217,7 +211,7 @@ class Model_VpnServer extends Model_Server
 		$vpnServerNames = array();
 		foreach ($vpnServers as $vpnServer)
 		{
-        		$vpnServerNames[$vpnServer->id] = $vpnServer->name;
+        		$vpnServerNames[$vpnServer->id] = $vpnServer->server->name . " (" . $vpnServer->IPv4 . ")";
 		}
 		return $vpnServerNames;
 	}

@@ -17,9 +17,6 @@ use Doctrine\ORM\Mapping\DiscriminatorMap;
  *
  * @Table(name="servers")
  * @Entity
- * @InheritanceType("JOINED")
- * @DiscriminatorColumn(name="type", type="string")
- * @DiscriminatorMap({"server" = "Model_Server", "vpn" = "Model_VpnServer"})
  */
 class Model_Server extends Model_Entity
 {
@@ -158,6 +155,10 @@ class Model_Server extends Model_Entity
          */
         protected $contacts;
 
+	 /**
+         * @OneToMany(targetEntity="Model_VpnServer", mappedBy="server", cascade={"persist", "remove"})
+         */
+        protected $servers;
 
        	/**
 	* @ManyToMany(targetEntity="Model_CronJob")
