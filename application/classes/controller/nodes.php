@@ -353,30 +353,30 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 	if(!empty($interface['name'])) 
 			{
                         	$validation = Validation::factory($interface)
-                                        ->rule('name', 'alpha_numeric', array(':value'))
+                                        ->rule('name', 'SownValid::interfaceName', array(':value'))
                                         ->rule('ssid', 'SownValid::ssid', array(':value'))
-                                        ->rule('networkAdapterMac', 'not_empty', array(':value'))
-                                        ->rule('networkAdapterMac', 'SownValid::mac', array(':value'));
+                                        ->rule('networkAdapterMac', 'SownValid::mac', array(':value', $interface['name']));
 
                                 if ($interface['type'] == "static")
                                 {
                                 	$validation->rule('IPv4Addr', 'not_empty', array(':value'))
                                         	->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
-                                                ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
+                                                ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value', false, $interface['name']))
                                                 ->rule('IPv4Addr', 'Model_Interface::freeIPSubnet', array(':value', $interface['IPv4AddrCidr'], 4, $interface['id']))
-						->rule('IPv4GatewayAddr', 'SownValid::ipv4', array(':value'), true)
-                                                ->rule('IPv6Addr', 'not_empty', array(':value'))
-                                                ->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
-                                                ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
+						->rule('IPv4GatewayAddr', 'SownValid::ipv4', array(':value', true))
+                                                ->rule('IPv6Addr', 'SownValid::ipv6', array(':value', true))
+                                                ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value', true))
                                                 ->rule('IPv6Addr', 'Model_Interface::freeIPSubnet', array(':value', $interface['IPv6AddrCidr'], 6, $interface['id']))
-						->rule('IPv6GatewayAddr', 'SownValid::ipv6', array(':value'), true);
+						->rule('IPv6GatewayAddr', 'SownValid::ipv6', array(':value', true));
                                 }
                                 else
                                 {
                                 	$validation->rule('IPv4Addr', 'SownValid::emptyField', array(':value'))
                                                 ->rule('IPv4AddrCidr', 'SownValid::emptyField', array(':value'))
+						->rule('IPv4GatewayAddr', 'SownValid::emptyField', array(':value'))
                                                 ->rule('IPv6Addr', 'SownValid::emptyField', array(':value'))
-                                                ->rule('IPv6AddrCidr', 'SownValid::emptyField', array(':value'));
+                                                ->rule('IPv6AddrCidr', 'SownValid::emptyField', array(':value'))
+						->rule('IPv6GatewayAddr', 'SownValid::emptyField', array(':value'));
                                 }
                                 if (in_array($interface['networkAdapterType'], array('100M', '1G')))
                                 {
@@ -645,18 +645,24 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                         $interfaceValues['radiusConfig'] = 0;
                                 }
 				if (empty($interfaceValues['id'])) {
-					$ipv4 = IP_Network_Address::factory($interfaceValues['IPv4Addr'], $interfaceValues['IPv4AddrCidr']);
-					$ipv6 = IP_Network_Address::factory($interfaceValues['IPv6Addr'], $interfaceValues['IPv6AddrCidr']);
-					$networkAdapter = Doctrine::em()->getRepository('Model_NetworkAdapter')->findOneBy(array('mac' => $interfaceValues['networkAdapterMac'], 'type' => $interfaceValues['networkAdapterType']));
-					if (empty($networkAdapter))
+					$ipv4 = null;
+					if (!empty($interfaceValues['IPv4Addr']))
 					{
-						$networkAdapter = Model_NetworkAdapter::build(
-							$interfaceValues['networkAdapterMac'], 
-							$interfaceValues['networkAdapterWirelessChannel'], 
-							$interfaceValues['networkAdapterType'], 
-							$node
-						);
+						$ipv4 = IP_Network_Address::factory($interfaceValues['IPv4Addr'], $interfaceValues['IPv4AddrCidr']);
 					}
+					$ipv6 = null;
+					$interfaceValues['ipv4GatewayAddr'] = (empty($interfaceValues['ipv4GatewayAddr']) ? null : $interfaceValues['ipv4GatewayAddr']);
+					if (!empty($interfaceValues['IPv6Addr']))
+                                        {
+						$ipv6 = IP_Network_Address::factory($interfaceValues['IPv6Addr'], $interfaceValues['IPv6AddrCidr']);
+					}
+					$interfaceValues['ipv6GatewayAddr'] = (empty($interfaceValues['ipv6GatewayAddr']) ? null : $interfaceValues['ipv6GatewayAddr']);
+					$networkAdapter = Model_NetworkAdapter::build(
+						$interfaceValues['networkAdapterMac'], 
+						$interfaceValues['networkAdapterWirelessChannel'], 
+						$interfaceValues['networkAdapterType'], 
+						$node
+					);
 					$node->interfaces->add(Model_Interface::build(
 						$ipv4, 
 						$interfaceValues['ipv4GatewayAddr'],
@@ -677,11 +683,21 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				{
 					$interface = Doctrine::em()->getRepository('Model_Interface')->find($interfaceValues['id']);
 					$interface->name = $interfaceValues['name'];
-					$interface->IPv4Addr = $interfaceValues['IPv4Addr'];
-					$interface->IPv4AddrCidr = $interfaceValues['IPv4AddrCidr'];
+					$ipv4 = null;
+                                        if (!empty($interfaceValues['IPv4Addr']))
+                                        {
+                                                $ipv4 = IP_Network_Address::factory($interfaceValues['IPv4Addr'], $interfaceValues['IPv4AddrCidr']);
+                                        }
+					$interfaceValues['ipv4GatewayAddr'] = (empty($interfaceValues['ipv4GatewayAddr']) ? null : $interfaceValues['ipv4GatewayAddr']);
+                                        $ipv6 = null;
+                                        if (!empty($interfaceValues['IPv6Addr']))
+                                        {
+                                                $ipv6 = IP_Network_Address::factory($interfaceValues['IPv6Addr'], $interfaceValues['IPv6AddrCidr']);
+                                        }
+					$interfaceValues['ipv6GatewayAddr'] = (empty($interfaceValues['ipv6GatewayAddr']) ? null : $interfaceValues['ipv6GatewayAddr']);
+					$interface->IPv4 = $ipv4;
 					$interface->IPv4GatewayAddr = $interfaceValues['IPv4GatewayAddr'];
-					$interface->IPv6Addr = $interfaceValues['IPv6Addr'];
-	        	                $interface->IPv6AddrCidr = $interfaceValues['IPv6AddrCidr'];
+					$interface->IPv6 = $ipv6;
 					$interface->IPv6GatewayAddr = $interfaceValues['IPv6GatewayAddr'];
  					$interface->ssid = $interfaceValues['ssid'];
  					$interface->type = $interfaceValues['type'];

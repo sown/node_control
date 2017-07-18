@@ -264,9 +264,9 @@ class Model_Interface extends Model_Entity
 	{
 		$obj = new Model_Interface();
 		$obj->IPv4 = $ipv4;
-		$obj->IPv4GatewayAddr = $ipv4GatewayAddr;
+		$obj->IPv4GatewayAddr = (empty($ipv4GatewayAddr) ? null : $ipv4GatewayAddr);
 		$obj->IPv6 = $ipv6;
-		$obj->IPv6GatewayAddr = $ipv6GatewayAddr;
+		$obj->IPv6GatewayAddr = (empty($ipv6GatewayAddr) ? null : $ipv6GatewayAddr);
 		$obj->name = $name;
 		$obj->ssid = $ssid;
 		$obj->type = $type;
@@ -285,6 +285,10 @@ class Model_Interface extends Model_Entity
 
 	public static function freeIPSubnet($address, $cidr, $version = 4, $interfaceId = 0)
 	{
+		if (empty($address))
+		{
+			return TRUE;
+		}
 		$interfaces = Doctrine::em()->getRepository('Model_Interface')->findAll();
                 $IPSubnet = IP_Network_Address::factory($address, $cidr);
                 $IPAddrName = "IPv" . $version . "Addr";

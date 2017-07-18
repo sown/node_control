@@ -71,7 +71,7 @@ class Model_NetworkAdapter extends Model_Entity
 	{
 		$obj = new Model_NetworkAdapter();
 		$obj->mac = $mac;
-		$obj->wirelessChannel = $wirelessChannel;
+		$obj->wirelessChannel = (empty($wirelessChannel) ? "" : $wirelessChannel);
 		$obj->type = $type;
 		$obj->node = $node;
 		return $obj;

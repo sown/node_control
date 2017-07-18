@@ -2,8 +2,12 @@
 
 class SownValid extends Valid {
 
-        public static function mac($value)
+        public static function mac($value, $intf_name="")
         {
+		if (preg_match("/^lo/", $intf_name))
+                {
+			return empty($value);
+		}
                 return (bool) preg_match('/^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$/', $value);
         }
 
@@ -13,19 +17,26 @@ class SownValid extends Valid {
 		return (bool) filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4);
 	}
 
-	public static function ipv4cidr($value)
+	public static function ipv4cidr($value, $allownull=false, $intf_name="")
         {
-                return (is_numeric($value) && $value <=30 && $value >=0);
+		if ($allownull && $value == "") return true;
+		$smallest = 30;
+		if (preg_match("/^lo/", $intf_name))
+		{
+			$smallest = 32;
+		}
+                return (is_numeric($value) && $value <=$smallest && $value >=0);
         }
 
-	public static function ipv6($value,$allownull=false)
+	public static function ipv6($value, $allownull=false)
         {
 		if ($allownull && $value == "") return true;
                 return (bool) filter_var($value, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
         }
 
-	public static function ipv6cidr($value)
+	public static function ipv6cidr($value, $allownull=false)
         {
+		if ($allownull && $value == "") return true;
                 return (is_numeric($value) && $value <=126 && $value >=0);
         }
 
@@ -33,6 +44,11 @@ class SownValid extends Valid {
         {
                 return (bool) preg_match('/^[^"<>\'&]{0,30}$/', $value);
         }
+	
+	public static function interfaceName($value)
+	{
+		return (bool) preg_match('/^[a-z][a-z0-9:\.\-]{1,63}$/', $value);
+	}
 
 	public static function wirelessChannel($value, $type = 'g')
 	{
