@@ -71,8 +71,20 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		$address = null;
 		if($node->vpnEndpoint != null)
 		{
-			$parents = $node->vpnEndpoint->vpnServer->name;
-			$address = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
+			#TODO: Fix me so we use loopbacks
+			$parents = $node->vpnEndpoint->vpnServer->server->name;
+			if(substr($node->vpnEndpoint->IPv4Addr, 0, 8) == "169.254."){
+				foreach($node->interfaces as $i)
+				{
+					if($i->IPv4 != null)
+					{
+						$ipv4_addrs[] = $i->name."=".$i->IPv4->get_address();
+					}
+				}
+				$address = implode(',', $ipv4_addrs);
+			}else{
+				$address = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
+			}
 		}
 		else
 		{

@@ -225,7 +225,8 @@ class Model_Server extends Model_Entity
 	public static function getByHostname($hostname)
 	{
 		
-		$query = Doctrine::em()->createQuery("SELECT s.id FROM Model_Server s JOIN s.interfaces si WHERE si.hostname LIKE '$hostname' OR si.cname LIKE '$hostname%'")->setMaxResults(1);
+		$query = Doctrine::em()->createQuery("SELECT s.id FROM Model_Server s JOIN s.interfaces si LEFT JOIN si.cnames sic WHERE si.hostname LIKE '$hostname' OR sic.cname LIKE '$hostname'")->setMaxResults(1);
+
                 $server_id = $query->getSingleScalarResult();
 		if (!empty($server_id))
 		{

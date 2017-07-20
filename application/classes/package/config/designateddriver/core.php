@@ -170,8 +170,12 @@ class Package_Config_Designateddriver_Core extends Package_Config
 		foreach ($node->interfaces as $iface)
 		{
 			$iface_config = array();
-			
-			$iface_config['ifname'] = $iface->name;
+			if(strpos($iface->name, ":") !== false){
+				$ifname = explode(":", $iface->name);
+				$iface_config['ifname'] = $ifname[0];
+			}else{
+				$iface_config['ifname'] = $iface->name;
+			}
 			
 			$iface_config['proto'] = $iface->type;	
 
@@ -212,7 +216,7 @@ class Package_Config_Designateddriver_Core extends Package_Config
 				$staticifnum++;
 			}
 			
-			$config['interface'][$iface->name] = $iface_config;
+			$config['interface'][str_replace(":", "_", $iface->name)] = $iface_config;
 		}
 		
 		static::send_uci_config('network', $config, $mod);
@@ -363,10 +367,11 @@ class Package_Config_Designateddriver_Core extends Package_Config
 			if ($iface->offerDhcp)
 			{
 				$v4_net_addr = IP_Network_Address::factory($iface->IPv4Addr, $iface->IPv4AddrCidr);
-
-				$if_config['start'] = '10';
-				$if_config['limit'] = $v4_net_addr->get_network_address_count() - 20;
-				$if_config['leasetime'] = '1h';
+				// TODO: FIXME: This doesn't support anything sensible
+				$v4_arr = explode(".", (string) $v4_net_addr->get_network_start());
+				$if_config['start'] = $v4_arr[3] + 2;
+				$if_config['limit'] = $v4_net_addr->get_network_address_count() - 3;
+				$if_config['leasetime'] = '15m';
 				$if_config['dhcp_option'] = '42,'.Kohana::$config->load('system.default.ntp.host');
 			}
 			else

@@ -133,7 +133,7 @@ class Model_VpnServer extends Model_Entity
 	{
                 foreach ($this->server->interfaces as $interface)
                 {
-                        if ($interface->server->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
+                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
                         {
 				
                                 return $interface->server->hostname;
@@ -144,15 +144,15 @@ class Model_VpnServer extends Model_Entity
 	{
 		foreach ($this->server->interfaces as $interface)
                 {
-                        if ($interface->server->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
+                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
                         {
 				if ($version == 4) 
 				{
-                                	return $interface->server->IPv4Addr;
+                                	return $interface->IPv4Addr;
 				}
 				elseif ($version == 6)
 				{
-					return $interface->server->IPv6Addr;
+					return $interface->IPv6Addr;
 				}
                         }
                 }

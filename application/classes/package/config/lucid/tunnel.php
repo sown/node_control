@@ -152,7 +152,7 @@ EOB;
 		$confdisconnect = "#!/bin/bash\n\n";
 		foreach($node->interfaces as $iface)
 		{
-			if(!$iface->offerDhcp)
+			if( (!$iface->offerDhcp) && ($iface->IPv4AddrCidr != 32) )
 				continue;
 			$confconnect    .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
 			$confdisconnect .= "/usr/bin/sudo /sbin/ip route del ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
