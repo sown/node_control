@@ -25,7 +25,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 			'acquiredDate' => 'Acquired',
 			'parent' => 'Parent',
 			'hostname' => 'Hostname',
-			'cname' => 'CName',
+			'cnames' => 'CName(s)',
 			'IPv4Addr' => 'IPv4 Address',
 			'IPv6Addr' => 'IPv6 Address',
 			'retired' => '',
@@ -59,7 +59,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'acquiredDate' => 'Acquired',
                         'parent' => 'Parent',
                         'hostname' => 'Hostname',
-                        'cname' => 'CName',
+                        'cnames' => 'CName(s)',
                         'IPv4Addr' => 'IPv4 Address',
                         'IPv6Addr' => 'IPv6 Address',
                         'view' => '',
@@ -257,6 +257,8 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                 {
                         throw new HTTP_Exception_404();
                 }
+		Doctrine::em()->refresh($other_host);
+
 		$formValues = array(
                         'id' => $other_host->id,
                         'name' => $other_host->name,
@@ -269,7 +271,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         'location' => '',
                         'case' => $other_host->case,
                         'hostname' => $other_host->hostname,
-			'cname' => $other_host->cname,
+			'cnames' => Model_OtherHostCname::getList($other_host->cnames),
 			'mac' => $other_host->mac,
 			'IPv4Addr' => $other_host->IPv4Addr,
                         'IPv6Addr' => $other_host->IPv6Addr,
@@ -283,17 +285,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 
 		$c = 0;
                 $contact_fields = array('id', 'name', 'email');
-                $other_host_contacts = array();
-                $oh_cct_ids = array();
                 foreach($other_host->contacts as $c => $contact)
-                {
-                        if (!in_array($contact->id, $oh_cct_ids))
-                        {
-                                $other_host_contacts[] = $contact;
-                                $oh_cct_ids[] = $contact->id;
-                        }
-                }
-                foreach ($other_host_contacts as $c => $contact)
                 {
                         foreach ($contact_fields as $cf)
                         {
@@ -327,9 +319,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         {
                                 $formValues['contacts']['currentContacts'][$c+1][$cf] = '';
                         }
-			// Cannot use $server->Services because these are not updated quick enough to be displayed on page reload.
-                        $hostServices = Doctrine::em()->getRepository('Model_HostService')->findByOtherHost($other_host);
-                        foreach ($hostServices as $hostService)
+                        foreach ($other_host->services as $hostService)
                         {
                                 $formValues['services'][] = $hostService->service->id;
                         }
@@ -354,7 +344,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 			'location' => array('title' => 'Location', 'type' => 'select', 'options' => $locations),
                         'case' => array('title' => 'Case', 'type' => 'input', 'size' => 20, 'hint' => "e.g. form factor, switch model, etc."),
                         'hostname' => array('title' => 'Hostname', 'type' => 'input', 'size' => 50),
-                        'cname' => array('title' => 'CName', 'type' => 'input', 'size' => 50),
+                        'cnames' => array('title' => 'CName(s)', 'type' => 'input', 'size' => 50),
 			'mac' => array('title' => 'MAC', 'type' => 'input', 'size' => 17),
                         'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 15),
                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 50),
@@ -397,7 +387,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                 $other_host->location = (!empty($formValues['location']) ? Doctrine::em()->getRepository('Model_Location')->find($formValues['location']) : null);
                 $other_host->case = $formValues['case'];
 		$other_host->hostname = $formValues['hostname'];
-		$other_host->cname = $formValues['cname'];
+		$other_host->updateCnames($formValues['cnames']);
 		$other_host->mac = $formValues['mac'];	
 		$other_host->IPv4Addr = $formValues['IPv4Addr'];
 		$other_host->IPv6Addr = $formValues['IPv6Addr'];

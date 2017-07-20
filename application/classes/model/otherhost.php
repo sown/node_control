@@ -93,13 +93,6 @@ class Model_OtherHost extends Model_Entity
          */
         protected $hostname;
 
-        /**
-         * @var string $cname
-         *
-         * @Column(name="cname", type="string", length=255, nullable=true)
-         */
-        protected $cname;
-
 	/**
          * @var string $mac
          *
@@ -139,6 +132,11 @@ class Model_OtherHost extends Model_Entity
          * @OneToMany(targetEntity="Model_Contact", mappedBy="otherHost", cascade={"persist", "remove"})
          */
         protected $contacts;
+
+	/**
+         * @OneToMany(targetEntity="Model_OtherHostCname", mappedBy="otherHost", cascade={"persist", "remove"})
+         */
+        protected $cnames;
 
 	/**
         * @ManyToMany(targetEntity="Model_HostService")
@@ -184,7 +182,12 @@ class Model_OtherHost extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "OtherHost: {$this->id}, name={$this->name}, type={$type}, parent={$this->parent}, description={$this->description}, location={$this->location}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, case={$this->case}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, alias={$this->alias}, checkCommand={$this->checkCommand}, ";
+		$str  = "OtherHost: {$this->id}, name={$this->name}, type={$type}, parent={$this->parent}, description={$this->description}, location={$this->location}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}, retired={$this->retired}, case={$this->case}, hostname={$this->hostname}, mac={$this->mac}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, alias={$this->alias}, checkCommand={$this->checkCommand}, ";
+		foreach($this->cnames as $cname)
+                {
+                        $str .= "<br/>";
+                        $str .= "cname={$cname->cname}";
+                }
 		foreach($this->services as $hostService)
                 {
                         $str .= "<br/>";
@@ -213,9 +216,13 @@ class Model_OtherHost extends Model_Entity
 			$str .= $this->fieldHTML('location', $this->location->toHTML());
 		}
 		$str .= $this->fieldHTML('acquiredDate', $this->acquiredDate->format('Y-m-d H:i:s'));
-		foreach(array('retired', 'case', 'hostname', 'cname', 'mac', 'IPv4Addr', 'IPv6Addr', 'alias' ,'checkCommand') as $field)
+		foreach(array('retired', 'case', 'hostname', 'mac', 'IPv4Addr', 'IPv6Addr', 'alias' ,'checkCommand') as $field)
                 {
                         $str .= $this->fieldHTML($field);
+                }
+		foreach($this->cnames as $cname)
+                {
+                        $str .= $this->fieldHTML('cname', $cname->toHTML());
                 }
 		foreach($this->services as $hostService)
                 {
@@ -230,19 +237,29 @@ class Model_OtherHost extends Model_Entity
 		return $str;
 	}
 
-	public function hasOnlyLocalCName()
-	{
-		foreach ($this->interfaces as $i)
+	public function updateCnames($cnameString)
+        {
+                $subCnames = explode(',', $cnameString);
+                sort($subCnames);
+                $curCnames = array();
+                foreach ($this->cnames as $cname)
                 {
-			$hostname_bits = explode('.', $i->hostname);
-			$cname_bits = explode('.', $i->cname);
-			if (strlen($cname_bits[0]) > 0 && sizeof($hostname_bits) > 1 && sizeof($cname_bits) == 1)
-			{
-                                return true;
-                        }
+                        $curCnames[] = $cname->cname;
                 }
-		return false;
-	}
+                sort($curCnames);
+                $newCnames = array_diff($subCnames, $curCnames);
+                $oldCnames = array_diff($curCnames, $subCnames);
+                foreach ($newCnames as $newCname)
+                {
+                        $ohc = Model_OtherHostCname::build($this, $newCname);
+                }
+                foreach ($oldCnames as $oldCname)
+                {
+                        $sic = Doctrine::em()->getRepository('Model_OtherHostCname')->findOneBy(array('otherHost' => $this, 'cname' => $oldCname));
+                        $sic->delete();
+                }
+        }
+
 
 	public static function uniqueName($name, $id = 0)
         {

@@ -451,20 +451,6 @@ class Model_Server extends Model_Entity
 		return false;
         }
 
-	public function hasOnlyLocalCName()
-	{
-		foreach ($this->interfaces as $i)
-                {
-			$hostname_bits = explode('.', $i->hostname);
-			$cname_bits = explode('.', $i->cname);
-			if (strlen($cname_bits[0]) > 0 && sizeof($hostname_bits) > 1 && sizeof($cname_bits) == 1)
-			{
-                                return true;
-                        }
-                }
-		return false;
-	}
-
 	public static function uniqueName($name, $id = 0)
         {
 		if (empty($name))

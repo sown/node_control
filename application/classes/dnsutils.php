@@ -9,32 +9,32 @@ class DNSUtils {
                 $dns = "; Primary Services\n";
                 list($dns2, $nss, $domain_server_interface) = DNSUtils::generateNameserverEntries($nameservers, false);
                 $dns .= $dns2;
-                $dns .= (is_object($wwwserver) ? "@\t\t\t\tIN\tA\t{$wwwserver->IPv4Addr}\n" : "");
+                $dns .= (is_array($wwwserver) ? "@\t\t\t\tIN\tA\t{$wwwserver['IPv4Addr']}\n" : "");
                 foreach ($nss as $ns => $ns_addrs)
                 {
                         $dns .= "\n";
                         $dns .= $ns . SOWN::tabs($ns, 5) . "IN\tA\t{$ns_addrs[0]}\n";
                         $dns .= (!empty($ns_addrs[1]) ? $ns . SOWN::tabs($ns, 5) . "IN\tAAAA\t{$ns_addrs[1]}\n" : "");
                 }
-                if (is_object($wwwserver))
+                if (is_array($wwwserver))
                 {
                         $dns .= "\n";
-                        $dns .= "www\t\t\t\tIN\tA\t{$wwwserver->IPv4Addr}\n";
-                        $www_ipv6 = $wwwserver->IPv6Addr;
+                        $dns .= "www\t\t\t\tIN\tA\t{$wwwserver['IPv4Addr']}\n";
+                        $www_ipv6 = $wwwserver['IPv6Addr'];
                         $dns .= (!empty($www_ipv6) ? "www\t\t\t\tIN\tAAAA\t{$www_ipv6}\n" : "");
                 }
                 $irc_server = Kohana::$config->load('system.default.irc_server');
                 $dns .= "\n";
                 $dns .= "_irc._tcp.$domain.".SOWN::tabs("_irc._tcp.$domain.", 5)."IN\tSRV\t1 0 6667\t$irc_server.\n";
-                if (is_object($wwwserver))
+                if (is_array($wwwserver))
                 {
                         $dns .= "_http._tcp.$domain.".SOWN::tabs("_http._tcp.$domain.", 5)."IN\tSRV\t1 0 80\t\twww.$domain.\n";
                         $dns .= "_http._tcp.$domain.".SOWN::tabs("_http._tcp.$domain.", 5)."IN\tSRV\t1 0 443\t\twww.$domain.\n";
                 }
-                if (is_object($domain_server_interface))
+                if (is_array($domain_server_interface))
                 {
-                        $dns .= "_domain._udp.$domain.".SOWN::tabs("_domain._udp.$domain.", 5)."IN\tSRV\t1 0 53\t\t{$domain_server_interface->hostname}.$domain.\n";
-                        $dns .= "_domain._tcp.$domain.".SOWN::tabs("_domain._tcp.$domain.", 5)."IN\tSRV\t1 0 53\t\t{$domain_server_interface->hostname}.$domain.\n";
+                        $dns .= "_domain._udp.$domain.".SOWN::tabs("_domain._udp.$domain.", 5)."IN\tSRV\t1 0 53\t\t{$domain_server_interface['hostname']}.$domain.\n";
+                        $dns .= "_domain._tcp.$domain.".SOWN::tabs("_domain._tcp.$domain.", 5)."IN\tSRV\t1 0 53\t\t{$domain_server_interface['hostname']}.$domain.\n";
                 }
                 $dns .= "\n\n; Servers\n";
 		foreach ($servers as $server)
@@ -51,14 +51,14 @@ class DNSUtils {
                 $dns .= "\n; Other CNAMEs\n";
                 foreach ($servers as $server)
                 {
-                        if ($server->hasOnlyLocalCName())
-                        {
-                                foreach ($server->interfaces as $interface)
+                	foreach ($server->interfaces as $interface)
+                       	{
+                       		foreach ($interface->cnames as $sic)
                                 {
-                                        foreach (explode(',', $interface->cname) as $cname)
-                                        {
-                                                $dns .= (!empty($cname) && $cname != "www" ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $interface->hostname . ".\n" : "");
-                                        }
+					$full_hostname = $interface->hostname;
+	                                $full_hostname .= (strpos($full_hostname, '.') ? "." : "");
+					$cname = $sic->cname;
+                        		$dns .= (strpos($interface->hostname, '.') && !empty($cname) && !strpos($cname, '.') && !preg_match("/^(ns[0-9]|www)$/", $cname) ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
                                 }
                         }
                 }
@@ -71,11 +71,12 @@ class DNSUtils {
                                 $dns .= (strlen($other_host->IPv6Addr) ? $other_host->hostname . $tabs . "IN\tAAAA\t" . $other_host->IPv6Addr. "\n" : "");
                                 $dns .= $other_host->hostname . $tabs . "IN\tTXT\t" . "\"mac: {$other_host->mac} type:{$other_host->type}\"\n";
                         }
-                        foreach (explode(',', $other_host->cname) as $cname)
+                        foreach ($other_host->cnames as $ohc)
                         {
 				$full_hostname = $other_host->hostname;
 				$full_hostname .= (strpos($full_hostname, '.') ? "." : "");
-                                $dns .= (!empty($cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
+				$cname = $ohc->cname;
+                               	$dns .= (!empty($cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
                         }
                 }
 		$file = "$dir/fragment.$domain-hosts";
@@ -300,9 +301,9 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
                 $domain_server_interface = null;
                 foreach ($nameservers as $nsi)
                 {
-                        $ns = (preg_match("/^ns/", $nsi->cname) ? $nsi->cname : $nsi->hostname);
+                        $ns = (preg_match("/^ns/", $nsi['cname']) ? $nsi['cname'] : $nsi['hostname']);
                         $ns = (strpos($ns, ',') ? substr($ns, 0, strpos($ns, ",")) : $ns);
-                        $nss[$ns] = array($nsi->IPv4Addr, $nsi->IPv6Addr);
+                        $nss[$ns] = array($nsi['IPv4Addr'], $nsi['IPv6Addr']);
                         $dns .= "@\t\t\t\tIN\tNS\t$ns.$domain.\n";
                         $domain_server_interface = ($ns == "ns0" ? $nsi : $domain_server_interface);
                 }
@@ -364,14 +365,14 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
                 $ipv6 = $interface->IPv6Addr;
                 if (is_object($interface->vlan) && strlen($interface->hostname) && (!empty($ipv4) || !empty($ipv6)))
                 {
-                        $cname_list = $interface->cname;
                         if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.local'))
                         {
                                 $tabs = SOWN::tabs($interface->hostname, 4);
                                 $dns .= $interface->hostname . $tabs . "IN\tA\t" . $ipv4 . "\n";
                                 $dns .= (!empty($ipv6) ? $interface->hostname . $tabs . "IN\tAAAA\t" . $ipv6 . "\n" : "");
-                                foreach (explode(',', $cname_list) as $cname)
+                                foreach ($interface->cnames as $sic)
                                 {
+					$cname = $sic->cname;
 					$full_hostname = $interface->hostname;
                                         $full_hostname .= (strpos($full_hostname, '.') ? "." : "");
                                         $dns .= (!empty($cname) && !preg_match("/^(ns[0-9]|www)$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
@@ -386,10 +387,11 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
                                 $tabs = SOWN::tabs($hostname, 4);
                                 $dns .= $hostname . $tabs . "IN\tA\t" . $ipv4 . "\n";
                                 $dns .= (!empty($ipv6) ? $hostname . $tabs . "IN\tAAAA\t" . $ipv6 . "\n" : "");
-                                foreach (explode(',', $cname_list) as $cname)
+                                foreach ($interface->cnames as $sic)
                                 {
 					$full_hostname = $interface->hostname;
 					$full_hostname .= (strpos($full_hostname, '.') ? "." : "");
+					$cname = $sic->cname;
                                         $dns .= (!empty($cname) && !preg_match("/^(ns[0-9]|www)$/", $cname) && !strpos($cname, '.') ? $cname . SOWN::tabs($cname, 4) . "IN\tCNAME\t" . $full_hostname . "\n" : "");
                                 }
                                 $dns .= $hostname . $tabs . "IN\tTXT\t\"mac: ".$interface->mac." type:server\"\n";

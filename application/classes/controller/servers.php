@@ -293,10 +293,12 @@ class Controller_Servers extends Controller_AbstractAdmin
 	private function _load_from_database($id, $action = 'edit')
 	{
 		$server = Doctrine::em()->getRepository('Model_Server')->find($id);
+		
                 if (!is_object($server))
                 {
                         throw new HTTP_Exception_404();
                 }
+		Doctrine::em()->refresh($server);
 		
                 $formValues = array(
                         'id' => $server->id,
@@ -325,25 +327,20 @@ class Controller_Servers extends Controller_AbstractAdmin
                         ),
                 );
 		$i = 0;
-		$intf_fields = array('id', 'vlan', 'name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr', 'subordinate');
-		$server_interfaces = array();
+		$intf_fields = array('id', 'vlan', 'name', 'hostname', 'cnames', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr', 'subordinate');
 		$srv_intf_ids = array();
-		// Fixes bug where duplicate interfaces appear when a new interface is added.
-		foreach($server->interfaces as $intf => $interface)
-		{
-			if (!in_array($interface->id, $srv_intf_ids))
-			{
-				$server_interfaces[] = $interface;
-				$srv_intf_ids[] = $interface->id;
-			}
-		}
-                foreach ($server_interfaces as $i => $interface)
+		foreach ($server->interfaces as $i => $interface)
                 {
+			Doctrine::em()->refresh($interface);
 			foreach ($intf_fields as $if)
 			{
 				if ($if == "vlan")
 				{
 					$formValues['interfaces']['currentInterfaces'][$i][$if] = $interface->$if->id;
+				}
+				else if ($if == "cnames")
+				{
+					$formValues['interfaces']['currentInterfaces'][$i][$if] = Model_ServerInterfaceCname::getList($interface->$if);
 				}
 				else 
 				{
@@ -358,17 +355,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 	
 		$c = 0;	
 		$contact_fields = array('id', 'name', 'email');
-		$server_contacts = array();
-		$srv_cct_ids = array();
-		foreach($server->contacts as $c => $contact)
-                {
-                        if (!in_array($contact->id, $srv_cct_ids))
-                        {
-                                $server_contacts[] = $contact;
-                                $srv_cct_ids[] = $contact->id;
-                        }
-                }
-		foreach ($server_contacts as $c => $contact)
+		foreach ($server->contacts as $c => $contact)
                 {
                         foreach ($contact_fields as $cf)
                         {
@@ -409,10 +396,8 @@ class Controller_Servers extends Controller_AbstractAdmin
                         {
                                 $formValues['contacts']['currentContacts'][$c+1][$cf] = '';
                         }
-			// Cannot use $server->Services because these are not updated quick enough to be displayed on page reload.
-                        $hostServices = Doctrine::em()->getRepository('Model_HostService')->findByServer($server);
-			foreach ($hostServices as $hostService)
-                        {
+                        foreach ($server->services as $hostService)
+			{
                                 $formValues['services'][] = $hostService->service->id;
                         }
                 }
@@ -455,7 +440,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 							'vlan' => array('title' => 'VLAN', 'type' => 'select', 'options' => $vlans),
                                                         'name' => array('title' => 'Name', 'type' => 'input', 'size' => 3),
 							'hostname' => array('title' => 'Hostname', 'type' => 'input', 'size' => 25),
-							'cname' => array('title' => 'CName', 'type' => 'input', 'size' => 15),
+							'cnames' => array('title' => 'CName(s)', 'type' => 'input', 'size' => 15),
 							'mac' => array('title' => 'MAC', 'type' => 'input', 'size' => 14),
 							'switchport' => array('title' => 'Switchport', 'type' => 'input', 'size' => 29),
 							'cable' => array('title' => 'Cable', 'type' => 'input', 'size' => 4),
@@ -559,7 +544,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 						$vlan,	
 						$interfaceValues['name'],
 						$interfaceValues['hostname'],
-						$interfaceValues['cname'],	
+						$interfaceValues['cnames'],	
 						$interfaceValues['mac'],
 						$interfaceValues['switchport'],
 						$interfaceValues['cable'],
@@ -574,7 +559,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                                         $interface->vlan = $vlan;
 					$interface->name = $interfaceValues['name'];
 					$interface->hostname = $interfaceValues['hostname'];
-					$interface->cname = $interfaceValues['cname'];
+					$interface->updateCnames($interfaceValues['cnames']);
 					$interface->mac = $interfaceValues['mac'];
 					$interface->switchport = $interfaceValues['switchport'];
                                         $interface->cable = $interfaceValues['cable'];

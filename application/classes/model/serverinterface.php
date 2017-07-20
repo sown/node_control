@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\ManyToMany;
+use Doctrine\ORM\Mapping\OneToMany;
 use Doctrine\ORM\Mapping\JoinColumns;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\JoinTable;
@@ -54,13 +55,6 @@ class Model_ServerInterface extends Model_Entity
 	 */
 	protected $hostname;
 
-	/**
-         * @var string $cname
-         *
-         * @Column(name="cname", type="string", length=255, nullable=true)
-         */
-        protected $cname;
-
         /**
          * @var string $mac
          *
@@ -101,7 +95,13 @@ class Model_ServerInterface extends Model_Entity
          *
          * @Column(name="subordinate", type="integer", nullable=true)
          */
-        protected $subordinate;	
+        protected $subordinate;
+
+	/**
+         * @OneToMany(targetEntity="Model_ServerInterfaceCname", mappedBy="serverInterface", cascade={"persist", "remove"})
+         */
+        protected $cnames;
+	
 
 	public function __get($name)
 	{
@@ -123,7 +123,12 @@ class Model_ServerInterface extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "ServerInterface: {$this->id}, name={$this->server->name} vlan={$this->vlan->name}, name={$this->name}, hostname={$this->hostname}, cname={$this->cname}, mac={$this->mac}, switchport={$this->switchport}, cable={$this->cable}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, subordinate={$this->subordinate}";
+		$str  = "ServerInterface: {$this->id}, name={$this->server->name} vlan={$this->vlan->name}, name={$this->name}, hostname={$this->hostname},  mac={$this->mac}, switchport={$this->switchport}, cable={$this->cable}, IPv4Addr={$this->IPv4Addr}, IPv6Addr={$this->IPv6Addr}, subordinate={$this->subordinate}";
+		foreach($this->cnames as $cname)
+                {
+                        $str .= "<br/>";
+                        $str .= "cname={$cname}";
+                }
 		return $str;
 	}
 
@@ -134,23 +139,27 @@ class Model_ServerInterface extends Model_Entity
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>ServerInterface</th><td>{$this->id}</td></tr>";
 		$str .= $this->fieldHTML('vlan', $this->vlan->toHTML());
-		foreach(array('name', 'hostname', 'cname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr', 'subordinate') as $field)
+		foreach(array('name', 'hostname', 'mac', 'switchport', 'cable', 'IPv4Addr', 'IPv6Addr', 'subordinate') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
+		foreach($this->cnames as $cname)
+                {
+                        $str .= $this->fieldHTML('cname', $cname->toHTML());
+                }	
 		$str .= "</table>";
 		$str .= "</div>";
 		return $str;
 	}
 
-	public static function build($server, $vlan, $name, $hostname, $cname, $mac, $switchport, $cable, $IPv4Addr, $IPv6Addr, $subordinate)
+	public static function build($server, $vlan, $name, $hostname, $cnames, $mac, $switchport, $cable, $IPv4Addr, $IPv6Addr, $subordinate)
         {
                 $si = new Model_ServerInterface();
 		$si->server = $server;
                 $si->vlan = $vlan;
 		$si->name = $name;
 		$si->hostname = $hostname;
-		$si->cname = $cname;
+		
 		$si->mac = $mac;
 		$si->switchport = $switchport;
 		$si->cable = $cable;
@@ -158,7 +167,37 @@ class Model_ServerInterface extends Model_Entity
 		$si->IPv6Addr = $IPv6Addr;
 		$si->subordinate = $subordinate;
 		$si->save();
+		$cname_bits = explode(',', $cnames);
+                foreach ($cname_bits as $acname)
+                {
+                        if (!empty($acname))
+                        {
+                                $sic = Model_ServerInterfaceCname::build($si, $acname);
+                        }
+		}
                 return $si;
         }
 
+	public function updateCnames($cnameString)	
+	{
+		$subCnames = explode(',', $cnameString);
+		sort($subCnames);
+		$curCnames = array();
+		foreach ($this->cnames as $cname)
+		{
+			$curCnames[] = $cname->cname;
+		}
+		sort($curCnames);
+		$newCnames = array_diff($subCnames, $curCnames);
+		$oldCnames = array_diff($curCnames, $subCnames);
+		foreach ($newCnames as $newCname)
+		{
+			$sic = Model_ServerInterfaceCname::build($this, $newCname);
+		}
+		foreach ($oldCnames as $oldCname)
+		{
+			$sic = Doctrine::em()->getRepository('Model_ServerInterfaceCname')->findOneBy(array('serverInterface' => $this, 'cname' => $oldCname));
+			$sic->delete();			
+		}
+	}
 }

@@ -190,16 +190,19 @@ class Controller_Scripts extends Controller_Template
 		$tmpdir = str_replace("+", "/", $tmpdir);
 
 
-                $nameservers = Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
+                $nameservers = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname, sic.cname FROM Model_ServerInterface si JOIN si.cnames sic WHERE si.hostname LIKE 'ns%' OR sic.cname LIKE 'ns%' ORDER BY sic.cname")->getResult();
+
+/*Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
                         ->where('si.hostname LIKE :hostname')->orWhere('si.cname LIKE :hostname')
                         ->orderBy('si.cname', 'ASC')
                         ->setParameter('hostname', 'ns%')
-                        ->getQuery()->getResult();
-		$wwwserver = Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
+                        ->getQuery()->getResult();*/
+		$wwwserver = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname, sic.cname FROM Model_ServerInterface si JOIN si.cnames sic WHERE si.hostname LIKE 'www' OR sic.cname LIKE 'www'")->setMaxResults(1)->getResult();
+/*		$wwwserver = Doctrine::em()->getRepository('Model_ServerInterface')->createQueryBuilder('si')
                         ->where('si.hostname LIKE :hostname')->orWhere('si.cname LIKE :hostname')
                         ->setParameter('hostname', 'www%')
                         ->setMaxResults(1)
-                        ->getQuery()->getResult();
+                        ->getQuery()->getResult(); */
 		$server_interfaces = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname FROM Model_ServerInterface si JOIN si.vlan v JOIN si.server s WHERE v.name = '".Kohana::$config->load('system.default.vlan.local')."' AND s.retired != 1 AND (si.IPv4Addr != '' OR si.IPv6Addr != '') ORDER BY si.IPv4Addr ASC")->getResult(); 
 		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
 		$other_hosts = Doctrine::em()->getRepository('Model_OtherHost')->findByRetired(0);

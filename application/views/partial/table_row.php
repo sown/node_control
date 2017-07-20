@@ -121,6 +121,15 @@ foreach ($fields as $f => $field)
 			echo "          <td></td>\n";
 		}
 	}
+	elseif ($f == "cnames")
+	{
+		$cnames = array();
+		foreach ($row->cnames as $cname)
+		{
+			$cnames[] = $cname->cname;
+		}
+		echo "<td>" . implode(",", $cnames)."</td>\n";
+	}
 	elseif ($f == "latestNote")
 	{
 		$latest_note = $row->latest_note();
