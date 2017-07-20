@@ -34,7 +34,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'submit_hash' => '',
                		'delete' => '',
        		);
-		$rows = Doctrine::em()->getRepository('Model_Node')->findAll();
+		$rows = Doctrine::em()->getRepository('Model_Node')->findBy(array(), array('boxNumber' => 'ASC'));
 		$objectType = 'node';
 		$idField = 'boxNumber';
 		$content = View::factory('partial/table')
@@ -68,7 +68,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'submit_hash' => '',
                         'delete' => '',
                 );
-                $rows = Doctrine::em()->getRepository('Model_Node')->findByUndeployable(0);
+                $rows = Doctrine::em()->getRepository('Model_Node')->findBy(array('undeployable' => '0'), array('boxNumber' => 'ASC'));
                 $objectType = 'node';
                 $idField = 'boxNumber';
                 $content = View::factory('partial/table')
