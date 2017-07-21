@@ -17,7 +17,7 @@ class Package_Config_Designateddriver_Tunnel extends Package_Config
 	public static function config_openvpn_v0_1_78_raw(Model_Node $node)
 	{
 		$server_id = $node->vpnEndpoint->vpnServer->id; # For some reason needed to make getIPAddresses command work
-                $server_ips = $node->vpnEndpoint->vpnServer->getIPAddresses(4,'LOCAL',0);
+                $server_ips = $node->vpnEndpoint->vpnServer->server->getIPAddresses(4,'LOCAL',0);
 
 		$config = array(
 			'openvpn' => array(
