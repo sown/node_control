@@ -534,6 +534,7 @@ CREATE TABLE `nodes` (
   `vpn_endpoint_id` int(11) DEFAULT NULL COMMENT 'link to the vpn endpoints table',
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
   `switch_id` int(11) DEFAULT NULL COMMENT 'switch on the node',
+  `dns_interface_id` int(11) DEFAULT NULL,
   `box_number` int(11) DEFAULT NULL COMMENT 'DEPRECATED. DO NOT USE.',
   `hardware` varchar(255) DEFAULT NULL,
   `wireless_chipset` varchar(255) DEFAULT NULL,
@@ -552,6 +553,8 @@ CREATE TABLE `nodes` (
   KEY `node_to_certificate` (`certificate_id`),
   KEY `node_to_switch` (`switch_id`),
   KEY `node_to_node_hardware` (`node_hardware_id`),
+  KEY `node_to_dns_interface` (`dns_interface_id`),
+  CONSTRAINT `node_to_dns_interface` FOREIGN KEY (`dns_interface_id`) REFERENCES `interfaces` (`id`),
   CONSTRAINT `node_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
   CONSTRAINT `node_to_endpoint` FOREIGN KEY (`vpn_endpoint_id`) REFERENCES `vpn_endpoints` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `node_to_node_hardware` FOREIGN KEY (`node_hardware_id`) REFERENCES `node_hardwares` (`id`),
@@ -588,6 +591,24 @@ CREATE TABLE `notes` (
   CONSTRAINT `note_to_notetaker` FOREIGN KEY (`notetaker_id`) REFERENCES `users` (`id`),
   CONSTRAINT `note_to_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `other_host_cnames`
+--
+
+DROP TABLE IF EXISTS `other_host_cnames`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `other_host_cnames` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `other_host_id` int(11) DEFAULT NULL COMMENT 'The other_host the CNAME should be applied to',
+  `cname` varchar(255) NOT NULL COMMENT 'A CNAME for an other_host thay has an IP',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `other_host_cname_to_other_host` (`other_host_id`),
+  CONSTRAINT `other_host_cname_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -660,6 +681,24 @@ CREATE TABLE `reserved_subnets` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='used subnets that should not be allocated to nodes';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `server_interface_cnames`
+--
+
+DROP TABLE IF EXISTS `server_interface_cnames`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `server_interface_cnames` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `server_interface_id` int(11) DEFAULT NULL COMMENT 'The server_interface the CNAME should be applied to',
+  `cname` varchar(255) NOT NULL COMMENT 'A CNAME for a service_interface thathas an IP',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `server_interface_cname_to_server_interface` (`server_interface_id`),
+  CONSTRAINT `server_interface_cname_to_server_interface` FOREIGN KEY (`server_interface_id`) REFERENCES `server_interfaces` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1016,4 +1055,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-09  4:23:04
+-- Dump completed on 2017-07-21  4:23:03
