@@ -299,6 +299,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
 		Doctrine::em()->refresh($server);
+		#\Doctrine\Common\Util\Debug::dump($server);
 		
                 $formValues = array(
                         'id' => $server->id,
@@ -382,7 +383,8 @@ class Controller_Servers extends Controller_AbstractAdmin
 			$services = array();
 			foreach ($server->services as $hostService)
 			{
-				$services[] = $hostService->service->label;
+				$service = Doctrine::em()->getRepository('Model_Service')->find($hostService->id);
+				$services[] = $service->label;
 			}
 			$formValues['services'] = implode(", ", $services);
 		}
@@ -398,7 +400,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                         }
                         foreach ($server->services as $hostService)
 			{
-                                $formValues['services'][] = $hostService->service->id;
+                                $formValues['services'][] = $hostService->id;
                         }
                 }
 		return $formValues;
@@ -508,6 +510,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 $dbServices[] = $serviceId;
                         }
                 }
+		
 		if (isset($formValues['services']))
 		{
 	                foreach ($formValues['services'] as $serviceId)

@@ -309,7 +309,8 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
 			$services = array();
                         foreach ($other_host->services as $hostService)
                         {
-                                $services[] = $hostService->service->label;
+				$service = Doctrine::em()->getRepository('Model_Service')->find($hostService->id);
+                                $services[] = $service->label;
                         }
                         $formValues['services'] = implode(", ", $services);
 		}
@@ -321,7 +322,7 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                         }
                         foreach ($other_host->services as $hostService)
                         {
-                                $formValues['services'][] = $hostService->service->id;
+                                $formValues['services'][] = $hostService->id;
                         }
                 }
 
