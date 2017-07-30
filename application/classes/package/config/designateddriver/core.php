@@ -128,7 +128,7 @@ class Package_Config_Designateddriver_Core extends Package_Config
 		$mod[] = Kohana::$config->load('system.default.filename');
 
 		$server_id = $node->vpnEndpoint->vpnServer->id; # For some reason needed to make getIPAddresses command work
-		$server_ips = $node->vpnEndpoint->vpnServer->getIPAddresses(4,'LOCAL',0);
+		$server_ips = $node->vpnEndpoint->vpnServer->server->getIPAddresses(4,'LOCAL',0);
 		$config = array(
 			'node' => array(
 				array(
@@ -258,6 +258,8 @@ class Package_Config_Designateddriver_Core extends Package_Config
 		$radio_id = array();
 		foreach ($node->interfaces as $interface)
 		{
+			if($interface->networkAdapter->wirelessChannel == null)
+				continue;
 			// mac80211 uses this identifier for co-ordination only
 			// it looks up the actual device name using the 
 			// mac address
@@ -270,13 +272,11 @@ class Package_Config_Designateddriver_Core extends Package_Config
 			
 			// 'mac80211' is hard coded, as all our nodes use this
 			// for their wireless interfaces
-			$config['wifi-device'] = array(
-					$dev_name => array(
+			$config['wifi-device'][$dev_name] = array(
 						'type' => "mac80211",
 						'channel' => $interface->networkAdapter->wirelessChannel,
 						'macaddr' => $interface->networkAdapter->mac,
-					),
-				);
+					);
 
 			// Also optional 'hwmode' which can be set to '11g',
 			// we can use the database 'type' field here
@@ -361,6 +361,8 @@ class Package_Config_Designateddriver_Core extends Package_Config
 		
 		foreach ($node->interfaces as $iface)
 		{
+			if(strpos($iface->name, ":") !== false){ continue; }
+
 			$if_config = array();
 			$if_config['interface'] = $iface->name;
 			
