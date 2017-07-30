@@ -306,6 +306,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
                 {
                         throw new HTTP_Exception_404();
                 }
+		Doctrine::em()->refresh($cronJob);
                 $formValues = array(
 			'id' => $cronJob->id,
                         'description' => $cronJob->description,
@@ -334,9 +335,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 		}
 		elseif ($action == 'edit')
 		{
-			// Cannot use $cronJob->onHosts because these are not updated quick enough to be displayed on page reload.	
-			$hostCronJobs = Doctrine::em()->getRepository('Model_HostCronJob')->findByCronJob($cronJob);
-			foreach ($hostCronJobs as $onHost) 
+			foreach ($cronJob->onHosts as $onHost) 
 			{
                         	$formValues['onHosts'][] = $onHost->get_host_id();
                 	}
@@ -389,6 +388,7 @@ class Controller_CronJobs extends Controller_AbstractAdmin
 			}
 			else 
 			{
+				
 				$dbOnHosts[] = $onHostId;
 			}
 		}
