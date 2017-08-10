@@ -554,8 +554,8 @@ CREATE TABLE `nodes` (
   KEY `node_to_switch` (`switch_id`),
   KEY `node_to_node_hardware` (`node_hardware_id`),
   KEY `node_to_dns_interface` (`dns_interface_id`),
-  CONSTRAINT `node_to_dns_interface` FOREIGN KEY (`dns_interface_id`) REFERENCES `interfaces` (`id`),
   CONSTRAINT `node_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
+  CONSTRAINT `node_to_dns_interface` FOREIGN KEY (`dns_interface_id`) REFERENCES `interfaces` (`id`),
   CONSTRAINT `node_to_endpoint` FOREIGN KEY (`vpn_endpoint_id`) REFERENCES `vpn_endpoints` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `node_to_node_hardware` FOREIGN KEY (`node_hardware_id`) REFERENCES `node_hardwares` (`id`),
   CONSTRAINT `node_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`)
@@ -1055,4 +1055,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-07-21  4:23:03
+-- Dump completed on 2017-08-07  4:23:09
