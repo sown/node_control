@@ -498,6 +498,10 @@ class Controller_Servers extends Controller_AbstractAdmin
 
 		$dbServices = array();
 		$hostServices = Doctrine::em()->getRepository('Model_HostService')->findByServer($server);
+		if (!isset($formValues['services']))
+		{
+			$formValues['services'] = array();
+		}
 		foreach ($hostServices as $hostService)
                 {
                         $serviceId = $hostService->service->id;
