@@ -5,20 +5,27 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 	private function _initialize_graph()
 	{
 		$response = $this->request->response();
-                // Changed /usr/share/php/kohana3.2/system/classes/kohana/http/header.php replaceing Text:: with Kohana_Text::
-                $response->headers('Content-Type', 'image/png');
 
                 $deployment = Doctrine::em()->getRepository('Model_Deployment')->find($this->request->param('deployment_id'));
+		if (!is_object($deployment))
+		{
+			throw new HTTP_Exception_404('There is no deployment with this ID.');
+		}
 
                 if (!Auth::instance()->logged_in('systemadmin'))
                 {
-                        $user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
-                        if (!$deployment->hasCurrentDeploymentAdmin($user->id))
-                        {
-                                return;
-                        }
+			if (!in_array($_SERVER['REMOTE_ADDR'], Kohana::$config->load('system.default.admin_system.valid_query_ips')))
+ 	               	{
+				$user = Doctrine::em()->getRepository('Model_User')->findOneByUsername(Auth::instance()->get_user());
+                        	if (!is_object($user) || !$deployment->hasCurrentDeploymentAdmin($user->id))
+                        	{
+                                	throw new HTTP_Exception_403('You do not have permission to access this page.');
+                        	}
+			}
                 }
 
+		// Changed /usr/share/php/kohana3.2/system/classes/kohana/http/header.php replaceing Text:: with Kohana_Text::
+		$response->headers('Content-Type', 'image/png');
 		return $deployment;
 	}
 	
