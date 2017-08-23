@@ -424,7 +424,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 			'configuration' => array(
 				'firewall' => $deployment->firewall,
 				'allowedPorts' => $deployment->allowedPorts,
-				'advancedFirewall' => $deployment->advancedFirewall,
+				#'advancedFirewall' => $deployment->advancedFirewall,
 				'cap' => $deployment->cap,
 				'pingAttempts' => $deployment->pingAttempts,
 				'wifiDownAfter' => $deployment->wifiDownAfter,
@@ -459,7 +459,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
                         $formValues['isDevelopment'] = ( $formValues['isDevelopment'] ? 'Yes' : 'No');
 			$formValues['isPrivate'] = ( $formValues['isPrivate'] ? 'Yes' : 'No');
 			$formValues['configuration']['firewall'] = ( $formValues['configuration']['firewall'] ? 'Yes' : 'No');
-			$formValues['configuration']['advancedFirewall'] = ( $formValues['configuration']['advancedFirewall'] ? 'Yes' : 'No') ;
+			#$formValues['configuration']['advancedFirewall'] = ( $formValues['configuration']['advancedFirewall'] ? 'Yes' : 'No') ;
 			if ($formValues['configuration']['cap'] == 0 ) 
 			{
 				$formValues['configuration']['cap'] = "Unlimited";
@@ -493,7 +493,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 				'fields' => array(
 					'firewall' => array('title' => 'Firewall', 'type' => 'checkbox', 'hint' => 'Allows web, email, VPN, SSH, FTP and VNC only'),
 					'allowedPorts' => array('title' => 'Additionally allowed ports', 'type' => 'input', 'size' => 20, 'hint' => 'Comma-separated (e.g. 123,993,8080)'),
-					'advancedFirewall' => array('title' => 'Advanced firewall', 'type' => 'checkbox'),
+					#'advancedFirewall' => array('title' => 'Advanced firewall', 'type' => 'checkbox'),
 					'cap' => array('title' => 'Usage cap', 'type' => 'input', 'size' => 5, 'hint' => 'MB'),	
 					'pingAttempts' => array('title' => 'Ping attempts', 'type' => 'input', 'size' => 5, 'hint' => 'Number of pings to test VPN tunnel is up'),
 					'wifiDownAfter' => array('title' => 'Wi-Fi down after', 'type' => 'input', 'size' => 5, 'hint' => 'Number of failed ping attempts before taking down Wi-Fi'),
@@ -579,7 +579,7 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 		}
 		$deployment->firewall = ( isset($formValues['configuration']['firewall']) ? 1 : 0 );
 		$deployment->allowedPorts = $formValues['configuration']['allowedPorts'];
-		$deployment->advancedFirewall = ( isset($formValues['configuration']['advancedFirewall']) ? 1 : 0 );
+		#$deployment->advancedFirewall = ( isset($formValues['configuration']['advancedFirewall']) ? 1 : 0 );
 		$deployment->cap = $formValues['configuration']['cap'];
 		$deployment->pingAttempts = $formValues['configuration']['pingAttempts'];
 		$deployment->wifiDownAfter = $formValues['configuration']['wifiDownAfter'];
