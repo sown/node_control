@@ -135,8 +135,7 @@ class Model_VpnServer extends Model_Entity
                 {
                         if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.vpn'))
                         {
-				
-                                return $interface->server->hostname;
+                                return $interface->hostname;
                         }
                 }	
 	}
