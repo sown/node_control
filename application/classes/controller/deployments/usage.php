@@ -179,6 +179,17 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		$this->_render_page("All Deployments Usage", $content);
 	}
 
+	public function action_consumption()
+	{
+		if (in_array($_SERVER['REMOTE_ADDR'], Kohana::$config->load('system.default.admin_system.valid_query_ips')))
+                {
+			$deployment = Doctrine::em()->getRepository('Model_Deployment')->find($this->request->param('deployment_id'));
+			echo $deployment->getConsumption();
+			exit;		
+		}
+		throw new HTTP_Exception_403('You do not have permission to access this page.');	
+	}
+
 	private function _render_deployment_usage($deployment, $title = null)
 	{
 		// This should be moved to view/partial

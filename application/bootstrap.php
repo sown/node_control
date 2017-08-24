@@ -925,6 +925,12 @@ Route::set('deployments_usage_throughout_day_average_graph', 'admin/deployments/
                 'action'     => 'throughout_day_average_graph',
         ));
 
+Route::set('deployments_usage_consumption', 'admin/deployments/usage/consumption/<deployment_id>')
+        ->defaults(array(
+                'controller' => 'deployments_usage',
+                'action'     => 'consumption',
+        ));
+
 Route::set('update_dnz_zones', 'scripts/update_dns_zones/<tmpdir>')
         ->defaults(array(
                 'controller' => 'scripts',
