@@ -18,6 +18,7 @@ return array
 		'admin_system'	=> array
 		(
 			'site_name' => 'SOWN Admin System',
+			'public_site_name' => 'SOWN Public Node Admin',
                         'url'   => 'https://sown-auth2.ecs.soton.ac.uk',
 			'contact_email' => 'support@sown.org.uk',
 			'sender_email' => 'NO-REPLY@sown.org.uk',

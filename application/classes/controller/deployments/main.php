@@ -606,11 +606,28 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
 					$deploymentAdmin->save();
 				}
 			}
-		}
+		}	
 		if (!empty($formValues['admins']['newAdmin']))
 		{
 			$deploymentAdmin = Model_DeploymentAdmin::build($deployment->id, $formValues['admins']['newAdmin']);
 			$deploymentAdmin->save();
+			$publicNodeAdminSiteName = Kohana::$config->load('system.default.admin_system.public_site_name');
+			if (strpos($deploymentAdmin->user->username, Kohana::$config->load('system.default.domain')) > 0 && !empty($publicNodeAdminSiteName))
+			{
+				$site = Doctrine::em()->getRepository('Model_Site')->findOneByName($publicNodeAdminSiteName);
+				$user = $deploymentAdmin->user;
+				$userAccount = Doctrine::em()->getRepository('Model_UserAccount')->findOneBy(array("user" => $user, "site" => $site));
+				if (!is_object($userAccount))
+				{
+					$username_bits = explode('@', $user->username);
+					$user->accounts->add(Model_UserAccount::build(
+                                        	$user,
+                                                $site,
+                                                $username_bits[0],
+                                        	""                
+                                        ));
+				}
+			}
 		}
 		$deployment->save();
 	}

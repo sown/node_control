@@ -401,7 +401,7 @@ class Controller_Users extends Controller_AbstractAdmin
 				);
 			}
 			else {
-				throw new HTTP_Exception_404("User has not account for site specified.");
+				throw new HTTP_Exception_404("User has no account for site specified.");
 			}
 		}
 		else
@@ -434,7 +434,6 @@ class Controller_Users extends Controller_AbstractAdmin
 			$username = $account->user->username;
 			if (preg_match('/' . $domain . '$/', $username))
 			{
-				error_log("matched domain");
 				$userlist[] = str_replace($domain, "", $username);
 			}
 		}
