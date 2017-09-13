@@ -1011,6 +1011,7 @@ DROP TABLE IF EXISTS `vpn_servers`;
 CREATE TABLE `vpn_servers` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `server_id` int(11) DEFAULT NULL COMMENT 'id of the server',
+  `name` varchar(255) NOT NULL DEFAULT '',
   `certificate_set_setid` int(11) DEFAULT NULL,
   `ipv4_addr` varchar(15) NOT NULL COMMENT 'IPv4 address',
   `ipv4_addr_cidr` int(2) NOT NULL COMMENT 'IPv6 address cidr prefix size (eg 24)',
@@ -1055,4 +1056,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-08-07  4:23:09
+-- Dump completed on 2017-09-04  4:23:04
