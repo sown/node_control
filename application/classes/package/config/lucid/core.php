@@ -32,8 +32,17 @@ class Package_Config_Lucid_Core extends Package_Config
 			}
 			static::send_file($data, 'nodes.conf', 'text/plain');
 		}
+		$dnsInterface = $node->dnsInterface;
+		if (!empty($dnsInterface))
+		{
+			$ip = $dnsInterface->IPv4Addr;		
+		}
+		else 
+		{
+			$ip = $node->vpnEndpoint->IPv4->get_address_in_network(2);
+		}
 		return "
-client {$node->vpnEndpoint->IPv4->get_address_in_network(2)} {
+client {$ip} {
 	secret		= '{$node->radiusSecret}'
 	shortname	= {$node->FQDN}
 }
