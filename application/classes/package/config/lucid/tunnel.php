@@ -153,7 +153,7 @@ EOB;
 					}
 					else 
 					{
-						throw new HTTP_Exception_404("Server with IPv4 interface address has now VPN servers.");
+						throw new HTTP_Exception_404("Server with IPv4 interface address has no VPN servers.");
 					}
                         	}
 				else
