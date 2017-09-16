@@ -5,9 +5,17 @@ class Check_SocketConnected extends Check
 	protected $name;
 
 	public function Check_SocketConnected($host)
-	{
-		$ip = $host->vpnEndpoint->IPv4->get_address_in_network(2);
-		
+	{	
+		$dnsInterface = $host->dnsInterface;
+		if (!empty($dnsInterface))
+                {
+                        $ip = $dnsInterface->IPv4Addr;
+                }
+                else
+                {
+                        $ip = $host->vpnEndpoint->IPv4->get_address_in_network(2);
+                }
+	
 		# if file not modified in last 6 minutes go unknown;
 
 		$last = time() - (6 * 60);
@@ -31,7 +39,7 @@ class Check_SocketConnected extends Check
 		}
 		else if($line_count == 0) {
 			$this->code = Check::CRITICAL;
-			$this->message = "Node not connected to " . $this->name;
+			$this->message = "Node with IP $ip not connected to " . $this->name;
 		}
 		else {
 			$this->code = Check::WARNING;
