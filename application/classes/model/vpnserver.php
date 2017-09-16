@@ -24,6 +24,14 @@ class Model_VpnServer extends Model_Entity
          * })
          */
         protected $server;
+
+	/**
+         * @var string $name
+         *
+         * @Column(name="name", type="string", length=255, nullable=false)
+         */
+        protected $name;
+
 	/**
          * @var Model_CertificateSet
          *
@@ -100,7 +108,7 @@ class Model_VpnServer extends Model_Entity
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "VpnServer: {$this->id}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}";
+		$str  = "VpnServer: {$this->id}, name={$this->name}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}";
 		$str .= "<br/>";
 		$str .= "certificate={$this->certificate}";
 		return $str;
@@ -112,7 +120,7 @@ class Model_VpnServer extends Model_Entity
 		$str  = "<div class='vpnServer' id='vpnServer_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>VPN Server</th><td>{$this->id}</td></tr>";
-		foreach(array('IPv4', 'IPv6') as $field)
+		foreach(array('name', 'IPv4', 'IPv6') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}
@@ -210,7 +218,7 @@ class Model_VpnServer extends Model_Entity
 		$vpnServerNames = array();
 		foreach ($vpnServers as $vpnServer)
 		{
-        		$vpnServerNames[$vpnServer->id] = $vpnServer->server->name . " (" . $vpnServer->IPv4 . ")";
+        		$vpnServerNames[$vpnServer->id] = $vpnServer->name;
 		}
 		return $vpnServerNames;
 	}

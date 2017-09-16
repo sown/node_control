@@ -9,6 +9,7 @@ class Controller_Package_Config_Lucid extends Controller
 		$request_name = $this->request->param('request_name');
 		$node_id      = $this->request->param('node_id');
 		$nonce	      = $this->request->param('nonce');
+		$ip	      = $this->request->param('ip');
 
 		if (substr($package, 0, 13) != 'sown_openwrt_')
 			Package_Config::send_shell_script("echo \"Unsupported package '$package'\" >&2; return 1\n");
@@ -59,7 +60,11 @@ class Controller_Package_Config_Lucid extends Controller
 		}
 		$node = $classname::get_server_node($node_id);
 		//SOWN::send_irc_message('calling '.$classname.'::'.$versions.'['.$found.']["method"]('.$node.', '.$version.');');
-		if (empty($nonce))
+		if (!empty($ip))
+		{
+			$classname::$versions[$found]['method']($node, $ip, $version);
+		}
+		elseif (empty($nonce))
 		{
 			$classname::$versions[$found]['method']($node, $version);
 		}

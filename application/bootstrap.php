@@ -211,6 +211,18 @@ Route::set('package_config_lucid_node', 'package/config/lucid/<package>/<version
                 'action'     => 'default',
         ));
 
+Route::set('package_config_lucid_ip', 'package/config/lucid/<package>/<version>/<request_name>/<ip>', array(
+                'package'       => '[A-Za-z0-9_]+',
+                'version'       => '[0-9.]+',
+                'request_name'  => '[A-Za-z0-9_]+',
+                'ip'         	=> '[0-9.]+',
+        ))
+        ->defaults(array(
+                'directory'  => 'package/config',
+                'controller' => 'lucid',
+                'action'     => 'default',
+        ));
+
 	
 Route::set('package_test_config', 'test/config/<hostname>/<os>/<package>/<version>/<request_name>', array(
 		'package'	=> '[A-Za-z0-9_]+',

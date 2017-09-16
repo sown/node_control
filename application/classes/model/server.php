@@ -158,7 +158,7 @@ class Model_Server extends Model_Entity
 	 /**
          * @OneToMany(targetEntity="Model_VpnServer", mappedBy="server", cascade={"persist", "remove"})
          */
-        protected $servers;
+        protected $vpnServers;
 
        	/**
 	* @ManyToMany(targetEntity="Model_CronJob")
