@@ -690,5 +690,35 @@ class SOWN
 		}
 		return $interfaces;
 	}
+
+	public static function unusedHostname($cname)
+	{
+		$si = Doctrine::em()->getRepository('Model_ServerInterface')->findByHostname($cname);
+		if (sizeof($si) > 0)
+                {
+                        return false;
+                }
+		$sic = Doctrine::em()->getRepository('Model_ServerInterfaceCname')->findByCname($cname);
+		if (sizeof($sic) > 0)
+		{
+			return false;
+		}
+		$oh = Doctrine::em()->getRepository('Model_OtherHost')->findByHostname($cname);
+                if (sizeof($oh) > 0)
+                {
+                        return false;
+                }
+		$ohc = Doctrine::em()->getRepository('Model_OtherHostCname')->findByCname($cname);
+		if (sizeof($ohc) > 0)
+                {
+                        return false;
+                }
+		$nc = Doctrine::em()->getRepository('Model_NodeCname')->findByCname($cname);
+		if (sizeof($nc) > 0)
+                {
+                        return false;
+                }
+		return true;
+	}
 }	
 

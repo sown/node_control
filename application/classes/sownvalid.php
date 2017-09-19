@@ -76,4 +76,15 @@ class SownValid extends Valid {
 	{
 		return (bool) preg_match('/^([1-9][0-9]*,)*[1-9][0-9]*$/', $value);
 	}
+	
+	public static function localCname($value)
+	{
+		return (bool) preg_match('/^[a-z][a-z0-9\-]{0,29}$/', $value);
+	}
+	
+	public static function notNodeCname($value)
+	{
+		return (bool) !preg_match('/^node[0-9]*$/', $value);
+	}
+
 }

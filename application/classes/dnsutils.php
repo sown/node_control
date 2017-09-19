@@ -176,6 +176,8 @@ class DNSUtils {
             		$type = $result['type'];
             		if (empty($type)) $type = "unknown";
             		$txt = "\"mac:".$result['mac'].";type:$type;firmware:".$result['firmwareImage'].";\"";
+			$node = Doctrine::em()->getRepository('Model_Node')->find($result['id']);
+			$cnames = Doctrine::em()->getRepository('Model_NodeCname')->findByNode($node);	
             		if(strlen($hostname) > 4)
             		{
                   		if(preg_match("/[A-Za-z0-9-_]+/", $hostname))
@@ -183,8 +185,13 @@ class DNSUtils {
                         		fwrite($handle, $hostname."\tIN\tA\t".$ipv4."\n");
                         		fwrite($handle, $hostname."\tIN\tAAAA\t".$ipv6."\n");
                         		if (!empty($loc)) fwrite($handle, $hostname."\tIN\tLOC\t".$loc."\n");
-					fwrite($handle, $hostname."\tIN\tTXT\t".$txt."\n");
-				}
+					fwrite($handle, $hostname."\tIN\tTXT\t".$txt."\n");	
+					foreach ($cnames as $cname)
+					{
+						fwrite($handle, $cname->cname."\tIN\tCNAME\t".$hostname."\n");
+					}
+					fwrite($handle, "\n");
+				}	
 			}
 		}
 		fwrite($handle, ";\n");

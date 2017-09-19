@@ -125,8 +125,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'firmwareVersion' => '',
 				'firmwareImage' => Kohana::$config->load('system.default.firmware_image_default'),
 				'externalBuild' => 0,
-			);
-			
+			);		
 		}
 		$formTemplate = array(
 			'boxNumber' => array('title' => 'Box Number', 'type' => 'input', 'size' => 3, 'hint' => "Leave empty to auto-assign box number"),
@@ -395,6 +394,20 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 }
                        }
 		}
+                if(!empty($formValues['cnames']['newCname']))
+                {
+			$validation = Validation::factory($formValues['cnames'])
+                                ->rule('newCname', 'SownValid::localCname', array(':value'))
+				->rule('newCname', 'SownValid::notNodeCname', array(':value'))
+				->rule('newCname', 'Sown::unusedHostname', array(':value'));
+			if (!$validation->check())
+	                {
+       		                foreach ($validation->errors() as $e => $error)
+               		        {
+                       		        $errors["New CNAME"] = $error;
+                        	}
+			}
+		}	
 		return $errors;
 	}
 
@@ -405,6 +418,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		{
 			throw new HTTP_Exception_404();
 		}
+		Doctrine::em()->refresh($node);
+
                 $formValues = array(
 		       	'id' => $node->id,
                        	'boxNumber' => $node->boxNumber,
@@ -432,6 +447,9 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'dnsInterface' => "",
 				'currentInterfaces' => array(),
 			),
+			'cnames' => array(
+				'currentCnames' => array(),
+			),
                 );
 		$dnsInterface = $node->dnsInterface;
 		if (!empty($dnsInterface))
@@ -458,6 +476,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'networkAdapterWirelessChannel' => 'networkAdapter:wirelessChannel', 
 			'networkAdapterType' => 'networkAdapter:type'
 		);
+		$i = 0;
                 foreach ($node->interfaces as $i => $interface)
                 {
 			foreach ($formValuesMap as $fmv_key => $fmv_value)
@@ -483,6 +502,12 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				$formValues['interfaces']['currentInterfaces'][$i]['is1x'] = ( $formValues['interfaces']['currentInterfaces'][$i]['is1x'] ? 'Yes' : 'No') ;
 			}	
                 }
+		$c = 0;
+		foreach ($node->cnames as $c => $cname)
+		{
+			$formValues['cnames']['currentCnames'][$c]['id'] = $cname->id;
+			$formValues['cnames']['currentCnames'][$c]['cname'] = $cname->cname;
+		}
 		$switch = $node->switch;
                 if (!empty($switch) && $switch->id > 0)
                 {
@@ -573,7 +598,27 @@ class Controller_Nodes extends Controller_AbstractAdmin
 					),
 				),
                         ),
-                );
+			'cnames' => array(
+                                'title' => 'CNAMEs',
+                                'type' => 'fieldset',
+                                'fields' => array(
+					'currentCnames' => array(
+                                                'title' => '',
+                                                'type' => 'table',
+						'fields' => array(
+		                               		'id' => array('type' => 'hidden'),
+	                	                        'cname' => array('title' => 'CNAME', 'type' => 'static', 'size' => 20),
+							'delete' => array('title' => 'Delete?', 'type' => 'checkbox'),
+						),
+					),
+				),
+			),
+		);
+
+                if ($action == 'edit')
+                {
+                        $formTemplate['cnames']['fields']['newCname'] = array('title' => 'New CNAME', 'type' => 'input', 'size' => 20);
+                }
 		if (!empty($switch))
                 {
                         $formTemplate['switch'] = Model_Switch::getFormTemplate($switch, $action);
@@ -718,7 +763,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 					$interface->save();
 				}	
                         }
-                }
+                };
+		$node->updateCnames($formValues['cnames']);
 		if (isset($formValues['switch']))
                 {
 			$switch = $node->switch;

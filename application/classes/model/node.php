@@ -150,6 +150,11 @@ class Model_Node extends Model_Entity
 	 */
 	protected $interfaces;
 
+        /**
+         * @OneToMany(targetEntity="Model_NodeCname", mappedBy="node", cascade={"persist", "remove"})
+         */
+        protected $cnames;
+
 	/**
          * @OneToMany(targetEntity="Model_NodeSetupRequest", mappedBy="node", cascade={"persist", "remove"})
          */
@@ -401,6 +406,11 @@ class Model_Node extends Model_Entity
 			$str .= "<br/>";
 			$str .= "interface={$interface}";
 		}
+		foreach($this->cnames as $cname)
+                {
+                        $str .= "<br/>";
+                        $str .= "cname={$cname}";
+                }
 		foreach($this->nodeSetupRequests as $nodeSetupRequest)
                 {
                         $str .= "<br/>";
@@ -445,6 +455,10 @@ class Model_Node extends Model_Entity
 		{
 			$str .= $this->fieldHTML('interface', $interface->toHTML());
 		}
+		foreach($this->cnames as $cname)
+                {
+                        $str .= $this->fieldHTML('cname', $cname->toHTML());
+                }
 		foreach($this->nodeSetupRequests as $nodeSetupRequest)
                 {
                         $str .= $this->fieldHTML('nodeSetupRequest', $nodeSetupRequest->toHTML());
@@ -581,4 +595,23 @@ class Model_Node extends Model_Entity
                 }
                 return $deployableNodes;
         }
+
+	public function updateCnames($cnames)
+        {
+		if (!empty($cnames['newCname']))
+		{
+			error_log("newCname: ".var_export($cnames['newCname'],1));
+                        $nc = Model_NodeCname::build($this, $cnames['newCname']);
+                }
+                foreach ($cnames['currentCnames'] as $cname)
+                {
+			if (!empty($cname['delete']))
+			{
+				error_log("oldCname: ".var_export($cname,1));
+                	        $nc = Doctrine::em()->getRepository('Model_NodeCname')->find($cname['id']);
+                        	$nc->delete();
+			}
+                }
+        }
+
 }
