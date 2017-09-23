@@ -412,6 +412,24 @@ CREATE TABLE `node_client_list_macs` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `node_cnames`
+--
+
+DROP TABLE IF EXISTS `node_cnames`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `node_cnames` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `node_id` int(11) DEFAULT NULL COMMENT 'The node the CNAME should be applied to',
+  `cname` varchar(255) NOT NULL COMMENT 'A CNAME for an node thay has an IP',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `node_cname_to_node` (`node_id`),
+  CONSTRAINT `node_cname_to_node` FOREIGN KEY (`node_id`) REFERENCES `nodes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `node_deployments`
 --
 
@@ -1056,4 +1074,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-04  4:23:04
+-- Dump completed on 2017-09-20  4:23:10
