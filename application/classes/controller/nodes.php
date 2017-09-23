@@ -383,7 +383,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 }
                                 else
                                 {
-                                        $validation->rule('networkAdapterWirelessChannel', 'SownValid::wirelessChannel', array(':value'));
+                                        $validation->rule('networkAdapterWirelessChannel', 'SownValid::wirelessChannel', array(':value', $interface['networkAdapterType']));
                                 }
                                 if (!$validation->check())
                                 {

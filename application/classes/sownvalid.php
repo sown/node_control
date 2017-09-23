@@ -56,14 +56,22 @@ class SownValid extends Valid {
 		{
 			return FALSE;
 		}
+		echo "TYPE: $type";
 		switch($type)
 		{
+			case 'b':
 			case 'g':
+			case 'bg':
 				return ($value <=13 && $value >=1);
-			case 'n':
-				return (($value <=13 && $value >=1) || in_array($value, array(36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140)));
+			case 'abg':
+			case 'abgn':
+			case 'bgn':
+				return (($value <=13 && $value >=1) || in_array($value, array(36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,149,153,157,161)));
 			case 'a':
-				return (in_array($value, array(36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,140)));
+			case 'ac':
+			case 'n':
+			case 'nac':
+				return (in_array($value, array(36,40,44,48,52,56,60,64,100,104,108,112,116,120,124,128,132,136,149,153,157,161)));
 		}
 		return FALSE;
 	}
