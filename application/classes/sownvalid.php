@@ -56,7 +56,6 @@ class SownValid extends Valid {
 		{
 			return FALSE;
 		}
-		echo "TYPE: $type";
 		switch($type)
 		{
 			case 'b':
