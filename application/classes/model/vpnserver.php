@@ -110,7 +110,6 @@ class Model_VpnServer extends Model_Entity
 		$this->logUse();
 		$str  = "VpnServer: {$this->id}, name={$this->name}, IPv4={$this->IPv4}, IPv6={$this->IPv6}, portStart={$this->portStart}, portEnd={$this->portEnd}, acquiredDate={$this->acquiredDate->format('Y-m-d H:i:s')}";
 		$str .= "<br/>";
-		$str .= "certificate={$this->certificate}";
 		return $str;
 	}
 
@@ -125,7 +124,7 @@ class Model_VpnServer extends Model_Entity
 			$str .= $this->fieldHTML($field);
 		}
 		$str .= $this->fieldHTML('port', $this->portStart.' - '.$this->portEnd);
-		foreach(array('certificate', 'vpnCertificateSet') as $field)
+		foreach(array('vpnCertificateSet') as $field)
 		{
 			if (is_object($this->$field))
 			{
@@ -212,10 +211,14 @@ class Model_VpnServer extends Model_Entity
 		return $usedspace;
 	}
 	
-	public static function getVpnServerNames()
+	public static function getVpnServerNames($or_none = false)
 	{
 		$vpnServers = Doctrine::em()->getRepository('Model_VpnServer')->findAll();
 		$vpnServerNames = array();
+		if ($or_none)
+		{
+			$vpnServerNames[] = "";
+		}
 		foreach ($vpnServers as $vpnServer)
 		{
         		$vpnServerNames[$vpnServer->id] = $vpnServer->name;

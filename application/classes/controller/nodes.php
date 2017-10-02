@@ -157,7 +157,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'view');
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
 		$switch = $node->switch;
-		$formTemplate = $this->_load_form_template('view', $node, $formValues['externalBuild'], $switch);
+		$formTemplate = $this->_load_form_template('view', $node, $formValues['externalBuild'], $switch, true);
 		$notesFormValues = Controller_Notes::load_from_database('Node', $formValues['id'], 'view');
                 $notesFormTemplate = Controller_Notes::load_form_template('view');
 		$this->template->content = FormUtils::drawForm('Node', $formTemplate, $formValues, array('editNode' => 'Edit Node')) . FormUtils::drawForm('Notes', $notesFormTemplate, $notesFormValues, null);
@@ -210,7 +210,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
 		$formValues = $this->_load_from_database($this->request->param('boxNumber'), 'edit');
 		$switch = $node->switch;
-		$formTemplate = $this->_load_form_template('edit', $node, isset($formValues['externalBuild']), $switch);
+		$formTemplate = $this->_load_form_template('edit', $node, isset($formValues['externalBuild']), $switch, true);
 		$formButtons = array('updateNode' => 'Update Node');
 		if (isset($switch) && $switch->id > 0)
                 {
@@ -323,30 +323,32 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         }
                 }
 		
-		$validation = Validation::factory($formValues['vpnEndpoint'])
-	                ->rule('port','not_empty', array(':value'))
-                        ->rule('port', 'Model_VpnServer::validPort', array(':value', $formValues['vpnEndpoint']['vpnServer']))
-                        ->rule('port', 'Model_VpnEndpoint::freePort', array(':value', $formValues['vpnEndpoint']['id']))
-			->rule('IPv4Addr', 'not_empty', array(':value'))
-                        ->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
-                        ->rule('IPv4AddrCidr', 'not_empty', array(':value'))
-                        ->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
-                        ->rule('IPv4Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['vpnServer']))
-                        ->rule('IPv4Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
-                        ->rule('IPv6Addr', 'not_empty', array(':value'))
-                        ->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
-                        ->rule('IPv6AddrCidr', 'not_empty', array(':value'))
-                        ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
-                        ->rule('IPv6Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['vpnServer']))
-                        ->rule('IPv6Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));
-
-                if (!$validation->check())
-                {
-                	foreach ($validation->errors() as $e => $error)
-                        {
-                                $errors["VPN Endpoint $e"] = $error;
-                        }
-                }
+		if (empty($formValues['vpnEndpoint']['disabled']))
+		{
+			$validation = Validation::factory($formValues['vpnEndpoint'])
+		                ->rule('port','not_empty', array(':value'))
+                	        ->rule('port', 'Model_VpnServer::validPort', array(':value', $formValues['vpnEndpoint']['vpnServer']))
+                        	->rule('port', 'Model_VpnEndpoint::freePort', array(':value', $formValues['vpnEndpoint']['id']))
+				->rule('IPv4Addr', 'not_empty', array(':value'))
+        	                ->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
+                	        ->rule('IPv4AddrCidr', 'not_empty', array(':value'))
+                        	->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
+	                        ->rule('IPv4Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['vpnServer']))
+        	                ->rule('IPv4Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
+                	        ->rule('IPv6Addr', 'not_empty', array(':value'))
+                        	->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
+	             	        ->rule('IPv6AddrCidr', 'not_empty', array(':value'))
+                	        ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
+                        	->rule('IPv6Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['vpnServer']))
+                        	->rule('IPv6Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));
+                	if (!$validation->check())
+	                {
+                		foreach ($validation->errors() as $e => $error)
+        	                {
+                        	        $errors["VPN Endpoint $e"] = $error;
+	                        }
+        	        }
+		}
                 foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interface)
                 {
                 	if(!empty($interface['name'])) 
@@ -434,14 +436,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'secondaryDNSIPv6Addr' => $node->secondaryDNSIPv6Addr,
 			'certificateWritten' => ( (strlen($node->certificate->privateKey) > 0) ? 'Yes' : 'No' ),
 			'vpnEndpoint' => array(	
-	               		'id' => $node->vpnEndpoint->id,
-                       		'port' => $node->vpnEndpoint->port,
-                       		'protocol' => $node->vpnEndpoint->protocol,
-                       		'IPv4Addr' => $node->vpnEndpoint->IPv4Addr,
-                       		'IPv4AddrCidr' => $node->vpnEndpoint->IPv4AddrCidr,
-                       		'IPv6Addr' => $node->vpnEndpoint->IPv6Addr,
-                       		'IPv6AddrCidr' => $node->vpnEndpoint->IPv6AddrCidr,
-                       		'vpnServer' => $node->vpnEndpoint->vpnServer->id,
+                       		'disabled' => 1,
 			),
 			'interfaces' => array(
 				'dnsInterface' => "",
@@ -451,6 +446,21 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				'currentCnames' => array(),
 			),
                 );
+		$vpnEndpoint = $node->vpnEndpoint;
+		if (!empty($vpnEndpoint))
+		{
+			$formValues['vpnEndpoint'] = array(
+				'id' => $vpnEndpoint->id,
+                                'port' => $vpnEndpoint->port,
+                                'protocol' => $vpnEndpoint->protocol,
+                                'IPv4Addr' => $vpnEndpoint->IPv4Addr,
+                                'IPv4AddrCidr' => $vpnEndpoint->IPv4AddrCidr,
+                                'IPv6Addr' => $vpnEndpoint->IPv6Addr,
+                                'IPv6AddrCidr' => $vpnEndpoint->IPv6AddrCidr,
+                                'vpnServer' => $vpnEndpoint->vpnServer->id,
+			);
+		}
+		
 		$dnsInterface = $node->dnsInterface;
 		if (!empty($dnsInterface))
 		{
@@ -539,7 +549,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		return $formValues;
 	}
 
-	private function _load_form_template($action = 'edit', $node = null, $externalBuild = 0, $switch = null)
+	private function _load_form_template($action = 'edit', $node = null, $externalBuild = 0, $switch = null, $or_no_vpnserver = false)
 	{
 		$formTemplate = array(
                         'id' => array('type' => 'hidden'),
@@ -558,14 +568,15 @@ class Controller_Nodes extends Controller_AbstractAdmin
                                 'title' => 'VPN Endpoint',
                                 'type' => 'fieldset',
                                 'fields' => array(
+					'disabled' => array('title' => 'Disabled?', 'type' => 'checkbox'),
                                         'id' => array('type' => 'hidden'),
                                         'port' => array('title' => 'Port', 'type' => 'input', 'size' => 4),
-                                        'protocol' => array('title' => 'Protocol', 'type' => 'select', 'options' => array("udp" => "UDP", "tcp" => "TCP")),
+                                        'protocol' => array('title' => 'Protocol', 'type' => 'select', 'options' => array(0 => "", "udp" => "UDP", "tcp" => "TCP")),
                                         'IPv4Addr' => array('title' => 'IPv4 Address', 'type' => 'input', 'size' => 12),
                                         'IPv4AddrCidr' => array('title' => 'IPv4 CIDR', 'type' => 'input', 'size' => 2),
                                         'IPv6Addr' => array('title' => 'IPv6 Address', 'type' => 'input', 'size' => 20),
                                         'IPv6AddrCidr' => array('title' => 'IPv6 CIDR', 'type' => 'input', 'size' => 2),
-                                        'vpnServer' => array('title' => 'VPN Server', 'type' => 'select', 'options' => Model_VpnServer::getVpnServerNames()),
+                                        'vpnServer' => array('title' => 'VPN Server', 'type' => 'select', 'options' => Model_VpnServer::getVpnServerNames($or_no_vpnserver)),
                                 ),
                         ),
                         'interfaces' => array(
@@ -652,15 +663,39 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		{
 			$node->dnsInterface = Doctrine::em()->getRepository('Model_Interface')->findOneById($formValues['interfaces']['dnsInterface']);
 		}
-		$vpnEndpoint = $node->vpnEndpoint;
-                $vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
-		$vpnEndpoint->protocol = $formValues['vpnEndpoint']['protocol'];
-		$vpnEndpoint->IPv4Addr = $formValues['vpnEndpoint']['IPv4Addr'];
-		$vpnEndpoint->IPv4AddrCidr = $formValues['vpnEndpoint']['IPv4AddrCidr'];
-		$vpnEndpoint->IPv6Addr = $formValues['vpnEndpoint']['IPv6Addr'];
-                $vpnEndpoint->IPv6AddrCidr = $formValues['vpnEndpoint']['IPv6AddrCidr'];
-		$vpnEndpoint->vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->find($formValues['vpnEndpoint']['vpnServer']);
-		$vpnEndpoint->save();
+		if (empty($formValues['vpnEndpoint']['disabled']))
+		{
+			if (!empty($node->vpnEndpoint))
+			{
+				$vpnEndpoint = $node->vpnEndpoint;
+        	        	$vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
+				$vpnEndpoint->protocol = $formValues['vpnEndpoint']['protocol'];
+				$vpnEndpoint->IPv4Addr = $formValues['vpnEndpoint']['IPv4Addr'];
+				$vpnEndpoint->IPv4AddrCidr = $formValues['vpnEndpoint']['IPv4AddrCidr'];
+				$vpnEndpoint->IPv6Addr = $formValues['vpnEndpoint']['IPv6Addr'];
+	                	$vpnEndpoint->IPv6AddrCidr = $formValues['vpnEndpoint']['IPv6AddrCidr'];
+				$vpnEndpoint->vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->find($formValues['vpnEndpoint']['vpnServer']);
+				$vpnEndpoint->save();
+			}
+			else
+			{
+				$ipv4 = IPv4_Network_Address::factory($formValues['vpnEndpoint']['IPv4Addr'], $formValues['vpnEndpoint']['IPv4AddrCidr']);
+				$ipv6 = IPv6_Network_Address::factory($formValues['vpnEndpoint']['IPv6Addr'], $formValues['vpnEndpoint']['IPv6AddrCidr']); 
+				$vpnServer = Doctrine::em()->getRepository('Model_VpnServer')->find($formValues['vpnEndpoint']['vpnServer']);
+				$vpnEndpoint = Model_VpnEndpoint::build($formValues['vpnEndpoint']['port'], $formValues['vpnEndpoint']['protocol'], $ipv4, $ipv6, $vpnServer);
+			}
+			$vpnEndpoint->save();
+			$node->vpnEndpoint = $vpnEndpoint;
+		}
+		else
+                {
+			$vpnEndpoint = $node->vpnEndpoint;
+			if (!empty($vpnEndpoint))
+			{
+				$node->vpnEndpoint = null;
+				$vpnEndpoint->delete();
+			}
+		}		
                 foreach ($formValues['interfaces']['currentInterfaces'] as $i => $interfaceValues)
                 {	
 			if (empty($interfaceValues['name']))
