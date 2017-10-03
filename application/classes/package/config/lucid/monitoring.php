@@ -33,7 +33,12 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 			$data .= ")\n";
 			static::send_file($data, 'nfsen-nodes.perl', 'text/perl');
 		}
-		return "'".$node->nfsenName."' => { 'port' => '".$node->vpnEndpoint->port."', 'col' => '#".substr(md5($node->name), 0, 6)."', 'type' => 'netflow' },\n";
+		$vpnEndpoint = $node->vpnEndpoint;
+		if (!empty($vpnEndpoint))
+		{
+			return "'".$node->nfsenName."' => { 'port' => '".$node->vpnEndpoint->port."', 'col' => '#".substr(md5($node->name), 0, 6)."', 'type' => 'netflow' },\n";
+		}
+		return "";
 	}
 
 	public static function config_icinga_v0_1_78(Model_Node $node = null)
