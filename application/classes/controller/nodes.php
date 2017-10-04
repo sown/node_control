@@ -176,10 +176,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 $success = "";
 		if ($this->request->method() == 'POST')
                 {
+			$node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
                         $formValues = FormUtils::parseForm($this->request->post());
 			if (!empty($formValues['updateNode']))
                         {
-				$errors = $this->_validate($formValues);
+				$errors = $this->_validate($formValues, $node->vpnEndpoint);
 				if (sizeof($errors) == 0)
 				{
 					$this->_update($this->request->param('boxNumber'), $formValues);
@@ -189,7 +190,6 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			}
 			elseif (!empty($formValues['addSwitch']))
                         {
-                                $node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
                                 $switch = Model_Switch::build("eth1");
                                 $node->switch = $switch;
                                 $node->save();
@@ -198,7 +198,6 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         }
                         elseif (!empty($formValues['removeSwitch']))
                         {
-                                $node = Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->request->param('boxNumber'));
                                 $switch = $node->switch;
                                 $node->switch = null;
                                 $switch->delete();
@@ -305,7 +304,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 	}
 
 	
-	private function _validate($formValues) 
+	private function _validate($formValues, $vpnEndpoint = null) 
 	{
 		$errors = array();
 
@@ -328,19 +327,19 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			$validation = Validation::factory($formValues['vpnEndpoint'])
 		                ->rule('port','not_empty', array(':value'))
                 	        ->rule('port', 'Model_VpnServer::validPort', array(':value', $formValues['vpnEndpoint']['vpnServer']))
-                        	->rule('port', 'Model_VpnEndpoint::freePort', array(':value', $formValues['vpnEndpoint']['id']))
+				->rule('port', 'Model_VpnEndpoint::freePort', array(':value', $formValues['vpnEndpoint']['id']))
 				->rule('IPv4Addr', 'not_empty', array(':value'))
         	                ->rule('IPv4Addr', 'SownValid::ipv4', array(':value'))
+			 	->rule('IPv4Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
                 	        ->rule('IPv4AddrCidr', 'not_empty', array(':value'))
                         	->rule('IPv4AddrCidr', 'SownValid::ipv4cidr', array(':value'))
 	                        ->rule('IPv4Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['vpnServer']))
-        	                ->rule('IPv4Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv4AddrCidr'], 4, $formValues['vpnEndpoint']['id']))
                 	        ->rule('IPv6Addr', 'not_empty', array(':value'))
                         	->rule('IPv6Addr', 'SownValid::ipv6', array(':value'))
 	             	        ->rule('IPv6AddrCidr', 'not_empty', array(':value'))
                 	        ->rule('IPv6AddrCidr', 'SownValid::ipv6cidr', array(':value'))
                         	->rule('IPv6Addr', 'Model_VpnServer::validIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['vpnServer']))
-                        	->rule('IPv6Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));
+				->rule('IPv6Addr', 'Model_VpnEndpoint::freeIPSubnet', array(':value', $formValues['vpnEndpoint']['IPv6AddrCidr'], 6, $formValues['vpnEndpoint']['id']));	
                 	if (!$validation->check())
 	                {
                 		foreach ($validation->errors() as $e => $error)
@@ -430,6 +429,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                        	'firmwareImage' => $node->firmwareImage,
 			'undeployable' => $node->undeployable,
 			'externalBuild' => $node->externalBuild,
+			'syslogServer' => '',
 			'primaryDNSIPv4Addr' => $node->primaryDNSIPv4Addr,
 			'secondaryDNSIPv4Addr' => $node->secondaryDNSIPv4Addr,
 			'primaryDNSIPv6Addr' => $node->primaryDNSIPv6Addr,
@@ -466,6 +466,12 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		{
 			$formValues['interfaces']['dnsInterface'] = $dnsInterface->id;
 		}
+
+		$syslogServer = $node->syslogServer;
+                if (!empty($syslogServer))
+                {
+                        $formValues['syslogServer'] = $syslogServer->id;
+                }
 
 		$formValuesMap = array(
 			'id' => 'id', 
@@ -545,6 +551,15 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			{
 				$formValues['dnsInterface'] = 'VPN';
 			}
+			if (!empty($formValues['syslogServer']))
+                        {
+                                $syslogServer = Doctrine::em()->getRepository('Model_Server')->findOneById($formValues['syslogServer']);
+                                $formValues['syslogServer'] = $syslogServer->name;
+                        }
+                        else
+                        {
+                                $formValues['syslogServer'] = 'VPN Server';
+                        }
 		}
 		return $formValues;
 	}
@@ -559,6 +574,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
                         'firmwareImage' => array('title' => 'Firmware Image', 'type' => 'input', 'size' => 50),
 			'undeployable' => array('title' => 'Undeployable', 'type' => 'checkbox'),
 			'externalBuild' => array('title' => 'External Build', 'type' => 'checkbox'),
+			'syslogServer' => array('title' => 'Syslog Server', 'type' => 'select', 'options' => Model_Server::getSyslogServerOptions()),
 			'primaryDNSIPv4Addr' => array('title' => 'Primary DNS Server (IPv4)', 'type' => 'input', 'size' => 15, 'hint' => "8.8.8.8"),
 			'secondaryDNSIPv4Addr' => array('title' => 'Secondary DNS Server (IPv4)', 'type' => 'input', 'size' => 15, 'hint' => "8.8.4.4"),
 			'primaryDNSIPv6Addr' => array('title' => 'Primary DNS Server (IPv6)', 'type' => 'input', 'size' => 39, 'hint' => "2001:4860:4860::8888"),
@@ -663,6 +679,11 @@ class Controller_Nodes extends Controller_AbstractAdmin
 		{
 			$node->dnsInterface = Doctrine::em()->getRepository('Model_Interface')->findOneById($formValues['interfaces']['dnsInterface']);
 		}
+		$node->syslogServer = null;
+                if (!empty($formValues['syslogServer']))
+                {
+                        $node->syslogServer = Doctrine::em()->getRepository('Model_Server')->findOneById($formValues['syslogServer']);
+                }
 		if (empty($formValues['vpnEndpoint']['disabled']))
 		{
 			if (!empty($node->vpnEndpoint))

@@ -483,4 +483,20 @@ class Model_Server extends Model_Entity
                 return $obj;
         }
 
+	public static function getSyslogServerOptions()
+        {
+                $syslogServers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
+                $syslogServerOptions = array('' => "VPN Server");
+                foreach ($syslogServers as $syslogServer)
+                {
+			$syslog_server_ips = $syslogServer->getIPAddresses(4,'LOCAL',0);
+			if (!empty($syslog_server_ips))
+			{
+	        		$syslogServerOptions[$syslogServer->id] = $syslogServer->name . " (" . $syslog_server_ips[0] . ")";
+			}
+                }
+                return $syslogServerOptions;
+        }
+
+
 }

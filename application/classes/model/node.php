@@ -130,6 +130,16 @@ class Model_Node extends Model_Entity
          */
         protected $dnsInterface;
 
+	/**
+         * @var Model_Server
+         *
+         * @ManyToOne(targetEntity="Model_Server")
+         * @JoinColumns({
+         *   @JoinColumn(name="syslog_server_id", referencedColumnName="id")
+         * })
+         */
+        protected $syslogServer;
+
  	/**
          * @var Model_Switch
          *
@@ -394,12 +404,18 @@ class Model_Node extends Model_Entity
 		$str .= "vpnEndpoint={$this->vpnEndpoint->id}";
 		if (!empty($this->dnsInterface))
 		{
-			$str .= "dnsInterface{$this->dnsInterface->name}";
+			$str .= "dnsInterface={$this->dnsInterface->name}";
 			$str .= "<br/>";
 		}
+		if (!empty($this->syslogServer))
+                {
+                        $str .= "syslogServer={$this->syslogServer->name}";
+                        $str .= "<br/>";
+                }
 		if (!empty($this->switch))
                 {
-                        $str .= ", switch={$this->switch->id}";
+                        $str .= "switch={$this->switch->id}";
+			$str .= "<br/>";
                 }
 		foreach($this->interfaces as $interface)
 		{
@@ -444,7 +460,7 @@ class Model_Node extends Model_Entity
 		{
 			$str .= $this->fieldHTML($field);
 		}
-		foreach(array('certificate', 'vpnEndpoint', 'dnsInterface', 'nodeHardware') as $field)
+		foreach(array('certificate', 'vpnEndpoint', 'dnsInterface', 'syslogServer', 'nodeHardware') as $field)
 		{
 			if (!empty($this->$field))
 			{
@@ -518,6 +534,7 @@ class Model_Node extends Model_Entity
 		$obj->certificate = $certificate;
 		$obj->vpnEndpoint = $vpnEndpoint;
 		$obj->dnsInterface = null;
+		$obj->syslogServer = null;
 		$obj->passwordHash = "";
 		$obj->undeployable = 0;
 		$obj->primaryDNSIPv4Addr = "";

@@ -129,6 +129,12 @@ class Package_Config_Designateddriver_Core extends Package_Config
 
 		$server_id = $node->vpnEndpoint->vpnServer->id; # For some reason needed to make getIPAddresses command work
 		$server_ips = $node->vpnEndpoint->vpnServer->server->getIPAddresses(4,'LOCAL',0);
+		$syslog_server_ips = $server_ips;
+		$syslogServer = $node->syslogServer;
+		if (!empty($syslogServer))
+		{
+			$syslog_server_ips = $syslogServer->getIPAddresses(4,'LOCAL',0);
+		}
 		$config = array(
 			'node' => array(
 				array(
@@ -138,12 +144,11 @@ class Package_Config_Designateddriver_Core extends Package_Config
 					'hostname'           => $node->hostname,
 					'node_name'          => $node->name,
 					'id'                 => $node->id,
-					'syslog_server'      => $server_ips[0],
+					'syslog_server'      => $syslog_server_ips[0],
 					'syslog_port'        => Kohana::$config->load('system.default.syslog.port'),
 					'tunnel_ping_target' => $server_ips[0],
 					'package_base'       => Kohana::$config->load('system.default.packages.url')."designated_driver/ar71xx/",
 					'package_groups'     => Kohana::$config->load('system.default.packages.groups'),
-					//'random'	     => 'test2',
 				)
 			)
 		);
