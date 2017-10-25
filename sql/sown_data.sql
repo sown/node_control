@@ -553,6 +553,7 @@ CREATE TABLE `nodes` (
   `certificate_id` int(11) DEFAULT NULL COMMENT 'certificate to use from certificate file',
   `switch_id` int(11) DEFAULT NULL COMMENT 'switch on the node',
   `dns_interface_id` int(11) DEFAULT NULL,
+  `syslog_server_id` int(11) DEFAULT NULL COMMENT 'ID of server the node''s syslog should be sent to.',
   `box_number` int(11) DEFAULT NULL COMMENT 'DEPRECATED. DO NOT USE.',
   `hardware` varchar(255) DEFAULT NULL,
   `wireless_chipset` varchar(255) DEFAULT NULL,
@@ -572,6 +573,8 @@ CREATE TABLE `nodes` (
   KEY `node_to_switch` (`switch_id`),
   KEY `node_to_node_hardware` (`node_hardware_id`),
   KEY `node_to_dns_interface` (`dns_interface_id`),
+  KEY `node_to_syslog_server` (`syslog_server_id`),
+  CONSTRAINT `node_to_syslog_server` FOREIGN KEY (`syslog_server_id`) REFERENCES `servers` (`id`),
   CONSTRAINT `node_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
   CONSTRAINT `node_to_dns_interface` FOREIGN KEY (`dns_interface_id`) REFERENCES `interfaces` (`id`),
   CONSTRAINT `node_to_endpoint` FOREIGN KEY (`vpn_endpoint_id`) REFERENCES `vpn_endpoints` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -1074,4 +1077,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-20  4:23:10
+-- Dump completed on 2017-10-04  4:23:04
