@@ -182,8 +182,8 @@ class DNSUtils {
             		{
                   		if(preg_match("/[A-Za-z0-9-_]+/", $hostname))
                   		{
-                        		fwrite($handle, $hostname."\tIN\tA\t".$ipv4."\n");
-                        		fwrite($handle, $hostname."\tIN\tAAAA\t".$ipv6."\n");
+                        		if (!empty($ipv4)) fwrite($handle, $hostname."\tIN\tA\t".$ipv4."\n");
+                        		if (!empty($ipv6)) fwrite($handle, $hostname."\tIN\tAAAA\t".$ipv6."\n");
                         		if (!empty($loc)) fwrite($handle, $hostname."\tIN\tLOC\t".$loc."\n");
 					fwrite($handle, $hostname."\tIN\tTXT\t".$txt."\n");	
 					foreach ($cnames as $cname)
@@ -232,8 +232,8 @@ class DNSUtils {
             		{
                   		if(preg_match("/[A-Za-z0-9-_]+/", $hostname))
                   		{
-                        		fwrite($handle4, DNSUtils::reversePTR($ipv4, $ipv4_rev_subnet, 4) . "\tPTR\t".$hostname.".sown.org.uk.\n");
-                        		fwrite($handle6, DNSUtils::reversePTR($ipv6, '', 6) . "\tPTR\t".$hostname.".sown.org.uk.\n");
+                        		if (!empty($ipv4)) fwrite($handle4, DNSUtils::reversePTR($ipv4, $ipv4_rev_subnet, 4) . "\tPTR\t".$hostname.".sown.org.uk.\n");
+                        		if (!empty($ipv6)) fwrite($handle6, DNSUtils::reversePTR($ipv6, '', 6) . "\tPTR\t".$hostname.".sown.org.uk.\n");
                   		}	
             		}
       		}

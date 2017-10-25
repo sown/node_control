@@ -197,7 +197,7 @@ class Controller_Scripts extends Controller_Template
 		DNSUtils::generateHostsReverseFragment($tmpdir, $nameservers, $server_interfaces, $other_hosts);
                 DNSUtils::generateHostsForwardFragment($tmpdir, $nameservers, $servers, $other_hosts, $wwwserver[0]);
 
-      		$nodes_query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber, i2.IPv4Addr AS DNSIPv4Addr, ve.IPv4Addr AS VPNIPv4Addr, ve.IPv6Addr, d.latitude, d.longitude, na.mac, d.type, n.firmwareImage FROM Model_Node n JOIN n.vpnEndpoint ve JOIN n.interfaces i JOIN i.networkAdapter na LEFT JOIN n.nodeDeployments nd LEFT JOIN nd.deployment d LEFT JOIN n.dnsInterface i2 WHERE (nd.endDate > CURRENT_TIMESTAMP() OR nd.endDate IS NULL) AND i.name = 'eth0' ORDER BY n.boxNumber ASC");
+      		$nodes_query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber, i2.IPv4Addr AS DNSIPv4Addr, ve.IPv4Addr AS VPNIPv4Addr, ve.IPv6Addr, d.latitude, d.longitude, na.mac, d.type, n.firmwareImage FROM Model_Node n LEFT JOIN n.vpnEndpoint ve JOIN n.interfaces i JOIN i.networkAdapter na LEFT JOIN n.nodeDeployments nd LEFT JOIN nd.deployment d LEFT JOIN n.dnsInterface i2 WHERE (nd.endDate > CURRENT_TIMESTAMP() OR nd.endDate IS NULL) AND i.name = 'eth0' ORDER BY n.boxNumber ASC");
 		$nodes = $nodes_query->getResult();
       		DNSUtils::generateNodesReverseFragment($tmpdir, $nodes);
       		DNSUtils::generateNodesForwardFragment($tmpdir, $nodes);
