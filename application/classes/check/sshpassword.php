@@ -4,7 +4,15 @@ class Check_SshPassword extends Check
 
 	public function Check_SshPassword($host)
 	{
-		$ip = $host->vpnEndpoint->IPv4->get_address_in_network(2);
+		$dnsInterface = $host->dnsInterface;
+                if (!empty($dnsInterface))
+                {
+                        $ip = $dnsInterface->IPv4Addr;
+                }
+                else
+                {
+                        $ip = $host->vpnEndpoint->IPv4->get_address_in_network(2);
+                }
 		$session = new SSHSession($ip);
 		try {
       			$session->connect();
