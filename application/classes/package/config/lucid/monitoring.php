@@ -129,11 +129,28 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 				$hostgroups.=",*Home Nodes";
 				break;
 			case 'campus':
-				$hostgroups.=",*Campus Nodes";
+			case 'native':
+				$hostgroups.=",*Native Nodes";
 				break;
 		}
+		
+		$extbld_node = $node->externalBuild;
 		$is_dev_node = $node->currentDeployment->isDevelopment;
-		if (!empty($is_dev_node))
+                if (!empty($extbld_node))
+                {
+                        $hostgroups .= ',*External Build Nodes';
+			if (!empty($is_dev_node))
+			{
+				$use = 'devnode';
+				$notification_lines = "host_notification_commands\thost-notify-by-irc-dev\n\tservice_notification_commands\tnotify-by-irc-dev";
+			}
+			else 
+			{
+				$use = 'prodnode';
+                        	$notification_lines = "host_notification_commands\tnodeadmin-notify-by-email\n\tservice_notification_commands\tnodeadmin-service-notify-by-email\n\temail\t\t\t\t\t{$email}";
+			}
+                }
+		elseif (!empty($is_dev_node))
 		{
 			$use = 'devnode';
 			$hostgroups .= ',*Development Nodes';
@@ -151,7 +168,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 			$hostgroups .= ',*'.$firmware_versions[$node->firmwareVersion].' Nodes';
 		}
 
-return "
+		$config = "
 define contact {
 	contact_name			{$name}_admin
 	host_notification_period	24x7
@@ -176,6 +193,10 @@ define host {
 	contacts	+{$name}_admin
 }
 
+";
+		if ($node_dep_type == "home")
+		{
+			$config .= "
 define service {
 	host_name	{$parents}
 	use		vpnserver
@@ -191,5 +212,7 @@ define service {
 }
 
 ";
+		}
+		return $config;
 	}
 }
