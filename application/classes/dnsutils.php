@@ -330,7 +330,7 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
                         {
                                 $addr_bits = explode(':', $addr);
                                 $addr_filler = array();
-                                for ($a = sizeof($addr_bits); $a < 8; $a++)
+                                for ($a = sizeof($addr_bits); $a <= 8; $a++)
                                 {
                                         $addr_filler[] = "0000";
                                 }
