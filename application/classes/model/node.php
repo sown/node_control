@@ -617,18 +617,19 @@ class Model_Node extends Model_Entity
         {
 		if (!empty($cnames['newCname']))
 		{
-			error_log("newCname: ".var_export($cnames['newCname'],1));
                         $nc = Model_NodeCname::build($this, $cnames['newCname']);
                 }
-                foreach ($cnames['currentCnames'] as $cname)
-                {
-			if (!empty($cname['delete']))
-			{
-				error_log("oldCname: ".var_export($cname,1));
-                	        $nc = Doctrine::em()->getRepository('Model_NodeCname')->find($cname['id']);
-                        	$nc->delete();
-			}
-                }
+		if (isset($cnames['currentCnames']) && is_array($cnames['currentCnames']))
+		{
+	                foreach ($cnames['currentCnames'] as $cname)
+        	        {
+				if (!empty($cname['delete']))
+				{
+	                	        $nc = Doctrine::em()->getRepository('Model_NodeCname')->find($cname['id']);
+	                        	$nc->delete();
+				}
+                	}
+		}
         }
 
 }
