@@ -686,7 +686,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
                 }
 		if (empty($formValues['vpnEndpoint']['disabled']))
 		{
-			if (!empty($node->vpnEndpoint))
+			$currentVpnEndpoint = $node->vpnEndpoint;
+			if (!empty($currentVpnEndpoint))
 			{
 				$vpnEndpoint = $node->vpnEndpoint;
         	        	$vpnEndpoint->port = $formValues['vpnEndpoint']['port'];
