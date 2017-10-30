@@ -373,6 +373,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			$formValues['acquiredDate'] = $server->acquiredDate->format('Y-m-d');
 		}
 		
+	 	$hostServices = Doctrine::em()->getRepository('Model_HostService')->findByServer($server);
 		if ($action == 'view')
                 {
                         $formValues['retired'] = ( $formValues['retired'] ? 'Yes' : 'No');
@@ -381,7 +382,7 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 $formValues['interfaces']['currentInterfaces'][$if]['subordinate'] = ($ifdata['subordinate'] ? 'Yes' : 'No');
                         }
 			$services = array();
-			foreach ($server->services as $hostService)
+			foreach ($hostServices as $hostService)
 			{
 				$service = Doctrine::em()->getRepository('Model_Service')->find($hostService->id);
 				$services[] = $service->label;
@@ -398,10 +399,11 @@ class Controller_Servers extends Controller_AbstractAdmin
                         {
                                 $formValues['contacts']['currentContacts'][$c+1][$cf] = '';
                         }
-                        foreach ($server->services as $hostService)
+                        foreach ($hostServices as $hostService)
 			{
-                                $formValues['services'][] = $hostService->id;
+                                $formValues['services'][] = $hostService->service->id;
                         }
+			var_dump($formValues['services']);
                 }
 		return $formValues;
 	}

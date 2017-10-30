@@ -134,11 +134,15 @@ class Model_HostCronJob extends Model_Entity
 	public function get_host_name()
 	{
 		if (!empty($this->server))
-                {
+                {	
+			$server = $this->server;
+                        Doctrine::em()->refresh($server);
                 	return $this->server->name;
                 }
                 if (!empty($this->node))
 		{
+			$node = $this->node;
+                        Doctrine::em()->refresh($node);
                         return "node" . $this->node->boxNumber;
 		}
 		if (!empty($this->aggregate))
@@ -151,12 +155,15 @@ class Model_HostCronJob extends Model_Entity
 	{
 		if (!empty($this->server))
                 {
-                        return "server:" . $this->server->id;
+			$server = $this->server;
+			Doctrine::em()->refresh($server);
+                        return "server:" . $server->id;
                 }
                 if (!empty($this->node))
                 {
-			//$this->node->id returns NULL so need to lookup using boxNumber to get the ID out.
-                        return "node:" . Doctrine::em()->getRepository('Model_Node')->findOneByBoxNumber($this->node->boxNumber)->id;
+			$node = $this->node;
+			Doctrine::em()->refresh($node);
+			return "node:" . $node->id;
                 }
                 if (!empty($this->aggregate))
                 {
