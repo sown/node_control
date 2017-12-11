@@ -340,7 +340,7 @@ class Model_Server extends Model_Entity
 			$intfIPv4Addr = $interface->IPv4Addr;
 			$intfIPv6Addr = $interface->IPv6Addr;
 			$intfHostname = $interface->hostname;
-                        $intfCname = $interface->cname;
+                        $intfCnames = $interface->cnames;
 			$intfMac = $interface->mac;
                         $intfSwitchport = $interface->switchport;
 			$intfName = $interface->name;
@@ -360,7 +360,13 @@ class Model_Server extends Model_Entity
 					$wm .= (empty($intfIPv6Addr) ? '' : "* [[{$prefix}ipv6::".str_replace("::", ":&#58;", $intfIPv6Addr)."]]\n");
 				}
 				$wm .= "It has the DNS names:\n* [[{$prefix}dns::{$interface->hostname}{$domain}]]\n";
-				$wm .= (empty($intfCname) ? '' : "[[has_cname::{$intfCname}{$domain}]]\n");
+				if (!empty($intfCname))
+				{
+					foreach ($intfCnames as $intfCname)
+					{
+						$wm .= (empty($intfCname) ? '' : "[[has_cname::{$intfCname}{$domain}]]\n");
+					}
+				}
 				if (!empty($intfMac) || !empty($infName)  || !empty($intfSwitchport) || !empty($intfCable)) 
 				{
 					$wm .= "Its ";
