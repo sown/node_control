@@ -403,7 +403,6 @@ class Controller_Servers extends Controller_AbstractAdmin
 			{
                                 $formValues['services'][] = $hostService->service->id;
                         }
-			var_dump($formValues['services']);
                 }
 		return $formValues;
 	}
