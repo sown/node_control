@@ -3,3 +3,4 @@ application/config/cookie_salt.php
 application/config/dev_ips.php
 application/config/database.php
 atheros
+node_control.apache

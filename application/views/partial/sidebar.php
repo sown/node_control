@@ -63,7 +63,8 @@ if(!isset($user))
 <?php 
 	$unresponded = sizeof(Model_Enquiry::getUnresponded());
         $enquiry_type_account = Doctrine::em()->getRepository('Model_EnquiryType')->find(3);
-        $unresponded_accounts = sizeof(Model_Enquiry::getUnresponded(array('type' => $enquiry_type_account)));
+        $unresponded_accounts = sizeof(Model_Enquiry::getUnresponded($enquiry_type_account));
+	//$unresponded_accounts = 0;
 ?>
 	<a href="<?= Route::url('current_servers') ?>">Servers</a><br/>
 	<a href="<?= Route::url('current_hosts') ?>">Other Hosts</a><br/>
