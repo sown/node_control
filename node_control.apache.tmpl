@@ -1,6 +1,3 @@
-# Go ahead and accept connections for these vhosts from non-SNI clients
-SSLStrictSNIVHostCheck off
-
 <VirtualHost EA.EB.EC.ED:80>
 	ServerName project-admin.example.org
 	ServerAlias project-admin
@@ -67,11 +64,6 @@ SSLStrictSNIVHostCheck off
     </Location>
 
     <Location /status>
-	SSLVerifyClient require
-	SSLOptions +StdEnvVars
-    </Location>
-
-    <Location /info.php>
 	SSLVerifyClient require
 	SSLOptions +StdEnvVars
     </Location>
