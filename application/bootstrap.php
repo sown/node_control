@@ -62,6 +62,7 @@ I18n::lang('en-gb');
  * Note: If you supply an invalid environment name, a PHP warning will be thrown
  * saying "Couldn't find constant Kohana::<INVALID_ENV_NAME>"
  */
+Cookie::$salt = 'set_in_cookie_salt.php';
 if (isset($_SERVER['KOHANA_ENV']))
 {
 	Kohana::$environment = constant('Kohana::'.strtoupper($_SERVER['KOHANA_ENV']));
@@ -73,6 +74,10 @@ elseif (isset($_SERVER['REMOTE_ADDR']))
 	{
 		include APPPATH.'config/dev_ips'.EXT;
 	}
+	if (file_exists(APPPATH.'config/cookie_salt'.EXT))
+        {
+                include APPPATH.'config/cookie_salt'.EXT;
+        }
 
 	if (in_array($_SERVER['REMOTE_ADDR'], $developmentAddrs)) 
 	{
@@ -138,7 +143,6 @@ Kohana::modules(array(
 	'php-ipaddress' => MODPATH.'php-ipaddress',
 #	'kohana-jelly-reverse-engineer' => MODPATH.'kohana-jelly-reverse-engineer',
 	));
-
 
 /**
  * Set the routes. Each route must have a minimum of a name, a URI and a set of

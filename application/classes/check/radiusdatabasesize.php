@@ -4,14 +4,14 @@ class Check_RadiusDatabaseSize extends Check
 	public function Check_RadiusDatabaseSize($host)
 	{
 		$conn = Kohana::$config->load('database.radius.connection');
-		mysql_connect($conn['hostname'], $conn['username'], $conn['password']);
-		mysql_select_db($conn['database']);
+		$pdo = new PDO("mysql:hostname=" . $conn['hostname'] . ";dbname=" . $conn['database'], $conn['username'], $conn['password']);
+		#mysql_select_db($conn['database']);
 		foreach(array('radacct', 'radpostauth') as $table)
 		{
-			$q = "SELECT count(*) FROM ".$table;
-			$res = mysql_query($q);
-			$row = mysql_fetch_row($res);
-			$sizes[$table] = $row[0];
+			$q = "SELECT count(*) AS nrows FROM ".$table;
+			$res = $pdo->query($q);
+			$row = $res->fetchObject();
+			$sizes[$table] = $row->nrows;
 		}
 
 		$this->code = Check::OK;
