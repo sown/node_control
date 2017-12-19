@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.73, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.58, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.1.73-0ubuntu0.10.04.1-log
+-- Server version	5.5.58-0ubuntu0.14.04.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -181,7 +181,7 @@ DROP TABLE IF EXISTS `enabled_enquiry_types`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 /*!50001 CREATE TABLE `enabled_enquiry_types` (
- `id` tinyint NOT NULL,
+  `id` tinyint NOT NULL,
   `title` tinyint NOT NULL,
   `description` tinyint NOT NULL,
   `email` tinyint NOT NULL,
@@ -574,12 +574,12 @@ CREATE TABLE `nodes` (
   KEY `node_to_node_hardware` (`node_hardware_id`),
   KEY `node_to_dns_interface` (`dns_interface_id`),
   KEY `node_to_syslog_server` (`syslog_server_id`),
-  CONSTRAINT `node_to_syslog_server` FOREIGN KEY (`syslog_server_id`) REFERENCES `servers` (`id`),
   CONSTRAINT `node_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
   CONSTRAINT `node_to_dns_interface` FOREIGN KEY (`dns_interface_id`) REFERENCES `interfaces` (`id`),
   CONSTRAINT `node_to_endpoint` FOREIGN KEY (`vpn_endpoint_id`) REFERENCES `vpn_endpoints` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `node_to_node_hardware` FOREIGN KEY (`node_hardware_id`) REFERENCES `node_hardwares` (`id`),
-  CONSTRAINT `node_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`)
+  CONSTRAINT `node_to_switch` FOREIGN KEY (`switch_id`) REFERENCES `switches` (`id`),
+  CONSTRAINT `node_to_syslog_server` FOREIGN KEY (`syslog_server_id`) REFERENCES `servers` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1077,4 +1077,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-04  4:23:04
+-- Dump completed on 2017-12-19  4:23:03
