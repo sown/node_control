@@ -95,7 +95,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		{
 			foreach($node->interfaces as $i)
 			{
-				if($i->IPv4 != null)
+				if($i->IPv4 != null && strpos($i->name, "wlan") === FALSE)
 				{
 					$ipv4_addrs[] = $i->name."=".$i->IPv4->get_address();
 				}
