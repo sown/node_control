@@ -91,7 +91,7 @@ class DNSUtils {
 		$dns_head = DNSUtils::generateNameserverEntries($nameservers) . "\n";
 		$domain = Kohana::$config->load('system.default.domain');
                 $local_vlan = Kohana::$config->load('system.default.vlan.local');
-                $ipv4_rev_subnet =  Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
+                $ipv4_rev_subnet = Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
 		$dns4 = $dns_head;
                 foreach ($server_interfaces as $addr)
                 {
@@ -147,7 +147,8 @@ class DNSUtils {
 
 	public static function generateNodesForwardFragment($dir, $results)
 	{
-		$file = "$dir/fragment.sown.org.uk-nodes";
+		$domain = Kohana::$config->load('system.default.domain');	
+		$file = "$dir/fragment.$domain-nodes";
       		$handle = fopen($file, "w");
 
       		if($handle == false)
@@ -201,6 +202,7 @@ class DNSUtils {
 	public static function generateNodesReverseFragment($dir, $results)
 	{
 		$ipv4_rev_subnet =  Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
+		$domain = Kohana::$config->load('system.default.domain');
 		$file4 = "$dir/fragment.$ipv4_rev_subnet-nodes";
 		$handle4 = fopen($file4, "w");
       		$file6 = "$dir/fragment.ip6ptr-nodes";
@@ -232,8 +234,8 @@ class DNSUtils {
             		{
                   		if(preg_match("/[A-Za-z0-9-_]+/", $hostname))
                   		{
-                        		if (!empty($ipv4)) fwrite($handle4, DNSUtils::reversePTR($ipv4, $ipv4_rev_subnet, 4) . "\tPTR\t".$hostname.".sown.org.uk.\n");
-                        		if (!empty($ipv6)) fwrite($handle6, DNSUtils::reversePTR($ipv6, '', 6) . "\tPTR\t".$hostname.".sown.org.uk.\n");
+                        		if (!empty($ipv4)) fwrite($handle4, DNSUtils::reversePTR($ipv4, $ipv4_rev_subnet, 4) . "\tPTR\t$hostname.$domain.\n");
+                        		if (!empty($ipv6)) fwrite($handle6, DNSUtils::reversePTR($ipv6, '', 6) . "\tPTR\t$hostname.$domain.\n");
                   		}	
             		}
       		}
@@ -245,9 +247,10 @@ class DNSUtils {
 
 	public static function generateZoneHeader($dir) 
 	{
-      		$handle = fopen($dir.'/db.sown.org.uk', 'w');
+		$domain = Kohana::$config->load('system.default.domain');
+      		$handle = fopen($dir.'/db.'.$domain, 'w');
       		fwrite($handle, '$TTL    86400
-@       IN      SOA     sown.org.uk. support.sown.org.uk. (
+@       IN      SOA     '.$domain.'. support.'.$domain.'. (
                  '.date('YmdH').'   ; Serial
                           86400         ; Refresh
                           86400         ; Retry
@@ -255,19 +258,19 @@ class DNSUtils {
                           86400 )       ; Negative Cache TTL
 ;
 
-$INCLUDE "/etc/bind/fragment.sown.org.uk-hosts"
-$INCLUDE "/etc/bind/fragment.sown.org.uk-nodes"
-;$INCLUDE "/etc/bind/fragment.sown.org.uk-users"
-;$INCLUDE "/etc/bind/fragment.sown.org.uk-streams"
+$INCLUDE "/etc/bind/fragment.'.$domain.'-hosts"
+$INCLUDE "/etc/bind/fragment.'.$domain.'-nodes"
 ');
       		fclose($handle);
 	}
 	
 	public static function generateReverseZoneIPv4Header($dir) 
 	{
-		$handle = fopen($dir.'/db.10.13', 'w');
+		$ipv4_rev_subnet = Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
+		$domain = Kohana::$config->load('system.default.domain');
+		$handle = fopen($dir.'/db.'.$ipv4_rev_subnet, 'w');
       		fwrite($handle, '$TTL    86400
-@       IN      SOA     sown.org.uk. support.sown.org.uk. (
+@       IN      SOA     '.$domain.'. support.'.$domain.'. (
                  '.date('YmdH').'   ; Serial
                           86400         ; Refresh
                           86400         ; Retry
@@ -275,18 +278,18 @@ $INCLUDE "/etc/bind/fragment.sown.org.uk-nodes"
                           86400 )       ; Negative Cache TTL
 ;
 
-$INCLUDE "/etc/bind/fragment.10.13-hosts"
-$INCLUDE "/etc/bind/fragment.10.13-nodes"
-;$INCLUDE "/etc/bind/fragment.10.13-users"
+$INCLUDE "/etc/bind/fragment.'.$ipv4_rev_subnet.'-hosts"
+$INCLUDE "/etc/bind/fragment.'.$ipv4_rev_subnet.'-nodes"
 ');
       		fclose($handle);
 	}
 
 	public static function generateReverseZoneIPv6Header($dir) 
 	{
+		$domain = Kohana::$config->load('system.default.domain');
       		$handle = fopen($dir.'/db.ip6ptr', 'w');
       		fwrite($handle, '$TTL    86400
-@       IN      SOA     sown.org.uk. support.sown.org.uk. (
+@       IN      SOA     '.$domain.'. support.'.$domain.'. (
                  '.date('YmdH').'   ; Serial
                           86400         ; Refresh
                           86400         ; Retry
