@@ -384,8 +384,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 			$services = array();
 			foreach ($hostServices as $hostService)
 			{
-				$service = Doctrine::em()->getRepository('Model_Service')->find($hostService->id);
-				$services[] = $service->label;
+				$services[] = $hostService->service->label;
 			}
 			$formValues['services'] = implode(", ", $services);
 		}
