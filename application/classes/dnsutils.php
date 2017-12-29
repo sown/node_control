@@ -109,7 +109,7 @@ class DNSUtils {
                                 $dns4 .= "$rdns\tPTR\t" . $addr->hostname . ".$domain.\n";
                         }
                 }
-		$file4 = "$dir/fragment.$ipv4_rev_subnet-hosts";
+		$file4 = "$dir/fragment.ip4ptr-hosts";
                 $handle4 = fopen($file4, "w");
 		fwrite($handle4, "; Hosts IPv4 Reverse Fragment - Generated automatically using admin system's DNSUtils on ".date("Y-m-d H:i:s")."\n");
 		fwrite($handle4, $dns4);
@@ -203,7 +203,7 @@ class DNSUtils {
 	{
 		$ipv4_rev_subnet =  Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
 		$domain = Kohana::$config->load('system.default.domain');
-		$file4 = "$dir/fragment.$ipv4_rev_subnet-nodes";
+		$file4 = "$dir/fragment.ip4ptr-nodes";
 		$handle4 = fopen($file4, "w");
       		$file6 = "$dir/fragment.ip6ptr-nodes";
       		$handle6 = fopen($file6, "w");
@@ -268,7 +268,7 @@ $INCLUDE "/etc/bind/fragment.'.$domain.'-nodes"
 	{
 		$ipv4_rev_subnet = Kohana::$config->load('system.default.dns.reverse_subnets.ipv4');
 		$domain = Kohana::$config->load('system.default.domain');
-		$handle = fopen($dir.'/db.'.$ipv4_rev_subnet, 'w');
+		$handle = fopen($dir.'/db.ip4ptr', 'w');
       		fwrite($handle, '$TTL    86400
 @       IN      SOA     '.$domain.'. support.'.$domain.'. (
                  '.date('YmdH').'   ; Serial
@@ -278,8 +278,8 @@ $INCLUDE "/etc/bind/fragment.'.$domain.'-nodes"
                           86400 )       ; Negative Cache TTL
 ;
 
-$INCLUDE "/etc/bind/fragment.'.$ipv4_rev_subnet.'-hosts"
-$INCLUDE "/etc/bind/fragment.'.$ipv4_rev_subnet.'-nodes"
+$INCLUDE "/etc/bind/fragment.ip4ptr-hosts"
+$INCLUDE "/etc/bind/fragment.ip4ptr-nodes"
 ');
       		fclose($handle);
 	}
