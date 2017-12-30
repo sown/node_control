@@ -205,6 +205,7 @@ class Controller_Scripts extends Controller_Template
       		DNSUtils::generateZoneHeader($tmpdir);
       		DNSUtils::generateReverseZoneIPv4Header($tmpdir);
       		DNSUtils::generateReverseZoneIPv6Header($tmpdir);
+		DNSUtils::generateNamedLocal($tmpdir, $nameservers);
 		Doctrine::em()->getConnection()->close();
 		exit();
 	}

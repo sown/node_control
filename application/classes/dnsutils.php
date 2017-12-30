@@ -303,6 +303,65 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
       		fclose($handle);
 	}
 
+	public static function generateNamedLocal($dir, $nameservers)
+        {
+		$domain = Kohana::$config->load('system.default.domain');
+		$ipv4_rev_ptr = Kohana::$config->load('system.default.dns.reverse_subnets.ip4ptr');
+		$ipv6_rev_ptr = Kohana::$config->load('system.default.dns.reverse_subnets.ip6ptr');
+		$dns_ips_arr = DNSUtils::getNameserverIPs($nameservers);
+		$dns_ips = implode("; ", $dns_ips_arr) . ";";
+		$slave_dns_ips_arr = DNSUtils::getNameserverIPs($nameservers, 1);
+		$slave_dns_ips = implode("; ", $slave_dns_ips_arr) . ";";
+                $handle = fopen($dir.'/named.conf.local', 'w');
+                fwrite($handle, '//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+// RNDC configuration
+include "/etc/bind/rndc.key";
+
+acl "rndc-users" { '.$dns_ips.' };
+
+controls {
+        inet 127.0.0.1 allow {localhost;};
+};
+// End RNDC configuration
+
+
+zone "'.$domain.'" {
+        type master;
+        notify explicit;
+        check-names ignore;
+        file "/etc/bind/db.'.$domain.'";
+        allow-transfer { '.$dns_ips.' };
+        also-notify { '.$slave_dns_ips.' };
+};
+
+zone "'.$ipv4_rev_ptr.'.in-addr.arpa" {
+        type master;
+        notify explicit;
+        check-names ignore;
+        file "/etc/bind/db.ip4ptr";
+        allow-transfer { '.$dns_ips.' };
+        also-notify { '.$slave_dns_ips.' };
+};
+
+zone "'.$ipv6_rev_ptr.'.ip6.arpa" {
+        type master;
+        notify explicit;
+        check-names ignore;
+        file "/etc/bind/db.ip6ptr";
+        allow-transfer { '.$dns_ips.' };
+        also-notify { '.$slave_dns_ips.' };
+};');
+                fclose($handle);
+        }
+
+
 	private static function generateNameserverEntries($nameservers, $just_text = true)
 	{
                 $domain = Kohana::$config->load('system.default.domain');
@@ -409,5 +468,28 @@ $INCLUDE "/etc/bind/fragment.ip6ptr-nodes"
                         }
                 }
                 return $dns;
+	}
+
+	private static function getNameserverIPs($nameservers, $slave_only = 0, $version = "")
+	{
+		$ip_addrs = array();
+		foreach ($nameservers as $nsi)
+                {
+                        $ns = (preg_match("/^ns/", $nsi['cname']) ? $nsi['cname'] : $nsi['hostname']);
+                        $ns = (strpos($ns, ',') ? substr($ns, 0, strpos($ns, ",")) : $ns);
+			if ($slave_only && $ns == "ns0")
+			{
+				continue;
+			}
+			if (!$version || $version == 4)
+			{
+				$ip_addrs[] = $nsi['IPv4Addr'];
+			}
+			if (!$version || $version == 6)
+                        {
+				$ip_addrs[] = $nsi['IPv6Addr'];
+                        }
+                }
+		return $ip_addrs;
 	}
 }
