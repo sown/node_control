@@ -129,6 +129,7 @@ return array
 		),
 		'routes'	=> '
 push "route 10.13.0.0 255.255.0.0"
+push "route 10.5.0.0 255.255.0.0"
 ',
 		'syslog'	=> array
 		(

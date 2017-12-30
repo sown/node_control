@@ -78,18 +78,20 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 		{
 			#TODO: Fix me so we use loopbacks
 			$parents = $node->vpnEndpoint->vpnServer->server->name;
-			if(substr($node->vpnEndpoint->IPv4Addr, 0, 8) == "169.254."){
-				foreach($node->interfaces as $i)
-				{
-					if($i->IPv4 != null)
-					{
-						$ipv4_addrs[] = $i->name."=".$i->IPv4->get_address();
-					}
-				}
-				$address = implode(',', $ipv4_addrs);
-			}else{
-				$address = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
+			# Handle multiple interfaces
+			$ipv4_addrs = array();
+
+			if(substr($node->vpnEndpoint->IPv4Addr, 0, 8) != "169.254."){
+				$ipv4_addrs[] = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
 			}
+			foreach($node->interfaces as $i)
+			{
+				if( ($i->IPv4 != null) && (!$i->offerDhcp) )
+				{
+					$ipv4_addrs[] = $i->name."=".$i->IPv4->get_address();
+				}
+			}
+			$address = implode(',', $ipv4_addrs);
 		}
 		else
 		{

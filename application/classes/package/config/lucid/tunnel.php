@@ -82,6 +82,13 @@ dh /etc/openvpn/dh1024.pem
 # Use this subnet for this client
 server {$ep->IPv4->get_network_address()} {$ep->IPv4->get_subnet_mask()}
 
+# IPv6 on tunnel network
+tun-ipv6
+push tun-ipv6
+ifconfig-ipv6 {$ep->IPv6->get_network_start()}1/{$ep->IPv6AddrCidr} {$ep->IPv6->get_network_start()}2 
+push ifconfig-ipv6 {$ep->IPv6->get_network_start()}2/{$ep->IPv6AddrCidr} {$ep->IPv6->get_network_start()}1
+push route-ipv6 2001:630:d0:f700::/56
+
 # Push these routes to the client
 {$routes}
 
@@ -146,9 +153,12 @@ EOB;
 					if (!empty($vpnServers[0]))
 					{
 			                        foreach(Doctrine::em()->getRepository('Model_Node')->findByUndeployable(0) as $node)
-        			                {
-        	        		        	$fn =  __function__;
-                	        		        $files = array_merge($files, static::$fn($node, $ip));
+        			                {	
+							if ($node->vpnEndpoint && $node->vpnEndpoint->vpnServer->id == $vpnServers[0]->id)
+							{
+        	        		        		$fn =  __function__;
+	                	        		        $files = array_merge($files, static::$fn($node, $ip));
+							}
 						}
 					}
 					else 
@@ -170,7 +180,7 @@ EOB;
                         # morse: Can this fall-through?
                 }
 
-                if($node->certificate->cn == "" )
+                if($node->certificate->cn == "")
                 {
                         # No certificate defined
                         return array();
@@ -283,10 +293,14 @@ EOB;
 		$confdisconnect = "#!/bin/bash\n\n";
 		foreach($node->interfaces as $iface)
 		{
-			if( (!$iface->offerDhcp) && ($iface->IPv4AddrCidr != 32) )
-				continue;
-			$confconnect    .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
-			$confdisconnect .= "/usr/bin/sudo /sbin/ip route del ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+			if( ! ( (!$iface->offerDhcp) && ($iface->IPv4AddrCidr != 32) )){
+				$confconnect    .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+				$confdisconnect .= "/usr/bin/sudo /sbin/ip route del ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+			}
+			if($iface->offerDhcpV6){
+				$confconnect	.= "/usr/bin/sudo /sbin/ip -6 route add ".$iface->IPv6->get_network_identifier()." via ".$node->vpnEndpoint->IPv6->get_address_in_network(2)."\n";
+				$confdisconnect	.= "/usr/bin/sudo /sbin/ip -6 route del ".$iface->IPv6->get_network_identifier()." via ".$node->vpnEndpoint->IPv6->get_address_in_network(2)."\n";
+			}
 		}
 		$confconnect .= "\nexit 0\n";
 		$confdisconnect .= "\nexit 0\n";
