@@ -76,6 +76,7 @@ client {$ip} {
 
 	public static function config_named_fwd_v0_1_78(Model_Node $node = null)
 	{
+		$domain = Kohana::$config->load('system.default.domain');
 		if($node === null)
 		{
 			$repository = Doctrine::em()->getRepository('Model_Node');
@@ -85,7 +86,7 @@ client {$ip} {
 				$fn =  __function__;
 				$data .= static::$fn($node);
 			}
-			static::send_file($data, 'fragment.sown.org.uk-node_control', 'text/plain');
+			static::send_file($data, 'fragment.'.$domain.'-node_control', 'text/plain');
 		}
 
 		/* Return a fragment of a zone file, eg:
@@ -151,7 +152,7 @@ node267 IN      AAAA    2001:630:d0:f7d4::1
 				$fn =  __function__;
 				$data .= static::$fn($node);
 			}
-			static::send_file($data, 'fragment.10.13-node_control', 'text/plain');
+			static::send_file($data, 'fragment.ip4ptr-node_control', 'text/plain');
 		}
 
 		/* Return a fragment of a zone file, eg:
