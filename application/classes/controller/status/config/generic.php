@@ -20,6 +20,8 @@ class Controller_Status_Config_Generic extends Controller
 		$classname = 'Check_'.$request_name;
 		$check = new $classname($host);
 
+		Doctrine::em()->getConnection()->close();
+
 		if(Request::$user_agent == 'icinga')
 		{
 			$check->format_icinga();
