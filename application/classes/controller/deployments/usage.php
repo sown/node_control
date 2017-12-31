@@ -221,21 +221,27 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 
 	private function _get_radius_connections_through_day_for_deployment_results($deployment)
         {
-                $calledstationid = "[UNSET]";
+                $calledstationids = array(); //"[UNSET]";
                 $node = $deployment->getLastNodeDeployment()->node;
                 foreach ($node->interfaces as $interface)
                 {
                         $ssid = $interface->ssid;
                         if (!empty($ssid))
                         {
-                                $calledstationid = str_replace(":", "-", strtoupper($interface->networkAdapter->mac));
-                                break;
+                                $calledstationids[] = str_replace(":", "-", strtoupper($interface->networkAdapter->mac));
                         }
                 }
-                $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra')
-                        ->select("UNIX_TIMESTAMP(ra.acctstarttime) AS start, UNIX_TIMESTAMP(ra.acctstoptime) AS stop, ra.acctsessiontime AS length, ra.callingstationid AS mac")
-                        ->where("ra.acctinputoctets+ra.acctoutputoctets > 0 OR (UNIX_TIMESTAMP(ra.acctstarttime) + ra.acctsessiontime + 600 > UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) AND ra.acctstoptime IS NULL)")
-                        ->andWhere("ra.calledstationid LIKE '%$calledstationid%'");
+		// No interface MACs - return null
+		if(!count($calledstationids)) return null;
+
+                $qb = Doctrine::em('radius')->getRepository('Model_Radacct')->createQueryBuilder('ra');
+		$qb->select("UNIX_TIMESTAMP(ra.acctstarttime) AS start, UNIX_TIMESTAMP(ra.acctstoptime) AS stop, ra.acctsessiontime AS length, ra.callingstationid AS mac")
+		   ->where("ra.acctinputoctets+ra.acctoutputoctets > 0 OR (UNIX_TIMESTAMP(ra.acctstarttime) + ra.acctsessiontime + 600 > UNIX_TIMESTAMP(CURRENT_TIMESTAMP()) AND ra.acctstoptime IS NULL)");
+		$innerWhere = array();
+		foreach($calledstationids as $csid){
+			$innerWhere[] = "ra.calledstationid LIKE '%".$csid."%'";
+		}
+		$qb->andWhere(join(" OR ", $innerWhere));
 		$sql = $qb->getQuery()->getSql();
                 $results = $qb->getQuery()->getResult();
                 return $results;
@@ -277,6 +283,7 @@ class Controller_Deployments_Usage extends Controller_AbstractAdmin
 		$start_date_secs = $start_date->format('U');
 		$end_date_secs = time();
 		$days = floor(($end_date_secs - $start_date_secs ) / 86400);
+		if($days == 0) $days = 1;
 		$start_date_tod = $start_date_secs % 86400;
 		$end_date_tod = $end_date_secs % 86400;
 		for ( $secs = 0; $secs < 86400; $secs += $interval )
