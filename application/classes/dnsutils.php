@@ -95,7 +95,7 @@ class DNSUtils {
 		$dns4 = $dns_head;
                 foreach ($server_interfaces as $addr)
                 {
-			if (strlen($addr['IPv4Addr']))
+			if (strlen($addr['IPv4Addr']) && !empty($addr['hostname']))
                         {
 	                        $rdns = DNSUtils::reversePTR($addr['IPv4Addr'], $ipv4_rev_subnet, 4);
         	                $dns4 .= "$rdns\tPTR\t" . $addr['hostname'] . ".$domain.\n";
@@ -124,7 +124,7 @@ class DNSUtils {
                 $dns6 .= ';$ORIGIN ' . implode('.', array_reverse(str_split(implode('', $snbits)))) . ".ip6.arpa.\n\n";
                 foreach ($server_interfaces as $addr)
                 {
-			if (strlen($addr['IPv6Addr'])) 
+			if (strlen($addr['IPv6Addr']) && !empty($addr['hostname'])) 
 			{
                         	$rdns = DNSUtils::reversePTR($addr['IPv6Addr'], '', 6);
                         	$dns6 .= "$rdns\tPTR\t" . $addr['hostname'] . ".$domain.\n";
