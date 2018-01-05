@@ -11,8 +11,8 @@
 <table class="sowntable">
 	<thead>
 		<tr class="tabletitle">
-		<?php foreach ($fields as $key => $title): ?>
-			<?php echo "<th id='$key'>$title</th>\n"; ?>
+		<?php foreach ($fields as $key => $header): ?>
+			<?php echo "<th id='$key'>$header</th>\n"; ?>
 		<?php endforeach ?>
 		</tr>
 	</thead>
