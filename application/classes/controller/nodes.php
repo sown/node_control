@@ -493,6 +493,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			'networkAdapterType' => 'networkAdapter:type'
 		);
 		$i = 0;
+		$adapter_types = Kohana::$config->load('system.default.adapter_types');
                 foreach ($node->interfaces as $i => $interface)
                 {
 			foreach ($formValuesMap as $fmv_key => $fmv_value)
@@ -516,6 +517,7 @@ class Controller_Nodes extends Controller_AbstractAdmin
 				$formValues['interfaces']['currentInterfaces'][$i]['offerDhcp'] = ( $formValues['interfaces']['currentInterfaces'][$i]['offerDhcp'] ? 'Yes' : 'No') ;
 			 	$formValues['interfaces']['currentInterfaces'][$i]['offerDhcpV6'] = ( $formValues['interfaces']['currentInterfaces'][$i]['offerDhcpV6'] ? 'Yes' : 'No') ;
 				$formValues['interfaces']['currentInterfaces'][$i]['is1x'] = ( $formValues['interfaces']['currentInterfaces'][$i]['is1x'] ? 'Yes' : 'No') ;
+				$formValues['interfaces']['currentInterfaces'][$i]['networkAdapterType'] = $adapter_types[$formValues['interfaces']['currentInterfaces'][$i]['networkAdapterType']];
 			}	
                 }
 		$c = 0;
@@ -542,6 +544,8 @@ class Controller_Nodes extends Controller_AbstractAdmin
 			$formValues['externalBuild'] = (!empty($formValues['externalBuild']) ? 'Yes' : 'No');
 			$firmware_versions = Kohana::$config->load('system.default.firmware_versions'); 
 			$formValues['firmwareVersion'] = $firmware_versions[$formValues['firmwareVersion']];
+			$nodeHardware = Doctrine::em()->getRepository('Model_NodeHardware')->findOneById($formValues['nodeHardware']);
+			$formValues['nodeHardware'] = $nodeHardware->manufacturer . " " . $nodeHardware->model;
 			if (!empty($formValues['dnsInterface']))
 			{
 				$dnsInterface = Doctrine::em()->getRepository('Model_Interface')->findOneById($formValues['dnsInterface']);
