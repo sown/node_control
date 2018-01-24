@@ -299,6 +299,11 @@ class RadAcctUtils {
 		$config = Kohana::$config->load('database')->get('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
 		return !is_null($config);
 	}
+
+	public static function loadDatabaseConfig($username)
+	{
+		return Kohana::$config->load('database.accounts-' . str_replace('.', '_', RadAcctUtils::GetDomainPart($username)) . '.connection');
+	}
 	
 	private static function GetUserPart($username)
 	{
@@ -314,10 +319,14 @@ class RadAcctUtils {
 
 	public static function UserNotExists($username)
 	{
-		$query = DB::select('username')->from('radcheck')->where('username', '=', ':username');
-		$query->param(':username', RadAcctUtils::GetUserPart($username));
-                $users = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
-		return (sizeof($users) == 0);
+		$conn = RadAcctUtils::loadDatabaseConfig($username);
+                $pdo = new PDO("mysql:hostname=" . $conn['hostname'] . ";dbname=" . $conn['database'], $conn['username'], $conn['password']);
+		$query = $pdo->prepare("SELECT COUNT(*) FROM radcheck WHERE username = :username");
+		$userpart = RadAcctUtils::GetUserPart($username);
+		$query->bindParam(':username', $userpart, PDO::PARAM_STR);
+		$query->execute();	
+		$numUsers = $query->fetchColumn(0);
+		return ($numUsers == 0);
 	}
 
 	public static function generateRandomString($stringLength = 8)
@@ -346,11 +355,21 @@ class RadAcctUtils {
 	
 	private static function AddUserHash($username, $hash)
 	{
-		$query = DB::insert('radcheck', array('username', 'attribute', 'Op', 'value'))->values(array(':username', 'NT-Password', ':=', ':hash'));
-		$query->param(':username', RadAcctUtils::GetUserPart($username));
-		$query->param(':hash', $hash);
-		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
-		return ($res[1] == 1);
+		$conn = RadAcctUtils::loadDatabaseConfig($username);
+                $pdo = new PDO("mysql:hostname=" . $conn['hostname'] . ";dbname=" . $conn['database'], $conn['username'], $conn['password']);
+		$query = $pdo->prepare("INSERT INTO radcheck SET username = :username, attribute = 'NT-Password', value = :hash, Op = ':='");
+		$userpart = RadAcctUtils::GetUserPart($username);
+		$query->bindParam(':username', $userpart, PDO::PARAM_STR);
+                $query->bindParam(':hash', $hash, PDO::PARAM_STR);
+		try 
+		{
+			$query->execute();
+		} 
+		catch (PDOException $e) 
+		{
+			return FALSE;
+		}	
+		return TRUE;	
 	}
 
 	public static function ResetPassword($username, $newpassword)
@@ -376,28 +395,58 @@ class RadAcctUtils {
 	
 	public static function DeleteUser($username)
 	{
-		$query = DB::delete('radcheck')->where('username', '=', ':username')->and_where('attribute', '=', 'NT-Password')->and_where('Op', '=', ':=');
-		$query->param(':username', RadAcctUtils::GetUserPart($username));
-		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
-                return ($res == 1);
+		$conn = RadAcctUtils::loadDatabaseConfig($username);
+                $pdo = new PDO("mysql:hostname=" . $conn['hostname'] . ";dbname=" . $conn['database'], $conn['username'], $conn['password']);
+                $query = $pdo->prepare("DELETE FROM radcheck WHERE username = :username AND attribute = 'NT-Password' AND Op = ':='");
+		$userpart = RadAcctUtils::GetUserPart($username);
+                $query->bindParam(':username', $userpart, PDO::PARAM_STR);
+                try
+                {
+                        $query->execute();
+                }
+                catch (PDOException $e)
+                {
+                        return FALSE;
+                }
+                return $query->rowCount();;
 	}
 	
 	private static function UpdateUserHash($username, $hash, $oldhash)
 	{
-		$query = DB::update('radcheck')->set(array('value' => ':hash'))->where('username', '=', ':username')->where('attribute', '=', 'NT-Password')->where('Op', '=', ':=')->where('value', '=', ':oldhash');
-		$query->param(':username', RadAcctUtils::GetUserPart($username));
-		$query->param(':hash', $hash);
-		$query->param(':oldhash', $oldhash);
-		$res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
-		return ($res == 1);
+                $conn = RadAcctUtils::loadDatabaseConfig($username);
+		$pdo = new PDO("mysql:hostname=" . $conn['hostname'] . ";dbname=" . $conn['database'], $conn['username'], $conn['password']);
+                $query = $pdo->prepare("UPDATE radcheck SET value = :hash WHERE username = :username AND attribute = 'NT-Password' AND Op = ':=' AND value = :oldhash");
+		$userpart = RadAcctUtils::GetUserPart($username);
+                $query->bindParam(':username', $userpart, PDO::PARAM_STR);
+		$query->bindParam(':hash', $hash, PDO::PARAM_STR);
+		$query->bindParam(':oldhash', $oldhash, PDO::PARAM_STR);
+                try
+                {
+                        $query->execute();
+                }
+                catch (PDOException $e)
+                {
+                        return FALSE;
+                }
+                return $query->rowCount();
 	}
 
 	private static function UpdateUserHashNoOldPassword($username, $hash)
 	{
-                $query = DB::update('radcheck')->set(array('value' => ':hash'))->where('username', '=', ':username')->where('attribute', '=', 'NT-Password')->where('Op', '=', ':=');
-                $query->param(':username', RadAcctUtils::GetUserPart($username));
-                $query->param(':hash', $hash);
-                $res = $query->execute('accounts-'.str_replace('.', '_', RadAcctUtils::GetDomainPart($username)));
-                return ($res == 1);
+		$conn = RadAcctUtils::loadDatabaseConfig($username);
+                $pdo = new PDO("mysql:hostname=" . $conn['hostname'] . ";dbname=" . $conn['database'], $conn['username'], $conn['password']);
+                $query = $pdo->prepare("UPDATE radcheck SET value = :hash  WHERE username = :username AND attribute = 'NT-Password' AND Op = ':='");
+		$userpart = RadAcctUtils::GetUserPart($username);
+                $query->bindParam(':username', $userpart, PDO::PARAM_STR);
+                $query->bindParam(':hash', $hash, PDO::PARAM_STR);
+                try
+                {
+                        $query->execute();
+                }
+                catch (PDOException $e)
+                {
+                        return FALSE;
+                }
+                return $query->rowCount();
 	}
 }

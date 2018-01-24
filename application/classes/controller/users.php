@@ -89,8 +89,9 @@ class Controller_Users extends Controller_AbstractAdmin
 			if (!empty($formValues['password']) || !empty($formValues['confirmPassword'])) 
 			{
 				$validation->rule('password', 'not_empty')
-					->rule('password', 'min_length', array(':value', '6'))
-					->rule('confirmPassword', 'matches', array(':validation', 'confirmPassword', 'password'));		
+					->rule('password', 'min_length', array(':value', '8'))
+					->rule('confirmPassword', 'matches', array(':validation', 'confirmPassword', 'password'))
+					->rule('password','Model_User::uncommonPassword', array(':value'));
 			}
 			if ($validation->check())
         		{
@@ -215,24 +216,32 @@ class Controller_Users extends Controller_AbstractAdmin
                                 {
                                         $password1 = $this->request->post('password1');
                                         $password2 = $this->request->post('password2');
-                                        if($password1 != $password2)
+                                        if (strlen($password1) < 8)
+                                        {
+                                                $content->info['error'][] = "Password is not at least 8 characters";
+                                        }
+					elseif($password1 != $password2)
                                         {
                                                 $content->info['error'][] = "New passwords do not match";
                                         }
                                         else
-                                        {
-                                                if(!RadAcctUtils::ResetPassword($user->username, $password1))
-                                                {
-                                                        $content->info['error'][] = "Failed to update password";
-                                                }
-                                                else
-                                                {
+                                        {	
+						if (!Model_User::uncommonPassword($password1))
+						{
+							$content->info['error'][] = "Password is too common and may be easy to guess";
+						}
+						elseif(!RadAcctUtils::ResetPassword($user->username, $password1))
+        	                                {
+                	                                $content->info['error'][] = "Failed to update password";
+                        	                }
+                                	        else
+                                        	{
                                                         $user->resetPasswordHash = "";
-                                                        $user->resetPasswordTime = NULL;
-                                                        $user->save();
-                                                        $content->info['notice'][] = "Password updated successfully.  <a href='/'>Click here</a> to login.";
-                                                        $content->show_form = false;
-                                                }
+	                                                $user->resetPasswordTime = NULL;
+        	                                        $user->save();
+                	                                $content->info['notice'][] = "Password updated successfully.  <a href='/'>Click here</a> to login.";
+                        	                        $content->show_form = false;
+						}
                                         }
                                 }
                         }
@@ -274,20 +283,28 @@ class Controller_Users extends Controller_AbstractAdmin
                                 $oldpassword = $this->request->post('oldpassword');
                                 $password1 = $this->request->post('password1');
                                 $password2 = $this->request->post('password2');
-                                if($password1 != $password2)
+				if (strlen($password1) < 8)
+                                {
+                                        $content->info['error'][] = "Password is not at least 8 characters";
+                                }
+                                elseif($password1 != $password2)
                                 {
                                         $content->info['error'][] = "New passwords do not match";
                                 }
                                 else
                                 {
-                                        if(!Auth::instance()->change_password($oldpassword, $password1))
+					if (!Model_User::uncommonPassword($password1))
                                         {
+                                                $content->info['error'][] = "Password is too common and may be easy to guess";
+                                        }
+					elseif(!Auth::instance()->change_password($oldpassword, $password1))
+                                      	{
                                                 $content->info['error'][] = "Failed to update password";
-                                        }
-                                        else
-                                        {
-                                                $content->info['notice'][] = "Password updated successfully";
-                                        }
+	                                }
+        	                        else
+                	                {
+                        	                $content->info['notice'][] = "Password updated successfully";
+					}
                                 }
                         }
                         $this->template->content = $content;

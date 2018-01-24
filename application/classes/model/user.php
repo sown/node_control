@@ -187,6 +187,13 @@ class Model_User extends Model_Entity
                 return $deployments;
         }
 
+	public static function uncommonPassword($password, $id = 0)
+        {
+		$common_passwords_file = Kohana::$config->load('system.default.admin_system.common_passwords_file');
+               	$common_passwords = file($common_passwords_file, FILE_IGNORE_NEW_LINES);
+                return !in_array(strtolower($password), $common_passwords);	
+        }
+
 	public static function uniqueUsername($username, $id = 0)
         {
 		return Model_User::uniqueUsernameWithDomain($username . '@' . Kohana::$config->load('system.default.domain'), $id);
