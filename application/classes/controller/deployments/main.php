@@ -113,9 +113,11 @@ class Controller_Deployments_Main extends Controller_AbstractAdmin
         	                'usage' => '',
                 	        'edit' => '',
 	                );
+			$objectType = "deployment";
+                	$idField = "id";
 			$content = View::factory('partial/table')
                 	        ->bind('fields', $fields)
-                        	->bind('rows', $rows)
+                        	->bind('rows', $deployments)
 	                        ->bind('objectType', $objectType)
         	                ->bind('idField', $idField);
 		}
