@@ -5,7 +5,7 @@ class Check_CertsCreated extends Check
 	public function Check_CertsCreated($host)
 	{
 		$this->code = Check::OK;
-		$this->message = "All certificates present2.";
+		$this->message = "All certificates present";
 
 		$certs = Doctrine::em()->getRepository('Model_Certificate')->findAll();
 		$ids = array();
