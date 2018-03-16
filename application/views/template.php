@@ -24,15 +24,26 @@ if (isset($jsFiles))
                 echo "  " . HTML::script('media/js/' . $jsFile) . "\n";
         }       
 }
+$isDevSite = Kohana::$config->load('system.default.admin_system.development');
+if (!empty($isDevSite))
+{
+	$favicon = "/media/images/favicon-development.ico";
+	$logo = "/media/images/sown_adminsys-development.png";
+}
+else
+{
+	$favicon = "/media/images/favicon-default.ico";
+	$logo = "/media/images/sown_adminsys-default.png";
+}	
 ?> 
-  <link <?= HTML::attributes(array("rel" => "icon", "href" => "/media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
-  <link <?= HTML::attributes(array("rel" => "shortcut icon", "href" => "/media/images/blueicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
+  <link<?= HTML::attributes(array("rel" => "icon", "href" => $favicon, "type" => "image/vnd.microsoft.icon")) ?> />
+  <link<?= HTML::attributes(array("rel" => "shortcut icon", "href" => $favicon, "type" => "image/vnd.microsoft.icon")) ?> />
 </head>
 <body>
   <div id="top_menu">
     <div class="menucontainer">
       <div>
-        <a href="/"><img class="logo" src="/media/images/sown_adminsys.png" alt="SOWN Admin System logo"/></a>
+        <a href="/"><img<?= HTML::attributes(array("class" => "logo", "src" => $logo, "alt" => "Admin system logo")) ?>></a>
       </div>
     </div>
     <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/wiki/">Wiki</a></div></div>

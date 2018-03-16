@@ -1,3 +1,16 @@
+<?php
+$isDevSite = Kohana::$config->load('system.default.admin_system.development');
+if (!empty($isDevSite))
+{
+        $favicon = "/media/images/favicon-development.ico";
+        $logo = "/media/images/sown_adminsys-development.png";
+}
+else
+{
+        $favicon = "/media/images/favicon-default.ico";
+        $logo = "/media/images/sown_adminsys-default.png";
+}
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -7,14 +20,14 @@
   <?= HTML::style('media/css/screen.css', array("media" => "screen")) ?> 
   <?= HTML::style('media/css/handheld.css', array("media" => "handheld")) ?> 
   <?= HTML::style('media/css/login.css', array("media" => "all")) ?> 
-  <link<?= HTML::attributes(array("rel" => "icon", "href" => "media/images/favicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
-  <link<?= HTML::attributes(array("rel" => "shortcut icon", "href" => "media/images/favicon.ico", "type" => "image/vnd.microsoft.icon")) ?> />
+  <link<?= HTML::attributes(array("rel" => "icon", "href" => $favicon, "type" => "image/vnd.microsoft.icon")) ?> />
+  <link<?= HTML::attributes(array("rel" => "shortcut icon", "href" => $favicon, "type" => "image/vnd.microsoft.icon")) ?> />
 </head>
 <body>
    <div id="top_menu">
       <div class="menucontainer">
          <div>
-	    <a href="/"><img class="logo" src="/media/images/sown_adminsys.png" alt="SOWN Admin System logo"/></a>
+	    <a href="/"><img<?= HTML::attributes(array("class" => "logo", "src" => $logo, "alt" => "Admin system logo")) ?>></a>
 	 </div>
       </div>
       <div class="menucontainer"><div class="item"><a href="http://www.sown.org.uk/wiki/">Wiki</a></div></div>
