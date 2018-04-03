@@ -52,9 +52,27 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 		}
 
 		$ep = $node->vpnEndpoint;
+
+		if (!is_object($ep))
+		{
+			# No endpoint
+			return array();
+		}
+
+		# Look for any subnets we should route:
+		$iroute_v6 = array();
+		foreach($node->interfaces as $i)
+		{
+			if($i->IPv6 != null && strpos($i->name, "wlan") !== FALSE)
+			{
+				$iroute_v6[] = "iroute-ipv6 " . $i->IPv6->get_network_start() . "/" . $i->IPv6AddrCidr;
+			}
+		}
+
+		$iroute_v6 = join("\r\n", $iroute_v6);
+
 		$dns_host = Kohana::$config->load('system.default.dns.host');
 		$routes = trim(Kohana::$config->load('system.default.routes'));
-
 $conf = <<< EOB
 # Comments are preceded with '#' or ';'
 
@@ -289,17 +307,26 @@ EOB;
 			return array();
 		}
 
+		$ep = $node->vpnEndpoint;
+
+                if (!is_object($ep))
+                {
+                        # No endpoint
+                        return array();
+                }
+
 		$confconnect = "#!/bin/bash\n\n";
 		$confdisconnect = "#!/bin/bash\n\n";
 		foreach($node->interfaces as $iface)
 		{
 			if( ! ( (!$iface->offerDhcp) && ($iface->IPv4AddrCidr != 32) )){
-				$confconnect    .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
-				$confdisconnect .= "/usr/bin/sudo /sbin/ip route del ".$iface->IPv4->get_network_identifier()." via ".$node->vpnEndpoint->IPv4->get_address_in_network(2)."\n";
+				$confconnect    .= "/usr/bin/sudo /sbin/ip route add ".$iface->IPv4->get_network_identifier()." via ".$ep->IPv4->get_address_in_network(2)."\n";
+				$confdisconnect .= "/usr/bin/sudo /sbin/ip route del ".$iface->IPv4->get_network_identifier()." via ".$ep->IPv4->get_address_in_network(2)."\n";
 			}
 			if($iface->offerDhcpV6){
-				$confconnect	.= "/usr/bin/sudo /sbin/ip -6 route add ".$iface->IPv6->get_network_identifier()." via ".$node->vpnEndpoint->IPv6->get_address_in_network(2)."\n";
-				$confdisconnect	.= "/usr/bin/sudo /sbin/ip -6 route del ".$iface->IPv6->get_network_identifier()." via ".$node->vpnEndpoint->IPv6->get_address_in_network(2)."\n";
+				$confconnect	.= "/usr/bin/sudo /sbin/ip -6 route add ".$iface->IPv6->get_network_identifier()." via ".$ep->IPv6->get_address_in_network(2)."\n";
+				$confconnect 	.= "echo \"iroute-ipv6 ".$iface->IPv6->get_network_identifier()."\" >> \$1";
+				$confdisconnect	.= "/usr/bin/sudo /sbin/ip -6 route del ".$iface->IPv6->get_network_identifier()." via ".$ep->IPv6->get_address_in_network(2)."\n";
 			}
 		}
 		$confconnect .= "\nexit 0\n";
