@@ -299,7 +299,6 @@ class Controller_Servers extends Controller_AbstractAdmin
                         throw new HTTP_Exception_404();
                 }
 		Doctrine::em()->refresh($server);
-		#\Doctrine\Common\Util\Debug::dump($server);
 		
                 $formValues = array(
                         'id' => $server->id,
@@ -353,6 +352,29 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 $formValues['interfaces']['currentInterfaces'][$i]['vlan'] = $interface->vlan->name;
                         }
                 }
+
+		$ce = 0;
+                $cert_fields = array('id', 'hostname', 'certificate', 'dateRange', 'current');
+                $srv_cert_ids = array();
+                foreach ($server->certificates as $ce => $certificate)
+                {
+                        Doctrine::em()->refresh($certificate);
+                        foreach ($cert_fields as $cf)
+                        {
+				if (in_array($cf, array("current", "dateRange")))
+				{
+					$formValues['certificates']['currentCertificates'][$ce][$cf] = $certificate->certificate->$cf;
+				}
+				else if ($cf == 'certificate')
+				{
+					$formValues['certificates']['currentCertificates'][$ce][$cf] = $certificate->certificate->id;
+				}
+				else
+				{
+                                	$formValues['certificates']['currentCertificates'][$ce][$cf] = $certificate->$cf;
+				}
+                        }
+                }
 	
 		$c = 0;	
 		$contact_fields = array('id', 'name', 'email');
@@ -381,6 +403,10 @@ class Controller_Servers extends Controller_AbstractAdmin
                         {
                                 $formValues['interfaces']['currentInterfaces'][$if]['subordinate'] = ($ifdata['subordinate'] ? 'Yes' : 'No');
                         }
+			foreach ($formValues['certificates']['currentCertificates'] as $cf => $cfdata)
+                        {
+                                $formValues['certificates']['currentCertificates'][$cf]['current'] = ($cfdata['current'] ? 'Yes' : 'No');
+                        }
 			$services = array();
 			foreach ($hostServices as $hostService)
 			{
@@ -393,6 +419,10 @@ class Controller_Servers extends Controller_AbstractAdmin
 			foreach ($intf_fields as $if)
                         {
                                 $formValues['interfaces']['currentInterfaces'][$i+1][$if] = '';
+                        }
+			foreach ($cert_fields as $cf)
+                        {
+                                $formValues['certificates']['currentCertificates'][$ce+1][$cf] = '';
                         }
 			foreach ($contact_fields as $cf)
                         {
@@ -449,6 +479,23 @@ class Controller_Servers extends Controller_AbstractAdmin
                                                         'IPv4Addr' => array('title' => 'IPv4', 'type' => 'input', 'size' => 11),
                                                         'IPv6Addr' => array('title' => 'IPv6', 'type' => 'input', 'size' => 25),
 							'subordinate' => array('title' => 'Sub', 'type' => 'checkbox'),
+                                                ),
+                                        ),
+                                ),
+                        ),
+			'certificates' => array(
+                                'title' => 'Certificates',
+                                'type' => 'fieldset',
+                                'fields' => array(
+                                        'currentCertificates' => array(
+                                                'title' => '',
+                                                'type' => 'table',
+                                                'fields' => array(
+                                                        'id' => array('type' => 'hidden'),
+                                                        'hostname' => array('title' => 'Hostname', 'type' => 'input'),
+                                                        'certificate' => array('title' => 'Certificate ID', 'type' => 'static'),
+							'dateRange' => array('title' => 'Date Range', 'type' => 'static'),
+							'current' => array('title' => 'Current?', 'type' => 'checkbox'),
                                                 ),
                                         ),
                                 ),
@@ -577,6 +624,31 @@ class Controller_Servers extends Controller_AbstractAdmin
                                 }
                         }
                 }
+
+		foreach ($formValues['certificates']['currentCertificates'] as $c => $certificateValues)
+		{
+			if (!isset($certificateValues['current']))
+                       	{
+                        	$certificateValues['current'] = 0;
+                        }
+			if (empty($certificateValues['id']) && !empty($certificateValues['hostname'])) 
+			{
+				$server->certificates->add(Model_HostCertificate::build(
+					$server,
+					null,
+					$certificateValues['hostname']
+				));		
+			}
+			else if (!empty($certificateValues['id']))
+			{
+				$hostCertificate = Doctrine::em()->getRepository('Model_HostCertificate')->find($certificateValues['id']);
+				$certificate = $hostCertificate->certificate;
+				$certificate->current = $certificateValues['current'];
+				$certificate->save();
+				$hostCertificate->save();
+			}
+		}		
+
 		foreach ($formValues['contacts']['currentContacts'] as $c => $contactValues)
                 {
                         if (empty($contactValues['name']) && empty($contactValues['email']))

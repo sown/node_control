@@ -58,6 +58,8 @@ class Model_Certificate extends Model_Entity
 				return $this->getCN();
 			case "ca":
 				return $this->certificateAuthority;
+			case "dateRange": 
+				return $this->getDateRange();
 			default:
 				if (property_exists($this, $name))
 				{
@@ -81,6 +83,7 @@ class Model_Certificate extends Model_Entity
 			case "cn":
 			case "ca":
 			case "certificateAuthority":
+			case "dateRange":
 				parent::__throwReadOnlyException($name);
 			default:
 				if (property_exists($this, $name))
@@ -111,10 +114,22 @@ class Model_Certificate extends Model_Entity
 		return $data['subject']['CN'];
 	}
 
+	public function getDateRange()
+	{
+		$data = openssl_x509_parse($this->publicKey);
+		$validFrom = SOWN::x509toUnixTime($data['validFrom']);
+		if (!empty($validFrom)){
+		
+			$validTo = SOWN::x509toUnixTime($data['validTo']);
+                	return date('r', $validFrom) . " - " . date('r', $validTo);
+		}
+		return "UNDEFINED";
+	}
+
 	public function __toString()
 	{
 		$this->logUse();
-		$str  = "Certificate: {$this->id}, cn={$this->cn}, ca={$this->ca}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
+		$str  = "Certificate: {$this->id}, cn={$this->cn}, dateRange={$this->dateRange}, ca={$this->ca}, publicKeyFingerprint={$this->publicKeyFingerprint}, privateKeyFingerprint={$this->privateKeyFingerprint}";
 		return $str;
 	}
 
@@ -124,7 +139,7 @@ class Model_Certificate extends Model_Entity
 		$str  = "<div class='certificate' id='certificate_{$this->id}'>";
 		$str .= "<table>";
 		$str .= "<tr class='ID'><th>Certificate</th><td>{$this->id}</td></tr>";
-		foreach(array('cn', 'ca', 'publicKeyFingerprint', 'privateKeyFingerprint', 'publicKeyMD5', 'privateKeyMD5') as $field)
+		foreach(array('cn', 'ca', 'dateRange', 'publicKeyFingerprint', 'privateKeyFingerprint', 'publicKeyMD5', 'privateKeyMD5') as $field)
 		{
 			$str .= $this->fieldHTML($field);
 		}

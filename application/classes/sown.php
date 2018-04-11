@@ -721,5 +721,10 @@ class SOWN
                 }
 		return true;
 	}
+
+	public static function x509ToUnixTime($x509time)
+	{
+		return strtotime("20".substr($x509time,0,2)."-".substr($x509time,2,2)."-".substr($x509time,4,2)." ".substr($x509time,6,2).":".substr($x509time,8,2).":".substr($x509time,10,2));
+	}
 }	
 
