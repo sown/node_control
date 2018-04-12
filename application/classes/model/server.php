@@ -150,6 +150,11 @@ class Model_Server extends Model_Entity
          */
         protected $interfaces;
 
+	 /**
+         * @OneToMany(targetEntity="Model_HostCertificate", mappedBy="server", cascade={"persist", "remove"})
+         */
+        protected $certificates;
+
 	/**
          * @OneToMany(targetEntity="Model_Contact", mappedBy="server", cascade={"persist", "remove"})
          */
