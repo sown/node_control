@@ -17,6 +17,7 @@ return array
 		),
 		'admin_system'	=> array
 		(
+			'development' => 0,
 			'site_name' => 'SOWN Admin System',
 			'public_site_name' => 'SOWN Public Node Admin',
                         'url'   => 'https://sown-auth2.ecs.soton.ac.uk',
