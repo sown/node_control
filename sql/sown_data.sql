@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.58, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.60, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.5.58-0ubuntu0.14.04.1-log
+-- Server version	5.5.60-0ubuntu0.14.04.1-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -236,6 +236,30 @@ CREATE TABLE `enquiry_types` (
   `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `host_certificates`
+--
+
+DROP TABLE IF EXISTS `host_certificates`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `host_certificates` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `server_id` int(11) DEFAULT NULL COMMENT 'id of server',
+  `other_host_id` int(11) DEFAULT NULL COMMENT 'id od other_host',
+  `certificate_id` int(11) NOT NULL COMMENT 'id of certificate',
+  `hostname` varchar(255) NOT NULL COMMENT 'hostname to use as certificate_cn',
+  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'time the row was last modified',
+  PRIMARY KEY (`id`),
+  KEY `host_certificate_to_server` (`server_id`),
+  KEY `host_certificate_to_other_host` (`other_host_id`),
+  KEY `host_certificate_to_certificate` (`certificate_id`),
+  CONSTRAINT `host_certificate_to_certificate` FOREIGN KEY (`certificate_id`) REFERENCES `certificates` (`id`),
+  CONSTRAINT `host_certificate_to_other_host` FOREIGN KEY (`other_host_id`) REFERENCES `other_hosts` (`id`),
+  CONSTRAINT `host_certificate_to_server` FOREIGN KEY (`server_id`) REFERENCES `servers` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='certificates assigned to hosts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1077,4 +1101,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-19  4:23:03
+-- Dump completed on 2018-04-25  4:23:03
