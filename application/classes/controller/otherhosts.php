@@ -400,14 +400,17 @@ class Controller_OtherHosts extends Controller_AbstractAdmin
                 foreach ($hostServices as $hostService)
                 {
                         $serviceId = $hostService->service->id;
-                        if (!in_array($serviceId, $formValues['services']))
-                        {
-                                Model_Builder::destroy_simple_object($hostService->id, 'HostService');
-                        }
-                        else
-                        {
-                                $dbServices[] = $serviceId;
-                        }
+			if (isset($formValues['services']) && is_array($formValues['services']))
+			{
+	                        if (!in_array($serviceId, $formValues['services']))
+        	                {
+                	                Model_Builder::destroy_simple_object($hostService->id, 'HostService');
+                        	}
+	                        else
+        	                {
+                	                $dbServices[] = $serviceId;
+                        	}
+			}
                 }
 		if (!empty($formValues['services']))
 		{
