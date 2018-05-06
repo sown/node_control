@@ -11,7 +11,7 @@ return array
 		'irc_server' => 'hash.ecs.soton.ac.uk',
 		'node_config'	=> array
 		(
-                        # We need to use the 10.13 address because of the firewall
+                        # We need to use the 10.5 address because of the firewall
                         # We can't change the route, because the tunnel needs to come up too
 			'url'	=> 'https://auth2.sown.org.uk',
 		),
@@ -27,7 +27,7 @@ return array
 			'email_subject_prefix' => '[sown-accounts]',
                         'latest_end_datetime' => '2037-12-31 23:59:59',
 			'valid_external_domains' => array('ecs.soton.ac.uk', 'soton.ac.uk'),
-			'valid_query_ips' => array('127.0.0.1', '127.0.1.1', '::1', '152.78.189.44', '2001:630:d0:f104::5032:243', '10.13.0.243', '2001:630:d0:f700::243', '152.78.189.160', '152.78.189.39', '2001:630:d0:f104::5032:250'), // localhost, localhost loopback, sown-monitor.ecs.soton.ac.uk, monitor.sown.org.uk, monitor-new, www.sown.org.uk
+			'valid_query_ips' => array('127.0.0.1', '127.0.1.1', '::1', '152.78.189.44', '2001:630:d0:f104::5032:243', '10.5.0.243', '2001:630:d0:f700::243', '152.78.189.160', '152.78.189.39', '2001:630:d0:f104::5032:250'), // localhost, localhost loopback, sown-monitor.ecs.soton.ac.uk, monitor.sown.org.uk, monitor-new, www.sown.org.uk
 			'common_passwords_file' => '/opt/sown/htaccess/common_long_passwords.txt',
 		),
 		'adapter_types' => array_merge($wireless_adapter_types, $wired_adapter_types),
@@ -35,10 +35,10 @@ return array
 		'wireless_adapter_types' => $wireless_adapter_types,
 		'dns'		=> array
 		(
-			'host'	=> '10.13.0.239',
+			'host'	=> '10.5.0.239',
 			'reverse_subnets' => array(
-				'ipv4' => '10.13',
-				'ip4ptr' => '13.10',
+				'ipv4' => '10.5',
+				'ip4ptr' => '5.10',
 				'ipv6' => '2001:630:d0:f700',
 				'ip6ptr' => '7.f.0.d.0.0.0.3.6.0.1.0.0.2',
 			),
@@ -89,19 +89,19 @@ return array
 		),
 		'radius'	=> array
 		(
-			'host'	=> '10.13.0.239',
+			'host'	=> '10.5.0.239',
 			'auth_port'	=> 1812,
 			'acct_port'	=> 1813,
 		),
 		'softflow'	=> array
 		(
-			'host'	=> '10.13.0.239',
+			'host'	=> '10.5.0.239',
 		),
 		'ntp'		=> array
 		(
 			'host'	=> '193.62.22.74',
 		),
-		'gateway'	=> '10.13.0.254',
+		'gateway'	=> '10.5.0.254',
 		'domain'	=> 'sown.org.uk',
 		'oid'		=> '.1.3.6.1.4.1.12275.5032',
 		'packages'	=> array(
