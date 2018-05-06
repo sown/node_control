@@ -83,24 +83,8 @@ else
                                 <dd>&raquo; If you have forgotten your password <a href="forgot_password">click here</a>.</dd>
 			<dt>University of Southampton <span class='no_bold'>(e.g. username@soton.ac.uk)</span></dt>
 				<dd>&raquo; This uses your <strong>iSolutions</strong> username &amp; password.</dd>
-			<dt><abbr title="Electronics and Computer Science">ECS</abbr> <span class='no_bold'>(e.g. username@ecs.soton.ac.uk)</span></dt>
-				<dd>&raquo; This uses your ECS username and password.</dd>
 		</dl>
 	</div>
-        <!--
-	<div id='contact_sown'>
-		<h4>Contact SOWN</h4>
-		<p>Please contact SOWN if you...</p>
-		<dl class="list">
-			<dt><a href="http://www.sown.org.uk/contact/faultreport">are experiencing a problem</a></dt>
-				<dd>&raquo; for problems logging in and accessing websites.</dd>
-			<dt>wish to <a href="http://www.sown.org.uk/contact/accountrequest">request a Community Account</a></dt>
-				<dd>&raquo; for new users.</dd>
-			<dt>have <a href="http://www.sown.org.uk/contact/?no_links">any other enquiries</a></dt>
-				<dd>&raquo; for any questions or proposals.</dd>
-		</dl>
-	</div>
-	-->
       </div>
     </div>
   </div>
