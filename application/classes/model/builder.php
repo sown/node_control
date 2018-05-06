@@ -45,7 +45,7 @@ class Model_Builder
 		$type = 'g';
 		$networkAdapter = Model_NetworkAdapter::build($wirelessMac, $wirelessChannel, $type, $node);
 
-		$ipv4 = IP_Network_Address::factory($vpnServer->getFreeIPv4Addr(24)->get_address_in_network(-1), 24);
+		$ipv4 = IP_Network_Address::factory($vpnServer->getFreeIPv4Addr(30)->get_address_in_network(-1), 30);
 		$ipv4GatewayAddr = null;
 		//$ipv6 = IP_Network_Address::factory($vpnServer->getFreeIPv6Addr(64)->get_address_in_network(-1), 64);
 		$ipv6 = $vpnServer->getFreeIPv6Addr(64);
