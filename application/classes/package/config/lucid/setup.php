@@ -34,7 +34,7 @@ class Package_Config_Lucid_Setup extends Package_Config
 			'hosts'           => array(
 				'content' => "127.0.0.1 localhost
 
-10.13.0.239 auth2.sown.org.uk
+10.5.0.239 auth2.sown.org.uk
 
 ::1     localhost ip6-localhost ip6-loopback
 ff02::1 ip6-allnodes
