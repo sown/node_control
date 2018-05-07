@@ -312,7 +312,7 @@ class Package_Config_Designateddriver_Core extends Package_Config
 			{
 				if($node->currentDeployment->exceedsCap)
 				{
-					$config['wifi-device'][$fake_iface_name]['disabled'] = 1;
+					$config['wifi-iface'][$fake_iface_name]['disabled'] = 1;
 				}
 			}
 
