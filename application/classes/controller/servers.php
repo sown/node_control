@@ -403,10 +403,13 @@ class Controller_Servers extends Controller_AbstractAdmin
                         {
                                 $formValues['interfaces']['currentInterfaces'][$if]['subordinate'] = ($ifdata['subordinate'] ? 'Yes' : 'No');
                         }
-			foreach ($formValues['certificates']['currentCertificates'] as $cf => $cfdata)
-                        {
-                                $formValues['certificates']['currentCertificates'][$cf]['current'] = ($cfdata['current'] ? 'Yes' : 'No');
-                        }
+			if (is_array($formValues['certificates']['currentCertificates']))
+			{
+				foreach ($formValues['certificates']['currentCertificates'] as $cf => $cfdata)
+                	        {
+                        	        $formValues['certificates']['currentCertificates'][$cf]['current'] = ($cfdata['current'] ? 'Yes' : 'No');
+	                        }	
+			}
 			$services = array();
 			foreach ($hostServices as $hostService)
 			{
