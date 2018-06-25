@@ -356,6 +356,7 @@ class Controller_Servers extends Controller_AbstractAdmin
 		$ce = 0;
                 $cert_fields = array('id', 'hostname', 'certificate', 'dateRange', 'current');
                 $srv_cert_ids = array();
+		$formValues['certificates']['currentCertificates'] = array();
                 foreach ($server->certificates as $ce => $certificate)
                 {
                         Doctrine::em()->refresh($certificate);
@@ -403,13 +404,10 @@ class Controller_Servers extends Controller_AbstractAdmin
                         {
                                 $formValues['interfaces']['currentInterfaces'][$if]['subordinate'] = ($ifdata['subordinate'] ? 'Yes' : 'No');
                         }
-			if (is_array($formValues['certificates']['currentCertificates']))
-			{
-				foreach ($formValues['certificates']['currentCertificates'] as $cf => $cfdata)
-                	        {
-                        	        $formValues['certificates']['currentCertificates'][$cf]['current'] = ($cfdata['current'] ? 'Yes' : 'No');
-	                        }	
-			}
+			foreach ($formValues['certificates']['currentCertificates'] as $cf => $cfdata)
+                	{
+                                $formValues['certificates']['currentCertificates'][$cf]['current'] = ($cfdata['current'] ? 'Yes' : 'No');
+	                }	
 			$services = array();
 			foreach ($hostServices as $hostService)
 			{
