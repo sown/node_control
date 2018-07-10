@@ -9,18 +9,10 @@ return array
 		'name' => 'SOWN',
 		'long_name' => 'Southampton Open Wireless Network',
 		'irc_server' => 'hash.ecs.soton.ac.uk',
-		'node_config'	=> array
-		(
-                        # We need to use the 10.5 address because of the firewall
-                        # We can't change the route, because the tunnel needs to come up too
-			'url'	=> 'https://auth2.sown.org.uk',
-		),
 		'admin_system'	=> array
 		(
-			'development' => 0,
 			'site_name' => 'SOWN Admin System',
 			'public_site_name' => 'SOWN Public Node Admin',
-                        'url'   => 'https://sown-auth2.ecs.soton.ac.uk',
 			'contact_email' => 'support@sown.org.uk',
 			'sender_email' => 'NO-REPLY@sown.org.uk',
 			'sender_name' => 'Southampton Open Wireless Network team',
