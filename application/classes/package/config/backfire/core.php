@@ -130,7 +130,7 @@ class Package_Config_Backfire_Core extends Package_Config
 		$config = array(
 			'node' => array(
 				array(
-					'config_URL' => Kohana::$config->load('system.default.node_config.url').'/package/config/backfire/',
+					'config_URL' => Kohana::$config->load('systemvar.default.node_config.url').'/package/config/backfire/',
 					'config_ca'  => '/etc/sown/'.$node->certificate->ca,
 					'package_ca' => '/etc/sown/www.sown.org.uk.ca.crt',
 					'hostname'   => $node->hostname,

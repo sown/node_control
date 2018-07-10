@@ -24,7 +24,7 @@ if (isset($jsFiles))
                 echo "  " . HTML::script('media/js/' . $jsFile) . "\n";
         }       
 }
-$isDevSite = Kohana::$config->load('system.default.admin_system.development');
+$isDevSite = Kohana::$config->load('systemvar.default.admin_system.development');
 if (!empty($isDevSite))
 {
 	$favicon = "/media/images/favicon-development.ico";

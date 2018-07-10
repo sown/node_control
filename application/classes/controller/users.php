@@ -345,7 +345,7 @@ class Controller_Users extends Controller_AbstractAdmin
                         }
 			if (!empty($user))
                         {
-                                $admin_system_url = Kohana::$config->load('system.default.admin_system.url');
+                                $admin_system_url = Kohana::$config->load('systemvar.default.admin_system.url');
                                 $sender_name = Kohana::$config->load('system.default.admin_system.sender_name');
                                 $user->resetPasswordHash = md5($user->username . date('U') . rand());
                                 $user->resetPasswordTime = new \DateTime();

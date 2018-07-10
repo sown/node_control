@@ -138,7 +138,7 @@ class Package_Config_Designateddriver_Core extends Package_Config
 		$config = array(
 			'node' => array(
 				array(
-					'config_URL'         => Kohana::$config->load('system.default.node_config.url').'/package/config/designateddriver/',
+					'config_URL'         => Kohana::$config->load('systemvar.default.node_config.url').'/package/config/designateddriver/',
 					'config_ca'          => '/etc/sown/'.$node->certificate->ca,
 					'package_ca'         => Kohana::$config->load('system.default.packages.ca'),
 					'hostname'           => $node->hostname,
