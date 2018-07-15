@@ -19,7 +19,7 @@ return array
 			'email_subject_prefix' => '[sown-accounts]',
                         'latest_end_datetime' => '2037-12-31 23:59:59',
 			'valid_external_domains' => array('ecs.soton.ac.uk', 'soton.ac.uk'),
-			'valid_query_ips' => array('127.0.0.1', '127.0.1.1', '::1', '10.5.0.243', '152.78.103.164', '2001:630:d0:f104::5032:243', '152.78.189.160', '152.78.189.39', '2001:630:d0:f104::5032:250'), // localhost, localhost loopback, sown-monitor.ecs.soton.ac.uk, monitor.sown.org.uk, monitor-new.sown.org.uk, www.sown.org.uk
+			'valid_query_ips' => array('127.0.0.1', '127.0.1.1', '::1', '10.5.0.243', '152.78.103.164', '2001:630:d0:f700::243', '152.78.189.160', '152.78.189.39', '2001:630:d0:f104::5032:250'), // localhost, localhost loopback, sown-monitor.ecs.soton.ac.uk, monitor.sown.org.uk, monitor-new.sown.org.uk, www.sown.org.uk
 			'common_passwords_file' => '/opt/sown/htaccess/common_long_passwords.txt',
 		),
 		'adapter_types' => array_merge($wireless_adapter_types, $wired_adapter_types),
