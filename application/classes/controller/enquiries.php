@@ -379,9 +379,9 @@ class Controller_Enquiries extends Controller_AbstractAdmin
                         'id' => $enquiry->id,
 			'type' => $enquiry->type->title,
                         'dateSent' => $enquiry->dateSent->format('Y-m-d H:i:s'),
-                        'from' => $enquiry->fromName . " &lt;" . $enquiry->fromEmail . "&gt; (IP: " . $enquiry->ipAddress .")",
-			'subject' => $enquiry->subject,
-			'message' => str_replace("\n", "<br/>", $enquiry->message),
+                        'from' => htmlentities($enquiry->fromName) . " &lt;" . $enquiry->fromEmail . "&gt; (IP: " . $enquiry->ipAddress .")",
+			'subject' => htmlentities($enquiry->subject),
+			'message' => str_replace("\n", "<br/>", htmlentities($enquiry->message)),
 			'response' => $enquiry->response,
 			'responseSummary' => $enquiry->responseSummary,
 			'acknowledgedUntil' => '', 
@@ -400,7 +400,7 @@ class Controller_Enquiries extends Controller_AbstractAdmin
 			$response_summary = $enquiry->responseSummary;
 			if (empty($response_summary)) 
 			{
-				$formValues['responsefieldset']['response'] = "=== Original Message ===\n> " . str_replace("\n", "\n> ", $enquiry->message);
+				$formValues['responsefieldset']['response'] = "=== Original Message ===\n> " . str_replace("\n", "\n> ", htmlentities($enquiry->message));
                                 $formValues['responsefieldset']['responseSummary'] = '';
                         }
 			else
