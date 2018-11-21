@@ -34,6 +34,9 @@ return array
 				'ipv6' => '2001:630:d0:f700',
 				'ip6ptr' => '7.f.0.d.0.0.0.3.6.0.1.0.0.2',
 			),
+			'external_v6_servers' => array(
+				'external-monitor,2001:470:1f08:391::2',
+			),
 		),
 		'firmware_image_default' => 'Designated Driver (Git commit f4eb2f3285b129fdbf5c411468973b8a1f9a820a)',
 		'firmware_versions'	=> array

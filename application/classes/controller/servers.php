@@ -260,7 +260,29 @@ class Controller_Servers extends Controller_AbstractAdmin
 	public function action_incoming()
         {
                 Sown::process_server_attributes($this->request);
-        }	
+        }
+
+	public function action_internal_ipv6_addresses()
+	{
+		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
+		$serverlines = Kohana::$config->load('system.default.dns.external_v6_servers');
+		$ipv6_subnet = Kohana::$config->load('system.default.dns.reverse_subnets.ipv6');
+		foreach ($servers as $server)
+		{
+			foreach ($server->interfaces as $interface) 
+			{
+				if ($interface->subordinate != 1) {
+					$ipv6  = $interface->IPv6Addr;
+					if (preg_match("/^$ipv6_subnet/", $ipv6))
+					{
+						$serverlines[] = strtolower($server->name) . ",$ipv6";
+					}
+				}
+			}
+		}
+		echo implode("\n", $serverlines);
+		exit();
+	}	
 
 	private function _validate($formValues) 
 	{

@@ -421,6 +421,12 @@ Route::set('servers_incoming', 'admin/servers/incoming')
                 'action'     => 'incoming',
         ));
 
+Route::set('servers_internal_ipv6_addresses', 'admin/servers/internal_ipv6_addresses')
+        ->defaults(array(
+                'controller' => 'servers',
+                'action'     => 'internal_ipv6_addresses',
+        ));
+
 Route::set('view_server', 'admin/servers/<id>')
         ->defaults(array(
                 'controller' => 'servers',
