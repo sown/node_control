@@ -155,8 +155,8 @@ push "route 10.5.0.0 255.255.0.0"
 					),
 					'radpostauth'	=> array
 					(
-						'warning'	=> 8000000,
-						'critical'	=> 16000000,
+						'warning'	=> 10000000,
+						'critical'	=> 20000000,
 					),
 				),
 			),
