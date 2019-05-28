@@ -39,10 +39,14 @@ class Check_OpenwrtVersion extends Check
 		}
 		$this->code = Check::OK;
                 $this->message = "The node is running $response.";
-		$host->firmwareImage = $response;
+		$firmware_image = $response;
 		$response_bits =  explode(" ", $response);
-		$host->firmwareVersion = strtolower(implode("", array_slice($response_bits, 1, sizeof($response_bits)-2)));
-		error_log("|".$host->firmwareImage."|".$host->firmwareVersion."|");
-		$host->save();
+		$firmware_version = strtolower(implode("", array_slice($response_bits, 1, sizeof($response_bits)-2)));
+		if ($firmware_image != $host->firmwareImage || $firmware_version != $host->firmwareVersion)
+		{
+			$host->firmwareImage = $response;
+			$host->firmwareVersion = $firmware_version;
+			$host->save();
+		}
 	}
 }
