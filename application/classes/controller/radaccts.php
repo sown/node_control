@@ -138,7 +138,7 @@ class Controller_Radaccts extends Controller_AbstractAdmin
                         'nasportid' => $radacct->nasportid,
                         'nasporttype' => $radacct->nasporttype, 
                         'acctstarttime' => $radacct->acctstarttime->format('Y-m-d H:i:s'),
-                        'acctstoptime' => $radacct->acctstoptime->format('Y-m-d H:i:s'),
+                        'acctstoptime' => ( empty($radacct->acctstoptime ) ? "" : $radacct->acctstoptime->format('Y-m-d H:i:s') ),
                         'acctsessiontime' => $radacct->acctsessiontime,
                         'connectinfo_start' => $radacct->connectinfo_start,
                         'connectinfo_stop' => $radacct->connectinfo_stop,
