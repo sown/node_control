@@ -44,6 +44,7 @@ return array
 			'0' => 'NOT APPLICABLE',
 			'backfire' => 'Attitude Adjustment',
 			'designateddriver' => 'Designated Driver',
+			'snapshot' => 'SNAPSHOT',
 		),
 		'hardwares' => array
 		(

@@ -25,6 +25,7 @@ class Check_OpenwrtVersion extends Check
 		}
 		try {
       			$response = $session->execute('/bin/cat /etc/openwrt_release | /bin/grep DISTRIB_DESCRIPTION | /usr/bin/awk \'BEGIN{FS="="}{print $2}\' | tr -d "\'"');
+			$response = trim($response, "\n\r\t "); 
 		}
 		catch(Exception $e) {
       			$this->code = Check::CRITICAL;
@@ -38,5 +39,10 @@ class Check_OpenwrtVersion extends Check
 		}
 		$this->code = Check::OK;
                 $this->message = "The node is running $response.";
+		$host->firmwareImage = $response;
+		$response_bits =  explode(" ", $response);
+		$host->firmwareVersion = strtolower(implode("", array_slice($response_bits, 1, sizeof($response_bits)-2)));
+		error_log("|".$host->firmwareImage."|".$host->firmwareVersion."|");
+		$host->save();
 	}
 }
