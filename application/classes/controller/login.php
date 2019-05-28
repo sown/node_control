@@ -15,6 +15,7 @@ class Controller_Login extends Controller_AbstractAdmin
 		{
 			$post = $this->request->post();
 			$post['username'] .= (strpos($post['username'], '@') ? "" : "@" . Kohana::$config->load('system.default.domain'));
+			$post['username'] = str_replace(' ', '', $post['username']);
 			$success = Auth::instance()->login($post['username'], $post['password']);
 			if (!empty($_SERVER['HTTPS'])) $uri = "https";
 			else $uri =  "http";
