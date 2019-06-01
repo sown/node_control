@@ -31,35 +31,18 @@ class Auth_Radius extends Auth {
 	 */
 	private function check_credentials($username, $password)
 	{
-		$ssid = 'web-login';
-		$anon_username = $this->create_anonymous_username($username);
-		$phase2 = 'auth=MSCHAPV2';
-		$phase1 = 'PEAP';
-
-		if (eapol_test($ssid, $username, $anon_username, $password, $phase2, $phase1) === TRUE)
-		{
+		$radius = radius_auth_open();
+		$radconf = Kohana::$config->load('systemvar.default.radius');
+		radius_add_server($radius, $radconf['host'], $radconf['port'], $radconf['password'], 5, 3);
+		radius_create_request($radius, RADIUS_ACCESS_REQUEST);
+		radius_put_attr($radius, RADIUS_USER_NAME, $username);
+		radius_put_attr($radius, RADIUS_USER_PASSWORD, $password);
+		$result = radius_send_request($radius);
+		if($result == RADIUS_ACCESS_ACCEPT){
 			return TRUE;
 		}
-
-		return FALSE;
-	}
-
-	/**
- 	 * Creates an anonymous username for the domain to be used in the outer request.
-	 *
-	 * @param   string   username
-         * @return  string
-         */
-	private function create_anonymous_username($username)
-	{
-		$usernameparts = explode('@', $username, 2);
-		if(count($usernameparts) > 1)
-		{
-			return 'anonymous@'.$usernameparts[1];
-		}
-		else
-		{
-			return 'anonymous';
+		else{
+			return FALSE;
 		}
 	}
 

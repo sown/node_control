@@ -81,8 +81,6 @@ else
 		<dl class="list">
                         <dt><abbr title="Southampton Open Wireless Network">SOWN</abbr> <span class='no_bold'>(e.g. username@sown.org.uk)</span></dt>
                                 <dd>&raquo; If you have forgotten your password <a href="forgot_password">click here</a>.</dd>
-			<dt>University of Southampton <span class='no_bold'>(e.g. username@soton.ac.uk)</span></dt>
-				<dd>&raquo; This uses your <strong>iSolutions</strong> username &amp; password.</dd>
 		</dl>
 	</div>
       </div>
