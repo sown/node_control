@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.5.60, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.26, for Linux (x86_64)
 --
 -- Host: localhost    Database: sown_data
 -- ------------------------------------------------------
--- Server version	5.5.60-0ubuntu0.14.04.1-log
+-- Server version	5.7.26-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -180,16 +180,15 @@ DROP TABLE IF EXISTS `enabled_enquiry_types`;
 /*!50001 DROP VIEW IF EXISTS `enabled_enquiry_types`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE TABLE `enabled_enquiry_types` (
-  `id` tinyint NOT NULL,
-  `title` tinyint NOT NULL,
-  `description` tinyint NOT NULL,
-  `email` tinyint NOT NULL,
-  `enabled_message` tinyint NOT NULL,
-  `disabled` tinyint NOT NULL,
-  `disabled_message` tinyint NOT NULL,
-  `last_modified` tinyint NOT NULL
-) ENGINE=MyISAM */;
+/*!50001 CREATE VIEW `enabled_enquiry_types` AS SELECT 
+ 1 AS `id`,
+ 1 AS `title`,
+ 1 AS `description`,
+ 1 AS `email`,
+ 1 AS `enabled_message`,
+ 1 AS `disabled`,
+ 1 AS `disabled_message`,
+ 1 AS `last_modified`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -1077,7 +1076,6 @@ CREATE TABLE `vpn_servers` (
 -- Final view structure for view `enabled_enquiry_types`
 --
 
-/*!50001 DROP TABLE IF EXISTS `enabled_enquiry_types`*/;
 /*!50001 DROP VIEW IF EXISTS `enabled_enquiry_types`*/;
 /*!50001 SET @saved_cs_client          = @@character_set_client */;
 /*!50001 SET @saved_cs_results         = @@character_set_results */;
@@ -1101,4 +1099,4 @@ CREATE TABLE `vpn_servers` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-25  4:23:03
+-- Dump completed on 2019-06-08  4:23:02
