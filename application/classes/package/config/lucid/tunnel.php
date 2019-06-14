@@ -29,17 +29,55 @@ class Package_Config_Lucid_Tunnel extends Package_Config
 
 	# If called with no node, this function will call itself
 	# to generate a tar file of config files
-	public static function config_openvpn_v0_1_78(Model_Node $node = null)
+	public static function config_openvpn_v0_1_78(Model_Node $node = null, $ip = null)
 	{
 		if($node === null)
 		{
 			$files = array();
 			$repository = Doctrine::em()->getRepository('Model_Node');
-			foreach($repository->findByUndeployable(0) as $node)
-			{
-				$fn =  __function__;
-				$files = array_merge($files, static::$fn($node));
-			}
+
+			if (!empty($ip))
+                        {
+                                $interface = Doctrine::em()->getRepository('Model_ServerInterface')->findOneBy(array("IPv4Addr" => $ip));
+                                if (!empty($interface))
+                                {
+					$vpnServerIds = array();
+                                        $vpnServers = $interface->server->vpnServers;
+					foreach ($vpnServers as $vpnServer)
+					{
+						if ($vpnServer->id)
+						{
+							$vpnServerIds[] = $vpnServer->id;
+						}
+					}					
+                                        if (!empty($vpnServerIds))
+                                        {
+						$nodes = Doctrine::em()->getRepository('Model_Node')->findBy(array("undeployable" => 0), array('boxNumber' => 'ASC'));
+                                                foreach($nodes as $node)
+                                                {
+                                                        if ($node->vpnEndpoint && in_array($node->vpnEndpoint->vpnServer->id, $vpnServerIds))
+                                                        {
+								
+                                                                $fn =  __function__;
+                                                                $files = array_merge($files, static::$fn($node, $ip));
+                                                        }
+                                                }
+                                        }
+                                        else
+                                        {
+                                                throw new HTTP_Exception_404("Server with IPv4 interface address has no VPN servers.");
+                                        }
+                                }
+                                else
+                                {
+                                        throw new HTTP_Exception_404("IPv4 address does not correspond to a server interface.");
+                                }
+                        }
+                        else
+                        {
+                                throw new HTTP_Exception_404("No IPv4 address provided.");
+                        }
+
 			static::send_tgz($files, array());
 
 			# morse: Can this fall-through?
@@ -87,7 +125,7 @@ port {$ep->port}
 proto {$ep->protocol}
 
 # sown-vpn uses tap tunnels
-dev tap{$ep->id}
+dev tap{$node->boxNumber}
 
 # Locations of SSL files
 ca /etc/openvpn/package_managment/{$node->certificate->ca}
@@ -137,8 +175,8 @@ persist-key
 persist-tun
 
 # Keep per-server log files
-log /var/log/openvpn/server{$ep->id}.log
-status /var/log/openvpn/server{$ep->id}-status.log
+log /var/log/openvpn/server{$node->boxNumber}.log
+status /var/log/openvpn/server{$node->boxNumber}-status.log
 
 # Set logging verbosity to 3
 verb 3
@@ -149,7 +187,7 @@ client-disconnect "/etc/openvpn/client-routes/disconnect-{$node->certificate->cn
 
 EOB;
 
-		return array('server'.$ep->id.'.conf' => array(
+		return array('server'.$node->boxNumber.'.conf' => array(
 			'content' => $conf,
 			'mtime'   => $ep->lastModified->getTimestamp(),
 		));
@@ -167,10 +205,19 @@ EOB;
 				$interface = Doctrine::em()->getRepository('Model_ServerInterface')->findOneBy(array("IPv4Addr" => $ip));
 				if (!empty($interface))
 				{
-					$vpnServers = $interface->server->vpnServers;
-					if (!empty($vpnServers[0]))
-					{
-			                        foreach(Doctrine::em()->getRepository('Model_Node')->findByUndeployable(0) as $node)
+					$vpnServerIds = array();
+                                        $vpnServers = $interface->server->vpnServers;
+                                        foreach ($vpnServers as $vpnServer)
+                                        {
+                                                if ($vpnServer->id)
+                                                {
+                                                        $vpnServerIds[] = $vpnServer->id;
+                                                }
+                                        }
+                                        if (!empty($vpnServerIds))
+                                        {
+						$nodes = Doctrine::em()->getRepository('Model_Node')->findBy(array("undeployable" => 0), array('boxNumber' => 'ASC'));
+			                        foreach($nodes as $node)
         			                {	
 							if ($node->vpnEndpoint && $node->vpnEndpoint->vpnServer->id == $vpnServers[0]->id)
 							{
@@ -222,7 +269,7 @@ port {$ep->port}
 proto {$ep->protocol}
 
 # sown-vpn uses tap tunnels
-dev tap{$ep->id}
+dev tap{$node->boxNumber}
 
 # Locations of SSL files
 ca /etc/openvpn/package_managment/{$node->certificate->ca}
@@ -265,8 +312,8 @@ persist-key
 persist-tun
 
 # Keep per-server log files
-log /var/log/openvpn/server{$ep->id}.log
-status /var/log/openvpn/server{$ep->id}-status.log
+log /var/log/openvpn/server{$node->boxNumber}.log
+status /var/log/openvpn/server{$node->boxNumber}-status.log
 
 # Set logging verbosity to 3
 verb 3
@@ -277,7 +324,7 @@ client-disconnect "/etc/openvpn/client-routes/disconnect-{$node->certificate->cn
 
 EOB;
 
-                return array('server'.$ep->id.'.conf' => array(
+                return array('server'.$node->boxNumber.'.conf' => array(
                         'content' => $conf,
                         'mtime'   => $ep->lastModified->getTimestamp(),
                 ));
