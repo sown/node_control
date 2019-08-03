@@ -16,7 +16,7 @@ class Package_Config_Lucid_Setup extends Package_Config
 	public static function config_setup_v0_1_78(Model_Node $node = null, $nonce = null)
 	{
 		$nodeSetupRequest = Doctrine::em()->getRepository('Model_NodeSetupRequest')->findOneByNonce($nonce); 
-		$crypted_password = crypt($nodeSetupRequest->password);
+		$crypted_password = password_hash($nodeSetupRequest->password, PASSWORD_BCRYPT);
 		$openvpn = call_user_func("Package_Config_".ucfirst($node->firmwareVersion)."_Tunnel::config_openvpn_v0_1_78_raw", $node);
                 static::send_tgz(array(
                         'client.crt'      => array(
