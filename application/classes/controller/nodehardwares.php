@@ -349,8 +349,7 @@ class Controller_NodeHardwares extends Controller_AbstractAdmin
 		$nodeHardware->developmentStatus = $formValues['developmentStatus'];
 		if (isset($formValues['switch']))
 		{
-			$switch = $nodeHardware->switch;
-			Model_Switch::update($switch, $formValues['switch']);
+			Model_Switch::update($nodeHardware->switch->id, $formValues['switch']);
                 }
 		$nodeHardware->save();
 	}

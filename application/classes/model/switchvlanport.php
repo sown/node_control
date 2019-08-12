@@ -91,14 +91,17 @@ class Model_SwitchVlanPort extends Model_Entity
 		$formValues = array();
 		$vp = 0;
                 // Fixes bug where duplicate ports appear when a new port is added.
-                foreach($switchVlanPorts as $svp => $switchVlanPort)
-                {
-                        if (!in_array($switchVlanPort->id, $switch_vlan_port_ids))
-                        {
-                                $switch_vlan_ports[] = $switchVlanPort;
-                                $switch_vlan_port_ids[] = $switchVlanPort->id;
-                        }
-                }
+		if (is_object($switchVlanPorts))
+		{
+	                foreach($switchVlanPorts as $svp => $switchVlanPort)
+        	        {
+                	        if (!in_array($switchVlanPort->id, $switch_vlan_port_ids))
+                        	{
+                                	$switch_vlan_ports[] = $switchVlanPort;
+	                                $switch_vlan_port_ids[] = $switchVlanPort->id;
+        	                }
+                	}
+		}
                 foreach ($switch_vlan_ports as $vp => $switchVlanPort)
                 {
                 	$formValues[$vp]['id'] = $switchVlanPort->id;

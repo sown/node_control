@@ -85,14 +85,17 @@ class Model_SwitchPort extends Model_Entity
                 $formValues = array();
 		$p = 0;
                 // Fixes bug where duplicate ports appear when a new port is added.
-                foreach($switchPorts as $sp => $switchPort)
-                {
-                        if (!in_array($switchPort->id, $switch_port_ids))
-                        {
-                                $switch_ports[] = $switchPort;
-                                $switch_port_ids[] = $switchPort->id;
-                        }
-                }
+		if (is_object($switchPorts))
+		{
+	                foreach($switchPorts as $sp => $switchPort)
+        	        {
+                	        if (!in_array($switchPort->id, $switch_port_ids))
+                        	{
+                                	$switch_ports[] = $switchPort;
+	                                $switch_port_ids[] = $switchPort->id;
+        	                }
+               		}
+		}
                 foreach ($switch_ports as $p => $switchPort)
                 {
                         foreach ($port_fields as $pf)

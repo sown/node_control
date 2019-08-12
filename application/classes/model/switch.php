@@ -102,10 +102,13 @@ class Model_Switch extends Model_Entity
 	public function getSwitchPortOptions()
         {
                 $switchPort_options = array('0' => '');
-		$switchPorts = $this->switchPorts;
-	        foreach ($switchPorts as $sp => $switchPort)
-        	{
-                	$switchPort_options[$switchPort->id] = $switchPort->portNumber;
+		$switchPorts = $this->switchPorts;	
+		if (is_object($switchPorts))
+		{
+		        foreach ($switchPorts as $sp => $switchPort)
+        		{
+                		$switchPort_options[$switchPort->id] = $switchPort->portNumber;
+			}
 		}
                 return $switchPort_options;
         }
@@ -207,8 +210,9 @@ class Model_Switch extends Model_Entity
 		);
 	}
 
-	public static function update($switch, $formValues)
+	public static function update($switchId, $formValues)
 	{
+		$switch = Doctrine::em()->getRepository('Model_Switch')->find($switchId);
 		$switch->name = $formValues['name'];
                 $switch->enable = $formValues['enable'];
                 $switch->enableVlan = $formValues['enableVlan'];
@@ -216,6 +220,6 @@ class Model_Switch extends Model_Entity
 		$switch->save();
 		Model_SwitchPort::updateAll($formValues['switchPorts'], $switch);
 		Model_SwitchVlan::updateAll($formValues['switchVlans'], $switch);
-		Model_SwitchVlanPort::updateAll($formValues['switchVlanPorts'], $switch);
+		Model_SwitchVlanPort::updateAll($formValues['switchVlanPorts'], $switch);	
 	}
 }
