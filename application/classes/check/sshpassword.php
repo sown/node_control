@@ -25,6 +25,21 @@ class Check_SshPassword extends Check
 		}
 		SOWN::notify_icinga($host->hostname, "SSH", 0, "SSH OK: Node can be logged into");
 		try {
+			$response = $session->execute('/bin/ps | /bin/grep vpn | /bin/grep -v grep | /usr/bin/wc -l | tr -d "\n"');
+			if ( $response != 1 )
+			{
+				SOWN::notify_icinga($host->hostname, "VPN-PROCS", 1, "VPN-PROCS WARNING: There should be only 1 VPN process running, (currently $response).");
+			}
+			else 
+			{
+				SOWN::notify_icinga($host->hostname, "VPN-PROCS", 0, "VPN-PROCS OK: There is only 1 VPN process running.");
+			}
+		}
+		catch(Exception $e) {
+			error_log("Reporting VPN-PROCS critical for ".$host->hostname);
+			SOWN::notify_icinga($host->hostname, "VPN-PROCS", 2, "VPN-PROCS: Could not run command to count number of VPN processes.");
+		}
+		try {
       			$response = $session->execute('/bin/cat /etc/shadow | /bin/grep root');
 		}
 		catch(Exception $e) {
