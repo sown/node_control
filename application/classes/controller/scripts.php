@@ -192,11 +192,12 @@ class Controller_Scripts extends Controller_Template
 
                 $nameservers = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname, sic.cname FROM Model_ServerInterface si JOIN si.cnames sic WHERE si.hostname LIKE 'ns%' OR sic.cname LIKE 'ns%' ORDER BY sic.cname")->getResult();
 		$wwwserver = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname, sic.cname FROM Model_ServerInterface si JOIN si.cnames sic WHERE si.hostname LIKE 'www' OR sic.cname LIKE 'www'")->setMaxResults(1)->getResult();
+		$rootserver = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr FROM Model_Server s JOIN s.interfaces si WHERE s.name LIKE 'ROOT'")->setMaxResults(1)->getResult();
 		$server_interfaces = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname FROM Model_ServerInterface si JOIN si.vlan v JOIN si.server s WHERE v.name = '".Kohana::$config->load('system.default.vlan.local')."' AND s.retired != 1 AND (si.IPv4Addr != '' OR si.IPv6Addr != '') ORDER BY si.IPv4Addr ASC")->getResult(); 
 		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
 		$other_hosts = Doctrine::em()->getRepository('Model_OtherHost')->findByRetired(0);
 		DNSUtils::generateHostsReverseFragment($tmpdir, $nameservers, $server_interfaces, $other_hosts);
-                DNSUtils::generateHostsForwardFragment($tmpdir, $nameservers, $servers, $other_hosts, $wwwserver[0]);
+                DNSUtils::generateHostsForwardFragment($tmpdir, $nameservers, $servers, $other_hosts, $wwwserver[0], $rootserver[0]);
 
 		$latest_end_datetime = Kohana::$config->load('system.default.admin_system.latest_end_datetime');
 		$nodes_query = Doctrine::em()->createQuery("SELECT n.id, n.boxNumber, i2.IPv4Addr AS DNSIPv4Addr, ve.IPv4Addr AS VPNIPv4Addr, ve.IPv6Addr, d.latitude, d.longitude, na.mac, d.type, n.firmwareImage FROM Model_Node n LEFT JOIN n.vpnEndpoint ve JOIN n.interfaces i JOIN i.networkAdapter na LEFT JOIN n.nodeDeployments nd WITH nd.endDate = '$latest_end_datetime' LEFT JOIN nd.deployment d LEFT JOIN n.dnsInterface i2 WHERE (nd.endDate > CURRENT_TIMESTAMP() OR nd.endDate IS NULL) AND i.name = 'eth0' AND n.undeployable != 1 ORDER BY n.boxNumber ASC");

@@ -2,15 +2,16 @@
 
 class DNSUtils {
 
- 	public static function generateHostsForwardFragment($dir, $nameservers, $servers, $other_hosts, $wwwserver)
+ 	public static function generateHostsForwardFragment($dir, $nameservers, $servers, $other_hosts, $wwwserver, $rootserver)
         {
 		$domain = Kohana::$config->load('system.default.domain');
 
                 $dns = "; Primary Services\n";
                 list($dns2, $nss, $domain_server_interface) = DNSUtils::generateNameserverEntries($nameservers, false);
                 $dns .= $dns2;
-                $dns .= (is_array($wwwserver) ? "@\t\t\t\tIN\tA\t{$wwwserver['IPv4Addr']}\n" : "");
-                foreach ($nss as $ns => $ns_addrs)
+                $dns .= (is_array($wwwserver) ? "@\t\t\t\tIN\tA\t{$rootserver['IPv4Addr']}\n" : "");
+                $dns .= (is_array($wwwserver) ? "@\t\t\t\tIN\tAAAA\t{$rootserver['IPv6Addr']}\n" : "");
+		foreach ($nss as $ns => $ns_addrs)
                 {
                         $dns .= "\n";
                         $dns .= $ns . SOWN::tabs($ns, 5) . "IN\tA\t{$ns_addrs[0]}\n";
