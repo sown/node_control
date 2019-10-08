@@ -435,7 +435,7 @@ zone "'.$ipv6_rev_ptr.'.ip6.arpa" {
                 $ipv6 = $interface->IPv6Addr;
                 if (is_object($interface->vlan) && strlen($interface->hostname) && (!empty($ipv4) || !empty($ipv6)))
                 {
-                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.local'))
+                        if ($interface->vlan->name == Kohana::$config->load('system.default.vlan.local') || in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.ipmi')))
                         {
                                 $tabs = SOWN::tabs($interface->hostname, 4);
                                 $dns .= $interface->hostname . $tabs . "IN\tA\t" . $ipv4 . "\n";

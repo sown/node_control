@@ -140,6 +140,7 @@ push "route 10.5.0.0 255.255.0.0"
 			'internal' => array('SOWN'),
 			'external' => array('ECS DMZ', 'ISOLUTIONS', 'JANET'),
 			'uplink' => array('SOWN UPLINK'),
+			'ipmi' => array('IPMI'),
 		),
 		'vpn_server' => 'AUTH2',
 		'filename'	=> __FILE__,

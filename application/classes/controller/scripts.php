@@ -193,7 +193,7 @@ class Controller_Scripts extends Controller_Template
                 $nameservers = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname, sic.cname FROM Model_ServerInterface si JOIN si.cnames sic WHERE si.hostname LIKE 'ns%' OR sic.cname LIKE 'ns%' ORDER BY sic.cname")->getResult();
 		$wwwserver = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname, sic.cname FROM Model_ServerInterface si JOIN si.cnames sic WHERE si.hostname LIKE 'www' OR sic.cname LIKE 'www'")->setMaxResults(1)->getResult();
 		$rootserver = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr FROM Model_Server s JOIN s.interfaces si WHERE s.name LIKE 'ROOT'")->setMaxResults(1)->getResult();
-		$server_interfaces = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname FROM Model_ServerInterface si JOIN si.vlan v JOIN si.server s WHERE v.name = '".Kohana::$config->load('system.default.vlan.local')."' AND s.retired != 1 AND (si.IPv4Addr != '' OR si.IPv6Addr != '') ORDER BY si.IPv4Addr ASC")->getResult(); 
+		$server_interfaces = Doctrine::em()->createQuery("SELECT si.IPv4Addr, si.IPv6Addr, si.hostname FROM Model_ServerInterface si JOIN si.vlan v JOIN si.server s WHERE (v.name = '".Kohana::$config->load('system.default.vlan.local')."' OR v.name IN ('" . implode("', '", Kohana::$config->load('system.default.vlan.ipmi')) . "')) AND s.retired != 1 AND (si.IPv4Addr != '' OR si.IPv6Addr != '') ORDER BY si.IPv4Addr ASC")->getResult();
 		$servers = Doctrine::em()->getRepository('Model_Server')->findByRetired(0);
 		$other_hosts = Doctrine::em()->getRepository('Model_OtherHost')->findByRetired(0);
 		DNSUtils::generateHostsReverseFragment($tmpdir, $nameservers, $server_interfaces, $other_hosts);

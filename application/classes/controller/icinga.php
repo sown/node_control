@@ -33,6 +33,7 @@ class Controller_Icinga extends Controller_AbstractAdmin
                                 'external_ipv6' => null,
 				'uplink_ipv4' => null,
                                 'uplink_ipv6' => null,
+                                'ipmi_ipv4' => null,
 				'services' => $services,
 				'contacts' => null,
                         );
@@ -53,6 +54,10 @@ class Controller_Icinga extends Controller_AbstractAdmin
 				{
 					$attrs['uplink_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
                                         $attrs['uplink_ipv6'] = (strlen(trim($interface->IPv6Addr)) > 0 ? $interface->IPv6Addr : null);
+				}
+				elseif (in_array($interface->vlan->name, Kohana::$config->load('system.default.vlan.ipmi')) && !$interface->subordinate)
+				{
+					$attrs['ipmi_ipv4'] = (strlen(trim($interface->IPv4Addr)) > 0 ? $interface->IPv4Addr : null);
 				}
                         }
 			$contacts = $server->contacts;
@@ -91,6 +96,7 @@ class Controller_Icinga extends Controller_AbstractAdmin
                                 'external_ipv6' => null,
 				'uplink_ipv4' => null,
                                 'uplink_ipv6' => null,
+                                'ipmi_ipv4' => null,
 				'hostname' => (strlen($other_host->hostname) ? $other_host->hostname : null),
 				'alias' => (strlen($other_host->alias) ? $other_host->alias : null),
 				'check_command' => (strlen($other_host->checkCommand) ? $other_host->checkCommand : null),
