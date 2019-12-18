@@ -192,75 +192,97 @@ EOB;
 			'mtime'   => $ep->lastModified->getTimestamp(),
 		));
 	}
-
+	
 	# If called with no node, this function will call itself
-        # to generate a tar file of config files
-        public static function config_openvpn_2_4_v0_1_78(Model_Node $node = null, $ip = null)
-        {
-                if($node === null)
-                {
-                        $files = array();
+	# to generate a tar file of config files
+	public static function config_openvpn_2_4_v0_1_78(Model_Node $node = null, $ip = null)
+	{
+		if($node === null)
+		{
+			$files = array();
+			$repository = Doctrine::em()->getRepository('Model_Node');
+
 			if (!empty($ip))
-			{
-				$interface = Doctrine::em()->getRepository('Model_ServerInterface')->findOneBy(array("IPv4Addr" => $ip));
-				if (!empty($interface))
-				{
+                        {
+                                $interface = Doctrine::em()->getRepository('Model_ServerInterface')->findOneBy(array("IPv4Addr" => $ip));
+                                if (!empty($interface))
+                                {
 					$vpnServerIds = array();
                                         $vpnServers = $interface->server->vpnServers;
-                                        foreach ($vpnServers as $vpnServer)
-                                        {
-                                                if ($vpnServer->id)
-                                                {
-                                                        $vpnServerIds[] = $vpnServer->id;
-                                                }
-                                        }
+					foreach ($vpnServers as $vpnServer)
+					{
+						if ($vpnServer->id)
+						{
+							$vpnServerIds[] = $vpnServer->id;
+						}
+					}					
                                         if (!empty($vpnServerIds))
                                         {
 						$nodes = Doctrine::em()->getRepository('Model_Node')->findBy(array("undeployable" => 0), array('boxNumber' => 'ASC'));
-			                        foreach($nodes as $node)
-        			                {	
-							if ($node->vpnEndpoint && $node->vpnEndpoint->vpnServer->id == $vpnServers[0]->id)
-							{
-        	        		        		$fn =  __function__;
-	                	        		        $files = array_merge($files, static::$fn($node, $ip));
-							}
-						}
-					}
-					else 
-					{
-						throw new HTTP_Exception_404("Server with IPv4 interface address has no VPN servers.");
-					}
-                        	}
-				else
-				{
-					throw new HTTP_Exception_404("IPv4 address does not correspond to a server interface.");
-				}
-			}
-			else 
+                                                foreach($nodes as $node)
+                                                {
+                                                        if ($node->vpnEndpoint && in_array($node->vpnEndpoint->vpnServer->id, $vpnServerIds))
+                                                        {
+								
+                                                                $fn =  __function__;
+                                                                $files = array_merge($files, static::$fn($node, $ip));
+                                                        }
+                                                }
+                                        }
+                                        else
+                                        {
+                                                throw new HTTP_Exception_404("Server with IPv4 interface address has no VPN servers.");
+                                        }
+                                }
+                                else
+                                {
+                                        throw new HTTP_Exception_404("IPv4 address does not correspond to a server interface.");
+                                }
+                        }
+                        else
+                        {
+                                throw new HTTP_Exception_404("No IPv4 address provided.");
+                        }
+
+			static::send_tgz($files, array());
+
+			# morse: Can this fall-through?
+		}
+
+		if($node->certificate->cn == "")
+		{
+			# No certificate defined
+			return array();
+		}
+
+		$ep = $node->vpnEndpoint;
+
+		if (!is_object($ep))
+		{
+			# No endpoint
+			return array();
+		}
+
+		# Look for any subnets we should route:
+		$iroute_v6 = array();
+		foreach($node->interfaces as $i)
+		{
+			if($i->IPv6 != null && strpos($i->name, "wlan") !== FALSE)
 			{
-				throw new HTTP_Exception_404("No IPv4 address provided.");
+				$iroute_v6[] = "iroute-ipv6 " . $i->IPv6->get_network_start() . "/" . $i->IPv6AddrCidr;
 			}
-                        static::send_tgz($files, array());
+		}
 
-                        # morse: Can this fall-through?
-                }
+		$iroute_v6 = join("\r\n", $iroute_v6);
 
-                if($node->certificate->cn == "")
-                {
-                        # No certificate defined
-                        return array();
-                }
-
-                $ep = $node->vpnEndpoint;
-                $dns_host = Kohana::$config->load('system.default.dns.host');
-                $routes = trim(Kohana::$config->load('system.default.routes'));
-
+		$dns_host = Kohana::$config->load('system.default.dns.host');
+		$routes = trim(Kohana::$config->load('system.default.routes'));
 $conf = <<< EOB
 # Comments are preceded with '#' or ';'
 
 # Bind to the server address that the nodes know about.
 # This breaks on udp as the server may reply with a different src_ip.
-local {$ip}
+local {$ep->vpnServer->getPrimaryIPAddress()}
 
 # Accept Connections on this port.
 port {$ep->port}
@@ -269,7 +291,9 @@ port {$ep->port}
 proto {$ep->protocol}
 
 # sown-vpn uses tap tunnels
-dev tap{$node->boxNumber}
+dev-type tap
+dev node{$node->boxNumber}
+
 
 # Locations of SSL files
 ca /etc/openvpn/package_managment/{$node->certificate->ca}
@@ -277,10 +301,15 @@ cert /etc/openvpn/package_managment/server-{$node->certificate->ca}
 key /etc/openvpn/package_managment/server-{$node->certificate->ca}.key
 
 # Diffie Hellman Parameters
-dh /etc/openvpn/dh1024.pem
+dh /etc/openvpn/dh2048.pem
 
 # Use this subnet for this client
 server {$ep->IPv4->get_network_address()} {$ep->IPv4->get_subnet_mask()}
+
+# IPv6 on tunnel network
+ifconfig-ipv6 {$ep->IPv6->get_network_start()}1/{$ep->IPv6AddrCidr} {$ep->IPv6->get_network_start()}2 
+push "ifconfig-ipv6 {$ep->IPv6->get_network_start()}2/{$ep->IPv6AddrCidr} {$ep->IPv6->get_network_start()}1"
+push "route-ipv6 2001:630:d0:f700::/56"
 
 # Push these routes to the client
 {$routes}
@@ -311,11 +340,8 @@ group openvpn
 persist-key
 persist-tun
 
-# Keep per-server log files
-log /var/log/openvpn/server{$node->boxNumber}.log
-status /var/log/openvpn/server{$node->boxNumber}-status.log
-
 # Set logging verbosity to 3
+# logs go to journald rather than files for 2.4
 verb 3
 
 script-security 3
@@ -324,11 +350,11 @@ client-disconnect "/etc/openvpn/client-routes/disconnect-{$node->certificate->cn
 
 EOB;
 
-                return array('server'.$node->boxNumber.'.conf' => array(
-                        'content' => $conf,
-                        'mtime'   => $ep->lastModified->getTimestamp(),
-                ));
-        }
+		return array('node'.$node->boxNumber.'.conf' => array(
+			'content' => $conf,
+			'mtime'   => $ep->lastModified->getTimestamp(),
+		));
+	}
 
 	# If called with no node, this function will call itself
 	# to generate a tar file of config files
