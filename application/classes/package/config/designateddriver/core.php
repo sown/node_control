@@ -379,7 +379,7 @@ class Package_Config_Designateddriver_Core extends Package_Config
 				$if_config['start'] = $v4_arr[3] + 2;
 				$if_config['limit'] = $v4_net_addr->get_network_address_count() - 3;
 				$if_config['leasetime'] = '15m';
-				$if_config['dhcp_option'] = '42,'.Kohana::$config->load('system.default.ntp.host');
+				$if_config['dhcp_option'] = array('42,'.Kohana::$config->load('system.default.ntp.host'));
 			}
 			else
 			{
@@ -407,10 +407,6 @@ class Package_Config_Designateddriver_Core extends Package_Config
                 $minuteplus5 = $minuteplus5 % 60;
 		$config = array(
                         'feature' => array(
-                                'cron_check' => array(
-                                        'enabled' => 'true',
-                                        'command' => $minuteplus5 . ' * * * * /usr/sbin/cron_check',
-                                ),
 				'syslog' => array(
                                         'enabled' => 'true',
                                         'command' => '*/5 * * * * /usr/sbin/maintain_syslog > /dev/null',
