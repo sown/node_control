@@ -53,7 +53,6 @@ abstract class Package_Config
 	
 		// Sets the Etag. If the client request etag matches, sends the 304 and exits
 		$r->check_cache('"'.$hash.'"', $req);
-
 		// check if the client sent an 'if-modified-since' header
 		$sa = strptime($req->headers('If-Modified-Since'), '%a, %e %b %Y %H:%M:%S');
 
@@ -98,15 +97,15 @@ abstract class Package_Config
 		# as nodes have ntp-sync'd clocks, and all call for updates
 		# in the same second or two.
 		$dirname = sys_get_temp_dir() .'/sown_tgz_'. time().rand();
-		if(! mkdir($dirname))
+		if(! mkdir($dirname)){
 			throw new Exception("Failed to create dir '$dirname'");
-
+		}
 		$list = array();
 		
 		// Fixing a bug in the tar library
-		if (count($files) == 1)
+		if (sizeof($files) == 0)
 			$files['.ignore'] = array('content' => 'Please ignore this file.');
-		
+
 		foreach ($files as $dst => $src)
 		{
 			$temp_dest = $dirname.'/'.$dst;
@@ -118,8 +117,9 @@ abstract class Package_Config
 			if (is_string($src))
 			{
 				// It's a filename.
-				if (!link($src, $temp_dest))
+				if (!copy($src, $temp_dest)){
 					throw new Exception("Failed to link file $src to $temp_dest.");
+				}
 			}
 			elseif (is_array($src))
 			{
@@ -147,22 +147,23 @@ abstract class Package_Config
 
 			$list[] = $temp_dest;
 		}
-
 		$file = tempnam(sys_get_temp_dir(), 'sown_tgz_');
 		if ($file === FALSE)
 			throw new Exception('Failed to create temporary file :(.');
 
+		# CM: EVIL HACK to make files owned by root....
+		exec("sudo /srv/www/static_files/chown-as-root.sh " . $dirname);
+		
 		require_once('Archive/Tar.php');
 		$archive = new Archive_Tar($file, 'gz');
 		$archive->createModify($list, '', $dirname);
-	
 		# This work better than an `rm -rf $dirname`
 		foreach(glob("{$dirname}/*") as $filename)
 		{
 			unlink($filename);
 		}
 		rmdir($dirname);
-		
+
 		Request::$current->response()->send_file($file, FALSE, array(
 			'delete'    => TRUE,
 			'mime_type' => 'application/x-gtar'
@@ -248,9 +249,9 @@ abstract class Package_Config
 	
 	public static function get_cert_cn()
 	{
-		return $_SERVER['SSL_CLIENT_S_DN_CN'];
-		//$data = openssl_x509_parse($cert);
-		//return $data['subject']['CN'];
+		$domain = Kohana::$config->load('system.default.domain');
+                $hostname = str_replace(".$domain", "", $_SERVER['SSL_CLIENT_S_DN_CN']);
+		return $hostname;
 	}
 	
 	public static function is_bootstrap_cert($cert)
