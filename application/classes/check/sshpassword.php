@@ -39,6 +39,20 @@ class Check_SshPassword extends Check
 			SOWN::notify_icinga($host->hostname, "VPN-PROCS", 1, "VPN-PROCS WARNING: Could not run command to count number of VPN processes.");
 		}
 		try {
+                        $response = $session->execute('/bin/ps | /bin/grep dnsmasq | /bin/grep -v grep | /usr/bin/wc -l | tr -d "\n"');
+                        if ( $response != 2 )
+                        {
+                                SOWN::notify_icinga($host->hostname, "DNSMASQ-PROCS", 2, "DNSMASQ-PROCS CRITICAL: There should be 2 dnsmasq processes running, (currently $response).");
+                        }
+                        else
+                        {
+                                SOWN::notify_icinga($host->hostname, "DNSMASQ-PROCS", 0, "DNSMASQ-PROCS OK: There are 2 dnsmasq processes running.");
+                        }
+                }
+                catch(Exception $e) {
+                        SOWN::notify_icinga($host->hostname, "DNSMASQ-PROCS", 1, "DNSMASQ-PROCS WARNING: Could not run command to count number of dnsmasq processes.");
+                }
+		try {
       			$response = $session->execute('/bin/cat /etc/shadow | /bin/grep root');
 		}
 		catch(Exception $e) {
