@@ -82,7 +82,7 @@ class Package_Config_Lucid_Monitoring extends Package_Config
 			$ipv4_addrs = array();
 
 			if(substr($node->vpnEndpoint->IPv4Addr, 0, 8) != "169.254."){
-				$ipv4_addrs[] = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2);
+				$ipv4_addrs[] = "tap0=".$node->vpnEndpoint->IPv4->get_address_in_network(2).",tap0-v6=".$node->vpnEndpoint->IPv6->get_address()."2";
 			}
 			foreach($node->interfaces as $i)
 			{
