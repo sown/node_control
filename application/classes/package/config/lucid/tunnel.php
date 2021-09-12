@@ -308,6 +308,7 @@ server {$ep->IPv4->get_network_address()} {$ep->IPv4->get_subnet_mask()}
 
 # IPv6 on tunnel network
 ifconfig-ipv6 {$ep->IPv6->get_network_start()}1/{$ep->IPv6AddrCidr} {$ep->IPv6->get_network_start()}2 
+push "tun-ipv6"
 push "ifconfig-ipv6 {$ep->IPv6->get_network_start()}2/{$ep->IPv6AddrCidr} {$ep->IPv6->get_network_start()}1"
 push "route-ipv6 2001:630:d0:f700::/56"
 
